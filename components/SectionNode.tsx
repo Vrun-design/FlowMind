@@ -3,6 +3,8 @@ import { NodeProps, NodeResizer } from 'reactflow';
 import { NodeData } from '../types';
 import { ChevronDown, ChevronRight, Group } from 'lucide-react';
 
+import { ICON_MAP } from './IconMap';
+
 const SECTION_COLORS: Record<string, { bg: string; border: string; title: string; badge: string }> = {
   slate: { bg: 'rgba(241,245,249,0.35)', border: '#94a3b8', title: '#334155', badge: 'bg-slate-200 text-slate-700' },
   blue: { bg: 'rgba(219,234,254,0.35)', border: '#60a5fa', title: '#1e40af', badge: 'bg-blue-200 text-blue-700' },
@@ -16,6 +18,7 @@ const SECTION_COLORS: Record<string, { bg: string; border: string; title: string
 const SectionNode = ({ data, selected }: NodeProps<NodeData>) => {
   const color = data.color || 'blue';
   const theme = SECTION_COLORS[color] || SECTION_COLORS.blue;
+  const Icon = data.icon && ICON_MAP[data.icon] ? ICON_MAP[data.icon] : Group;
 
   return (
     <>
@@ -25,7 +28,7 @@ const SectionNode = ({ data, selected }: NodeProps<NodeData>) => {
         minWidth={350}
         minHeight={250}
         lineStyle={{ borderStyle: 'dashed', borderWidth: 2 }}
-        handleStyle={{ width: 10, height: 10, borderRadius: 5 }}
+        handleStyle={{ width: 12, height: 12, borderRadius: 6 }}
       />
       <div
         className={`
@@ -42,10 +45,10 @@ const SectionNode = ({ data, selected }: NodeProps<NodeData>) => {
       >
         {/* Title Bar */}
         <div
-          className="flex items-center gap-2 px-4 py-2.5 rounded-t-2xl"
+          className="flex items-center gap-2 px-4 py-3 rounded-t-2xl"
           style={{ borderBottom: `1px dashed ${theme.border}`, pointerEvents: 'auto' }}
         >
-          <Group className="w-4 h-4" style={{ color: theme.title }} />
+          <Icon className="w-4 h-4" style={{ color: theme.title }} />
           <span
             className="font-bold text-sm tracking-tight"
             style={{ color: theme.title }}
@@ -53,7 +56,7 @@ const SectionNode = ({ data, selected }: NodeProps<NodeData>) => {
             {data.label || 'Section'}
           </span>
           {data.subLabel && (
-            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${theme.badge}`}>
+            <span className={`text-xs font-medium px-2 py-1 rounded-full ${theme.badge}`}>
               {data.subLabel}
             </span>
           )}

@@ -199,6 +199,19 @@ export const useFlowOperations = (
     setSelectedNodeId(id);
   }, [setNodes, recordHistory, setSelectedNodeId]);
 
+  const handleAddTextNode = useCallback((position?: { x: number; y: number }) => {
+    recordHistory();
+    const id = `text-${Date.now()}`;
+    const newNode: Node = {
+      id,
+      position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
+      data: { label: 'Text', subLabel: '', color: 'slate' },
+      type: 'text',
+    };
+    setNodes((nds) => nds.concat(newNode));
+    setSelectedNodeId(id);
+  }, [setNodes, recordHistory, setSelectedNodeId]);
+
   // --- Drag into/out of Section ---
   const onNodeDragStart = useCallback(() => {
     recordHistory();
@@ -371,5 +384,6 @@ export const useFlowOperations = (
     handleClear,
     copySelection,
     pasteSelection,
+    handleAddTextNode,
   };
 };

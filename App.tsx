@@ -17,6 +17,8 @@ import dagre from 'dagre';
 import CustomNode from './components/CustomNode';
 import AnnotationNode from './components/AnnotationNode';
 import SectionNode from './components/SectionNode';
+import TextNode from './components/TextNode';
+import { CustomBezierEdge, CustomSmoothStepEdge, CustomStepEdge } from './components/CustomEdge';
 import { CommandBar } from './components/CommandBar';
 import { Toolbar } from './components/Toolbar';
 import { NavigationControls } from './components/NavigationControls';
@@ -27,6 +29,7 @@ import { ContextMenu, ContextMenuProps } from './components/ContextMenu';
 import { TopNav } from './components/TopNav';
 import { FlowTemplate } from './services/templates';
 import { toMermaid, toPlantUML } from './services/exportService';
+import { toFigmaSVG } from './services/figmaExportService';
 import { toFlowMindDSL } from './services/flowmindDSLExporter';
 
 import { useSnapshots } from './hooks/useSnapshots';
@@ -45,6 +48,7 @@ const MINIMAP_NODE_COLORS: Record<string, string> = {
   decision: '#f59e0b',
   annotation: '#facc15',
   section: '#60a5fa',
+  text: '#94a3b8',
 };
 
 const FlowEditor = () => {
@@ -170,6 +174,13 @@ const FlowEditor = () => {
     custom: CustomNode,
     annotation: AnnotationNode,
     section: SectionNode,
+    text: TextNode,
+  }), []);
+
+  const edgeTypes = useMemo(() => ({
+    default: CustomBezierEdge,
+    smoothstep: CustomSmoothStepEdge,
+    step: CustomStepEdge,
   }), []);
 
   // --- History ---
@@ -286,7 +297,7 @@ const FlowEditor = () => {
     deleteNode, deleteEdge, duplicateNode,
     onConnect, onSelectionChange, onNodeDoubleClick,
     onNodeDragStart, onNodeDragStop,
-    handleAddNode, handleAddAnnotation, handleAddSection,
+    handleAddNode, handleAddAnnotation, handleAddSection, handleAddTextNode,
     handleClear,
     copySelection, pasteSelection,
     onConnectStart, onConnectEnd,
@@ -401,6 +412,17 @@ const FlowEditor = () => {
     }
   }, [nodes, edges]);
 
+  const handleExportFigma = useCallback(async () => {
+    try {
+      const svg = toFigmaSVG(nodes, edges);
+      await navigator.clipboard.writeText(svg);
+      alert('Diagram copied for Figma! You can now paste (Cmd+V) in Figma.');
+    } catch (err: any) {
+      console.error('Failed to copy Figma SVG:', err);
+      alert(`Figma Export Failed: ${err?.message || err}`);
+    }
+  }, [nodes, edges]);
+
   const handleRestoreSnapshot = useCallback((snapshot: any) => {
     restoreSnapshot(snapshot, setNodes, setEdges);
     recordHistory(); // Record the restoration as a new history step
@@ -422,15 +444,20 @@ const FlowEditor = () => {
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === 'Meta' || e.key === 'Control') setIsSelectionModifierPressed(false);
     };
+    // Reset modifier when window loses focus (prevents stuck state)
+    const handleBlur = () => setIsSelectionModifierPressed(false);
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', handleBlur);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', handleBlur);
     };
   }, []);
 
+  // Ctrl/Cmd temporarily enables selection drag; toolbar button permanently toggles
   const isEffectiveSelectMode = isSelectMode || isSelectionModifierPressed;
 
   return (
@@ -454,6 +481,7 @@ const FlowEditor = () => {
         onExportMermaid={handleExportMermaid}
         onExportPlantUML={handleExportPlantUML}
         onExportFlowMindDSL={handleExportFlowMindDSL}
+        onExportFigma={handleExportFigma}
         onImportJSON={handleImportJSON}
         onHistory={() => setIsHistoryOpen(true)}
       />
@@ -475,6 +503,7 @@ const FlowEditor = () => {
         onConnectStart={onConnectStart}
         onConnectEnd={onConnectEnd}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         fitView
         className="bg-slate-50 pt-16"
         minZoom={0.1}
@@ -511,6 +540,7 @@ const FlowEditor = () => {
         onAddNode={handleAddNode}
         onAddAnnotation={handleAddAnnotation}
         onAddSection={handleAddSection}
+        onAddText={handleAddTextNode}
         onUndo={undo}
         onRedo={redo}
         onLayout={onLayout}

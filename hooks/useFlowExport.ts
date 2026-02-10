@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react';
 import { Node, Edge, getRectOfNodes } from 'reactflow';
-import { toPng } from 'html-to-image';
+import { toPng, toJpeg } from 'html-to-image';
 
 export const useFlowExport = (
   nodes: Node[],
@@ -13,8 +13,8 @@ export const useFlowExport = (
 ) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // --- PNG Export ---
-  const handleExport = useCallback(() => {
+  // --- Image Export (PNG/JPG) ---
+  const handleExport = useCallback((format: 'png' | 'jpeg' = 'png') => {
     if (!reactFlowWrapper.current) return;
     reactFlowWrapper.current.classList.add('exporting');
 
@@ -30,8 +30,8 @@ export const useFlowExport = (
         return;
       }
 
-      toPng(flowViewport, {
-        backgroundColor: '#f8fafc',
+      const options = {
+        backgroundColor: format === 'png' ? null : '#ffffff', // PNG transparent, JPG white
         width,
         height,
         style: {
@@ -39,6 +39,7 @@ export const useFlowExport = (
           width: `${width}px`,
           height: `${height}px`,
         },
+        pixelRatio: 3, // Default to High-Res (4K)
         filter: (node: any) => {
           if (node?.classList) {
             if (
@@ -52,10 +53,14 @@ export const useFlowExport = (
           }
           return true;
         },
-      })
+      };
+
+      const exportPromise = format === 'png' ? toPng(flowViewport, options) : toJpeg(flowViewport, options);
+
+      exportPromise
         .then((dataUrl) => {
           const link = document.createElement('a');
-          link.download = 'flowmind-diagram.png';
+          link.download = `flowmind-diagram.${format === 'jpeg' ? 'jpg' : 'png'}`;
           link.href = dataUrl;
           link.click();
         })
