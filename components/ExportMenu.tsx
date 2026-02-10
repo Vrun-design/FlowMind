@@ -1,22 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Download, Image, FileJson, GitBranch, FileCode, Wand2, X } from 'lucide-react';
+import { Download, Image, FileJson, GitBranch, FileCode, Wand2, X, Figma } from 'lucide-react';
 
 import { Tooltip } from './Tooltip';
 
 interface ExportMenuProps {
-    onExportPNG: () => void;
+    onExportPNG: (format: 'png' | 'jpeg') => void;
     onExportJSON: () => void;
     onExportMermaid: () => void;
     onExportPlantUML: () => void;
     onExportFlowMindDSL: () => void;
+    onExportFigma: () => void;
 }
 
 const EXPORT_OPTIONS = [
-    { key: 'png', label: 'PNG Image', hint: 'Download', Icon: Image },
+    { key: 'png', label: 'Export PNG', hint: 'Transparent (4K)', Icon: Image },
+    { key: 'jpeg', label: 'Export JPG', hint: 'White Background (4K)', Icon: Image },
     { key: 'json', label: 'JSON File', hint: 'Download', Icon: FileJson },
     { key: 'flowmind', label: 'FlowMind DSL', hint: 'Copy to clipboard', Icon: Wand2 },
     { key: 'mermaid', label: 'Mermaid', hint: 'Copy to clipboard', Icon: GitBranch },
     { key: 'plantuml', label: 'PlantUML', hint: 'Copy to clipboard', Icon: FileCode },
+    { key: 'figma', label: 'Figma Editable', hint: 'Copy to clipboard', Icon: Figma },
 ] as const;
 
 export const ExportMenu: React.FC<ExportMenuProps> = ({
@@ -25,6 +28,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
     onExportMermaid,
     onExportPlantUML,
     onExportFlowMindDSL,
+    onExportFigma,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -42,11 +46,13 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
     }, [isOpen]);
 
     const handlers: Record<string, () => void> = {
-        png: onExportPNG,
+        png: () => onExportPNG('png'),
+        jpeg: () => onExportPNG('jpeg'),
         json: onExportJSON,
         flowmind: onExportFlowMindDSL,
         mermaid: onExportMermaid,
         plantuml: onExportPlantUML,
+        figma: onExportFigma,
     };
 
     const handleSelect = (key: string) => {

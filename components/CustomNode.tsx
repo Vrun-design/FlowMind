@@ -2,18 +2,9 @@ import React, { memo, useMemo } from 'react';
 import { Handle, Position, NodeProps, NodeResizer } from 'reactflow';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import * as AllIcons from 'lucide-react'; // Import all icons
+import remarkBreaks from 'remark-breaks';
 import { NodeData } from '../types';
-
-// Filter out non-component exports from Lucide
-export const ICON_MAP = Object.entries(AllIcons).reduce((acc, [key, component]) => {
-  // Lucide icons are PascalCase. We filter out createLucideIcon and default.
-  // We also check if the key starts with an uppercase letter to catch components.
-  if (key !== 'createLucideIcon' && key !== 'default' && /^[A-Z]/.test(key)) {
-    acc[key] = component as React.ElementType;
-  }
-  return acc;
-}, {} as Record<string, React.ElementType>);
+import { ICON_MAP } from './IconMap';
 
 const getThemeStyles = (color: string = 'slate') => {
   const themes: Record<string, { bg: string, border: string, iconBg: string, iconColor: string, handle: string, ring: string }> = {
@@ -31,10 +22,10 @@ const getThemeStyles = (color: string = 'slate') => {
 
 const getDefaults = (type: string) => {
   switch (type) {
-    case 'start': return { color: 'emerald', icon: 'Play', shape: 'capsule' };
-    case 'end': return { color: 'red', icon: 'Square', shape: 'capsule' };
+    case 'start': return { color: 'emerald', icon: 'Play', shape: 'rounded' };
+    case 'end': return { color: 'red', icon: 'Square', shape: 'rounded' };
     case 'decision': return { color: 'amber', icon: 'Diamond', shape: 'rounded' };
-    case 'annotation': return { color: 'yellow', icon: 'StickyNote', shape: 'rectangle' };
+    case 'annotation': return { color: 'yellow', icon: 'StickyNote', shape: 'rounded' };
     case 'custom': return { color: 'violet', icon: 'Cpu', shape: 'rounded' };
     default: return { color: 'slate', icon: 'Settings', shape: 'rounded' };
   }
@@ -59,7 +50,7 @@ const CustomNode = ({ data, type, selected }: NodeProps<NodeData>) => {
     // Fallback search
     const keyLower = activeIconKey.toLowerCase();
     const foundKey = Object.keys(ICON_MAP).find(k => k.toLowerCase() === keyLower);
-    return foundKey ? ICON_MAP[foundKey] : AllIcons.Settings;
+    return foundKey ? ICON_MAP[foundKey] : ICON_MAP.Settings;
   }, [activeIconKey]);
 
   // Alignment Logic
@@ -87,7 +78,7 @@ const CustomNode = ({ data, type, selected }: NodeProps<NodeData>) => {
       <div style={{ transform: `rotate(${rotation}deg)`, transformOrigin: 'center center', width: '100%', height: '100%' }}>
         <div
           className={`
-              relative flex flex-col shadow-lg border-2 transition-all duration-200 h-full overflow-hidden
+              relative flex flex-col justify-center shadow-lg border-2 transition-all duration-200 h-full overflow-hidden
               ${borderRadiusClass}
               ${style.bg} ${style.border}
               ${selected ? `ring-2 ${style.ring} ring-offset-2 z-10` : 'hover:shadow-xl'}
@@ -95,7 +86,7 @@ const CustomNode = ({ data, type, selected }: NodeProps<NodeData>) => {
           style={{ minWidth: 200, width: '100%', height: '100%' }}
         >
           {/* 1. Header Section */}
-          <div className={`flex ${layoutClass} ${itemsClass} gap-3 p-4 flex-1`}>
+          <div className={`flex ${layoutClass} items-center gap-3 p-4`}>
             {IconComponent && (
               <div className={`
                       shrink-0 w-10 h-10 rounded-lg flex items-center justify-center border border-black/5 shadow-sm
@@ -108,12 +99,12 @@ const CustomNode = ({ data, type, selected }: NodeProps<NodeData>) => {
             <div className={`flex flex-col min-w-0 ${!IconComponent ? 'w-full' : ''}`}>
               {/* Rich Text Label */}
               <div className="text-sm font-bold text-slate-800 leading-tight block break-words markdown-content [&>p]:m-0">
-                <ReactMarkdown>{data.label || 'Node'}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{data.label || 'Node'}</ReactMarkdown>
               </div>
 
               {data.subLabel && (
-                <div className="text-[11px] text-slate-600 mt-2 font-medium leading-normal markdown-content break-words">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <div className="text-xs text-slate-600 mt-1 font-medium leading-normal markdown-content break-words">
+                  <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
                     {data.subLabel}
                   </ReactMarkdown>
                 </div>

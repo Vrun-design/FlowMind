@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { Node, Edge, Connection, addEdge, MarkerType, OnSelectionChangeParams } from 'reactflow';
 import { NodeData } from '../types';
 import { EDGE_STYLE, EDGE_LABEL_STYLE, EDGE_LABEL_BG_STYLE } from '../constants';
@@ -10,8 +10,11 @@ export const useFlowOperations = (
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>,
   recordHistory: () => void,
   setSelectedNodeId: (id: string | null) => void,
-  setSelectedEdgeId: (id: string | null) => void
+  setSelectedEdgeId: (id: string | null) => void,
+  screenToFlowPosition: (position: { x: number; y: number }) => { x: number; y: number }
 ) => {
+  const connectingNodeId = useRef<string | null>(null);
+  const connectingHandleId = useRef<string | null>(null);
   // --- Node Data Updates ---
   const updateNodeData = useCallback((id: string, data: Partial<NodeData>) => {
     setNodes((nds) =>
@@ -93,6 +96,57 @@ export const useFlowOperations = (
     );
   }, [setEdges, recordHistory]);
 
+  const onConnectStart = useCallback((_, { nodeId, handleId }: { nodeId: string | null; handleId: string | null }) => {
+    connectingNodeId.current = nodeId;
+    connectingHandleId.current = handleId;
+  }, []);
+
+  const onConnectEnd = useCallback(
+    (event: any) => {
+      if (!connectingNodeId.current) return;
+
+      const targetIsPane = event.target.classList.contains('react-flow__pane');
+
+      if (targetIsPane) {
+        // we need to remove the wrapper bounds to get the correct position
+        const { top, left } = event.target.getBoundingClientRect();
+        const position = screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
+        });
+
+        const id = `${Date.now()}`;
+        const newNode: Node = {
+          id,
+          position,
+          data: { label: 'New Node', subLabel: 'Process Step', icon: 'Settings', color: 'slate' },
+          type: 'process',
+        };
+
+        recordHistory();
+        setNodes((nds) => nds.concat(newNode));
+        setEdges((eds) =>
+          eds.concat({
+            id: `e-${connectingNodeId.current}-${id}`,
+            source: connectingNodeId.current!,
+            sourceHandle: connectingHandleId.current,
+            target: id,
+            type: 'smoothstep',
+            markerEnd: { type: MarkerType.ArrowClosed },
+            animated: true,
+            style: EDGE_STYLE,
+            labelStyle: EDGE_LABEL_STYLE,
+            labelBgStyle: EDGE_LABEL_BG_STYLE,
+            labelBgPadding: [8, 4],
+            labelBgBorderRadius: 4,
+          })
+        );
+        setSelectedNodeId(id);
+      }
+    },
+    [screenToFlowPosition, recordHistory, setNodes, setEdges, setSelectedNodeId]
+  );
+
   // --- Selection ---
   const onSelectionChange = useCallback(({ nodes: selectedNodes, edges: selectedEdges }: OnSelectionChangeParams) => {
     setSelectedNodeId(selectedNodes.length > 0 ? selectedNodes[0].id : null);
@@ -104,12 +158,12 @@ export const useFlowOperations = (
   }, [setSelectedNodeId]);
 
   // --- Add Nodes ---
-  const handleAddNode = useCallback(() => {
+  const handleAddNode = useCallback((position?: { x: number; y: number }) => {
     recordHistory();
     const id = `${Date.now()}`;
     const newNode: Node = {
       id,
-      position: { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
+      position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
       data: { label: 'New Node', subLabel: 'Process Step', icon: 'Settings', color: 'slate' },
       type: 'process',
     };
@@ -117,12 +171,12 @@ export const useFlowOperations = (
     setSelectedNodeId(id);
   }, [setNodes, recordHistory, setSelectedNodeId]);
 
-  const handleAddAnnotation = useCallback(() => {
+  const handleAddAnnotation = useCallback((position?: { x: number; y: number }) => {
     recordHistory();
     const id = `${Date.now()}`;
     const newNode: Node = {
       id,
-      position: { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
+      position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
       data: { label: 'Note', subLabel: 'Add your comments here.', color: 'yellow' },
       type: 'annotation',
     };
@@ -130,16 +184,29 @@ export const useFlowOperations = (
     setSelectedNodeId(id);
   }, [setNodes, recordHistory, setSelectedNodeId]);
 
-  const handleAddSection = useCallback(() => {
+  const handleAddSection = useCallback((position?: { x: number; y: number }) => {
     recordHistory();
     const id = `section-${Date.now()}`;
     const newNode: Node = {
       id,
-      position: { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },
+      position: position || { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },
       data: { label: 'New Section', subLabel: '', color: 'blue' },
       type: 'section',
       style: { width: 500, height: 400 },
       zIndex: -1,
+    };
+    setNodes((nds) => nds.concat(newNode));
+    setSelectedNodeId(id);
+  }, [setNodes, recordHistory, setSelectedNodeId]);
+
+  const handleAddTextNode = useCallback((position?: { x: number; y: number }) => {
+    recordHistory();
+    const id = `text-${Date.now()}`;
+    const newNode: Node = {
+      id,
+      position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
+      data: { label: 'Text', subLabel: '', color: 'slate' },
+      type: 'text',
     };
     setNodes((nds) => nds.concat(newNode));
     setSelectedNodeId(id);
@@ -305,6 +372,8 @@ export const useFlowOperations = (
     deleteEdge,
     duplicateNode,
     onConnect,
+    onConnectStart,
+    onConnectEnd,
     onSelectionChange,
     onNodeDoubleClick,
     onNodeDragStart,
@@ -315,5 +384,6 @@ export const useFlowOperations = (
     handleClear,
     copySelection,
     pasteSelection,
+    handleAddTextNode,
   };
 };

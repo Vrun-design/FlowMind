@@ -1,6 +1,8 @@
 import { useCallback, useRef } from 'react';
 import { Node, Edge, getRectOfNodes } from 'reactflow';
-import { toPng } from 'html-to-image';
+import { toPng, toJpeg } from 'html-to-image';
+
+import { useToast } from '../components/ui/ToastContext';
 
 export const useFlowExport = (
   nodes: Node[],
@@ -11,10 +13,10 @@ export const useFlowExport = (
   fitView: (opts?: any) => void,
   reactFlowWrapper: React.RefObject<HTMLDivElement>
 ) => {
+  const { addToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // --- PNG Export ---
-  const handleExport = useCallback(() => {
+  const handleExport = useCallback((format: 'png' | 'jpeg' = 'png') => {
     if (!reactFlowWrapper.current) return;
     reactFlowWrapper.current.classList.add('exporting');
 
@@ -30,8 +32,8 @@ export const useFlowExport = (
         return;
       }
 
-      toPng(flowViewport, {
-        backgroundColor: '#f8fafc',
+      const options = {
+        backgroundColor: format === 'png' ? null : '#ffffff', // PNG transparent, JPG white
         width,
         height,
         style: {
@@ -39,6 +41,7 @@ export const useFlowExport = (
           width: `${width}px`,
           height: `${height}px`,
         },
+        pixelRatio: 3, // Default to High-Res (4K)
         filter: (node: any) => {
           if (node?.classList) {
             if (
@@ -52,22 +55,27 @@ export const useFlowExport = (
           }
           return true;
         },
-      })
+      };
+
+      const exportPromise = format === 'png' ? toPng(flowViewport, options) : toJpeg(flowViewport, options);
+
+      exportPromise
         .then((dataUrl) => {
           const link = document.createElement('a');
-          link.download = 'flowmind-diagram.png';
+          link.download = `flowmind-diagram.${format === 'jpeg' ? 'jpg' : 'png'}`;
           link.href = dataUrl;
           link.click();
+          addToast(`Diagram exported as ${format.toUpperCase()}!`, 'success');
         })
         .catch((err) => {
           console.error('Export failed:', err);
-          alert('Failed to export. Please try again.');
+          addToast('Failed to export. Please try again.', 'error');
         })
         .finally(() => {
           reactFlowWrapper.current?.classList.remove('exporting');
         });
     }, 300);
-  }, [nodes, reactFlowWrapper]);
+  }, [nodes, reactFlowWrapper, addToast]);
 
   // --- JSON Export ---
   const handleExportJSON = useCallback(() => {
@@ -101,21 +109,22 @@ export const useFlowExport = (
         try {
           const parsed = JSON.parse(ev.target?.result as string);
           if (!parsed.nodes || !parsed.edges) {
-            alert('Invalid flow file: missing nodes or edges.');
+            addToast('Invalid flow file: missing nodes or edges.', 'error');
             return;
           }
           recordHistory();
           setNodes(parsed.nodes);
           setEdges(parsed.edges);
+          addToast('Diagram loaded successfully!', 'success');
           setTimeout(() => fitView({ duration: 800, padding: 0.2 }), 100);
         } catch {
-          alert('Failed to parse JSON file. Please check the format.');
+          addToast('Failed to parse JSON file. Please check the format.', 'error');
         }
       };
       reader.readAsText(file);
       e.target.value = '';
     },
-    [recordHistory, setNodes, setEdges, fitView]
+    [recordHistory, setNodes, setEdges, fitView, addToast]
   );
 
   return { fileInputRef, handleExport, handleExportJSON, handleImportJSON, onFileImport };

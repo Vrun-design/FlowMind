@@ -13,16 +13,19 @@ import {
   Layout,
   Hand,
   Square,
+  Type,
 } from 'lucide-react';
+import { useReactFlow } from 'reactflow';
 import { Tooltip } from './Tooltip';
 
 interface ToolbarProps {
   onClear: () => void;
   onCommandBar: () => void;
   onFitView: () => void;
-  onAddNode: () => void;
-  onAddAnnotation: () => void;
-  onAddSection: () => void;
+  onAddNode: (pos?: { x: number; y: number }) => void;
+  onAddAnnotation: (pos?: { x: number; y: number }) => void;
+  onAddSection: (pos?: { x: number; y: number }) => void;
+  onAddText: (pos?: { x: number; y: number }) => void;
   onUndo: () => void;
   onRedo: () => void;
   onLayout: () => void;
@@ -44,6 +47,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onAddNode,
   onAddAnnotation,
   onAddSection,
+  onAddText,
   onUndo,
   onRedo,
   onLayout,
@@ -56,6 +60,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onTogglePanMode
 }) => {
   const [showAddMenu, setShowAddMenu] = React.useState(false);
+  const { screenToFlowPosition } = useReactFlow();
+
+  const getCenter = () => {
+    return screenToFlowPosition({
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+    });
+  };
 
   return (
     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 transform-gpu">
@@ -131,14 +143,17 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
             {showAddMenu && (
               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-40 bg-white rounded-xl shadow-xl border border-slate-100 p-1 flex flex-col gap-0.5 z-50 animate-in slide-in-from-bottom-2 zoom-in-95 duration-200">
-                <button onClick={() => { onAddNode(); setShowAddMenu(false); }} className="px-2 py-1.5 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors flex items-center gap-2">
+                <button onClick={() => { onAddNode(getCenter()); setShowAddMenu(false); }} className="px-2 py-1.5 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors flex items-center gap-2">
                   <Square className="w-4 h-4 text-slate-400" /> Node
                 </button>
-                <button onClick={() => { onAddAnnotation(); setShowAddMenu(false); }} className="px-2 py-1.5 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors flex items-center gap-2">
+                <button onClick={() => { onAddAnnotation(getCenter()); setShowAddMenu(false); }} className="px-2 py-1.5 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors flex items-center gap-2">
                   <StickyNote className="w-4 h-4 text-yellow-500" /> Note
                 </button>
-                <button onClick={() => { onAddSection(); setShowAddMenu(false); }} className="px-2 py-1.5 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors flex items-center gap-2">
+                <button onClick={() => { onAddSection(getCenter()); setShowAddMenu(false); }} className="px-2 py-1.5 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors flex items-center gap-2">
                   <Group className="w-4 h-4 text-blue-500" /> Section
+                </button>
+                <button onClick={() => { onAddText(getCenter()); setShowAddMenu(false); }} className="px-2 py-1.5 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors flex items-center gap-2">
+                  <Type className="w-4 h-4 text-slate-500" /> Text
                 </button>
               </div>
             )}

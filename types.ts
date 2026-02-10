@@ -21,6 +21,9 @@ export interface NodeData {
   rotation?: number; // New Rotation Property
   width?: number;
   height?: number;
+  fontSize?: string;
+  fontFamily?: string;
+  backgroundColor?: string;
 }
 
 export interface AIRequestParams {
@@ -29,7 +32,15 @@ export interface AIRequestParams {
 }
 
 export type FlowNode = Node<NodeData>;
-export type FlowEdge = Edge;
+
+export interface EdgeData {
+  condition?: EdgeCondition;
+  labelOffsetX?: number;
+  labelOffsetY?: number;
+  labelPosition?: number; // 0 to 1, default 0.5
+}
+
+export type FlowEdge = Edge<EdgeData>;
 
 export interface GeneratedFlowData {
   nodes: {

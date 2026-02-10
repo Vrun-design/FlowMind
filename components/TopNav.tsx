@@ -22,11 +22,12 @@ interface TopNavProps {
     onRenameTab: (tabId: string, newName: string) => void;
 
     // Actions
-    onExportPNG: () => void;
+    onExportPNG: (format?: 'png' | 'jpeg') => void;
     onExportJSON: () => void;
     onExportMermaid: () => void;
     onExportPlantUML: () => void;
     onExportFlowMindDSL: () => void;
+    onExportFigma: () => void;
     onImportJSON: () => void;
     onHistory: () => void;
 }
@@ -49,6 +50,7 @@ export const TopNav: React.FC<TopNavProps> = ({
     onExportMermaid,
     onExportPlantUML,
     onExportFlowMindDSL,
+    onExportFigma,
     onImportJSON,
     onHistory,
 }) => {
@@ -108,6 +110,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                         onExportMermaid={onExportMermaid}
                         onExportPlantUML={onExportPlantUML}
                         onExportFlowMindDSL={onExportFlowMindDSL}
+                        onExportFigma={onExportFigma}
                     />
                 </div>
 

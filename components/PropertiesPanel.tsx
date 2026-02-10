@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { Node, Edge } from 'reactflow';
 import { NodeData, EdgeCondition } from '../types';
-import { ICON_MAP } from './CustomNode';
+import { ICON_MAP } from './IconMap';
 import { EDGE_CONDITION_STYLES, EDGE_CONDITION_LABELS } from '../constants';
 
 interface PropertiesPanelProps {
@@ -126,7 +126,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     const [iconSearch, setIconSearch] = useState('');
 
     // Refs & Hooks for insertion
-    const labelInputRef = useRef<HTMLInputElement>(null);
+    const labelInputRef = useRef<HTMLTextAreaElement>(null);
     const descInputRef = useRef<HTMLTextAreaElement>(null);
 
     const labelEditor = useMarkdownEditor(labelInputRef, (val) => selectedNode && onChangeNode(selectedNode.id, { label: val }), selectedNode?.data.label || '');
@@ -171,6 +171,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     };
 
     const isAnnotation = selectedNode?.type === 'annotation';
+    const isText = selectedNode?.type === 'text';
 
     return (
         <div className="absolute top-20 right-6 w-80 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 ring-1 ring-black/5 flex flex-col overflow-hidden max-h-[calc(100vh-140px)] z-50 animate-in slide-in-from-right-10 duration-200">
@@ -202,7 +203,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Appearance</label>
 
                             {/* Shapes */}
-                            {!isAnnotation && (
+                            {!isAnnotation && !isText && (
                                 <div className="flex bg-slate-100 p-1 rounded-lg mb-3">
                                     <button
                                         onClick={() => onChangeNode(selectedNode.id, { shape: 'rectangle' })}
@@ -238,7 +239,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                             <div className="flex items-center justify-between">
                                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Content</label>
 
-                                {!isAnnotation && (
+                                {!isAnnotation && !isText && (
                                     <div className="flex bg-slate-100 rounded-lg p-1 gap-1">
                                         {[
                                             { val: 'left', Icon: AlignLeft },
@@ -263,31 +264,74 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                             {/* Rich Text Label */}
                             <div className="relative border border-slate-200 rounded-lg bg-slate-50 overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent transition-all">
                                 <MarkdownToolbar onInsert={labelEditor.insert} simple />
-                                <input
+                                <MarkdownToolbar onInsert={labelEditor.insert} simple />
+                                <textarea
                                     ref={labelInputRef}
-                                    type="text"
                                     value={selectedNode.data.label}
                                     onChange={(e) => onChangeNode(selectedNode.id, { label: e.target.value })}
                                     onKeyDown={labelEditor.handleKeyDown}
                                     placeholder={isAnnotation ? "Title (Optional)" : "Node Label"}
-                                    className="w-full px-3 py-2 bg-slate-50 text-sm font-medium text-slate-900 outline-none font-mono"
+                                    rows={1}
+                                    style={{ minHeight: '38px' }}
+                                    className="w-full px-3 py-2 bg-slate-50 text-sm font-medium text-slate-900 outline-none font-mono resize-y"
                                 />
                             </div>
 
-                            {/* Rich Text / Markdown Editor */}
-                            <div className="relative border border-slate-200 rounded-lg bg-slate-50 overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent transition-all">
-                                <MarkdownToolbar onInsert={descEditor.insert} />
-                                <textarea
-                                    ref={descInputRef}
-                                    value={selectedNode.data.subLabel || ''}
-                                    onChange={(e) => onChangeNode(selectedNode.id, { subLabel: e.target.value })}
-                                    onKeyDown={descEditor.handleKeyDown}
-                                    placeholder={isAnnotation ? "Write your note here..." : "Description / Sublabel"}
-                                    rows={8}
-                                    className="w-full px-3 py-2 bg-slate-50 text-sm font-medium text-slate-900 outline-none resize-none font-mono"
-                                />
-                            </div>
+                            {/* Rich Text / Markdown Editor - Hide for TextNode (single line only) */}
+                            {!isText && (
+                                <div className="relative border border-slate-200 rounded-lg bg-slate-50 overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent transition-all">
+                                    <MarkdownToolbar onInsert={descEditor.insert} />
+                                    <textarea
+                                        ref={descInputRef}
+                                        value={selectedNode.data.subLabel || ''}
+                                        onChange={(e) => onChangeNode(selectedNode.id, { subLabel: e.target.value })}
+                                        onKeyDown={descEditor.handleKeyDown}
+                                        placeholder={isAnnotation ? "Write your note here..." : "Description / Sublabel"}
+                                        rows={8}
+                                        className="w-full px-3 py-2 bg-slate-50 text-sm font-medium text-slate-900 outline-none resize-none font-mono"
+                                    />
+                                </div>
+                            )}
                         </div>
+
+                        {/* Text Style Controls */}
+                        {isText && (
+                            <div className="space-y-3">
+                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Text Style</label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {/* Font Family */}
+                                    <div className="flex bg-slate-100 p-1 rounded-lg">
+                                        {['sans', 'serif', 'mono'].map((font) => (
+                                            <button
+                                                key={font}
+                                                onClick={() => onChangeNode(selectedNode.id, { fontFamily: font })}
+                                                className={`flex-1 py-1 rounded-md text-xs font-medium transition-all capitalize
+                                                    ${(selectedNode.data.fontFamily || 'sans') === font ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}
+                                                `}
+                                                title={font}
+                                            >
+                                                {font === 'sans' ? 'A' : font === 'serif' ? 'T' : 'M'}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    {/* Font Size */}
+                                    <div className="flex bg-slate-100 p-1 rounded-lg">
+                                        {['small', 'medium', 'large', 'xl'].map((size) => (
+                                            <button
+                                                key={size}
+                                                onClick={() => onChangeNode(selectedNode.id, { fontSize: size })}
+                                                className={`flex-1 py-1 rounded-md text-xs font-medium transition-all
+                                                    ${(selectedNode.data.fontSize || 'medium') === size ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}
+                                                `}
+                                                title={size}
+                                            >
+                                                {size === 'small' ? 'S' : size === 'medium' ? 'M' : size === 'large' ? 'L' : 'XL'}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Color Picker */}
                         <div className="space-y-3">
@@ -311,8 +355,45 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                             </div>
                         </div>
 
-                        {/* Icon Picker - Hide for annotation */}
-                        {!isAnnotation && (
+                        {/* Background Color for Text Node */}
+                        {isText && (
+                            <div className="space-y-3">
+                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                                    <span>Background</span>
+                                    <button
+                                        onClick={() => onChangeNode(selectedNode.id, { backgroundColor: selectedNode.data.backgroundColor ? undefined : '#ffffff' })}
+                                        className={`text-[10px] px-2 py-0.5 rounded-full border transition-all ${selectedNode.data.backgroundColor ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-slate-50 border-slate-200 text-slate-400'}`}
+                                    >
+                                        {selectedNode.data.backgroundColor ? 'On' : 'Off'}
+                                    </button>
+                                </label>
+                                {selectedNode.data.backgroundColor && (
+                                    <div className="flex flex-wrap gap-2">
+                                        {[
+                                            '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', // Grays
+                                            '#fef2f2', '#fffbeb', '#f0fdf4', '#eff6ff', // Tints
+                                            '#fee2e2', '#fef3c7', '#dcfce7', '#dbeafe', // More tints
+                                        ].map((bg) => (
+                                            <button
+                                                key={bg}
+                                                onClick={() => onChangeNode(selectedNode.id, { backgroundColor: bg })}
+                                                className={`w-6 h-6 rounded-md border shadow-sm transition-transform hover:scale-110 ${selectedNode.data.backgroundColor === bg ? 'ring-2 ring-indigo-500 ring-offset-1 border-indigo-200' : 'border-slate-200'}`}
+                                                style={{ backgroundColor: bg }}
+                                            />
+                                        ))}
+                                        <input
+                                            type="color"
+                                            value={selectedNode.data.backgroundColor || '#ffffff'}
+                                            onChange={(e) => onChangeNode(selectedNode.id, { backgroundColor: e.target.value })}
+                                            className="w-6 h-6 rounded-md overflow-hidden cursor-pointer border border-slate-200 p-0"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Icon Picker - Hide for annotation and text */}
+                        {!isAnnotation && !isText && (
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between">
                                     <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Icon Symbol</label>
@@ -370,43 +451,45 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                         <hr className="border-slate-100" />
 
                         {/* Image Upload */}
-                        <div className="space-y-3">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                                <ImageIcon className="w-3 h-3" /> Attached Image
-                            </label>
-                            <div className="flex flex-col gap-3">
+                        {!isText && (
+                            <div className="space-y-3">
+                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <ImageIcon className="w-3 h-3" /> Attached Image
+                                </label>
+                                <div className="flex flex-col gap-3">
 
-                                {selectedNode.data.imageUrl ? (
-                                    <div className="relative group rounded-lg overflow-hidden border border-slate-200">
-                                        <img src={selectedNode.data.imageUrl} className="w-full h-32 object-cover opacity-90" />
-                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button
-                                                onClick={() => onChangeNode(selectedNode.id, { imageUrl: undefined })}
-                                                className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-medium hover:bg-red-600"
-                                            >
-                                                Remove
-                                            </button>
+                                    {selectedNode.data.imageUrl ? (
+                                        <div className="relative group rounded-lg overflow-hidden border border-slate-200">
+                                            <img src={selectedNode.data.imageUrl} className="w-full h-32 object-cover opacity-90" />
+                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button
+                                                    onClick={() => onChangeNode(selectedNode.id, { imageUrl: undefined })}
+                                                    className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-medium hover:bg-red-600"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                ) : (
-                                    <button
-                                        onClick={() => fileInputRef.current?.click()}
-                                        className="w-full py-6 border-2 border-dashed border-slate-300 rounded-xl hover:bg-slate-50 hover:border-indigo-400 hover:text-indigo-600 transition-all text-sm text-slate-500 flex flex-col items-center gap-2"
-                                    >
-                                        <Upload className="w-5 h-5" />
-                                        <span>Click to Upload Image</span>
-                                    </button>
-                                )}
+                                    ) : (
+                                        <button
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="w-full py-6 border-2 border-dashed border-slate-300 rounded-xl hover:bg-slate-50 hover:border-indigo-400 hover:text-indigo-600 transition-all text-sm text-slate-500 flex flex-col items-center gap-2"
+                                        >
+                                            <Upload className="w-5 h-5" />
+                                            <span>Click to Upload Image</span>
+                                        </button>
+                                    )}
 
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={handleImageUpload}
-                                />
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleImageUpload}
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         <div className="pt-4 mt-4 border-t border-slate-100 flex gap-2">
                             <button
@@ -478,6 +561,25 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                                 placeholder="e.g., 'If yes', 'On success'"
                                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none"
                             />
+
+                            {/* Label Offset Controls */}
+                            {(selectedEdge.label) && (
+                                <div className="space-y-1 pt-2">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] uppercase font-bold text-slate-400">Position on Wire</span>
+                                        <span className="text-[10px] text-slate-500">{Math.round((selectedEdge.data?.labelPosition ?? 0.5) * 100)}%</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="100"
+                                        step="1"
+                                        value={Math.round((selectedEdge.data?.labelPosition ?? 0.5) * 100)}
+                                        onChange={(e) => onChangeEdge(selectedEdge.id, { data: { ...selectedEdge.data, labelPosition: parseInt(e.target.value) / 100, labelOffsetX: 0, labelOffsetY: 0 } })}
+                                        className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         <div className="space-y-3">
