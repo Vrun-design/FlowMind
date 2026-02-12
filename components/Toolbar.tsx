@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Undo2, Redo2, MousePointer2, Hand, Wand2, Plus,
   Square, StickyNote, Group, Type, Layout, Workflow,
-  Maximize, Trash2
+  Maximize, Trash2, Image as ImageIcon, Palette
 } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Tooltip } from './Tooltip';
@@ -18,10 +18,13 @@ interface ToolbarProps {
   onTogglePanMode: () => void;
   onCommandBar: () => void;
   isCommandBarOpen: boolean;
+  onDesignSystemPanel: () => void;
+  isDesignSystemPanelOpen: boolean;
   onAddNode: (position: { x: number, y: number }) => void;
   onAddAnnotation: (position: { x: number, y: number }) => void;
   onAddSection: (position: { x: number, y: number }) => void;
   onAddText: (position: { x: number, y: number }) => void;
+  onAddImage: (imageUrl: string, position: { x: number, y: number }) => void;
   onTemplates: () => void;
   onLayout: () => void;
   onFitView: () => void;
@@ -43,10 +46,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onTogglePanMode,
   onCommandBar,
   isCommandBarOpen,
+  onDesignSystemPanel,
+  isDesignSystemPanelOpen,
   onAddNode,
   onAddAnnotation,
   onAddSection,
   onAddText,
+  onAddImage,
   onTemplates,
   onLayout,
   onFitView,
@@ -54,10 +60,37 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   getCenter
 }) => {
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageUrl = e.target?.result as string;
+        if (imageUrl) {
+          onAddImage(imageUrl, getCenter());
+          setShowAddMenu(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+    // Reset input
+    event.target.value = '';
+  };
 
   return (
     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 transform-gpu">
       <div className="flex items-center p-1.5 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border border-slate-100 ring-1 ring-slate-900/5">
+
+        {/* Hidden File Input */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept="image/*"
+          onChange={handleImageUpload}
+        />
 
         {/* Group 1: Undo/Redo */}
         <div className="flex items-center gap-0.5 px-1">
@@ -111,6 +144,16 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
         {/* Group 3: Core Actions */}
         <div className="flex items-center gap-0.5 px-1">
+          <Tooltip text="Design Systems">
+            <Button
+              onClick={onDesignSystemPanel}
+              variant="ghost"
+              size="icon"
+              className={`rounded-xl ${isDesignSystemPanelOpen ? 'bg-indigo-100 text-indigo-700' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'}`}
+              icon={<Palette className="w-4 h-4" />}
+            />
+          </Tooltip>
+
           <Tooltip text="Command Bar">
             <Button
               onClick={onCommandBar}
@@ -147,6 +190,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 </Button>
                 <Button onClick={() => { onAddText(getCenter()); setShowAddMenu(false); }} variant="ghost" className="w-full justify-start h-8 px-2 text-xs" icon={<Type className="w-4 h-4 text-slate-500" />}>
                   Text
+                </Button>
+                <Button onClick={() => fileInputRef.current?.click()} variant="ghost" className="w-full justify-start h-8 px-2 text-xs" icon={<ImageIcon className="w-4 h-4 text-pink-500" />}>
+                  Image
                 </Button>
               </div>
             )}

@@ -219,11 +219,11 @@ export const SECTION_COLOR_PALETTE: Record<string, SectionColors> = {
 };
 
 export const NODE_DEFAULTS: Record<string, { color: string; icon: string; shape: string }> = {
-    start: { color: 'emerald', icon: 'Play', shape: 'capsule' },
-    end: { color: 'red', icon: 'Square', shape: 'capsule' },
-    decision: { color: 'amber', icon: 'GitBranch', shape: 'diamond' },
-    custom: { color: 'violet', icon: 'Cpu', shape: 'rounded' },
-    process: { color: 'slate', icon: 'Settings', shape: 'rounded' },
+    start: { color: 'emerald', icon: 'none', shape: 'capsule' },
+    end: { color: 'red', icon: 'none', shape: 'capsule' },
+    decision: { color: 'amber', icon: 'none', shape: 'diamond' },
+    custom: { color: 'violet', icon: 'none', shape: 'rounded' },
+    process: { color: 'slate', icon: 'none', shape: 'rounded' },
 };
 
 export const getDefaultColor = (type: string): string =>

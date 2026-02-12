@@ -44,6 +44,7 @@ export const useFlowOperations = (
     handleAddAnnotation: nodeOps.handleAddAnnotation,
     handleAddSection: nodeOps.handleAddSection,
     handleAddTextNode: nodeOps.handleAddTextNode,
+    handleAddImage: nodeOps.handleAddImage,
     onNodeDragStart: nodeOps.onNodeDragStart,
     onNodeDrag: nodeOps.onNodeDrag,
     onNodeDragStop: nodeOps.onNodeDragStop,

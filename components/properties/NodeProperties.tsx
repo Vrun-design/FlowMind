@@ -80,6 +80,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
 }) => {
     const isAnnotation = selectedNode.type === 'annotation';
     const isText = selectedNode.type === 'text';
+    const isImage = selectedNode.type === 'image';
 
     const labelInputRef = useRef<HTMLTextAreaElement>(null);
     const descInputRef = useRef<HTMLTextAreaElement>(null);
@@ -92,13 +93,53 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
             <hr className="border-slate-100" />
             <div className="space-y-3">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Appearance</label>
-                {!isAnnotation && !isText && (
+                {!isAnnotation && !isText && !isImage && (
                     <ShapeSelector
                         selectedShape={selectedNode.data?.shape}
                         onChange={(shape) => onChange(selectedNode.id, { shape })}
                     />
                 )}
             </div>
+
+            {isImage && (
+                <div className="space-y-3">
+                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Image Settings</label>
+
+                    {/* Transparency */}
+                    <div className="space-y-1">
+                        <div className="flex justify-between text-xs text-slate-500">
+                            <span>Transparency</span>
+                            <span>{Math.round((1 - (selectedNode.data?.transparency ?? 1)) * 100)}%</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="0.1"
+                            max="1"
+                            step="0.05"
+                            value={selectedNode.data?.transparency ?? 1}
+                            onChange={(e) => onChange(selectedNode.id, { transparency: parseFloat(e.target.value) })}
+                            className="w-full accent-indigo-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                        />
+                    </div>
+
+                    {/* Rotation */}
+                    <div className="space-y-1">
+                        <div className="flex justify-between text-xs text-slate-500">
+                            <span>Rotation</span>
+                            <span>{selectedNode.data?.rotation ?? 0}°</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="0"
+                            max="360"
+                            step="15"
+                            value={selectedNode.data?.rotation ?? 0}
+                            onChange={(e) => onChange(selectedNode.id, { rotation: parseInt(e.target.value) })}
+                            className="w-full accent-indigo-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                        />
+                    </div>
+                </div>
+            )}
 
             <div className="space-y-3">
                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Content</label>
@@ -119,7 +160,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                 </div>
 
                 {/* Description */}
-                {!isText && (
+                {!isText && !isImage && (
                     <div className="relative border border-slate-200 rounded-lg bg-slate-50 overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent transition-all">
                         <MarkdownToolbar onInsert={descEditor.insert} />
                         <textarea
@@ -168,12 +209,14 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                 </div>
             )}
 
-            <ColorPicker
-                selectedColor={selectedNode.data?.color}
-                onChange={(color) => onChange(selectedNode.id, { color })}
-            />
+            {!isImage && (
+                <ColorPicker
+                    selectedColor={selectedNode.data?.color}
+                    onChange={(color) => onChange(selectedNode.id, { color })}
+                />
+            )}
 
-            {!isAnnotation && !isText && (
+            {!isAnnotation && !isText && !isImage && (
                 <IconPicker
                     selectedIcon={selectedNode.data?.icon}
                     customIconUrl={selectedNode.data?.customIconUrl}

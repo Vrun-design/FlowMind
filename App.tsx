@@ -23,6 +23,9 @@ import { FlowTemplate } from './services/templates';
 import { toMermaid, toPlantUML } from './services/exportService';
 import { toFigmaSVG } from './services/figmaExportService';
 import { toFlowMindDSL } from './services/flowmindDSLExporter';
+import { LandingPage } from './components/LandingPage';
+
+
 
 import { useSnapshots } from './hooks/useSnapshots';
 import { useAutoSave } from './hooks/useAutoSave';
@@ -64,9 +67,10 @@ const FlowEditor = () => {
 
   // Command Bar State
   const [isCommandBarOpen, setIsCommandBarOpen] = useState(false);
-  const [commandBarView, setCommandBarView] = useState<'root' | 'ai' | 'mermaid' | 'flowmind' | 'templates' | 'search' | 'layout'>('root');
 
-  const openCommandBar = (view: 'root' | 'ai' | 'mermaid' | 'flowmind' | 'templates' | 'search' | 'layout' = 'root') => {
+  const [commandBarView, setCommandBarView] = useState<'root' | 'ai' | 'mermaid' | 'flowmind' | 'templates' | 'search' | 'layout' | 'design-system'>('root');
+
+  const openCommandBar = (view: 'root' | 'ai' | 'mermaid' | 'flowmind' | 'templates' | 'search' | 'layout' | 'design-system' = 'root') => {
     setCommandBarView(view);
     setIsCommandBarOpen(true);
   };
@@ -129,7 +133,7 @@ const FlowEditor = () => {
   const {
     updateNodeData, updateNodeType, updateNodeZIndex, updateEdge,
     deleteNode, deleteEdge, duplicateNode,
-    handleAddNode, handleAddAnnotation, handleAddSection, handleAddTextNode,
+    handleAddNode, handleAddAnnotation, handleAddSection, handleAddTextNode, handleAddImage,
     handleClear
   } = useFlowOperations(recordHistory);
 
@@ -322,12 +326,18 @@ const FlowEditor = () => {
 
       <Toolbar
         onCommandBar={() => openCommandBar('root')}
+        onDesignSystemPanel={() => {
+          setCommandBarView('design-system');
+          setIsCommandBarOpen(true);
+        }}
+        isDesignSystemPanelOpen={isCommandBarOpen && commandBarView === 'design-system'}
         onClear={handleClear}
         onFitView={() => fitView({ duration: 800 })}
         onAddNode={handleAddNode}
         onAddAnnotation={handleAddAnnotation}
         onAddSection={handleAddSection}
         onAddText={handleAddTextNode}
+        onAddImage={handleAddImage}
         onUndo={undo}
         onRedo={redo}
         onLayout={() => openCommandBar('layout')}
@@ -340,6 +350,8 @@ const FlowEditor = () => {
         onTogglePanMode={() => setIsSelectMode(false)}
         getCenter={getCenter}
       />
+
+
 
       <ErrorBoundary fallbackMessage="The command bar encountered an error.">
         <CommandBar
@@ -427,9 +439,15 @@ const FlowEditor = () => {
 };
 
 function App() {
+  const [showLanding, setShowLanding] = useState(true);
+
   return (
     <ReactFlowProvider>
-      <FlowEditor />
+      {showLanding ? (
+        <LandingPage onLaunch={() => setShowLanding(false)} />
+      ) : (
+        <FlowEditor />
+      )}
     </ReactFlowProvider>
   );
 }

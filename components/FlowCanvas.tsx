@@ -22,6 +22,7 @@ import SectionNode from './SectionNode';
 import TextNode from './TextNode';
 import GroupNode from './GroupNode';
 import SwimlaneNode from './SwimlaneNode';
+import ImageNode from './ImageNode';
 import { CustomBezierEdge, CustomSmoothStepEdge, CustomStepEdge } from './CustomEdge';
 import CustomConnectionLine from './CustomConnectionLine';
 import { ConnectMenu } from './ConnectMenu';
@@ -80,10 +81,40 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         pasteSelection, copySelection,
         handleAlignNodes, handleDistributeNodes, handleGroupNodes,
         onEdgeUpdate,
-        onNodeDrag
+        onNodeDrag,
+        handleAddImage
     } = useFlowOperations(
         recordHistory,
         (position, sourceId, sourceHandle) => setConnectMenu({ position, sourceId, sourceHandle })
+    );
+
+    // --- Drag & Drop ---
+    const onDragOver = useCallback((event: React.DragEvent) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+    }, []);
+
+    const onDrop = useCallback(
+        (event: React.DragEvent) => {
+            event.preventDefault();
+
+            const file = event.dataTransfer.files?.[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imageUrl = e.target?.result as string;
+                    if (imageUrl) {
+                        const position = screenToFlowPosition({
+                            x: event.clientX,
+                            y: event.clientY,
+                        });
+                        handleAddImage(imageUrl, position);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        [screenToFlowPosition, handleAddImage]
     );
 
     // --- Keyboard Shortcuts ---
@@ -91,33 +122,6 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
     useEdgeInteractions();
 
     const isEffectiveSelectMode = isSelectMode || isSelectionModifierPressed;
-
-    // --- Selection Mode ---
-    // const [isSelectMode, setIsSelectMode] = useState(false); // Removed local state
-    // Ideally this should be in store if shared with Toolbar, but if Toolbar is outside...
-    // Wait, Toolbar has a button to toggle Select Mode.
-    // So isSelectMode MUST be in Store or passed as prop.
-    // It is currently not in store.
-    // Plan: Keep locally or move to store?
-    // Let's assume passed as prop or move to store. Use Store!
-    // I need to add `isSelectMode` to store to share it with Toolbar.
-    // For now, I will use Store method:
-    // Accessing `isSelectMode` from generic `viewSettings` or dedicated state.
-    // I'll add `interactionMode: 'select' | 'pan'` to store later.
-    // For now, I'll rely on a new prop? 
-    // "Decompose App.tsx" -> Ideally Toolbar shouldn't need full App control.
-    // I'll add `isSelectMode` to component state for now and leave Toolbar decoupled (or Toolbar manages it).
-    // Actually, Toolbar sends `toggleSelectMode` which updates `App.tsx` state.
-    // So `App.tsx` should pass `isSelectMode` to `FlowCanvas`.
-    // I missed adding `isSelectMode` to Props.
-
-    // Let's assume `isSelectMode` comes from props for now.
-    // But wait, `useKeyboardShortcuts` returns `isSelectionModifierPressed`.
-    // `FlowCanvas` calculates `isEffectiveSelectMode`.
-    // So `FlowCanvas` needs `isSelectMode` from parent.
-
-    // Updating Props interface
-    // ...
 
     // --- Context Menu Handlers ---
     const closeContextMenu = useCallback(
@@ -138,8 +142,6 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         },
         [closeContextMenu]
     );
-
-    // ... other context menu handlers ...
 
     const onPaneContextMenu = useCallback(
         (event: React.MouseEvent) => {
@@ -196,6 +198,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         text: TextNode,
         group: GroupNode,
         swimlane: SwimlaneNode,
+        image: ImageNode,
     }), []);
 
     const edgeTypes = useMemo(() => ({
@@ -203,9 +206,6 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         smoothstep: CustomSmoothStepEdge,
         step: CustomStepEdge,
     }), []);
-
-    // IsSelectMode handling
-    // Let's use a prop for now.
 
     const [isConnecting, setIsConnecting] = useState(false);
 
@@ -225,7 +225,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
                 nodes={nodes}
                 edges={edges}
                 onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange} // selection handling issues?
+                onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
                 onEdgeUpdate={onEdgeUpdate}
                 onSelectionChange={onSelectionChange}
@@ -240,15 +240,15 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
                 onDoubleClick={onDoubleClickPane}
                 onConnectStart={onConnectStartWrapper}
                 onConnectEnd={onConnectEndWrapper}
+                onDragOver={onDragOver}
+                onDrop={onDrop}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
-                fitView // Initial fit view?
+                fitView
                 className="bg-slate-50"
                 minZoom={0.1}
                 connectionMode={ConnectionMode.Loose}
                 isValidConnection={(connection) => {
-                    // Prevent active duplicates (though onConnect handles it, this gives UI feedback)
-                    // We allow self-loops for now as requested in features
                     return !edges.some(e =>
                         e.source === connection.source &&
                         e.target === connection.target &&
@@ -291,39 +291,41 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
                     }}
                 />
             )}
-            {contextMenu.isOpen && (
-                <ContextMenu
-                    {...contextMenu}
-                    onClose={onCloseContextMenu}
-                    onCopy={copySelection}
-                    onPaste={() => {
-                        if (contextMenu.position) {
-                            pasteSelection(screenToFlowPosition(contextMenu.position));
-                        }
-                        onCloseContextMenu();
-                    }}
-                    onDuplicate={() => {
-                        if (contextMenu.id) duplicateNode(contextMenu.id);
-                        onCloseContextMenu();
-                    }}
-                    onDelete={() => {
-                        if (contextMenu.id) {
-                            if (contextMenu.type === 'edge') deleteEdge(contextMenu.id);
-                            else deleteNode(contextMenu.id);
-                        }
-                        onCloseContextMenu();
-                    }}
-                    onSendToBack={() => {
-                        if (contextMenu.id) updateNodeZIndex(contextMenu.id, 'back');
-                        onCloseContextMenu();
-                    }}
-                    canPaste={true}
-                    selectedCount={nodes.filter(n => n.selected).length}
-                    onAlignNodes={(dir) => { handleAlignNodes(dir); onCloseContextMenu(); }}
-                    onDistributeNodes={(dir) => { handleDistributeNodes(dir); onCloseContextMenu(); }}
-                    onGroupSelected={() => { handleGroupNodes(); onCloseContextMenu(); }}
-                />
-            )}
+            {
+                contextMenu.isOpen && (
+                    <ContextMenu
+                        {...contextMenu}
+                        onClose={onCloseContextMenu}
+                        onCopy={copySelection}
+                        onPaste={() => {
+                            if (contextMenu.position) {
+                                pasteSelection(screenToFlowPosition(contextMenu.position));
+                            }
+                            onCloseContextMenu();
+                        }}
+                        onDuplicate={() => {
+                            if (contextMenu.id) duplicateNode(contextMenu.id);
+                            onCloseContextMenu();
+                        }}
+                        onDelete={() => {
+                            if (contextMenu.id) {
+                                if (contextMenu.type === 'edge') deleteEdge(contextMenu.id);
+                                else deleteNode(contextMenu.id);
+                            }
+                            onCloseContextMenu();
+                        }}
+                        onSendToBack={() => {
+                            if (contextMenu.id) updateNodeZIndex(contextMenu.id, 'back');
+                            onCloseContextMenu();
+                        }}
+                        canPaste={true}
+                        selectedCount={nodes.filter(n => n.selected).length}
+                        onAlignNodes={(dir) => { handleAlignNodes(dir); onCloseContextMenu(); }}
+                        onDistributeNodes={(dir) => { handleDistributeNodes(dir); onCloseContextMenu(); }}
+                        onGroupSelected={() => { handleGroupNodes(); onCloseContextMenu(); }}
+                    />
+                )
+            }
         </div>
     );
 };

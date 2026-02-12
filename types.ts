@@ -10,6 +10,7 @@ export enum NodeType {
   SECTION = 'section',
   GROUP = 'group',
   SWIMLANE = 'swimlane',
+  IMAGE = 'image',
 }
 
 export interface NodeData {
@@ -28,6 +29,7 @@ export interface NodeData {
   fontSize?: string;
   fontFamily?: string;
   backgroundColor?: string;
+  transparency?: number; // 0-1
 }
 
 export interface AIRequestParams {
@@ -97,4 +99,47 @@ export interface FlowSnapshot {
   timestamp: string;
   nodes: FlowNode[];
   edges: FlowEdge[];
+}
+
+export interface DesignSystem {
+  id: string;
+  name: string;
+  description?: string;
+  isDefault?: boolean;
+  colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    background: string;
+    surface: string;
+    border: string;
+    text: {
+      primary: string;
+      secondary: string;
+    };
+    nodeBackground: string;
+    nodeBorder: string;
+    nodeText: string;
+    edge: string;
+  };
+  typography: {
+    fontFamily: string;
+    fontSize: {
+      sm: string;
+      md: string;
+      lg: string;
+      xl: string;
+    };
+  };
+  components: {
+    node: {
+      borderRadius: string;
+      borderWidth: string;
+      boxShadow: string;
+      padding: string;
+    };
+    edge: {
+      strokeWidth: number;
+    };
+  };
 }

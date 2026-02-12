@@ -67,7 +67,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         const newNode: Node = {
             id,
             position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
-            data: { label: 'New Node', subLabel: 'Process Step', icon: 'Settings', color: 'slate' },
+            data: { label: 'New Node', subLabel: 'Process Step', color: 'slate' },
             type: 'process',
         };
         setNodes((nds) => nds.concat(newNode));
@@ -110,6 +110,20 @@ export const useNodeOperations = (recordHistory: () => void) => {
             position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
             data: { label: 'Text', subLabel: '', color: 'slate' },
             type: 'text',
+        };
+        setNodes((nds) => nds.concat(newNode));
+        setSelectedNodeId(id);
+    }, [setNodes, recordHistory, setSelectedNodeId]);
+
+    const handleAddImage = useCallback((imageUrl: string, position?: { x: number; y: number }) => {
+        recordHistory();
+        const id = `image-${Date.now()}`;
+        const newNode: Node = {
+            id,
+            position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
+            data: { label: 'Image', imageUrl, transparency: 1, rotation: 0 },
+            type: 'image',
+            style: { width: 200, height: 200 },
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
@@ -222,6 +236,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         handleAddAnnotation,
         handleAddSection,
         handleAddTextNode,
+        handleAddImage,
         onNodeDragStart,
         onNodeDrag,
         onNodeDragStop,

@@ -23,6 +23,7 @@ import { TemplatesView } from './command-bar/TemplatesView';
 import { SearchView } from './command-bar/SearchView';
 import { LayoutView } from './command-bar/LayoutView';
 import { VisualsView } from './command-bar/VisualsView';
+import { DesignSystemView } from './command-bar/DesignSystemView';
 
 
 export const CommandBar: React.FC<CommandBarProps> = ({
@@ -67,6 +68,14 @@ export const CommandBar: React.FC<CommandBarProps> = ({
     }, [view, onClose]);
 
     const commands: CommandItem[] = useMemo(() => [
+        {
+            id: 'design-systems',
+            label: 'Design Systems...',
+            icon: <Palette className="w-4 h-4 text-indigo-500" />,
+            type: 'navigation',
+            view: 'design-system',
+            description: 'Manage themes & styles'
+        },
         {
             id: 'ai-generate',
             label: 'Ask AI to build flow...',
@@ -212,6 +221,12 @@ export const CommandBar: React.FC<CommandBarProps> = ({
                 )}
                 {view === 'visuals' && (
                     <VisualsView onBack={handleBack} />
+                )}
+                {view === 'design-system' && (
+                    <DesignSystemView
+                        onClose={onClose}
+                        handleBack={handleBack}
+                    />
                 )}
                 {view === 'ai' && (
                     <AIView
