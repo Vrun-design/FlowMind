@@ -245,7 +245,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
                 fitView
-                className="bg-slate-50"
+                className="bg-[var(--brand-background)]"
                 minZoom={0.1}
                 connectionMode={ConnectionMode.Loose}
                 isValidConnection={(connection) => {

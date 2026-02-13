@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Node } from 'reactflow';
 import { NodeData } from '../../types';
-import { Bold, Italic, List, ListOrdered, Code, Quote, Heading1, CheckSquare, Copy, Trash2 } from 'lucide-react';
+import { Bold, Italic, List, ListOrdered, Code, Quote, Heading1, CheckSquare, Copy, Trash2, Box, AlignLeft, Image as ImageIcon, Type } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { ShapeSelector } from './ShapeSelector';
 import { ColorPicker } from './ColorPicker';
@@ -54,19 +54,19 @@ const useMarkdownEditor = (
 };
 
 const MarkdownToolbar = ({ onInsert, simple = false }: { onInsert: (p: string, s?: string) => void, simple?: boolean }) => (
-    <div className="flex items-center gap-1 p-1 bg-white border-b border-slate-100 overflow-x-auto no-scrollbar">
-        <button onClick={() => onInsert('**', '**')} className="p-1.5 text-slate-500 hover:bg-slate-100 rounded" title="Bold"><Bold className="w-3.5 h-3.5" /></button>
-        <button onClick={() => onInsert('_', '_')} className="p-1.5 text-slate-500 hover:bg-slate-100 rounded" title="Italic"><Italic className="w-3.5 h-3.5" /></button>
-        <button onClick={() => onInsert('`', '`')} className="p-1.5 text-slate-500 hover:bg-slate-100 rounded" title="Code"><Code className="w-3.5 h-3.5" /></button>
+    <div className="flex items-center gap-1 p-1 bg-[var(--brand-surface)] border-b border-slate-100 overflow-x-auto no-scrollbar">
+        <button onClick={() => onInsert('**', '**')} className="p-1.5 text-[var(--brand-secondary)] hover:bg-[var(--brand-background)] rounded" title="Bold"><Bold className="w-3.5 h-3.5" /></button>
+        <button onClick={() => onInsert('_', '_')} className="p-1.5 text-[var(--brand-secondary)] hover:bg-[var(--brand-background)] rounded" title="Italic"><Italic className="w-3.5 h-3.5" /></button>
+        <button onClick={() => onInsert('`', '`')} className="p-1.5 text-[var(--brand-secondary)] hover:bg-[var(--brand-background)] rounded" title="Code"><Code className="w-3.5 h-3.5" /></button>
         {!simple && (
             <>
                 <div className="w-px h-4 bg-slate-200 mx-0.5"></div>
-                <button onClick={() => onInsert('### ')} className="p-1.5 text-slate-500 hover:bg-slate-100 rounded"><Heading1 className="w-3.5 h-3.5" /></button>
-                <button onClick={() => onInsert('> ')} className="p-1.5 text-slate-500 hover:bg-slate-100 rounded"><Quote className="w-3.5 h-3.5" /></button>
+                <button onClick={() => onInsert('### ')} className="p-1.5 text-[var(--brand-secondary)] hover:bg-[var(--brand-background)] rounded"><Heading1 className="w-3.5 h-3.5" /></button>
+                <button onClick={() => onInsert('> ')} className="p-1.5 text-[var(--brand-secondary)] hover:bg-[var(--brand-background)] rounded"><Quote className="w-3.5 h-3.5" /></button>
                 <div className="w-px h-4 bg-slate-200 mx-0.5"></div>
-                <button onClick={() => onInsert('- ')} className="p-1.5 text-slate-500 hover:bg-slate-100 rounded"><List className="w-3.5 h-3.5" /></button>
-                <button onClick={() => onInsert('1. ')} className="p-1.5 text-slate-500 hover:bg-slate-100 rounded"><ListOrdered className="w-3.5 h-3.5" /></button>
-                <button onClick={() => onInsert('- [ ] ')} className="p-1.5 text-slate-500 hover:bg-slate-100 rounded"><CheckSquare className="w-3.5 h-3.5" /></button>
+                <button onClick={() => onInsert('- ')} className="p-1.5 text-[var(--brand-secondary)] hover:bg-[var(--brand-background)] rounded"><List className="w-3.5 h-3.5" /></button>
+                <button onClick={() => onInsert('1. ')} className="p-1.5 text-[var(--brand-secondary)] hover:bg-[var(--brand-background)] rounded"><ListOrdered className="w-3.5 h-3.5" /></button>
+                <button onClick={() => onInsert('- [ ] ')} className="p-1.5 text-[var(--brand-secondary)] hover:bg-[var(--brand-background)] rounded"><CheckSquare className="w-3.5 h-3.5" /></button>
             </>
         )}
     </div>
@@ -91,8 +91,12 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
     return (
         <>
             <hr className="border-slate-100" />
+
+            {/* Appearance Section */}
             <div className="space-y-3">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Appearance</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                    <Box className="w-3.5 h-3.5" /> Appearance
+                </label>
                 {!isAnnotation && !isText && !isImage && (
                     <ShapeSelector
                         selectedShape={selectedNode.data?.shape}
@@ -101,9 +105,12 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                 )}
             </div>
 
+            {/* Image Settings Section */}
             {isImage && (
                 <div className="space-y-3">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Image Settings</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                        <ImageIcon className="w-3.5 h-3.5" /> Image Settings
+                    </label>
 
                     {/* Transparency */}
                     <div className="space-y-1">
@@ -118,7 +125,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                             step="0.05"
                             value={selectedNode.data?.transparency ?? 1}
                             onChange={(e) => onChange(selectedNode.id, { transparency: parseFloat(e.target.value) })}
-                            className="w-full accent-indigo-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                            className="w-full accent-[var(--brand-primary)] h-2 bg-slate-200 rounded-[var(--brand-radius)] appearance-none cursor-pointer"
                         />
                     </div>
 
@@ -135,17 +142,20 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                             step="15"
                             value={selectedNode.data?.rotation ?? 0}
                             onChange={(e) => onChange(selectedNode.id, { rotation: parseInt(e.target.value) })}
-                            className="w-full accent-indigo-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                            className="w-full accent-[var(--brand-primary)] h-2 bg-slate-200 rounded-[var(--brand-radius)] appearance-none cursor-pointer"
                         />
                     </div>
                 </div>
             )}
 
+            {/* Content Section */}
             <div className="space-y-3">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Content</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                    <AlignLeft className="w-3.5 h-3.5" /> Content
+                </label>
 
                 {/* Rich Text Label */}
-                <div className="relative border border-slate-200 rounded-lg bg-slate-50 overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent transition-all">
+                <div className="relative border border-slate-200 rounded-[var(--brand-radius)] bg-[var(--brand-background)] overflow-hidden focus-within:ring-2 focus-within:ring-[var(--brand-primary)] focus-within:border-transparent transition-all">
                     <MarkdownToolbar onInsert={labelEditor.insert} simple />
                     <textarea
                         ref={labelInputRef}
@@ -155,13 +165,13 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                         placeholder={isAnnotation ? "Title (Optional)" : "Node Label"}
                         rows={1}
                         style={{ minHeight: '38px' }}
-                        className="w-full px-3 py-2 bg-slate-50 text-sm font-medium text-slate-900 outline-none font-mono resize-y"
+                        className="w-full px-3 py-2 bg-[var(--brand-background)] text-sm font-medium text-[var(--brand-text)] outline-none font-mono resize-y"
                     />
                 </div>
 
                 {/* Description */}
                 {!isText && !isImage && (
-                    <div className="relative border border-slate-200 rounded-lg bg-slate-50 overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent transition-all">
+                    <div className="relative border border-slate-200 rounded-[var(--brand-radius)] bg-[var(--brand-background)] overflow-hidden focus-within:ring-2 focus-within:ring-[var(--brand-primary)] focus-within:border-transparent transition-all">
                         <MarkdownToolbar onInsert={descEditor.insert} />
                         <textarea
                             ref={descInputRef}
@@ -170,7 +180,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                             onKeyDown={descEditor.handleKeyDown}
                             placeholder={isAnnotation ? "Write your note here..." : "Description / Sublabel"}
                             rows={6}
-                            className="w-full px-3 py-2 bg-slate-50 text-sm font-medium text-slate-900 outline-none resize-none font-mono"
+                            className="w-full px-3 py-2 bg-[var(--brand-background)] text-sm font-medium text-[var(--brand-text)] outline-none resize-none font-mono"
                         />
                     </div>
                 )}
@@ -179,15 +189,17 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
             {/* Text Styling for Text Node */}
             {isText && (
                 <div className="space-y-3">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Text Style</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                        <Type className="w-3.5 h-3.5" /> Text Style
+                    </label>
                     <div className="grid grid-cols-2 gap-2">
                         <div className="flex bg-slate-100 p-1 rounded-lg overflow-x-auto no-scrollbar">
                             {['inter', 'roboto', 'outfit', 'playfair', 'fira'].map((font) => (
                                 <button
                                     key={font}
                                     onClick={() => onChange(selectedNode.id, { fontFamily: font })}
-                                    className={`flex-1 px-2 py-1.5 rounded-md text-[10px] font-bold uppercase whitespace-nowrap
-                                        ${(selectedNode.data?.fontFamily || 'inter') === font ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
+                                    className={`flex-1 px-2 py-1.5 rounded-[calc(var(--brand-radius)-4px)] text-[10px] font-bold uppercase whitespace-nowrap
+                                        ${(selectedNode.data?.fontFamily || 'inter') === font ? 'bg-[var(--brand-surface)] shadow-sm text-[var(--brand-primary)]' : 'text-[var(--brand-secondary)] hover:text-[var(--brand-text)]'}`}
                                 >
                                     {font}
                                 </button>
@@ -198,8 +210,8 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                                 <button
                                     key={size}
                                     onClick={() => onChange(selectedNode.id, { fontSize: size.toString() })}
-                                    className={`flex-1 px-2 py-1.5 rounded-md text-[10px] font-bold
-                                        ${(selectedNode.data?.fontSize || '16') === size.toString() ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
+                                    className={`flex-1 px-2 py-1.5 rounded-[calc(var(--brand-radius)-4px)] text-[10px] font-bold
+                                        ${(selectedNode.data?.fontSize || '16') === size.toString() ? 'bg-[var(--brand-surface)] shadow-sm text-[var(--brand-primary)]' : 'text-[var(--brand-secondary)] hover:text-[var(--brand-text)]'}`}
                                 >
                                     {size}
                                 </button>

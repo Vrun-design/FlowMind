@@ -41,7 +41,7 @@ export const SearchView = ({
 
     return (
         <div className="flex flex-col h-full">
-            <ViewHeader title="Search Nodes" icon={<Search className="w-4 h-4 text-violet-500" />} onBack={handleBack} />
+            <ViewHeader title="Search Nodes" icon={<Search className="w-4 h-4 text-[var(--brand-primary)]" />} onBack={handleBack} />
 
             <div className="px-4 py-2 border-b border-slate-100">
                 <Input
@@ -49,7 +49,7 @@ export const SearchView = ({
                     onChange={e => setQuery(e.target.value)}
                     onKeyDown={(e) => e.stopPropagation()}
                     placeholder="Search by label or ID..."
-                    className="w-full focus:border-violet-400"
+                    className="w-full focus:border-[var(--brand-primary-400)]"
                     autoFocus
                 />
             </div>
@@ -59,9 +59,9 @@ export const SearchView = ({
                     <div
                         key={node.id}
                         onClick={() => handleSelectNode(node)}
-                        className="group flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 cursor-pointer transition-all"
+                        className="group flex items-center gap-3 p-3 rounded-[var(--radius-md)] hover:bg-slate-50 border border-transparent hover:border-slate-200 cursor-pointer transition-all"
                     >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-white font-bold text-xs
+                        <div className={`w-8 h-8 rounded-[var(--radius-sm)] flex items-center justify-center shrink-0 text-white font-bold text-xs
                             ${node.type === 'start' ? 'bg-emerald-500' :
                                 node.type === 'end' ? 'bg-red-500' :
                                     node.type === 'decision' ? 'bg-amber-500' :
@@ -70,7 +70,7 @@ export const SearchView = ({
                             {getInitials(node.data?.label || node.type || '?')}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-medium text-slate-700 group-hover:text-violet-700 truncate">
+                            <h4 className="text-sm font-medium text-slate-700 group-hover:text-[var(--brand-primary-700)] truncate">
                                 {node.data?.label || 'Untitled Node'}
                             </h4>
                             <p className="text-xs text-slate-400 line-clamp-1">

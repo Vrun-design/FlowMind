@@ -1,5 +1,47 @@
 @import "tailwindcss";
 
+:root {
+  /* Brand Colors - Default: Indigo */
+  --brand-primary: #6366f1;
+  --brand-secondary: #64748b;
+  --brand-surface: #ffffff;
+  --brand-background: #f8fafc;
+  --brand-text: #0f172a;
+
+  /* Brand Palette */
+  --brand-primary-50: #eef2ff;
+  --brand-primary-100: #e0e7ff;
+  --brand-primary-200: #c7d2fe;
+  --brand-primary-300: #a5b4fc;
+  --brand-primary-400: #818cf8;
+  --brand-primary-500: #6366f1;
+  --brand-primary-600: #4f46e5;
+  --brand-primary-700: #4338ca;
+  --brand-primary-800: #3730a3;
+  --brand-primary-900: #312e81;
+
+  /* Dimensions */
+  --brand-radius: 12px;
+  --radius-sm: max(2px, calc(var(--brand-radius) - 4px));
+  --radius-md: var(--brand-radius);
+  --radius-lg: calc(var(--brand-radius) + 4px);
+  --brand-border-width: 1px;
+
+  /* Typography */
+  --brand-font-family: 'Inter', sans-serif;
+
+  /* UI Effects */
+  --brand-glass-blur: 12px;
+  --brand-glass-opacity: 0.7;
+  --brand-glass-bg: rgba(255, 255, 255, 0.7);
+}
+
+body {
+  font-family: var(--brand-font-family);
+  color: var(--brand-text);
+  background-color: var(--brand-background);
+}
+
 .font-inter {
   font-family: 'Inter', sans-serif;
 }
@@ -48,6 +90,7 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 /* ========================================= */
 /* MIGRATED FROM INDEX.HTML */
 /* ========================================= */

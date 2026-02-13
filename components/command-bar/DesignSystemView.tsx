@@ -52,7 +52,7 @@ export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, han
                     <ArrowLeft className="w-4 h-4 text-slate-500" />
                 </Button>
                 <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                    <Palette className="w-4 h-4 text-indigo-500" />
+                    <Palette className="w-4 h-4 text-[var(--brand-primary)]" />
                     Design Systems
                 </div>
             </div>
@@ -62,9 +62,9 @@ export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, han
                     {designSystems.map((ds) => (
                         <div
                             key={ds.id}
-                            className={`group w-full flex items-center justify-between p-3 rounded-xl border transition-all
+                            className={`group w-full flex items-center justify-between p-3 rounded-[var(--radius-md)] border transition-all
                                 ${activeDesignSystemId === ds.id
-                                    ? 'bg-indigo-50 border-indigo-200 ring-1 ring-indigo-500/20'
+                                    ? 'bg-[var(--brand-primary-50)] border-[var(--brand-primary-200)] ring-1 ring-[var(--brand-primary)]/20'
                                     : 'bg-white border-slate-100 hover:border-slate-300 hover:bg-slate-50'
                                 }`}
                         >
@@ -72,7 +72,7 @@ export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, han
                                 className="flex-1 text-left"
                                 onClick={() => setActiveDesignSystem(ds.id)}
                             >
-                                <div className={`font-medium text-sm ${activeDesignSystemId === ds.id ? 'text-indigo-900' : 'text-slate-900'}`}>
+                                <div className={`font-medium text-sm ${activeDesignSystemId === ds.id ? 'text-[var(--brand-primary-900)]' : 'text-slate-900'}`}>
                                     {ds.name}
                                 </div>
                                 {ds.description && (
@@ -83,13 +83,7 @@ export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, han
                             </button>
 
                             <div className="flex items-center gap-1">
-                                {activeDesignSystemId === ds.id && (
-                                    <div className="mr-1 bg-indigo-100 text-indigo-600 p-1 rounded-full">
-                                        <Check className="w-3 h-3" />
-                                    </div>
-                                )}
-
-                                <div className="opacity-0 group-hover:opacity-100 flex items-center bg-white/50 rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                                <div className="opacity-0 group-hover:opacity-100 flex items-center bg-white/50 rounded-[var(--radius-sm)] border border-slate-200 shadow-sm overflow-hidden transition-opacity">
                                     <Button
                                         variant="ghost"
                                         size="icon"
@@ -117,6 +111,12 @@ export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, han
                                         </Button>
                                     )}
                                 </div>
+
+                                {activeDesignSystemId === ds.id && (
+                                    <div className="ml-2 bg-[var(--brand-primary-100)] text-[var(--brand-primary)] p-1 rounded-full animate-in zoom-in spin-in-180 duration-300">
+                                        <Check className="w-3 h-3" />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -133,7 +133,7 @@ export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, han
                     </Button>
 
                     <div className="grid grid-cols-2 gap-2">
-                        <label className="flex items-center justify-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50 cursor-pointer">
+                        <label className="flex items-center justify-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-[var(--radius-md)] text-xs font-medium text-slate-600 hover:bg-slate-50 cursor-pointer">
                             <Download className="w-3.5 h-3.5 rotate-180" />
                             Import
                             <input

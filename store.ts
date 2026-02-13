@@ -67,6 +67,67 @@ interface ViewSettings {
     smartRoutingEnabled: boolean;
 }
 
+export interface BrandConfig {
+    appName: string;
+    logoUrl: string | null;
+    faviconUrl: string | null; // Added favicon
+    logoStyle: 'icon' | 'text' | 'both' | 'wide';
+    colors: {
+        primary: string; // Base color for auto-generation
+        secondary: string;
+        background: string;
+        surface: string;
+        text: string;
+    };
+    typography: {
+        fontFamily: string;
+    };
+    shape: {
+        radius: number; // px
+        borderWidth: number; // px
+    };
+    ui: {
+        glassmorphism: boolean;
+    };
+}
+
+export const DEFAULT_BRAND_CONFIG: BrandConfig = {
+    appName: 'FlowMind',
+    logoUrl: null,
+    faviconUrl: null,
+    logoStyle: 'both',
+    colors: {
+        primary: '#6366f1',
+        secondary: '#64748b',
+        background: '#f8fafc',
+        surface: '#ffffff',
+        text: '#0f172a',
+    },
+    typography: {
+        fontFamily: 'Inter',
+    },
+    shape: {
+        radius: 8,
+        borderWidth: 1,
+    },
+    ui: {
+        glassmorphism: true,
+    },
+};
+
+export interface BrandKit extends BrandConfig {
+    id: string;
+    name: string;
+    isDefault: boolean;
+}
+
+export const DEFAULT_BRAND_KIT: BrandKit = {
+    ...DEFAULT_BRAND_CONFIG,
+    id: 'default',
+    name: 'Default',
+    isDefault: true,
+};
+
 
 interface FlowState {
     // Nodes & Edges (Active Tab)
@@ -85,6 +146,11 @@ interface FlowState {
     viewSettings: ViewSettings;
     globalEdgeOptions: GlobalEdgeOptions;
 
+    // Brand
+    brandConfig: BrandConfig;
+    brandKits: BrandKit[];
+    activeBrandKitId: string;
+
     // Selection
     selectedNodeId: string | null;
     selectedEdgeId: string | null;
@@ -99,7 +165,7 @@ interface FlowState {
     // Tab Actions
     setActiveTabId: (id: string) => void;
     setTabs: (tabs: FlowTab[]) => void;
-    addTab: () => void;
+    addTab: () => string;
     closeTab: (id: string) => void;
     updateTab: (id: string, updates: Partial<FlowTab>) => void;
 
@@ -120,6 +186,16 @@ interface FlowState {
     setGlobalEdgeOptions: (options: Partial<GlobalEdgeOptions>) => void;
     setDefaultIconsEnabled: (enabled: boolean) => void;
     setSmartRoutingEnabled: (enabled: boolean) => void;
+
+    // Brand Actions
+    setBrandConfig: (config: Partial<BrandConfig>) => void;
+    resetBrandConfig: () => void;
+
+    // Brand Kit Actions
+    addBrandKit: (name: string, base?: BrandConfig) => void;
+    updateBrandKitName: (id: string, name: string) => void;
+    deleteBrandKit: (id: string) => void;
+    setActiveBrandKitId: (id: string) => void;
 
     // Selection Actions
     setSelectedNodeId: (id: string | null) => void;
@@ -163,6 +239,10 @@ export const useFlowStore = create<FlowState>()(
                 animated: false,
                 strokeWidth: 2,
             },
+
+            brandConfig: DEFAULT_BRAND_CONFIG,
+            brandKits: [DEFAULT_BRAND_KIT],
+            activeBrandKitId: 'default',
 
             selectedNodeId: null,
             selectedEdgeId: null,
@@ -254,6 +334,7 @@ export const useFlowStore = create<FlowState>()(
                     nodes: newTab.nodes,
                     edges: newTab.edges,
                 });
+                return newTabId;
             },
 
             closeTab: (id) => {
@@ -394,6 +475,78 @@ export const useFlowStore = create<FlowState>()(
                 };
             }),
 
+            // Brand Actions
+            // Brand Actions
+            setBrandConfig: (config) => set((state) => {
+                const newConfig = { ...state.brandConfig, ...config };
+                const updatedKits = state.brandKits.map(k =>
+                    k.id === state.activeBrandKitId ? { ...k, ...config } : k
+                );
+                return { brandConfig: newConfig, brandKits: updatedKits };
+            }),
+            resetBrandConfig: () => set((state) => {
+                const defaultKit = state.brandKits.find(k => k.id === 'default') || DEFAULT_BRAND_KIT;
+                // Reset active to default values but keep ID? Or reset completely to default kit?
+                // "Reset" usually means reset to default values.
+                // If we are editing a custom kit, reset might mean "reset to default colors".
+                // But generally "reset brand config" implies going back to default brand.
+
+                // Let's make reset just switch to default kit?
+                return {
+                    brandConfig: defaultKit,
+                    activeBrandKitId: 'default'
+                };
+            }),
+
+            addBrandKit: (name: string, base?: BrandConfig) => set((state) => {
+                const newId = `brand-${Date.now()}`;
+                const baseConfig = base || state.brandConfig;
+                const newKit: BrandKit = {
+                    ...baseConfig,
+                    id: newId,
+                    name,
+                    isDefault: false
+                };
+                return {
+                    brandKits: [...state.brandKits, newKit],
+                    activeBrandKitId: newId,
+                    brandConfig: newKit
+                };
+            }),
+
+            updateBrandKitName: (id: string, name: string) => set((state) => ({
+                brandKits: state.brandKits.map(k => k.id === id ? { ...k, name } : k)
+            })),
+
+            deleteBrandKit: (id: string) => set((state) => {
+                const kitToDelete = state.brandKits.find(k => k.id === id);
+                if (!kitToDelete || kitToDelete.isDefault) return {};
+                const newKits = state.brandKits.filter(k => k.id !== id);
+                let newActiveId = state.activeBrandKitId;
+                let newConfig = state.brandConfig;
+
+                if (state.activeBrandKitId === id) {
+                    // Switch to default if active was deleted
+                    newActiveId = 'default';
+                    const defaultKit = newKits.find(k => k.id === 'default') || DEFAULT_BRAND_KIT;
+                    newConfig = defaultKit;
+                }
+                return {
+                    brandKits: newKits,
+                    activeBrandKitId: newActiveId,
+                    brandConfig: newConfig
+                };
+            }),
+
+            setActiveBrandKitId: (id: string) => set((state) => {
+                const kit = state.brandKits.find(k => k.id === id);
+                if (!kit) return {};
+                return {
+                    activeBrandKitId: id,
+                    brandConfig: kit
+                };
+            }),
+
             // Selection Actions
             setSelectedNodeId: (id) => set({ selectedNodeId: id }),
             setSelectedEdgeId: (id) => set({ selectedEdgeId: id }),
@@ -408,6 +561,9 @@ export const useFlowStore = create<FlowState>()(
                 activeDesignSystemId: state.activeDesignSystemId,
                 viewSettings: state.viewSettings,
                 globalEdgeOptions: state.globalEdgeOptions,
+                brandConfig: state.brandConfig,
+                brandKits: state.brandKits,
+                activeBrandKitId: state.activeBrandKitId,
             }),
         }
     )

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useParams, Navigate, useLocation } from 'react-router-dom';
 import 'reactflow/dist/style.css';
 import {
   ReactFlowProvider,
@@ -23,7 +24,7 @@ import { FlowTemplate } from './services/templates';
 import { toMermaid, toPlantUML } from './services/exportService';
 import { toFigmaSVG } from './services/figmaExportService';
 import { toFlowMindDSL } from './services/flowmindDSLExporter';
-import { LandingPage } from './components/LandingPage';
+import { HomePage } from './components/HomePage';
 
 
 
@@ -35,7 +36,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useAIGeneration } from './hooks/useAIGeneration';
 import { useFlowExport } from './hooks/useFlowExport';
 import { INITIAL_NODES, INITIAL_EDGES, NODE_WIDTH, NODE_HEIGHT, EDGE_STYLE, EDGE_LABEL_STYLE, EDGE_LABEL_BG_STYLE } from './constants';
-import { FlowTab } from './types';
+import { FlowTab, FlowSnapshot } from './types';
 
 const MINIMAP_NODE_COLORS: Record<string, string> = {
   start: '#10b981',
@@ -47,9 +48,12 @@ const MINIMAP_NODE_COLORS: Record<string, string> = {
 };
 
 import { useToast } from './components/ui/ToastContext';
+import { useBrandTheme } from './hooks/useBrandTheme';
 
-const FlowEditor = () => {
+const FlowEditor = ({ onGoHome }: { onGoHome: () => void }) => {
   const { addToast } = useToast();
+  const navigate = useNavigate();
+  // useBrandTheme moved to App for global consistency
 
   // --- Global Store ---
   const {
@@ -107,14 +111,14 @@ const FlowEditor = () => {
 
   // --- Tab Management ---
   const handleSwitchTab = useCallback((newTabId: string) => {
-    setActiveTabId(newTabId); // Store handles state saving/restoring
-    setTimeout(() => fitView({ duration: 800 }), 50);
-  }, [setActiveTabId, fitView]);
+    navigate(`/flow/${newTabId}`);
+    // Fit view will happen after route update triggers store update
+  }, [navigate]);
 
   const handleAddTab = useCallback(() => {
-    addTab();
-    // store automatically switches to new tab
-  }, [addTab]);
+    const newId = addTab();
+    navigate(`/flow/${newId}`);
+  }, [addTab, navigate]);
 
   const handleCloseTab = useCallback((tabId: string) => {
     if (tabs.length === 1) {
@@ -275,7 +279,7 @@ const FlowEditor = () => {
   const [isSelectMode, setIsSelectMode] = useState(false);
 
   return (
-    <div className="w-full h-screen bg-slate-50 flex flex-col relative" ref={reactFlowWrapper}>
+    <div className="w-full h-screen bg-[var(--brand-background)] flex flex-col relative" ref={reactFlowWrapper}>
       {/* Header */}
       <TopNav
         showMiniMap={showMiniMap}
@@ -298,6 +302,7 @@ const FlowEditor = () => {
         onExportFigma={handleExportFigma}
         onImportJSON={handleImportJSON}
         onHistory={() => setIsHistoryOpen(true)}
+        onGoHome={onGoHome}
       />
 
       <ErrorBoundary fallbackMessage="The canvas encountered an error. Click 'Try Again' to recover.">
@@ -332,7 +337,7 @@ const FlowEditor = () => {
         }}
         isDesignSystemPanelOpen={isCommandBarOpen && commandBarView === 'design-system'}
         onClear={handleClear}
-        onFitView={() => fitView({ duration: 800 })}
+
         onAddNode={handleAddNode}
         onAddAnnotation={handleAddAnnotation}
         onAddSection={handleAddSection}
@@ -431,6 +436,7 @@ const FlowEditor = () => {
         accept=".json"
         onChange={onFileImport}
         className="hidden"
+        id="json-import-input"
       />
 
       <KeyboardShortcutsModal />
@@ -438,17 +444,70 @@ const FlowEditor = () => {
   );
 };
 
-function App() {
-  const [showLanding, setShowLanding] = useState(true);
+const FlowCanvasRoute = () => {
+  const { flowId } = useParams();
+  const navigate = useNavigate();
+  const { setActiveTabId } = useFlowStore();
+
+  useEffect(() => {
+    if (flowId) {
+      setActiveTabId(flowId);
+    }
+  }, [flowId, setActiveTabId]);
+
+  return <FlowEditor onGoHome={() => navigate('/')} />;
+};
+
+const HomePageRoute = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const activeTab = location.pathname === '/settings' ? 'settings' : 'home';
+
+  const handleLaunch = () => {
+    navigate('/canvas');
+  };
+
+  const handleRestore = (snapshot: any) => {
+    const { setNodes, setEdges } = useFlowStore.getState();
+    // Deep copy to prevent state mutation issues if snapshot is just a ref
+    const nodesCopy = JSON.parse(JSON.stringify(snapshot.nodes));
+    const edgesCopy = JSON.parse(JSON.stringify(snapshot.edges));
+    setNodes(nodesCopy);
+    setEdges(edgesCopy);
+    navigate('/canvas');
+  };
 
   return (
-    <ReactFlowProvider>
-      {showLanding ? (
-        <LandingPage onLaunch={() => setShowLanding(false)} />
-      ) : (
-        <FlowEditor />
-      )}
-    </ReactFlowProvider>
+    <HomePage
+      onLaunch={handleLaunch}
+      onImportJSON={() => {
+        navigate('/canvas');
+        setTimeout(() => {
+          document.getElementById('json-import-input')?.click();
+        }, 100);
+      }}
+      onRestoreSnapshot={handleRestore}
+      activeTab={activeTab}
+      onSwitchTab={(tab) => navigate(tab === 'settings' ? '/settings' : '/')}
+    />
+  );
+};
+
+function App() {
+  useBrandTheme();
+
+  return (
+    <Router>
+      <ReactFlowProvider>
+        <Routes>
+          <Route path="/" element={<HomePageRoute />} />
+          <Route path="/settings" element={<HomePageRoute />} />
+          <Route path="/canvas" element={<FlowCanvasRoute />} />
+          <Route path="/flow/:flowId" element={<FlowCanvasRoute />} />
+        </Routes>
+      </ReactFlowProvider>
+    </Router>
   );
 }
 

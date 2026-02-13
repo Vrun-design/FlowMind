@@ -22,11 +22,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     const baseStyles = "inline-flex items-center justify-center font-medium transition-all focus:outline-none disabled:opacity-50 disabled:pointer-events-none";
 
     const variants = {
-        primary: "bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm shadow-indigo-500/20 rounded-xl active:scale-95",
-        secondary: "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-sm rounded-xl active:scale-95",
-        ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 rounded-lg",
-        danger: "bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-xl active:scale-95",
-        icon: "text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl active:scale-95",
+        primary: "bg-[var(--brand-primary)] text-white hover:brightness-110 rounded-[var(--radius-md)] active:scale-95",
+        secondary: "bg-white text-slate-700 border border-slate-200 hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] hover:border-[var(--brand-primary-200)] rounded-[var(--radius-md)] active:scale-95",
+        ghost: "text-slate-600 hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] rounded-[var(--radius-md)]",
+        danger: "bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-[var(--radius-md)] active:scale-95",
+        icon: "text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-[var(--radius-md)] active:scale-95",
     };
 
     const sizes = {

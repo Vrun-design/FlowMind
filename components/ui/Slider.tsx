@@ -23,8 +23,8 @@ export const Slider = React.forwardRef<HTMLInputElement, SliderProps>(({
                 type="range"
                 ref={ref}
                 className={`
-                    w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600
-                    focus:outline-none focus:ring-2 focus:ring-indigo-500/20
+                    w-full h-1.5 bg-slate-200 rounded-[var(--brand-radius)] appearance-none cursor-pointer accent-[var(--brand-primary)]
+                    focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/20
                     ${className}
                 `}
                 {...props}

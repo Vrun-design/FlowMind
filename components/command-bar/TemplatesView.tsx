@@ -26,7 +26,7 @@ export const TemplatesView = ({
 
     return (
         <div className="flex flex-col h-full">
-            <ViewHeader title="Templates" icon={<Layout className="w-4 h-4 text-blue-500" />} onBack={handleBack} />
+            <ViewHeader title="Templates" icon={<Layout className="w-4 h-4 text-[var(--brand-primary)]" />} onBack={handleBack} />
 
             <div className="px-4 py-2 border-b border-slate-100">
                 <Input
@@ -34,7 +34,7 @@ export const TemplatesView = ({
                     onChange={e => setTSearch(e.target.value)}
                     onKeyDown={(e) => e.stopPropagation()}
                     placeholder="Search templates..."
-                    className="w-full focus:border-blue-400"
+                    className="w-full focus:border-[var(--brand-primary-400)]"
                     autoFocus
                 />
             </div>
@@ -46,13 +46,13 @@ export const TemplatesView = ({
                         <div
                             key={t.id}
                             onClick={() => { onSelectTemplate?.(t); onClose(); }}
-                            className="group flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 cursor-pointer transition-all"
+                            className="group flex items-start gap-3 p-3 rounded-[var(--radius-md)] hover:bg-slate-50 border border-transparent hover:border-slate-200 cursor-pointer transition-all"
                         >
-                            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:bg-blue-100 group-hover:scale-105 transition-all">
+                            <div className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-600)] flex items-center justify-center shrink-0 group-hover:bg-[var(--brand-primary-100)] group-hover:scale-105 transition-all">
                                 <Icon className="w-4 h-4" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <h4 className="text-sm font-medium text-slate-700 group-hover:text-blue-700 truncate">{t.name}</h4>
+                                <h4 className="text-sm font-medium text-slate-700 group-hover:text-[var(--brand-primary-700)] truncate">{t.name}</h4>
                                 <p className="text-xs text-slate-400 line-clamp-1">{t.description}</p>
                             </div>
                             <Plus className="w-4 h-4 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />

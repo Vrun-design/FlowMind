@@ -66,24 +66,9 @@ export const MINIMAP_NODE_COLORS: Record<string, string> = {
 };
 
 // --- Initial Data ---
-export const INITIAL_NODES: Node[] = [
-  {
-    id: '1',
-    type: NodeType.START,
-    data: { label: 'Start Flow', subLabel: 'Entry point', icon: 'Play', color: 'emerald' },
-    position: { x: 250, y: 0 },
-  },
-  {
-    id: '2',
-    type: NodeType.PROCESS,
-    data: { label: 'User Action', subLabel: 'Waiting for input', icon: 'User', color: 'blue' },
-    position: { x: 250, y: 200 },
-  },
-];
+export const INITIAL_NODES: Node[] = [];
 
-export const INITIAL_EDGES: Edge[] = [
-  createDefaultEdge('1', '2', 'Start', 'e1-2'),
-];
+export const INITIAL_EDGES: Edge[] = [];
 
 // Dash pattern definitions for edge styling
 export const EDGE_DASH_PATTERNS: Record<string, { label: string; strokeDasharray: string }> = {
@@ -93,3 +78,33 @@ export const EDGE_DASH_PATTERNS: Record<string, { label: string; strokeDasharray
   dashdot: { label: 'Dash-Dot', strokeDasharray: '8 4 2 4' },
 };
 
+// --- Keyboard Shortcuts ---
+export const KEYBOARD_SHORTCUTS = [
+  {
+    title: 'Essentials',
+    items: [
+      { label: 'Undo', keys: ['Cmd', 'Z'] },
+      { label: 'Redo', keys: ['Cmd', 'Shift', 'Z'] },
+      { label: 'Select All', keys: ['Cmd', 'A'] },
+      { label: 'Delete', keys: ['Backspace'] },
+    ]
+  },
+  {
+    title: 'Manipulation',
+    items: [
+      { label: 'Duplicate', keys: ['Cmd', 'D'] },
+      { label: 'Copy', keys: ['Cmd', 'C'] },
+      { label: 'Paste', keys: ['Cmd', 'V'] },
+      { label: 'Group Selection', keys: ['Cmd', 'G'] },
+    ]
+  },
+  {
+    title: 'Navigation',
+    items: [
+      { label: 'Pan Canvas', keys: ['Space', 'Drag'] },
+      { label: 'Zoom In/Out', keys: ['Cmd', '+/-'] },
+      { label: 'Fit View', keys: ['Shift', '1'] },
+      { label: 'Nudge Node', keys: ['Arrows'] },
+    ]
+  },
+];

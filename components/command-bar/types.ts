@@ -14,6 +14,7 @@ export interface CommandItem {
     description?: string;
     value?: boolean;
     view?: CommandView;
+    hidden?: boolean;
 }
 
 export interface CommandBarProps {

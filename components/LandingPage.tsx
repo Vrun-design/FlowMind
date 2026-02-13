@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Zap, Command, Share2, Layout, MousePointer2, Cpu, GitBranch } from 'lucide-react';
+import { useFlowStore } from '../store';
 
 interface LandingPageProps {
     onLaunch: () => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
+    const { brandConfig } = useFlowStore();
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -29,7 +31,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
                         <div className="w-8 h-8 bg-gradient-to-tr from-indigo-500 to-violet-500 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.3)]">
                             <Zap className="w-4 h-4 text-white fill-white" />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-white">FlowMind</span>
+                        <span className="text-xl font-bold tracking-tight text-white">{brandConfig.appName}</span>
                     </div>
                     <div className="flex items-center gap-6">
                         <button onClick={onLaunch} className="group relative px-5 py-2 rounded-full bg-white text-black font-semibold text-sm transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 overflow-hidden">
@@ -119,7 +121,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
                                 </div>
                                 <h3 className="text-3xl font-bold mb-4">Mermaid Native</h3>
                                 <p className="text-slate-400 text-lg leading-relaxed max-w-md">
-                                    Don't drag nodes. Write code. FlowMind parses standard Mermaid.js syntax instantly into complex, editable diagrams. Start with code, finish with design.
+                                    Don't drag nodes. Write code. {brandConfig.appName} parses standard Mermaid.js syntax instantly into complex, editable diagrams. Start with code, finish with design.
                                 </p>
                             </div>
                             <div className="font-mono text-sm text-slate-500 bg-black/40 rounded-lg p-4 border border-white/5">

@@ -18,13 +18,13 @@ const CommandItemRow = ({ item, isSelected, onClick }: { item: CommandItem, isSe
     <div
         onClick={onClick}
         className={`
-            group flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl cursor-pointer transition-all duration-200
-            ${isSelected ? 'bg-indigo-50/80 text-indigo-700 shadow-sm ring-1 ring-indigo-100' : 'text-slate-600 hover:bg-slate-50'}
+            group flex items-center gap-3 px-4 py-2.5 mx-2 rounded-[var(--radius-md)] cursor-pointer transition-all duration-200
+            ${isSelected ? 'bg-[var(--brand-primary-50)]/80 text-[var(--brand-primary-800)] shadow-sm ring-1 ring-[var(--brand-primary-100)]' : 'text-slate-600 hover:bg-slate-50'}
         `}
     >
         <div className={`
-            p-1.5 rounded-lg transition-colors
-            ${isSelected ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-500 group-hover:bg-white group-hover:shadow-sm'}
+            p-1.5 rounded-[var(--radius-sm)] transition-colors
+            ${isSelected ? 'bg-[var(--brand-primary-100)] text-[var(--brand-primary)]' : 'bg-slate-100 text-slate-500 group-hover:bg-white group-hover:shadow-sm'}
         `}>
             {item.icon}
         </div>
@@ -32,7 +32,7 @@ const CommandItemRow = ({ item, isSelected, onClick }: { item: CommandItem, isSe
         <div className="flex-1 flex flex-col justify-center">
             <span className="text-sm font-medium leading-none mb-0.5">{item.label}</span>
             {item.description && (
-                <span className={`text-[11px] ${isSelected ? 'text-indigo-400' : 'text-slate-400'}`}>
+                <span className={`text-[11px] ${isSelected ? 'text-[var(--brand-primary-400)]' : 'text-slate-400'}`}>
                     {item.description}
                 </span>
             )}
@@ -41,7 +41,7 @@ const CommandItemRow = ({ item, isSelected, onClick }: { item: CommandItem, isSe
         {item.type === 'toggle' && (
             <div className={`
                 w-8 h-4 rounded-full relative transition-colors
-                ${item.value ? 'bg-indigo-500' : 'bg-slate-200'}
+                ${item.value ? 'bg-[var(--brand-primary)]' : 'bg-slate-200'}
              `}>
                 <div className={`
                     absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all shadow-sm
@@ -51,14 +51,14 @@ const CommandItemRow = ({ item, isSelected, onClick }: { item: CommandItem, isSe
         )}
 
         {item.type === 'navigation' && (
-            <ChevronRight className={`w-3.5 h-3.5 ${isSelected ? 'text-indigo-400' : 'text-slate-300 opacity-0 group-hover:opacity-100'}`} />
+            <ChevronRight className={`w-3.5 h-3.5 ${isSelected ? 'text-[var(--brand-primary-400)]' : 'text-slate-300 opacity-0 group-hover:opacity-100'}`} />
         )}
 
         {item.shortcut && (
             <div className={`
                 text-[10px] font-medium px-1.5 py-0.5 rounded border
                 ${isSelected
-                    ? 'bg-white border-indigo-200 text-indigo-400'
+                    ? 'bg-white border-[var(--brand-primary-200)] text-[var(--brand-primary-400)]'
                     : 'bg-slate-50 border-slate-200 text-slate-400'}
             `}>
                 {item.shortcut}
@@ -78,7 +78,7 @@ export const RootView = ({
     inputRef
 }: RootViewProps) => {
     const filteredCommands = useMemo(() => {
-        if (!searchQuery) return commands;
+        if (!searchQuery) return commands.filter(c => !c.hidden);
         return commands.filter(c =>
             c.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
             c.description?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -91,18 +91,20 @@ export const RootView = ({
             const len = filteredCommands.length;
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
-                setSelectedIndex(prev => (prev + 1) % len);
+                setSelectedIndex(prev => (prev === -1 ? 0 : (prev + 1) % len));
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
-                setSelectedIndex(prev => (prev - 1 + len) % len);
+                setSelectedIndex(prev => (prev === -1 ? len - 1 : (prev - 1 + len) % len));
             } else if (e.key === 'Enter') {
                 e.preventDefault();
-                const item = filteredCommands[selectedIndex];
-                if (item) {
-                    if (item.view) setView(item.view);
-                    else if (item.action) {
-                        item.action();
-                        if (item.type === 'action') onClose();
+                if (selectedIndex >= 0 && selectedIndex < len) {
+                    const item = filteredCommands[selectedIndex];
+                    if (item) {
+                        if (item.view) setView(item.view);
+                        else if (item.action) {
+                            item.action();
+                            if (item.type === 'action') onClose();
+                        }
                     }
                 } else if (searchQuery) {
                     setView('ai');

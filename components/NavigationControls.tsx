@@ -11,11 +11,11 @@ export const NavigationControls = () => {
 
     return (
         <div className="absolute bottom-8 left-8 flex flex-col gap-2 z-50">
-            <div className="flex flex-col p-1 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border border-slate-100 ring-1 ring-slate-900/5">
+            <div className="flex flex-col p-1 bg-white shadow-2xl rounded-[var(--radius-lg)] border border-slate-100 ring-1 ring-slate-900/5">
                 <Tooltip text="Zoom In" side="right">
                     <button
                         onClick={() => zoomIn({ duration: 300 })}
-                        className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all active:scale-95"
+                        className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-[var(--radius-sm)] transition-all active:scale-95"
                     >
                         <Plus className="w-4 h-4" />
                     </button>
@@ -28,7 +28,7 @@ export const NavigationControls = () => {
                 <Tooltip text="Zoom Out" side="right">
                     <button
                         onClick={() => zoomOut({ duration: 300 })}
-                        className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all active:scale-95"
+                        className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-[var(--radius-sm)] transition-all active:scale-95"
                     >
                         <Minus className="w-4 h-4" />
                     </button>
@@ -37,7 +37,7 @@ export const NavigationControls = () => {
                 <Tooltip text="Fit View" side="right">
                     <button
                         onClick={() => fitView({ duration: 600, padding: 0.2 })}
-                        className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all active:scale-95"
+                        className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-[var(--radius-sm)] transition-all active:scale-95"
                     >
                         <Maximize className="w-4 h-4" />
                     </button>
@@ -46,7 +46,7 @@ export const NavigationControls = () => {
                 <Tooltip text="Keyboard Shortcuts" side="right">
                     <button
                         onClick={() => setShortcutsHelpOpen(true)}
-                        className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all active:scale-95"
+                        className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-[var(--radius-sm)] transition-all active:scale-95"
                     >
                         <Keyboard className="w-4 h-4" />
                     </button>

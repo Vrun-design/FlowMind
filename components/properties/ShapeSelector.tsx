@@ -25,10 +25,10 @@ export const ShapeSelector: React.FC<ShapeSelectorProps> = ({ selectedShape, onC
                 <button
                     key={value}
                     onClick={() => onChange(value)}
-                    className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg text-[10px] font-semibold transition-all
+                    className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-[var(--brand-radius)] text-[10px] font-semibold transition-all
                         ${(selectedShape || 'rounded') === value
-                            ? 'bg-indigo-50 text-indigo-600 ring-1 ring-indigo-200'
-                            : 'bg-slate-50 text-slate-500 hover:bg-white hover:text-slate-700 hover:shadow-sm'
+                            ? 'bg-[var(--brand-primary-50)] text-[var(--brand-primary-600)] ring-1 ring-[var(--brand-primary-200)]'
+                            : 'bg-[var(--brand-background)] text-[var(--brand-secondary)] hover:bg-[var(--brand-surface)] hover:text-[var(--brand-text)] hover:shadow-sm'
                         }`}
                     title={label}
                 >

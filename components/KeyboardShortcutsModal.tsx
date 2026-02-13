@@ -2,41 +2,13 @@ import React from 'react';
 import { useFlowStore } from '../store';
 import { X, Keyboard, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, MousePointer2 } from 'lucide-react';
 
+import { KEYBOARD_SHORTCUTS } from '../constants';
+
 export const KeyboardShortcutsModal = () => {
     const { viewSettings, setShortcutsHelpOpen } = useFlowStore();
     const { isShortcutsHelpOpen } = viewSettings;
 
     if (!isShortcutsHelpOpen) return null;
-
-    const sections = [
-        {
-            title: 'Essentials',
-            items: [
-                { label: 'Undo', keys: ['Cmd', 'Z'] },
-                { label: 'Redo', keys: ['Cmd', 'Shift', 'Z'] },
-                { label: 'Select All', keys: ['Cmd', 'A'] },
-                { label: 'Delete', keys: ['Backspace'] },
-            ]
-        },
-        {
-            title: 'Manipulation',
-            items: [
-                { label: 'Duplicate', keys: ['Cmd', 'D'] },
-                { label: 'Copy', keys: ['Cmd', 'C'] },
-                { label: 'Paste', keys: ['Cmd', 'V'] },
-                { label: 'Group Selection', keys: ['Cmd', 'G'] },
-            ]
-        },
-        {
-            title: 'Navigation',
-            items: [
-                { label: 'Pan Canvas', keys: ['Space', 'Drag'] },
-                { label: 'Zoom In/Out', keys: ['Cmd', '+/-'] },
-                { label: 'Fit View', keys: ['Shift', '1'] },
-                { label: 'Nudge Node', keys: ['Arrows'] },
-            ]
-        },
-    ];
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
@@ -55,7 +27,7 @@ export const KeyboardShortcutsModal = () => {
                 </div>
 
                 <div className="p-6 grid grid-cols-2 gap-8 max-h-[70vh] overflow-y-auto">
-                    {sections.map((section) => (
+                    {KEYBOARD_SHORTCUTS.map((section) => (
                         <div key={section.title} className="space-y-4">
                             <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">{section.title}</h3>
                             <div className="space-y-2">

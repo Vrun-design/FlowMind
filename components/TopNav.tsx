@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Rainbow, Settings, Check, ChevronDown, Clock, FolderOpen } from 'lucide-react';
+import { Rainbow, Settings, Check, ChevronDown, Clock, FolderOpen, AlignJustify, Palette, Home } from 'lucide-react';
 import { FlowTab } from '../types';
 import { FlowTabs } from './FlowTabs';
 import { ExportMenu } from './ExportMenu';
 import { Tooltip } from './Tooltip';
+import { useFlowStore } from '../store';
+import { SettingsModal } from './SettingsModal/SettingsModal';
 
 interface TopNavProps {
     showMiniMap: boolean;
@@ -30,6 +32,7 @@ interface TopNavProps {
     onExportFigma: () => void;
     onImportJSON: () => void;
     onHistory: () => void;
+    onGoHome: () => void;
 }
 
 export const TopNav: React.FC<TopNavProps> = ({
@@ -53,26 +56,118 @@ export const TopNav: React.FC<TopNavProps> = ({
     onExportFigma,
     onImportJSON,
     onHistory,
+    onGoHome,
 }) => {
+    const { brandConfig } = useFlowStore();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [activeSettingsTab, setActiveSettingsTab] = useState<'brand' | 'general' | 'shortcuts'>('brand');
+
+    const openSettings = (tab: 'brand' | 'general' | 'shortcuts') => {
+        setActiveSettingsTab(tab);
+        setIsSettingsOpen(true);
+        setIsMenuOpen(false);
+    };
 
     return (
         <div className="absolute top-0 left-0 right-0 z-50 h-16 bg-white/70 backdrop-blur-md border-b border-white/20 shadow-sm px-6 flex items-center justify-between transition-all">
             {/* Left: Brand */}
-            <Tooltip text="FlowMind AI Canvas" side="bottom">
-                <div className="flex items-center gap-3 min-w-[240px]">
-                    <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
-                        <Rainbow className="w-5 h-5" />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="font-bold text-slate-800 tracking-tight text-lg leading-none">FlowMind</span>
-                    </div>
+            {/* Left: Menu & Brand */}
+            <div className="flex items-center gap-4 min-w-[240px]">
+                {/* Menu Dropdown */}
+                <div className="relative">
+                    <button
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-[var(--radius-md)] border transition-all text-sm font-medium
+                            ${isMenuOpen
+                                ? 'bg-[var(--brand-primary-50)] border-[var(--brand-primary-200)] text-[var(--brand-primary)] shadow-inner'
+                                : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 shadow-sm hover:shadow'}
+                        `}
+                    >
+                        <AlignJustify className="w-4 h-4" />
+                    </button>
+
+                    {isMenuOpen && (
+                        <>
+                            <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setIsMenuOpen(false)} />
+                            <div className="absolute top-full left-0 mt-3 w-56 bg-white/90 backdrop-blur-xl rounded-[var(--radius-lg)] shadow-2xl border border-white/50 ring-1 ring-black/5 p-2 flex flex-col gap-1 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
+                                <div className="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                    Menu
+                                </div>
+                                <button
+                                    onClick={() => { onGoHome(); setIsMenuOpen(false); }}
+                                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] rounded-[var(--radius-sm)] transition-all font-medium"
+                                >
+                                    <Home className="w-4 h-4" />
+                                    Go to Dashboard
+                                </button>
+                                <div className="my-1 border-t border-slate-100" />
+                                <button
+                                    onClick={() => openSettings('general')}
+                                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] rounded-[var(--radius-sm)] transition-all"
+                                >
+                                    <Settings className="w-4 h-4" />
+                                    Canvas Settings
+                                </button>
+                                <button
+                                    onClick={() => openSettings('brand')}
+                                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] rounded-[var(--radius-sm)] transition-all"
+                                >
+                                    <Palette className="w-4 h-4" />
+                                    Brand Settings
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
-            </Tooltip>
+
+                <Tooltip text={brandConfig.appName || "FlowMind AI Canvas"} side="bottom">
+                    <div className="flex items-center gap-3">
+                        {/* Logo Icon (Square) */}
+                        {(brandConfig.logoStyle === 'icon' || brandConfig.logoStyle === 'both') && (
+                            <div className="w-9 h-9 flex items-center justify-center bg-[var(--brand-primary-50)] rounded-[var(--radius-md)] text-[var(--brand-primary)] overflow-hidden relative shrink-0">
+                                {brandConfig.logoUrl ? (
+                                    <img src={brandConfig.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                                ) : (
+                                    <Rainbow className="w-5 h-5" />
+                                )}
+                            </div>
+                        )}
+
+                        {/* Wide Logo (Full Width Image) */}
+                        {/* Wide Logo (Full Width Image) */}
+                        {brandConfig.logoStyle === 'wide' && (
+                            <div className="h-8 flex-1 flex items-center justify-start text-[var(--brand-primary)] shrink-0 px-1 max-w-[180px] overflow-hidden">
+                                {brandConfig.logoUrl ? (
+                                    <div className="flex items-center justify-start h-full">
+                                        <img
+                                            src={brandConfig.logoUrl}
+                                            alt="Logo"
+                                            className="h-[70%] w-auto max-w-full object-contain object-left"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--brand-primary-50)] rounded-[var(--radius-md)] border border-[var(--brand-primary-100)] opacity-80 hover:opacity-100 transition-opacity cursor-help" title="Upload a wide logo in Brand Settings to see it here">
+                                        <Rainbow className="w-4 h-4" />
+                                        <span className="text-xs font-semibold whitespace-nowrap">Your Wide Logo</span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* App Name */}
+                        {(brandConfig.logoStyle === 'text' || brandConfig.logoStyle === 'both') && (
+                            <div className="flex flex-col">
+                                <span className="font-bold text-slate-800 tracking-tight text-lg leading-none">{brandConfig.appName}</span>
+                            </div>
+                        )}
+                    </div>
+                </Tooltip>
+            </div>
 
             {/* Center: Tabs */}
             <div className="flex-1 flex justify-center max-w-2xl">
-                <div className="bg-slate-100/50 p-1 rounded-xl border border-slate-200/60 backdrop-blur-sm">
+                <div className="bg-slate-100/50 p-1 rounded-[var(--radius-lg)] border border-slate-200/60 backdrop-blur-sm">
                     <FlowTabs
                         tabs={tabs}
                         activeTabId={activeTabId}
@@ -86,96 +181,51 @@ export const TopNav: React.FC<TopNavProps> = ({
 
             {/* Right: Actions */}
             <div className="flex items-center gap-3 min-w-[240px] justify-end">
-                <div className="flex items-center gap-1 bg-slate-50/80 p-1 rounded-xl border border-slate-200/60 backdrop-blur-sm">
+                <div className="flex items-center gap-0.5 p-1">
                     <Tooltip text="Version History" side="bottom">
                         <button
                             onClick={onHistory}
-                            className="p-2 text-slate-500 hover:text-slate-700 hover:bg-white rounded-lg transition-all shadow-sm hover:shadow"
+                            className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-[var(--radius-sm)] transition-all"
                         >
                             <Clock className="w-4 h-4" />
                         </button>
                     </Tooltip>
-                    <div className="w-px h-4 bg-slate-200 mx-1" />
+                    <div className="w-px h-4 bg-slate-200 mx-0.5" />
                     <Tooltip text="Load JSON" side="bottom">
                         <button
                             onClick={onImportJSON}
-                            className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-white rounded-lg transition-all shadow-sm hover:shadow"
+                            className="p-2 text-slate-500 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-50)] rounded-[var(--radius-sm)] transition-all"
                         >
                             <FolderOpen className="w-4 h-4" />
                         </button>
                     </Tooltip>
-                    <ExportMenu
-                        onExportPNG={onExportPNG}
-                        onExportJSON={onExportJSON}
-                        onExportMermaid={onExportMermaid}
-                        onExportPlantUML={onExportPlantUML}
-                        onExportFlowMindDSL={onExportFlowMindDSL}
-                        onExportFigma={onExportFigma}
-                    />
                 </div>
 
-                <div className="relative">
-                    <Tooltip text="Canvas Settings" side="bottom">
-                        <button
-                            onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-xl border transition-all text-sm font-medium
-                                ${isSettingsOpen
-                                    ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-inner'
-                                    : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 shadow-sm hover:shadow'}
-                            `}
-                        >
-                            <Settings className="w-4 h-4" />
-                            <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isSettingsOpen ? 'rotate-180' : ''}`} />
-                        </button>
-                    </Tooltip>
+                <div className="h-8 w-px bg-slate-200/50 mx-1" />
 
-                    {isSettingsOpen && (
-                        <>
-                            <div
-                                className="fixed inset-0 z-40 bg-transparent"
-                                onClick={() => setIsSettingsOpen(false)}
-                            />
-                            <div className="absolute top-full right-0 mt-3 w-64 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 ring-1 ring-black/5 p-2 flex flex-col gap-1 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                                <div className="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
-                                    Canvas Settings
-                                </div>
+                <ExportMenu
+                    onExportPNG={onExportPNG}
+                    onExportJSON={onExportJSON}
+                    onExportMermaid={onExportMermaid}
+                    onExportPlantUML={onExportPlantUML}
+                    onExportFlowMindDSL={onExportFlowMindDSL}
+                    onExportFigma={onExportFigma}
+                />
 
-                                <button
-                                    onClick={toggleMiniMap}
-                                    title="Toggle Mini Map"
-                                    className="flex items-center justify-between px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50/80 hover:text-slate-900 rounded-xl transition-all group"
-                                >
-                                    <span className="font-medium">Mini Map</span>
-                                    <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${showMiniMap ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-300'}`}>
-                                        {showMiniMap && <Check className="w-3.5 h-3.5" />}
-                                    </div>
-                                </button>
+                <SettingsModal
+                    isOpen={isSettingsOpen}
+                    onClose={() => setIsSettingsOpen(false)}
+                    initialTab={activeSettingsTab}
+                />
 
-                                <button
-                                    onClick={toggleGrid}
-                                    title="Toggle Grid"
-                                    className="flex items-center justify-between px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50/80 hover:text-slate-900 rounded-xl transition-all group"
-                                >
-                                    <span className="font-medium">Show Grid</span>
-                                    <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${showGrid ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-300'}`}>
-                                        {showGrid && <Check className="w-3.5 h-3.5" />}
-                                    </div>
-                                </button>
-
-                                <button
-                                    onClick={toggleSnapToGrid}
-                                    title="Toggle Snap to Grid"
-                                    className="flex items-center justify-between px-3 py-2.5 text-sm text-slate-600 hover:bg-slate-50/80 hover:text-slate-900 rounded-xl transition-all group"
-                                >
-                                    <span className="font-medium">Snap to Grid</span>
-                                    <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${snapToGrid ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-300'}`}>
-                                        {snapToGrid && <Check className="w-3.5 h-3.5" />}
-                                    </div>
-                                </button>
-                            </div>
-                        </>
-                    )}
-                </div>
+                {/* Logo after Menu (User Request: "icon on the right side adn then logo") */}
+                {/* NOTE: I am keeping the main logo on the left for now as removing it might break the layout balance. 
+                     The user might mean they want *another* logo here or the main logo moved? 
+                     I will interpret "then logo" as maybe the user wants their logo to be visible here too?
+                     Or maybe they confused left/right? 
+                     I will leave the logo on left for now and just add the menu. 
+                     If they want the logo on the right *instead* of left, I would need to move the left block.
+                 */}
             </div>
         </div>
     );

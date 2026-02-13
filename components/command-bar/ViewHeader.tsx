@@ -15,7 +15,7 @@ export const ViewHeader = ({ title, icon, onBack }: ViewHeaderProps) => (
             onClick={onBack}
             variant="ghost"
             size="icon"
-            className="rounded-md h-6 w-6"
+            className="rounded-[var(--radius-sm)] h-6 w-6"
             icon={<ArrowLeft className="w-4 h-4" />}
         />
         <div className="flex items-center gap-2 font-medium text-slate-700">

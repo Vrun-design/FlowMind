@@ -8,6 +8,9 @@ import { parseMermaid } from '../../services/mermaidParser';
 import { parseFlowMindDSL } from '../../services/flowmindDSLParser';
 import { getElkLayout } from '../../services/elkLayout';
 import { assignSmartHandles } from '../../services/smartEdgeRouting';
+import { Button } from '../ui/Button';
+import { Textarea } from '../ui/Textarea';
+import { useFlowStore } from '../../store';
 
 interface CodeViewProps {
     mode: 'mermaid' | 'flowmind';
@@ -26,15 +29,14 @@ export const CodeView = ({
     onClose,
     handleBack
 }: CodeViewProps) => {
+    const { brandConfig } = useFlowStore();
     const [code, setCode] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isApplying, setIsApplying] = useState(false);
 
-    // Sync from canvas on mount ONLY.
+    // No initial sync - start empty for import
     useEffect(() => {
-        if (mode === 'mermaid') setCode(toMermaid(nodes, edges));
-        else setCode(toFlowMindDSL(nodes, edges));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        setCode('');
     }, [mode]);
 
     const handleChange = (val: string) => {
@@ -93,27 +95,32 @@ export const CodeView = ({
     return (
         <div className="flex flex-col h-full">
             <ViewHeader
-                title={mode === 'mermaid' ? 'Mermaid Editor' : 'FlowMind DSL'}
-                icon={mode === 'mermaid' ? <Code2 className="w-4 h-4 text-pink-500" /> : <FileCode className="w-4 h-4 text-emerald-500" />}
+                title={mode === 'mermaid' ? 'Import Mermaid' : `Import ${brandConfig.appName} DSL`}
+                icon={mode === 'mermaid' ? <Code2 className="w-4 h-4 text-[var(--brand-primary)]" /> : <FileCode className="w-4 h-4 text-[var(--brand-primary)]" />}
                 onBack={handleBack}
             />
-            <div className="p-4 flex-1 relative flex flex-col">
-                <textarea
-                    value={code}
-                    onChange={e => handleChange(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    className={`w-full flex-1 p-3 rounded-xl border text-sm font-mono leading-relaxed outline-none resize-none transition-all mb-4
-                             ${error ? 'border-amber-300 bg-amber-50/30' : 'border-slate-200 bg-slate-50/50 focus:border-indigo-500'}
-                        `}
-                    spellCheck={false}
-                    autoFocus
-                />
+            <div className="p-4 flex-1 relative flex flex-col gap-4">
+                <div className="relative flex-1">
+                    <Textarea
+                        value={code}
+                        onChange={e => handleChange(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder={mode === 'mermaid' ? "Paste Mermaid code here..." : `Paste ${brandConfig.appName} DSL code here...`}
+                        className={`h-full font-mono leading-relaxed resize-none transition-all
+                                ${error ? 'border-amber-300 bg-amber-50/30' : 'bg-slate-50/50'}
+                            `}
+                        spellCheck={false}
+                        autoFocus
+                    />
+                </div>
+
                 {error && (
-                    <div className="absolute bottom-20 left-4 right-4 flex items-center gap-2 px-3 py-2 bg-white/95 border border-amber-200 rounded-lg text-amber-700 text-xs shadow-sm">
+                    <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-xs shadow-sm">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         <span className="font-medium truncate">{error}</span>
                     </div>
                 )}
+
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <span className="text-xs text-slate-400">⌘+Enter to apply</span>
@@ -122,21 +129,23 @@ export const CodeView = ({
                                 href="https://varun-shield.notion.site/FlowMind-DSL-Syntax-Guide-303ce7f68c06800f94f4d2cd21082236?source=copy_link"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
+                                className="flex items-center gap-1.5 text-xs font-medium text-[var(--brand-primary)] hover:text-[var(--brand-primary-700)] transition-colors"
                             >
                                 <BookOpen className="w-3.5 h-3.5" />
                                 Syntax Guide
                             </a>
                         )}
                     </div>
-                    <button
+                    <Button
                         onClick={handleApply}
                         disabled={isApplying}
-                        className={`flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium text-sm shadow-sm transition-all ${isApplying ? 'opacity-60 cursor-wait' : ''}`}
+                        variant="primary"
+                        className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-600)] border-transparent text-white"
+                        isLoading={isApplying}
+                        icon={!isApplying && <Play className="w-4 h-4" />}
                     >
-                        {isApplying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
-                        {isApplying ? 'Applying...' : 'Apply Changes'}
-                    </button>
+                        Apply Changes
+                    </Button>
                 </div>
             </div>
         </div>

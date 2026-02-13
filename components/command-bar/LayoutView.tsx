@@ -14,22 +14,22 @@ const AlgorithmCard = ({ id, label, desc, icon, selected, onClick }: any) => (
     <div
         onClick={onClick}
         className={`
-            relative p-3 rounded-xl border-2 cursor-pointer transition-all duration-200
+            relative p-3 rounded-[var(--radius-md)] border-2 cursor-pointer transition-all duration-200
             ${selected
-                ? 'border-indigo-500 bg-indigo-50/50 ring-1 ring-indigo-500/20'
-                : 'border-slate-100 bg-white hover:border-indigo-200 hover:bg-slate-50'}
+                ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)]/50 ring-1 ring-[var(--brand-primary)]/20'
+                : 'border-slate-100 bg-white hover:border-[var(--brand-primary-200)] hover:bg-slate-50'}
         `}
     >
         <div className={`
-            w-8 h-8 rounded-lg flex items-center justify-center mb-2 transition-colors
-            ${selected ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-slate-500'}
+            w-8 h-8 rounded-[var(--radius-sm)] flex items-center justify-center mb-2 transition-colors
+            ${selected ? 'bg-[var(--brand-primary)] text-white' : 'bg-slate-100 text-slate-500'}
         `}>
             {icon}
         </div>
         <div className="font-medium text-sm text-slate-700">{label}</div>
         <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{desc}</div>
         {selected && (
-            <div className="absolute top-3 right-3 text-indigo-500">
+            <div className="absolute top-3 right-3 text-[var(--brand-primary)]">
                 <Check className="w-4 h-4" />
             </div>
         )}
@@ -40,7 +40,7 @@ const DirectionButton = ({ dir, label, selected, onClick }: any) => (
     <button
         onClick={onClick}
         className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all
-            ${selected ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}
+            ${selected ? 'bg-white text-[var(--brand-primary)] shadow-sm' : 'text-slate-500 hover:text-slate-700'}
         `}
     >
         {label}
@@ -50,9 +50,9 @@ const DirectionButton = ({ dir, label, selected, onClick }: any) => (
 const SpacingButton = ({ id, label, selected, onClick }: any) => (
     <button
         onClick={onClick}
-        className={`py-2 px-3 rounded-lg border text-sm font-medium transition-all
+        className={`py-2 px-3 rounded-[var(--radius-sm)] border text-sm font-medium transition-all
             ${selected
-                ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-700)]'
                 : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'}
         `}
     >
@@ -76,7 +76,7 @@ export const LayoutView = ({
 
     return (
         <div className="flex flex-col h-full">
-            <ViewHeader title="Layout Studio" icon={<Zap className="w-4 h-4 text-amber-500" />} onBack={handleBack} />
+            <ViewHeader title="Layout Studio" icon={<Zap className="w-4 h-4 text-[var(--brand-primary)]" />} onBack={handleBack} />
 
             <div className="flex-1 overflow-y-auto p-4 space-y-6">
 
@@ -123,7 +123,7 @@ export const LayoutView = ({
                 {(algorithm === 'layered' || algorithm === 'mrtree') && (
                     <div className="space-y-3 animate-in slide-in-from-top-2 duration-200">
                         <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Direction</label>
-                        <div className="flex bg-slate-100 p-1 rounded-lg">
+                        <div className="flex bg-slate-100 p-1 rounded-[var(--radius-sm)]">
                             <DirectionButton dir="TB" label="Down" selected={direction === 'TB'} onClick={() => setDirection('TB')} />
                             <DirectionButton dir="BT" label="Up" selected={direction === 'BT'} onClick={() => setDirection('BT')} />
                             <DirectionButton dir="LR" label="Right" selected={direction === 'LR'} onClick={() => setDirection('LR')} />
@@ -149,7 +149,7 @@ export const LayoutView = ({
                 <Button
                     onClick={handleApply}
                     variant="primary"
-                    className="w-full py-2.5 h-auto rounded-xl shadow-sm shadow-indigo-200 justify-center"
+                    className="w-full py-2.5 h-auto rounded-[var(--radius-md)] shadow-sm shadow-[var(--brand-primary-200)] justify-center"
                 >
                     <Zap className="w-4 h-4 mr-2" />
                     Apply Layout

@@ -35,22 +35,22 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     const isAnnotation = selectedNode?.type === 'annotation';
 
     return (
-        <div className="absolute top-20 right-6 w-80 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 ring-1 ring-black/5 flex flex-col overflow-hidden max-h-[calc(100vh-140px)] z-50 animate-in slide-in-from-right-10 duration-200">
-            <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/80">
-                <h3 className="font-semibold text-slate-800 flex items-center gap-2">
+        <div className="absolute top-20 right-6 w-80 bg-[var(--brand-surface)]/95 backdrop-blur-md rounded-[var(--radius-lg)] shadow-2xl border border-white/20 ring-1 ring-black/5 flex flex-col overflow-hidden max-h-[calc(100vh-140px)] z-50 animate-in slide-in-from-right-10 duration-200">
+            <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-[var(--brand-surface)]">
+                <h3 className="font-semibold text-[var(--brand-text)] flex items-center gap-2">
                     {selectedNode ? (
                         <>
-                            <Layout className="w-4 h-4 text-indigo-600" />
+                            <Layout className="w-4 h-4 text-[var(--brand-primary)]" />
                             <span>{isAnnotation ? 'Sticky Note' : 'Node Settings'}</span>
                         </>
                     ) : (
                         <>
-                            <ArrowRight className="w-4 h-4 text-indigo-600" />
+                            <ArrowRight className="w-4 h-4 text-[var(--brand-primary)]" />
                             <span>Connection</span>
                         </>
                     )}
                 </h3>
-                <button onClick={onClose} className="p-1 hover:bg-slate-200 rounded-full text-slate-400 transition-colors">
+                <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded-full text-[var(--brand-secondary)] transition-colors">
                     <X className="w-4 h-4" />
                 </button>
             </div>

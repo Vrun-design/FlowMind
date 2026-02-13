@@ -1,7 +1,7 @@
 import React from 'react';
 import { Edge, MarkerType } from 'reactflow';
 import { EdgeCondition } from '../../types';
-import { GitBranch, Ban, ArrowRightLeft, Trash2 } from 'lucide-react';
+import { GitBranch, Ban, ArrowRightLeft, Trash2, Activity } from 'lucide-react';
 import { Input } from '../ui/Input';
 import { Slider } from '../ui/Slider';
 import { Switch } from '../ui/Switch';
@@ -26,8 +26,8 @@ export const EdgeProperties: React.FC<EdgePropertiesProps> = ({
         <div className="space-y-6">
             {/* Condition Selector */}
             <div className="space-y-3">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                    <GitBranch className="w-3 h-3" /> Condition
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                    <GitBranch className="w-3.5 h-3.5" /> Condition
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                     {(Object.keys(EDGE_CONDITION_STYLES) as EdgeCondition[]).map((cond) => {
@@ -49,8 +49,8 @@ export const EdgeProperties: React.FC<EdgePropertiesProps> = ({
                                 className={`
                                     px-2 py-1.5 rounded-lg text-xs font-medium border transition-all text-left flex items-center gap-2
                                     ${isSelected
-                                        ? 'bg-indigo-50 border-indigo-200 text-indigo-700 ring-1 ring-indigo-200'
-                                        : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                                        ? 'bg-[var(--brand-primary-50)] border-[var(--brand-primary-200)] text-[var(--brand-primary-700)] ring-1 ring-[var(--brand-primary-200)]'
+                                        : 'bg-[var(--brand-surface)] border-slate-200 text-[var(--brand-secondary)] hover:border-slate-300'
                                     }
                                 `}
                             >
@@ -87,7 +87,9 @@ export const EdgeProperties: React.FC<EdgePropertiesProps> = ({
             </div>
 
             <div className="space-y-3">
-                <Label>Line Style</Label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                    <Activity className="w-3.5 h-3.5" /> Line Style
+                </label>
 
                 <div className="flex flex-wrap gap-2">
                     {/* Edge Color Picker */}
@@ -149,7 +151,7 @@ export const EdgeProperties: React.FC<EdgePropertiesProps> = ({
                         <button
                             key={t}
                             onClick={() => onChange(selectedEdge.id, { type: t })}
-                            className={`py-2 text-xs font-medium rounded-lg border capitalize transition-all ${selectedEdge.type === t ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-slate-200 text-slate-600'}`}
+                            className={`py-2 text-xs font-medium rounded-lg border capitalize transition-all ${selectedEdge.type === t ? 'bg-[var(--brand-primary-50)] border-[var(--brand-primary-200)] text-[var(--brand-primary-700)]' : 'bg-[var(--brand-surface)] border-slate-200 text-[var(--brand-secondary)]'}`}
                         >
                             {t === 'default' ? 'Bezier' : t}
                         </button>
@@ -169,7 +171,7 @@ export const EdgeProperties: React.FC<EdgePropertiesProps> = ({
                         step="1"
                         value={Number(selectedEdge.style?.strokeWidth) || 2}
                         onChange={(e) => onChange(selectedEdge.id, { style: { ...selectedEdge.style, strokeWidth: parseInt(e.target.value) } })}
-                        className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                        className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[var(--brand-primary)]"
                     />
                 </div>
 
@@ -187,10 +189,10 @@ export const EdgeProperties: React.FC<EdgePropertiesProps> = ({
                                         data: { ...selectedEdge.data, dashPattern: pattern },
                                         style: { ...selectedEdge.style, strokeDasharray: dashArrayMap[pattern] }
                                     })}
-                                    className={`py-1.5 flex items-center justify-center rounded-lg border transition-all ${currentPattern === pattern ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-slate-200'}`}
+                                    className={`py-1.5 flex items-center justify-center rounded-lg border transition-all ${currentPattern === pattern ? 'bg-[var(--brand-primary-50)] border-[var(--brand-primary-200)]' : 'bg-[var(--brand-surface)] border-slate-200'}`}
                                 >
                                     <svg width="32" height="4" viewBox="0 0 32 4">
-                                        <line x1="0" y1="2" x2="32" y2="2" stroke={currentPattern === pattern ? '#4f46e5' : '#94a3b8'} strokeWidth="2" strokeDasharray={dashArrayMap[pattern]} />
+                                        <line x1="0" y1="2" x2="32" y2="2" stroke={currentPattern === pattern ? 'var(--brand-primary)' : '#94a3b8'} strokeWidth="2" strokeDasharray={dashArrayMap[pattern]} />
                                     </svg>
                                 </button>
                             );
