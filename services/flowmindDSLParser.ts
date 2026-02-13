@@ -1,5 +1,6 @@
-import { Node, Edge, MarkerType } from 'reactflow';
-import { EDGE_STYLE, EDGE_LABEL_STYLE, EDGE_LABEL_BG_STYLE } from '../constants';
+import { Node, Edge } from 'reactflow';
+import { createDefaultEdge } from '../constants';
+import { NODE_DEFAULTS } from '../theme';
 
 interface ParseResult {
     nodes: Node[];
@@ -16,16 +17,6 @@ const NODE_TYPE_MAP: Record<string, string> = {
     system: 'custom',
     note: 'annotation',
     section: 'section',
-};
-
-const TYPE_COLORS: Record<string, string> = {
-    start: 'emerald',
-    process: 'slate',
-    decision: 'amber',
-    end: 'red',
-    custom: 'violet',
-    annotation: 'yellow',
-    section: 'blue',
 };
 
 /**
@@ -131,27 +122,21 @@ export const parseFlowMindDSL = (input: string): ParseResult => {
             data: {
                 label: n.label,
                 subLabel: '',
-                color: TYPE_COLORS[n.type] || 'slate',
+                color: NODE_DEFAULTS[n.type]?.color || 'slate',
             },
         };
     });
 
     const edges: Edge[] = declaredEdges
         .filter((e) => labelToId.has(e.sourceLabel) && labelToId.has(e.targetLabel))
-        .map((e, i) => ({
-            id: `fe-${i}-${Date.now()}`,
-            source: labelToId.get(e.sourceLabel)!,
-            target: labelToId.get(e.targetLabel)!,
-            label: e.label || undefined,
-            type: 'smoothstep',
-            markerEnd: { type: MarkerType.ArrowClosed },
-            animated: true,
-            style: EDGE_STYLE,
-            labelStyle: EDGE_LABEL_STYLE,
-            labelBgStyle: EDGE_LABEL_BG_STYLE,
-            labelBgPadding: [8, 4] as [number, number],
-            labelBgBorderRadius: 4,
-        }));
+        .map((e, i) =>
+            createDefaultEdge(
+                labelToId.get(e.sourceLabel)!,
+                labelToId.get(e.targetLabel)!,
+                e.label || undefined,
+                `fe-${i}-${Date.now()}`
+            )
+        );
 
     return { nodes, edges, title };
 };

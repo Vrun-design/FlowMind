@@ -51,10 +51,10 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
           <div
             key={tab.id}
             className={`
-              group relative flex items-center gap-2 px-3 py-1.5 rounded-md cursor-pointer select-none transition-all
+              group relative flex items-center gap-2 px-3 py-1.5 rounded-[var(--brand-radius)] cursor-pointer select-none transition-all border
               ${activeTabId === tab.id
-                ? 'bg-indigo-50 text-indigo-700 font-medium'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                ? 'bg-[var(--brand-primary-50)] border-[var(--brand-primary-200)] text-[var(--brand-primary-700)] font-medium shadow-sm'
+                : 'border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900'
               }
             `}
             onClick={() => onSwitchTab(tab.id)}
@@ -68,7 +68,7 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
                 onChange={(e) => setEditName(e.target.value)}
                 onBlur={handleFinishEdit}
                 onKeyDown={handleKeyDown}
-                className="bg-white border border-indigo-300 rounded px-1 py-0 text-xs font-medium w-24 outline-none focus:ring-1 focus:ring-indigo-500"
+                className="bg-white border border-[var(--brand-primary-300)] rounded-[calc(var(--brand-radius)-4px)] px-1 py-0 text-xs font-medium w-24 outline-none focus:ring-1 focus:ring-[var(--brand-primary)]"
                 autoFocus
                 onClick={(e) => e.stopPropagation()}
               />
@@ -84,7 +84,7 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
               title="Close Tab"
               className={`
                 p-0.5 rounded-full hover:bg-slate-200 transition-colors opacity-0 group-hover:opacity-100
-                ${activeTabId === tab.id ? 'text-indigo-400 hover:text-indigo-600' : 'text-slate-400 hover:text-slate-600'}
+                ${activeTabId === tab.id ? 'text-[var(--brand-primary-400)] hover:text-[var(--brand-primary)]' : 'text-slate-400 hover:text-slate-600'}
               `}
             >
               <X className="w-3 h-3" />
@@ -94,7 +94,7 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
 
         <button
           onClick={onAddTab}
-          className="p-1.5 ml-1 rounded-full text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+          className="p-1.5 ml-1 rounded-full text-slate-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-50)] transition-colors"
           title="New Flow Tab"
         >
           <Plus className="w-4 h-4" />

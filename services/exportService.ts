@@ -17,8 +17,18 @@ export const toMermaid = (nodes: Node[], edges: Edge[]) => {
     let shapeStart = '[';
     let shapeEnd = ']';
 
-    if (node.type === 'decision') { shapeStart = '{'; shapeEnd = '}'; }
-    else if (node.type === 'start' || node.type === 'end') { shapeStart = '(['; shapeEnd = '])'; }
+    const shape = node.data.shape || 'rounded';
+    const type = node.type;
+
+    if (shape === 'diamond') { shapeStart = '{'; shapeEnd = '}'; }
+    else if (shape === 'hexagon') { shapeStart = '{{'; shapeEnd = '}}'; }
+    else if (shape === 'cylinder') { shapeStart = '[('; shapeEnd = ')]'; }
+    else if (shape === 'ellipse') { shapeStart = '(['; shapeEnd = '])'; }
+    else if (shape === 'circle') { shapeStart = '(('; shapeEnd = '))'; }
+    else if (shape === 'parallelogram') { shapeStart = '>'; shapeEnd = ']'; } // asymmetric
+    // Fallback based on type if no specific shape
+    else if (type === 'decision') { shapeStart = '{'; shapeEnd = '}'; }
+    else if (type === 'start' || type === 'end') { shapeStart = '(['; shapeEnd = '])'; }
 
     mermaid += `    ${id}${shapeStart}"${label}"${shapeEnd}\n`;
   });
@@ -43,9 +53,17 @@ export const toPlantUML = (nodes: Node[], edges: Edge[]) => {
   nodes.forEach((node) => {
     const label = sanitizeLabel(node.data.label);
     const id = sanitizeId(node.id);
+    const shape = node.data.shape;
     let type = 'rectangle';
 
-    if (node.type === 'decision') type = 'diamond';
+    if (shape === 'diamond') type = 'diamond';
+    else if (shape === 'cylinder') type = 'database';
+    else if (shape === 'circle') type = 'circle';
+    else if (shape === 'hexagon') type = 'hexagon';
+    else if (shape === 'ellipse') type = 'usecase';
+    else if (shape === 'parallelogram') type = 'card'; // closest mapping
+    // Fallback
+    else if (node.type === 'decision') type = 'diamond';
     else if (node.type === 'start' || node.type === 'end') type = 'circle';
     else if (node.type === 'custom') type = 'component';
 

@@ -5,7 +5,7 @@ export const generateDiagramFromPrompt = async (
   prompt: string,
   currentNodesJSON: string,
   focusedContextJSON?: string
-): Promise<GeneratedFlowData> => {
+): Promise<string> => {
   if (!process.env.API_KEY) {
     throw new Error("API Key is missing in environment variables");
   }
@@ -13,74 +13,59 @@ export const generateDiagramFromPrompt = async (
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   const systemInstruction = `
-    You are an expert system architect and UI designer specializing in creating technical flowcharts and diagrams.
-    Your goal is to generate a structured JSON representation of a flowchart based on the user's description.
+# FlowMind DSL Conversion Prompt
 
-    LAYOUT RULES:
-    1. You MUST calculate 'x' and 'y' coordinates for every node. 
-    2. Organize the flow logically, typically from Top-to-Bottom.
-    3. 'x' should generally be centered around 0. Branch out horizontally for decisions.
-    4. 'y' should increase by approximately 150-200 pixels for each step down.
-    5. Avoid overlapping nodes.
-    
-    NODE TYPES:
-    - 'start': Use for entry points.
-    - 'process': Use for actions, functions, or states.
-    - 'decision': Use for logic branches (if/else).
-    - 'end': Use for exit points.
+You are an assistant that converts plain human language into **FlowMind DSL**.
 
-    If the user asks to "update" or "add" to an existing flow, I will provide the current flow JSON. Respect existing IDs where possible but feel free to reposition nodes for better layout.
-    If 'Focused Context' is provided, the user wants you to specifically modify, expand, or connect to those nodes, while keeping the rest of the flow in mind.
+Your job:
+- Read any messy, casual, incomplete, or informal description of a flow.
+- Infer missing steps when they are obvious.
+- Convert everything into valid **FlowMind DSL syntax**.
+- Keep node labels short, clear, and human-readable.
+- Use correct node types wherever possible.
+- If unsure about a node type, default to \`[process]\`.
+- Always output **only FlowMind DSL**, nothing else.
+
+## Rules You Must Follow
+
+1. Always start with a document header:
+   - Include \`flow\`
+   - Include \`direction\` (default to \`TB\` unless user implies horizontal)
+
+2. Supported node types:
+   - \`[start]\`
+   - \`[end]\`
+   - \`[process]\`
+   - \`[decision]\`
+   - \`[system]\`
+   - \`[note]\`
+   - \`[section]\`
+
+3. Connections:
+   - Use \`->\` for connections
+   - Use \`->|label|\` for decision paths
+
+4. If a node is referenced but not defined, treat it as \`[process]\`.
+
+5. Use comments \`#\` only when they add clarity.
+
+6. Do NOT explain the output. Do NOT add prose. Only output DSL.
   `;
 
   const fullPrompt = `
     User Request: ${prompt}
-    ${currentNodesJSON ? `Current Diagram State: ${currentNodesJSON}` : ''}
+    ${currentNodesJSON ? `Current Diagram State (JSON): ${currentNodesJSON}` : ''}
     ${focusedContextJSON ? `Focused Context (Selected Nodes): ${focusedContextJSON}` : ''}
     
-    Generate the nodes and edges for this flow.
+    Generate the FlowMind DSL for this flow.
   `;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-2.5-flash-lite',
     contents: fullPrompt,
     config: {
       systemInstruction: systemInstruction,
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          nodes: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                id: { type: Type.STRING },
-                type: { type: Type.STRING, enum: ['start', 'process', 'decision', 'end'] },
-                label: { type: Type.STRING },
-                description: { type: Type.STRING },
-                x: { type: Type.NUMBER },
-                y: { type: Type.NUMBER },
-              },
-              required: ['id', 'type', 'label', 'x', 'y']
-            }
-          },
-          edges: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                id: { type: Type.STRING },
-                source: { type: Type.STRING },
-                target: { type: Type.STRING },
-                label: { type: Type.STRING },
-              },
-              required: ['id', 'source', 'target']
-            }
-          }
-        },
-        required: ['nodes', 'edges']
-      }
+      responseMimeType: "text/plain",
     }
   });
 
@@ -88,5 +73,5 @@ export const generateDiagramFromPrompt = async (
     throw new Error("No response from AI");
   }
 
-  return JSON.parse(response.text) as GeneratedFlowData;
+  return response.text;
 };

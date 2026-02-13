@@ -17,8 +17,6 @@ export const useAutoSave = (
     setActiveTabId: (id: string) => void,
     setNodes: (nodes: FlowNode[]) => void,
     setEdges: (edges: FlowEdge[]) => void,
-    past: any[],
-    future: any[],
     setPast: (past: any[]) => void,
     setFuture: (future: any[]) => void
 ) => {
@@ -71,7 +69,7 @@ export const useAutoSave = (
                         ...t,
                         nodes: currentNodes,
                         edges: currentEdges,
-                        history: { past, future }
+                        // History intentionally omitted to save space
                     };
                 }
                 return t;
@@ -85,10 +83,10 @@ export const useAutoSave = (
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
             } catch (e) {
-                console.error('Auto-save failed (likely quota exceeded)', e);
+                console.error('Auto-save failed', e);
             }
-        }, 1000); // Debounce 1s
+        }, 1000);
 
         return () => clearTimeout(timeout);
-    }, [tabs, activeTabId, currentNodes, currentEdges, past, future]);
+    }, [tabs, activeTabId, currentNodes, currentEdges]); // Removed past/future deps
 };

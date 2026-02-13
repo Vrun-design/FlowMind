@@ -1,6 +1,6 @@
-import { Node, Edge, MarkerType } from 'reactflow';
+import { Node, Edge } from 'reactflow';
 import { NodeType } from '../types';
-import { EDGE_STYLE, EDGE_LABEL_STYLE, EDGE_LABEL_BG_STYLE } from '../constants';
+import { createDefaultEdge } from '../constants';
 import { Layout, Database, Shield, Server, Mail, AlertTriangle, Play, FileText, CheckCircle } from 'lucide-react';
 
 export interface FlowTemplate {
@@ -13,20 +13,6 @@ export interface FlowTemplate {
   edges: Edge[];
 }
 
-const createEdge = (source: string, target: string, label?: string) => ({
-  id: `e-${source}-${target}-${Date.now()}`,
-  source,
-  target,
-  label,
-  type: 'smoothstep',
-  markerEnd: { type: MarkerType.ArrowClosed },
-  animated: true,
-  style: EDGE_STYLE,
-  labelStyle: EDGE_LABEL_STYLE,
-  labelBgStyle: EDGE_LABEL_BG_STYLE,
-  labelBgPadding: [8, 4] as [number, number],
-  labelBgBorderRadius: 4,
-});
 
 export const FLOW_TEMPLATES: FlowTemplate[] = [
   {
@@ -44,11 +30,11 @@ export const FLOW_TEMPLATES: FlowTemplate[] = [
       { id: 't-auth-6', type: NodeType.END, position: { x: -250, y: 400 }, data: { label: 'Deny Access', subLabel: 'Return 401', icon: 'AlertTriangle', color: 'red' } },
     ],
     edges: [
-      createEdge('t-auth-1', 't-auth-2'),
-      createEdge('t-auth-2', 't-auth-3'),
-      createEdge('t-auth-3', 't-auth-4', 'Yes'),
-      createEdge('t-auth-3', 't-auth-6', 'No'),
-      createEdge('t-auth-4', 't-auth-5'),
+      createDefaultEdge('t-auth-1', 't-auth-2'),
+      createDefaultEdge('t-auth-2', 't-auth-3'),
+      createDefaultEdge('t-auth-3', 't-auth-4', 'Yes'),
+      createDefaultEdge('t-auth-3', 't-auth-6', 'No'),
+      createDefaultEdge('t-auth-4', 't-auth-5'),
     ]
   },
   {
@@ -67,15 +53,15 @@ export const FLOW_TEMPLATES: FlowTemplate[] = [
       { id: 't-crud-7', type: NodeType.END, position: { x: 0, y: 450 }, data: { label: 'Response', subLabel: 'Return JSON', icon: 'Code', color: 'slate' } },
     ],
     edges: [
-      createEdge('t-crud-1', 't-crud-2'),
-      createEdge('t-crud-2', 't-crud-3', 'POST'),
-      createEdge('t-crud-2', 't-crud-4', 'GET'),
-      createEdge('t-crud-2', 't-crud-5', 'PUT'),
-      createEdge('t-crud-2', 't-crud-6', 'DELETE'),
-      createEdge('t-crud-3', 't-crud-7'),
-      createEdge('t-crud-4', 't-crud-7'),
-      createEdge('t-crud-5', 't-crud-7'),
-      createEdge('t-crud-6', 't-crud-7'),
+      createDefaultEdge('t-crud-1', 't-crud-2'),
+      createDefaultEdge('t-crud-2', 't-crud-3', 'POST'),
+      createDefaultEdge('t-crud-2', 't-crud-4', 'GET'),
+      createDefaultEdge('t-crud-2', 't-crud-5', 'PUT'),
+      createDefaultEdge('t-crud-2', 't-crud-6', 'DELETE'),
+      createDefaultEdge('t-crud-3', 't-crud-7'),
+      createDefaultEdge('t-crud-4', 't-crud-7'),
+      createDefaultEdge('t-crud-5', 't-crud-7'),
+      createDefaultEdge('t-crud-6', 't-crud-7'),
     ]
   },
   {
@@ -93,12 +79,12 @@ export const FLOW_TEMPLATES: FlowTemplate[] = [
       { id: 't-app-6', type: NodeType.END, position: { x: 0, y: 600 }, data: { label: 'Complete', subLabel: 'Archive', icon: 'Archive', color: 'slate' } },
     ],
     edges: [
-      createEdge('t-app-1', 't-app-2'),
-      createEdge('t-app-2', 't-app-3'),
-      createEdge('t-app-3', 't-app-4', 'Yes'),
-      createEdge('t-app-3', 't-app-5', 'No'),
-      createEdge('t-app-4', 't-app-6'),
-      createEdge('t-app-5', 't-app-1', 'Resubmit'),
+      createDefaultEdge('t-app-1', 't-app-2'),
+      createDefaultEdge('t-app-2', 't-app-3'),
+      createDefaultEdge('t-app-3', 't-app-4', 'Yes'),
+      createDefaultEdge('t-app-3', 't-app-5', 'No'),
+      createDefaultEdge('t-app-4', 't-app-6'),
+      createDefaultEdge('t-app-5', 't-app-1', 'Resubmit'),
     ]
   }
 ];

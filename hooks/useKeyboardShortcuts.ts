@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ShortcutHandlers {
   selectedNodeId: string | null;
@@ -9,6 +9,9 @@ interface ShortcutHandlers {
   redo: () => void;
   duplicateNode: (id: string) => void;
   selectAll: () => void;
+  onCommandBar: () => void;
+  onSearch: () => void;
+  onShortcutsHelp: () => void;
 }
 
 export const useKeyboardShortcuts = ({
@@ -20,9 +23,41 @@ export const useKeyboardShortcuts = ({
   redo,
   duplicateNode,
   selectAll,
+  onCommandBar,
+  onSearch,
+  onShortcutsHelp,
 }: ShortcutHandlers) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+
+      const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+      const isShift = e.shiftKey;
+
+      // Command Bar (Cmd+K)
+      if (isCmdOrCtrl && e.key === 'k') {
+        e.preventDefault();
+        onCommandBar();
+        return;
+      }
+
+      // Search (Cmd+F)
+      if (isCmdOrCtrl && e.key === 'f') {
+        e.preventDefault();
+        onSearch();
+        return;
+      }
+
+      // Help (?) - Shift+/
+      if (e.key === '?' || (isShift && e.key === '/')) {
+        // Only if not typing in input
+        const tag = (document.activeElement as HTMLElement)?.tagName;
+        const isEditable = tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement as HTMLElement)?.isContentEditable;
+        if (!isEditable) {
+          e.preventDefault();
+          onShortcutsHelp();
+        }
+      }
+
       // Delete
       if (e.key === 'Delete' || e.key === 'Backspace') {
         const tag = (document.activeElement as HTMLElement)?.tagName;
@@ -38,35 +73,40 @@ export const useKeyboardShortcuts = ({
       }
 
       // Undo / Redo
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+      if (isCmdOrCtrl && e.key === 'z') {
         e.preventDefault();
-        if (e.shiftKey) {
+        if (isShift) {
           redo();
         } else {
           undo();
         }
       }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+      if (isCmdOrCtrl && e.key === 'y') {
         e.preventDefault();
         redo();
       }
 
       // Duplicate
-      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+      if (isCmdOrCtrl && e.key === 'd') {
         e.preventDefault();
         if (selectedNodeId) duplicateNode(selectedNodeId);
       }
 
       // Select All
-      if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+      if (isCmdOrCtrl && e.key === 'a') {
         e.preventDefault();
-        if (document.activeElement === document.body) {
+        // Only if focus is body or canvas (not inputs)
+        const tag = (document.activeElement as HTMLElement)?.tagName;
+        if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
           selectAll();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedNodeId, selectedEdgeId, deleteNode, deleteEdge, undo, redo, duplicateNode, selectAll]);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedNodeId, selectedEdgeId, deleteNode, deleteEdge, undo, redo, duplicateNode, selectAll, onCommandBar, onSearch, onShortcutsHelp]);
 };

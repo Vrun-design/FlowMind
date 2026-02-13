@@ -1,18 +1,16 @@
 import { useCallback, useRef } from 'react';
-import { Node, Edge, getRectOfNodes } from 'reactflow';
+import { Node, Edge, getRectOfNodes, useReactFlow } from 'reactflow';
 import { toPng, toJpeg } from 'html-to-image';
+import { useFlowStore } from '../store';
 
 import { useToast } from '../components/ui/ToastContext';
 
 export const useFlowExport = (
-  nodes: Node[],
-  edges: Edge[],
-  setNodes: (nodes: Node[]) => void,
-  setEdges: (edges: Edge[]) => void,
   recordHistory: () => void,
-  fitView: (opts?: any) => void,
   reactFlowWrapper: React.RefObject<HTMLDivElement>
 ) => {
+  const { nodes, edges, setNodes, setEdges } = useFlowStore();
+  const { fitView } = useReactFlow();
   const { addToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 

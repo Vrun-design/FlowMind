@@ -19,6 +19,11 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, '.'),
       }
     },
-    base: '/FlowMind/',
+    base: mode === 'production' ? '/FlowMind/' : '/',
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: './vitest.setup.ts',
+    },
   };
 });

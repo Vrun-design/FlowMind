@@ -1,21 +1,17 @@
 import { useState, useCallback } from 'react';
-import { Node, Edge } from 'reactflow';
-
 import { FlowHistoryState } from '../types';
+import { useFlowStore } from '../store';
 
 const MAX_HISTORY = 20;
 
-export const useFlowHistory = (
-  nodes: Node[],
-  edges: Edge[],
-  setNodes: (nodes: Node[]) => void,
-  setEdges: (edges: Edge[]) => void
-) => {
+export const useFlowHistory = () => {
+  const { nodes, edges, setNodes, setEdges } = useFlowStore();
+
   const [past, setPast] = useState<FlowHistoryState[]>([]);
   const [future, setFuture] = useState<FlowHistoryState[]>([]);
 
   const recordHistory = useCallback(() => {
-    setPast((old) => [...old.slice(-MAX_HISTORY), { nodes, edges }]);
+    setPast((old) => [...old, { nodes, edges }].slice(-MAX_HISTORY));
     setFuture([]);
   }, [nodes, edges]);
 
@@ -32,10 +28,12 @@ export const useFlowHistory = (
     if (future.length === 0) return;
     const next = future[0];
     setFuture((old) => old.slice(1));
-    setPast((old) => [...old, { nodes, edges }]);
+    setPast((old) => [...old, { nodes, edges }].slice(-MAX_HISTORY)); // Ensure limit on redo too
     setNodes(next.nodes);
     setEdges(next.edges);
   }, [future, nodes, edges, setNodes, setEdges]);
 
+  // Expose setPast/setFuture for AutoSave and Tab switching
+  // Ideally these should also be in store or handled differently, but for now we expose them.
   return { past, future, setPast, setFuture, recordHistory, undo, redo, canUndo: past.length > 0, canRedo: future.length > 0 };
 };
