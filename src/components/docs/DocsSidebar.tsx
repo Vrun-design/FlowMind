@@ -36,8 +36,8 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClos
             </div>
 
             <nav className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
-                {docsNavigation.map((section) => (
-                    <div key={section.title}>
+                {docsNavigation.map((section, idx) => (
+                    <div key={`${section.title}-${idx}`}>
                         <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">
                             {section.title}
                         </h3>

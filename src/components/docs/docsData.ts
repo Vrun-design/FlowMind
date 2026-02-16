@@ -10,13 +10,6 @@ export type DocItem = {
 
 export const docsNavigation: DocSection[] = [
     {
-        title: 'Announcements',
-        items: [
-            { title: 'V1 Beta Launch', slug: 'v1-beta-launch' },
-            { title: 'Future Roadmap', slug: 'roadmap' },
-        ],
-    },
-    {
         title: 'Getting Started',
         items: [
             { title: 'Introduction', slug: 'introduction' },
@@ -48,6 +41,13 @@ export const docsNavigation: DocSection[] = [
             { title: 'Exporting', slug: 'exporting' },
             { title: 'Keyboard Shortcuts', slug: 'keyboard-shortcuts' },
             { title: 'Theming', slug: 'theming' },
+        ],
+    },
+    {
+        title: 'Announcements',
+        items: [
+            { title: 'V1 Beta Launch', slug: 'v1-beta-launch' },
+            { title: 'Future Roadmap', slug: 'roadmap' },
         ],
     },
 ];

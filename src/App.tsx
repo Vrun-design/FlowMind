@@ -11,7 +11,7 @@ import { HomePage } from './components/HomePage';
 import { LandingPage } from './components/LandingPage';
 import { DocsLayout } from './components/docs/DocsLayout';
 import { DocsPage } from './components/docs/DocsPage';
-import { WelcomeModal } from './components/WelcomeModal';
+
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 
 function FlowEditorWrapper({ onGoHome }: { onGoHome: () => void }): React.JSX.Element {
@@ -114,7 +114,7 @@ function App(): React.JSX.Element {
             <Route path=":slug" element={<DocsPage />} />
           </Route>
         </Routes>
-        <WelcomeModal />
+
         <KeyboardShortcutsModal />
       </ReactFlowProvider>
     </Router>

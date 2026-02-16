@@ -2,7 +2,11 @@ import React from 'react';
 import { Check, ArrowRight, Heart, Code2 } from 'lucide-react';
 import { Button } from './Button';
 
-export function PricingSection(): React.ReactElement {
+interface PricingSectionProps {
+    onLaunch: () => void;
+}
+
+export function PricingSection({ onLaunch }: PricingSectionProps): React.ReactElement {
     return (
         <section id="pricing" className="py-24 md:py-32 bg-white relative overflow-hidden">
             <div className="container mx-auto px-6">
@@ -49,7 +53,10 @@ export function PricingSection(): React.ReactElement {
                                         </div>
                                         <p className="text-xs font-mono text-brand-muted uppercase tracking-wider mb-8">Unlimited Usage</p>
 
-                                        <Button className="w-full h-12 text-sm flex items-center justify-center gap-2 group">
+                                        <Button
+                                            className="w-full h-12 text-sm flex items-center justify-center gap-2 group"
+                                            onClick={onLaunch}
+                                        >
                                             <span>Get Started</span>
                                             <ArrowRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform" />
                                         </Button>

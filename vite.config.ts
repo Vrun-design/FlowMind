@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
       }
     },
-    base: './',
+    base: '/',
     test: {
       globals: true,
       environment: 'jsdom',

@@ -112,11 +112,11 @@ export function FinalCTASection({ onLaunch }: FinalCTASectionProps): React.React
 
                     {/* Footer Links - Light Mode */}
                     <div className="mt-12 flex items-center gap-6 text-sm text-brand-secondary">
-                        <a href="https://github.com/Vrun-design/FlowMind" target="_blank" rel="noreferrer" className="hover:text-brand-primary transition-colors">Documentation</a>
+                        <a href="#/docs" className="hover:text-brand-primary transition-colors">Documentation</a>
                         <span className="opacity-30">•</span>
                         <a href="https://github.com/Vrun-design/FlowMind" target="_blank" rel="noreferrer" className="hover:text-brand-primary transition-colors">GitHub</a>
                         <span className="opacity-30">•</span>
-                        <a href="#" className="hover:text-brand-primary transition-colors">Discord</a>
+                        <a href="#/docs/roadmap" className="hover:text-brand-primary transition-colors">Roadmap</a>
                     </div>
 
                 </div>

@@ -12,6 +12,7 @@ import { GeneralSettings } from './SettingsModal/GeneralSettings';
 import { ShortcutsSettings } from './SettingsModal/ShortcutsSettings';
 import { FlowSnapshot } from '@/lib/types';
 import { SidebarItem } from './ui/SidebarItem';
+import { WelcomeModal } from './WelcomeModal';
 
 
 interface HomePageProps {
@@ -262,6 +263,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     </div>
                 )}
             </main>
+            <WelcomeModal />
         </div>
     );
 };

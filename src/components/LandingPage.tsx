@@ -93,13 +93,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
 
                 <FigmaSection />
                 <UseCases />
-                <PricingSection />
+                <PricingSection onLaunch={onLaunch} />
                 <Testimonials />
                 <FinalCTASection onLaunch={onLaunch} />
 
                 {/* Footer Banner */}
                 <div className="bg-brand-primary text-white py-2.5 text-center font-medium text-xs tracking-wide">
-                    🚀 We are shipping daily. <span className="underline cursor-pointer opacity-90 hover:opacity-100">Check the Changelog.</span>
+                    🚀 We are shipping daily. <a href="#/docs/v1-beta-launch" className="underline cursor-pointer opacity-90 hover:opacity-100 ml-1">Check the Changelog.</a>
                 </div>
             </main>
             <Footer onLaunch={onLaunch} />

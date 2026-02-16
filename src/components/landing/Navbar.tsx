@@ -80,7 +80,7 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
               onClick={() => window.open("https://github.com/Vrun-design/FlowMind", "_blank")}
             >
               <Github className="w-4 h-4 mr-2" />
-              <span>Star</span>
+              <span>Github</span>
             </Button>
 
             <Button
