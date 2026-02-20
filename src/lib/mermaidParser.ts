@@ -19,13 +19,15 @@ const DEFAULT_EDGE_OPTIONS = {
     labelBgBorderRadius: 4,
 };
 
-const createDefaultEdge = (source: string, target: string, label?: string, id?: string) => ({
-    id: id || `e-${source}-${target}-${Date.now()}`,
-    source,
-    target,
-    label,
-    ...DEFAULT_EDGE_OPTIONS,
-});
+function createDefaultEdge(source: string, target: string, label?: string, id?: string) {
+    return {
+        id: id || `e-${source}-${target}-${Date.now()}`,
+        source,
+        target,
+        label,
+        ...DEFAULT_EDGE_OPTIONS,
+    };
+}
 
 // ---- Inlined node color defaults (from app theme) ----
 const NODE_TYPE_DEFAULTS: Record<string, string> = {
@@ -36,8 +38,9 @@ const NODE_TYPE_DEFAULTS: Record<string, string> = {
     process: 'slate',
 };
 
-const getDefaultColor = (type: string): string =>
-    NODE_TYPE_DEFAULTS[type] || 'slate';
+function getDefaultColor(type: string): string {
+    return NODE_TYPE_DEFAULTS[type] || 'slate';
+}
 
 export interface ParseResult {
     nodes: FlowNode[];
@@ -294,7 +297,7 @@ function parseStyleString(styleStr: string): Record<string, string> {
 
 // ---- Main parser ----
 
-export const parseMermaid = (input: string): ParseResult => {
+export function parseMermaid(input: string): ParseResult {
     let processed = input.replace(/\r\n/g, '\n');
     processed = normalizeMultilineStrings(processed);
     processed = normalizeEdgeLabels(processed);
@@ -397,7 +400,7 @@ export const parseMermaid = (input: string): ParseResult => {
                 label = stateGroupMatch![1];
             }
 
-            nodesMap.set(id, { id, label, type: 'group', parentId: parentStack[parentStack.length - 1] });
+            nodesMap.set(id, { id, label, type: 'section', parentId: parentStack[parentStack.length - 1] });
             parentStack.push(id);
             continue;
         }
@@ -497,7 +500,7 @@ export const parseMermaid = (input: string): ParseResult => {
         }
 
         // Apply Group Styling
-        if (n.type === 'group') {
+        if (n.type === 'section') {
             flowNode.className = 'bg-slate-50/50 border-2 border-dashed border-slate-300 rounded-lg';
             flowNode.style = { width: 600, height: 400 }; // Default size, user resizes or layout engine handles
         }

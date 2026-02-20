@@ -46,7 +46,7 @@ const NODE_TYPE_MAP: Record<string, string> = {
 
 // --- Helpers ---
 
-const parseAttributes = (text: string): Record<string, any> => {
+function parseAttributes(text: string): Record<string, any> {
     const attributes: Record<string, any> = {};
     if (!text) return attributes;
 
@@ -83,7 +83,7 @@ const parseAttributes = (text: string): Record<string, any> => {
 
 // --- Parser ---
 
-export const parseFlowMindDSL = (input: string): DSLResult => {
+export function parseFlowMindDSL(input: string): DSLResult {
     const dslNodes: DSLNode[] = [];
     const dslEdges: DSLEdge[] = [];
     const metadata: Record<string, any> = { direction: 'TB' };
@@ -229,7 +229,7 @@ export const parseFlowMindDSL = (input: string): DSLResult => {
                 label: n.label,
                 ...n.attributes
             },
-            parentId: n.parentId,
+            parentNode: n.parentId,
             extent: n.parentId ? 'parent' : undefined
         });
         createdNodeIds.add(n.id);

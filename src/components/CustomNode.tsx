@@ -7,7 +7,7 @@ import MemoizedMarkdown from './MemoizedMarkdown';
 import { NODE_COLOR_PALETTE, NODE_EXPORT_COLORS } from '../theme';
 import { useDesignSystem } from '../hooks/useDesignSystem';
 
-const getDefaults = (type: string) => {
+function getDefaults(type: string): { color: string; icon: string | null; shape: 'rounded' | 'diamond' | 'rectangle' | 'capsule' | 'hexagon' | 'parallelogram' | 'triangle' | 'cylinder' | 'circle' | 'ellipse' } {
   switch (type) {
     case 'start': return { color: 'emerald', icon: null, shape: 'rounded' };
     case 'end': return { color: 'red', icon: null, shape: 'rounded' };
@@ -18,7 +18,7 @@ const getDefaults = (type: string) => {
   }
 }
 
-const CustomNode = ({ data, type, selected }: NodeProps<NodeData>) => {
+function CustomNode({ data, type, selected }: NodeProps<NodeData>): React.ReactElement {
   const designSystem = useDesignSystem();
 
   const defaults = getDefaults(type || 'process');
@@ -58,7 +58,24 @@ const CustomNode = ({ data, type, selected }: NodeProps<NodeData>) => {
 
   const fontSize = data.fontSize || '14';
   const isNumericSize = !isNaN(Number(fontSize));
-  const fontSizeClass = isNumericSize ? '' : (fontSize === 'small' ? 'text-xs' : fontSize === 'medium' ? 'text-sm' : fontSize === 'large' ? 'text-base' : 'text-lg');
+
+  let fontSizeClass = '';
+  if (!isNumericSize) {
+    switch (fontSize) {
+      case 'small':
+        fontSizeClass = 'text-xs';
+        break;
+      case 'medium':
+        fontSizeClass = 'text-sm';
+        break;
+      case 'large':
+        fontSizeClass = 'text-base';
+        break;
+      default:
+        fontSizeClass = 'text-lg';
+        break;
+    }
+  }
   const fontSizeStyle = isNumericSize ? { fontSize: fontSize + 'px' } : {};
 
   // Layout alignment: Dynamic
@@ -66,7 +83,7 @@ const CustomNode = ({ data, type, selected }: NodeProps<NodeData>) => {
   const hasIcon = IconComponent || data.customIconUrl;
 
   // -- Shape Rendering Logic -- //
-  const getShapeSVG = () => {
+  function getShapeSVG(): React.ReactElement | null {
     const strokeColor = exportColors.border;
     const fillColor = exportColors.bg;
 
@@ -104,15 +121,8 @@ const CustomNode = ({ data, type, selected }: NodeProps<NodeData>) => {
   const isComplexShape = ['diamond', 'hexagon', 'parallelogram', 'cylinder', 'circle', 'ellipse'].includes(activeShape);
   const isCircular = activeShape === 'circle';
 
-  // CSS classes for standard shapes
-  // If we are using Design System, we might want to override these defaults
-  const borderRadiusClass = !isComplexShape ? (
-    activeShape === 'rectangle' ? 'rounded-sm' :
-      activeShape === 'capsule' ? 'rounded-[2rem]' : 'rounded-xl'
-  ) : '';
-
   // Calculate Border Radius from Design System if shape is 'rounded' (default)
-  const getBorderRadius = () => {
+  function getBorderRadius(): string | number {
     if (isComplexShape) return '0';
     if (activeShape === 'capsule') return '9999px';
     if (activeShape === 'rectangle') return '4px'; // Or 0
@@ -181,14 +191,14 @@ const CustomNode = ({ data, type, selected }: NodeProps<NodeData>) => {
           {/* Icon Area */}
           <div className="flex items-center gap-1.5 shrink-0 mb-2">
             {data.customIconUrl && (
-              <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center border border-black/5 shadow-sm overflow-hidden ${style.iconBg}`}>
-                <img src={data.customIconUrl} alt="icon" className="w-6 h-6 object-contain" />
+              <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border border-black/5 shadow-sm overflow-hidden ${style.iconBg}`}>
+                <img src={data.customIconUrl} alt="icon" className="w-5 h-5 object-contain" />
               </div>
             )}
 
             {IconComponent && (
-              <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center border border-black/5 shadow-sm ${style.iconBg}`}>
-                <IconComponent className={`w-5 h-5 ${style.iconColor}`} />
+              <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border border-black/5 shadow-sm ${style.iconBg}`}>
+                <IconComponent className={`w-4 h-4 ${style.iconColor}`} />
               </div>
             )}
           </div>
@@ -208,7 +218,7 @@ const CustomNode = ({ data, type, selected }: NodeProps<NodeData>) => {
             </div>
             {data.subLabel && (
               <div
-                className="text-xs text-slate-600 mt-1 leading-normal markdown-content break-words"
+                className="text-[10px] text-slate-500 mt-1 leading-snug markdown-content break-words line-clamp-2"
                 style={{
                   fontWeight: 'normal',
                   fontStyle: 'normal',

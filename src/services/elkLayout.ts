@@ -127,7 +127,7 @@ export async function getElkLayout(
 
     // 2. Build Hierarchy
     const buildElkNode = (node: Node): ElkNode => {
-        const children = nodes.filter(n => n.parentId === node.id);
+        const children = nodes.filter(n => n.parentNode === node.id);
 
         // Better estimation for unmeasured nodes (e.g. fresh from AI)
         let w = (node as any).measured?.width ?? node.width ?? (node.data as any)?.width;
@@ -155,7 +155,7 @@ export async function getElkLayout(
         };
     };
 
-    const topLevelNodes = nodes.filter(n => !n.parentId);
+    const topLevelNodes = nodes.filter(n => !n.parentNode);
 
     const elkGraph: ElkNode = {
         id: 'root',

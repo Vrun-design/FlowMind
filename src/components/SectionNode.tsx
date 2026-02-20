@@ -8,7 +8,7 @@ import { SECTION_COLOR_PALETTE } from '../theme';
 
 
 
-const SectionNode = ({ data, selected }: NodeProps<NodeData>) => {
+function SectionNode({ data, selected }: NodeProps<NodeData>): React.ReactElement {
   const color = data.color || 'blue';
   const theme = SECTION_COLOR_PALETTE[color] || SECTION_COLOR_PALETTE.blue;
   const Icon = data.icon && ICON_MAP[data.icon] ? ICON_MAP[data.icon] : Group;
@@ -33,13 +33,12 @@ const SectionNode = ({ data, selected }: NodeProps<NodeData>) => {
           borderColor: theme.border,
           minWidth: 350,
           minHeight: 250,
-          pointerEvents: 'none',
         }}
       >
         {/* Title Bar */}
         <div
-          className="flex items-center gap-2 px-4 py-3 rounded-t-2xl"
-          style={{ borderBottom: `1px dashed ${theme.border}`, pointerEvents: 'auto' }}
+          className="flex items-center gap-2 px-4 py-3 rounded-t-2xl cursor-grab active:cursor-grabbing"
+          style={{ borderBottom: `1px dashed ${theme.border}` }}
         >
           <Icon className="w-4 h-4" style={{ color: theme.title }} />
           <span
