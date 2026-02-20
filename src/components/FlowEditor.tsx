@@ -54,9 +54,9 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
     // Command Bar State
     const [isCommandBarOpen, setIsCommandBarOpen] = useState(false);
 
-    const [commandBarView, setCommandBarView] = useState<'root' | 'ai' | 'mermaid' | 'flowmind' | 'templates' | 'search' | 'layout' | 'design-system'>('root');
+    const [commandBarView, setCommandBarView] = useState<'root' | 'ai' | 'mermaid' | 'flowmind' | 'templates' | 'search' | 'layout' | 'design-system' | 'wireframes'>('root');
 
-    const openCommandBar = (view: 'root' | 'ai' | 'mermaid' | 'flowmind' | 'templates' | 'search' | 'layout' | 'design-system' = 'root') => {
+    const openCommandBar = (view: 'root' | 'ai' | 'mermaid' | 'flowmind' | 'templates' | 'search' | 'layout' | 'design-system' | 'wireframes' = 'root') => {
         setCommandBarView(view);
         setIsCommandBarOpen(true);
     };
@@ -326,6 +326,7 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
                     onAddSection={handleAddSection}
                     onAddText={handleAddTextNode}
                     onAddImage={handleAddImage}
+                    onAddWireframes={() => openCommandBar('wireframes')}
                     onUndo={undo}
                     onRedo={redo}
                     onLayout={() => openCommandBar('layout')}

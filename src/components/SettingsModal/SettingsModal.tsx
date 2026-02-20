@@ -27,19 +27,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
     if (!isOpen) return null;
 
     return createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200 p-4 sm:p-6">
             <div
-                className="bg-white/95 backdrop-blur-xl w-full max-w-3xl h-[80vh] rounded-[calc(var(--brand-radius)*1.5)] shadow-2xl border border-white/20 ring-1 ring-black/5 flex overflow-hidden animate-in zoom-in-95 duration-200"
+                className="bg-white/95 backdrop-blur-xl w-full max-w-3xl max-h-full md:h-[80vh] rounded-[calc(var(--brand-radius)*1.5)] shadow-2xl border border-white/20 ring-1 ring-black/5 flex flex-col md:flex-row overflow-hidden animate-in zoom-in-95 duration-200"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Sidebar */}
-                <div className="w-64 bg-slate-50/50 border-r border-slate-200/60 p-4 flex flex-col gap-1">
-                    <h2 className="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Settings</h2>
+                <div className="w-full md:w-64 bg-slate-50/50 border-b md:border-b-0 md:border-r border-slate-200/60 p-2 md:p-4 flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-visible items-center md:items-stretch custom-scrollbar shrink-0">
+                    <h2 className="hidden md:block px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Settings</h2>
 
                     <SidebarItem
                         icon={<Settings className="w-4 h-4" />}
                         isActive={activeTab === 'general'}
                         onClick={() => setActiveTab('general')}
+                        className="whitespace-nowrap w-auto md:w-full px-4 md:px-3 py-2 md:py-2.5 flex-none"
                     >
                         General
                     </SidebarItem>
@@ -48,6 +49,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
                         icon={<Sparkles className="w-4 h-4" />}
                         isActive={activeTab === 'ai'}
                         onClick={() => setActiveTab('ai')}
+                        className="whitespace-nowrap w-auto md:w-full px-4 md:px-3 py-2 md:py-2.5 flex-none"
                     >
                         Flowpilot AI
                     </SidebarItem>
@@ -56,11 +58,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
                         icon={<Keyboard className="w-4 h-4" />}
                         isActive={activeTab === 'shortcuts'}
                         onClick={() => setActiveTab('shortcuts')}
+                        className="whitespace-nowrap w-auto md:w-full px-4 md:px-3 py-2 md:py-2.5 flex-none"
                     >
                         Shortcuts
                     </SidebarItem>
 
-                    <div className="mt-auto px-4 py-4 border-t border-slate-100">
+                    <div className="hidden md:block mt-auto px-4 py-4 border-t border-slate-100">
                         <div className="text-xs text-slate-400">
                             Running {brandConfig.appName}
                         </div>
@@ -68,7 +71,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 flex flex-col min-h-0 bg-white/50">
+                <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-white/50">
                     <div className="flex items-center justify-between p-4 border-b border-slate-100">
                         <h2 className="text-lg font-semibold text-slate-800">
                             {{

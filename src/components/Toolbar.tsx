@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Undo2, Redo2, MousePointer2, Hand, Wand2, Plus,
   Square, StickyNote, Group, Type, Layout, Workflow,
-  Trash2, Image as ImageIcon, Palette, Sparkles, X
+  Trash2, Image as ImageIcon, Palette, Sparkles, X, AppWindow
 } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Tooltip } from './Tooltip';
@@ -25,6 +25,7 @@ interface ToolbarProps {
   onAddSection: (position: { x: number, y: number }) => void;
   onAddText: (position: { x: number, y: number }) => void;
   onAddImage: (imageUrl: string, position: { x: number, y: number }) => void;
+  onAddWireframes: () => void;
   onTemplates: () => void;
   onLayout: () => void;
 
@@ -49,6 +50,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onAddSection,
   onAddText,
   onAddImage,
+  onAddWireframes,
   onTemplates,
   onLayout,
 
@@ -181,6 +183,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               </Button>
               <Button onClick={() => { onAddText(getCenter()); setShowAddMenu(false); }} variant="ghost" className="w-full justify-start h-9 px-3 text-sm rounded-[var(--radius-sm)] hover:bg-slate-100 transition-colors" icon={<Type className="w-4 h-4 mr-2" />}>
                 Text
+              </Button>
+              <div className="h-px bg-slate-100 my-1 mx-2" />
+              <Button onClick={() => { onAddWireframes(); setShowAddMenu(false); }} variant="ghost" className="w-full justify-start h-9 px-3 text-sm rounded-[var(--radius-sm)] hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] transition-colors" icon={<AppWindow className="w-4 h-4 mr-2" />}>
+                Wireframes
               </Button>
               <div className="h-px bg-slate-100 my-1 mx-2" />
               <Button onClick={() => fileInputRef.current?.click()} variant="ghost" className="w-full justify-start h-9 px-3 text-sm rounded-[var(--radius-sm)] hover:bg-pink-50 hover:text-pink-600 transition-colors" icon={<ImageIcon className="w-4 h-4 mr-2" />}>

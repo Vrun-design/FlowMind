@@ -281,3 +281,44 @@ export async function generateDiagramFromPrompt(
 
   return generateDiagramFromChat([], prompt, contextParts || undefined, imageBase64, userApiKey);
 }
+
+export async function chatWithDocsGemini(
+  history: ChatMessage[],
+  newMessage: string,
+  docsContext: string,
+  userApiKey: string,
+  modelId?: string
+): Promise<string> {
+  const ai = new GoogleGenAI({ apiKey: userApiKey });
+
+  const systemInstruction = `
+You are an expert support assistant for OpenFlowKit, a local-first node-based diagramming tool.
+Your job is to answer user questions accurately based ONLY on the provided documentation.
+Be helpful, concise, and use formatting (bold, code blocks) to make your answers easy to read.
+If the answer is not in the documentation, politely inform the user that you don't know based on the current docs.
+
+DOCUMENTATION REPOSITORY:
+---
+${docsContext}
+---
+`;
+
+  const newMessageContent = {
+    role: 'user' as const,
+    parts: [{ text: newMessage }]
+  };
+
+  const contents = [...history, newMessageContent];
+
+  const response = await ai.models.generateContent({
+    model: modelId || GEMINI_DEFAULT_MODEL,
+    contents,
+    config: {
+      systemInstruction,
+    }
+  });
+
+  if (!response.text) throw new Error("No response from AI");
+
+  return response.text;
+}

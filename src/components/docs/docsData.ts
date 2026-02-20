@@ -10,6 +10,12 @@ export type DocItem = {
 
 export const docsNavigation: DocSection[] = [
     {
+        title: 'AI Assistant',
+        items: [
+            { title: 'Ask Flowpilot', slug: 'ask-flowpilot' },
+        ],
+    },
+    {
         title: 'Getting Started',
         items: [
             { title: 'Introduction', slug: 'introduction' },

@@ -257,7 +257,7 @@ export function AISettings(): React.ReactElement {
     }
 
     return (
-        <div className="space-y-8 pb-4 animate-in fade-in duration-200">
+        <div className="space-y-8 pb-4 animate-in fade-in duration-200 w-full min-w-0">
             {/* Header Text */}
             <div className="space-y-1">
                 <h3 className="text-base font-semibold text-slate-800">Flowpilot Settings</h3>
@@ -395,7 +395,7 @@ export function AISettings(): React.ReactElement {
                                 <p className="text-[11px] text-slate-600 leading-snug">
                                     Any <span className="font-semibold text-slate-800">OpenAI-compatible</span> API endpoint — local or remote. Great for:
                                 </p>
-                                <div className="grid grid-cols-3 gap-1.5 mt-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 mt-2">
                                     {[
                                         { name: 'Ollama', hint: 'Local · Free' },
                                         { name: 'LM Studio', hint: 'Local · Free' },

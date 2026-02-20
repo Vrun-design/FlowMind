@@ -10,6 +10,7 @@ import { DocsBreadcrumbs } from './DocsBreadcrumbs';
 import { DocsFooter } from './DocsFooter';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { useFlowStore } from '../../store';
+import { DocsChatbot } from './DocsChatbot';
 
 // Helper to inject dynamic content and fix placeholders
 const processContent = (content: string, appName: string) => {
@@ -99,15 +100,19 @@ export const DocsPage: React.FC = () => {
 
     return (
         <div className="animate-in fade-in duration-300 min-h-[60vh] flex gap-12">
-            <div className="flex-1 min-w-0">
-                <DocsBreadcrumbs />
+            <div className={`flex-1 min-w-0 ${slug === 'ask-flowpilot' ? 'max-w-5xl mx-auto w-full' : ''}`}>
+                {slug !== 'ask-flowpilot' && (
+                    <>
+                        <DocsBreadcrumbs />
 
-                {/* Only show title if the content doesn't start with an H1 */
-                    (!content || !content.trim().startsWith('# ')) && (
-                        <h1 className="text-4xl font-extrabold mb-8 capitalize text-slate-900 tracking-tight leading-tight">
-                            {slug?.replace(/-/g, ' ')}
-                        </h1>
-                    )}
+                        {/* Only show title if the content doesn't start with an H1 */
+                            (!content || !content.trim().startsWith('# ')) && (
+                                <h1 className="text-4xl font-extrabold mb-8 capitalize text-slate-900 tracking-tight leading-tight">
+                                    {slug?.replace(/-/g, ' ')}
+                                </h1>
+                            )}
+                    </>
+                )}
 
                 {loading && (
                     <div className="flex items-center gap-2 text-slate-400 py-12">
@@ -127,7 +132,7 @@ export const DocsPage: React.FC = () => {
                     </div>
                 )}
 
-                {!loading && !error && content && (
+                {!loading && !error && content && slug !== 'ask-flowpilot' && (
                     <div className="mb-16">
                         <ReactMarkdown
                             components={MarkdownComponents}
@@ -139,30 +144,36 @@ export const DocsPage: React.FC = () => {
                     </div>
                 )}
 
-                {!loading && !error && <DocsFooter />}
+                {!loading && !error && slug === 'ask-flowpilot' && (
+                    <DocsChatbot />
+                )}
+
+                {!loading && !error && slug !== 'ask-flowpilot' && <DocsFooter />}
             </div>
 
-            <div className="hidden xl:block w-64 shrink-0">
-                <div className="sticky top-6">
-                    <h5 className="text-xs font-semibold text-slate-900 uppercase tracking-widest mb-4">On This Page</h5>
-                    <ul className="space-y-2 text-sm border-l border-slate-100">
-                        {toc.map((item, i) => (
-                            <li key={i}>
-                                <a
-                                    href={`#${item.id}`}
-                                    onClick={(e) => handleScroll(e, item.id)}
-                                    className={`
-                                        block pl-4 py-1 border-l -ml-px transition-colors cursor-pointer
-                                        ${item.level === 2 ? 'text-slate-600 hover:text-slate-900 hover:border-slate-300' : 'text-slate-400 hover:text-slate-700 pl-8 text-xs'}
-                                    `}
-                                >
-                                    {item.text}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
+            {slug !== 'ask-flowpilot' && (
+                <div className="hidden xl:block w-64 shrink-0">
+                    <div className="sticky top-6">
+                        <h5 className="text-xs font-semibold text-slate-900 uppercase tracking-widest mb-4">On This Page</h5>
+                        <ul className="space-y-2 text-sm border-l border-slate-100">
+                            {toc.map((item, i) => (
+                                <li key={i}>
+                                    <a
+                                        href={`#${item.id}`}
+                                        onClick={(e) => handleScroll(e, item.id)}
+                                        className={`
+                                            block pl-4 py-1 border-l -ml-px transition-colors cursor-pointer
+                                            ${item.level === 2 ? 'text-slate-600 hover:text-slate-900 hover:border-slate-300' : 'text-slate-400 hover:text-slate-700 pl-8 text-xs'}
+                                        `}
+                                    >
+                                        {item.text}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

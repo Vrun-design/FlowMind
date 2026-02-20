@@ -10,10 +10,10 @@ export const DocsLayout: React.FC = () => {
     const location = useLocation();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    // Redirect to introduction if at root /docs
+    // Redirect to AI Assistant if at root /docs
     useEffect(() => {
         if (location.pathname === '/docs' || location.pathname === '/docs/') {
-            navigate('/docs/introduction', { replace: true });
+            navigate('/docs/ask-flowpilot', { replace: true });
         }
     }, [location.pathname, navigate]);
 
