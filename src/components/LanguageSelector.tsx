@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, Check, ChevronDown } from 'lucide-react';
 import { useFlowStore } from '../store';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 
 interface Language {
   code: string;
@@ -24,10 +25,19 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'd
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
   const { setViewSettings } = useFlowStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { lang, slug } = useParams();
 
-  const changeLanguage = (languageCode: string) => {
-    i18n.changeLanguage(languageCode);
+  const changeLanguage = async (languageCode: string) => {
+    await i18n.changeLanguage(languageCode);
     setViewSettings({ language: languageCode });
+    
+    // If in docs, update URL with new language
+    if (location.pathname.startsWith('/docs') && slug) {
+      navigate(`/docs/${languageCode}/${slug}`, { replace: true });
+    }
+    
     setIsOpen(false);
   };
 

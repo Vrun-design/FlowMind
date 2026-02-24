@@ -20,6 +20,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
+    lng: 'en', // Default language is English
     debug: false,
     interpolation: {
       escapeValue: false,
@@ -27,7 +28,14 @@ i18n
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
+      lookupLocalStorage: 'i18nextLng',
     },
+    react: {
+      useSuspense: false,
+      bindI18n: 'languageChanged loaded',
+      bindI18nStore: 'added removed',
+    },
+    load: 'languageOnly',
   });
 
 export default i18n;

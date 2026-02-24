@@ -17,7 +17,7 @@ export const DocsLayout: React.FC = () => {
     // Redirect to default language and page if at root /docs
     useEffect(() => {
         if (location.pathname === '/docs' || location.pathname === '/docs/') {
-            const currentLang = i18n.language || 'en';
+            const currentLang = i18n.language === 'en' || i18n.language === 'tr' ? i18n.language : 'en';
             navigate(`/docs/${currentLang}/ask-flowpilot`, { replace: true });
         }
     }, [location.pathname, navigate, i18n.language]);
