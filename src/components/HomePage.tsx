@@ -17,6 +17,7 @@ import { SidebarItem } from './ui/SidebarItem';
 import { WelcomeModal } from './WelcomeModal';
 import { LanguageSelector } from './LanguageSelector';
 import { trackEvent } from '../lib/analytics';
+import { useTranslation } from 'react-i18next';
 
 
 interface HomePageProps {
@@ -34,6 +35,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     activeTab: propActiveTab,
     onSwitchTab
 }) => {
+    const { t } = useTranslation();
     const { brandConfig } = useFlowStore();
     const { snapshots, deleteSnapshot } = useSnapshots();
     const [internalActiveTab, setInternalActiveTab] = useState<'home' | 'settings'>('home');
@@ -99,21 +101,21 @@ export const HomePage: React.FC<HomePageProps> = ({
                         isActive={activeTab === 'home'}
                         onClick={() => handleTabChange('home')}
                     >
-                        Home
+                        {t('nav.home', 'Home')}
                     </SidebarItem>
                     <SidebarItem
                         icon={<Settings className="w-4 h-4" />}
                         isActive={activeTab === 'settings'}
                         onClick={() => handleTabChange('settings')}
                     >
-                        Settings
+                        {t('nav.settings', 'Settings')}
                     </SidebarItem>
 
                     <SidebarItem
                         icon={<Book className="w-4 h-4" />}
                         to="#/docs"
                     >
-                        Documentation
+                        {t('nav.documentation', 'Documentation')}
                         <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity ml-auto" />
                     </SidebarItem>
                 </div>
@@ -136,8 +138,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                         {/* Header & Actions */}
                         <div className="flex items-end justify-between mb-12">
                             <div>
-                                <h1 className="text-2xl font-semibold text-slate-900 tracking-tight mb-1">Dashboard</h1>
-                                <p className="text-[var(--brand-secondary)] text-sm">Manage your flows and diagrams.</p>
+                                <h1 className="text-2xl font-semibold text-slate-900 tracking-tight mb-1">{t('home.title', 'Dashboard')}</h1>
+                                <p className="text-[var(--brand-secondary)] text-sm">{t('home.description', 'Manage your flows and diagrams.')}</p>
                             </div>
                             <div className="flex items-center gap-3">
 
@@ -148,7 +150,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                                     size="md"
                                     icon={<Plus className="w-4 h-4" />}
                                 >
-                                    Create New
+                                    {t('common.createNew', 'Create New')}
                                 </Button>
                             </div>
                         </div>
@@ -156,9 +158,9 @@ export const HomePage: React.FC<HomePageProps> = ({
                         {/* Recent Files */}
                         <section>
                             <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Recent Files</h2>
+                                <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('home.recentFiles', 'Recent Files')}</h2>
                                 {snapshots.length > 0 && (
-                                    <span className="text-xs text-slate-400">{snapshots.length} files</span>
+                                    <span className="text-xs text-slate-400">{snapshots.length} {t('home.files', 'files')}</span>
                                 )}
                             </div>
 
@@ -167,22 +169,22 @@ export const HomePage: React.FC<HomePageProps> = ({
                                     <div className="w-10 h-10 bg-[var(--brand-surface)] rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-slate-100">
                                         <Plus className="w-5 h-5 text-slate-400" />
                                     </div>
-                                    <h3 className="text-slate-900 font-medium text-sm mb-1">Create your first flow</h3>
-                                    <p className="text-[var(--brand-secondary)] text-xs">Start from scratch or import an existing diagram.</p>
+                                    <h3 className="text-slate-900 font-medium text-sm mb-1">{t('home.createFirstFlow', 'Create your first flow')}</h3>
+                                    <p className="text-[var(--brand-secondary)] text-xs">{t('home.startFromScratch', 'Start from scratch or import an existing diagram.')}</p>
                                     <div className="mt-6 flex items-center justify-center gap-3">
                                         <Button
                                             onClick={() => { trackEvent('import_json_flow'); onImportJSON(); }}
                                             variant="secondary"
                                             size="sm"
                                         >
-                                            Open File
+                                            {t('common.openFile', 'Open File')}
                                         </Button>
                                         <Button
                                             onClick={() => { trackEvent('create_new_flow'); onLaunch(); }}
                                             variant="primary"
                                             size="sm"
                                         >
-                                            Create New
+                                            {t('common.createNew', 'Create New')}
                                         </Button>
                                     </div>
                                 </div>
@@ -233,7 +235,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {activeTab === 'settings' && (
                     <div className="flex-1 flex flex-col h-screen overflow-hidden animate-in fade-in duration-300">
                         <header className="px-8 py-6 border-b border-slate-100 bg-[var(--brand-surface)]">
-                            <h1 className="text-xl font-bold text-slate-900 tracking-tight">Settings</h1>
+                            <h1 className="text-xl font-bold text-slate-900 tracking-tight">{t('settings.title', 'Settings')}</h1>
                         </header>
 
                         <div className="flex-1 flex min-h-0 bg-[var(--brand-surface)]">
@@ -243,31 +245,31 @@ export const HomePage: React.FC<HomePageProps> = ({
                                     isActive={activeSettingsTab === 'brand'}
                                     onClick={() => setActiveSettingsTab('brand')}
                                 >
-                                    Brand Kit
+                                    {t('settings.brand', 'Brand Kit')}
                                 </SidebarItem>
                                 <SidebarItem
                                     isActive={activeSettingsTab === 'general'}
                                     onClick={() => setActiveSettingsTab('general')}
                                 >
-                                    General
+                                    {t('settings.general', 'General')}
                                 </SidebarItem>
                                 <SidebarItem
                                     isActive={activeSettingsTab === 'ai'}
                                     onClick={() => setActiveSettingsTab('ai')}
                                 >
-                                    Flowpilot AI
+                                    {t('settings.ai', 'Flowpilot AI')}
                                 </SidebarItem>
                                 <SidebarItem
                                     isActive={activeSettingsTab === 'shortcuts'}
                                     onClick={() => setActiveSettingsTab('shortcuts')}
                                 >
-                                    Shortcuts
+                                    {t('settings.shortcuts', 'Shortcuts')}
                                 </SidebarItem>
                                 <SidebarItem
                                     isActive={activeSettingsTab === 'privacy'}
                                     onClick={() => setActiveSettingsTab('privacy')}
                                 >
-                                    Privacy
+                                    {t('settings.privacy', 'Privacy')}
                                 </SidebarItem>
                             </div>
 

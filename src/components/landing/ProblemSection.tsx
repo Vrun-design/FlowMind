@@ -1,7 +1,9 @@
 import React from 'react';
 import { Image, Lock, AlertTriangle, MousePointer2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function ProblemSection(): React.ReactElement {
+    const { t } = useTranslation();
     return (
         <section className="py-32 bg-[#111111] text-white relative overflow-hidden select-none">
             {/* Background Grid - Dark Mode */}
@@ -17,14 +19,14 @@ export function ProblemSection(): React.ReactElement {
                 <div className="mb-24 max-w-3xl">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 mb-8 font-mono text-[10px] uppercase tracking-widest font-bold">
                         <AlertTriangle className="w-3 h-3" />
-                        <span>The Problem</span>
+                        <span>{t('problem.badge')}</span>
                     </div>
                     <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-[0.9] tracking-tighter text-white">
-                        Why do diagrams <br />
-                        <span className="font-serif italic text-white/50 font-normal">always feel like a chore?</span>
+                        {t('problem.title')} <br />
+                        <span className="font-serif italic text-white/50 font-normal">{t('problem.subtitle')}</span>
                     </h2>
                     <p className="text-xl text-white/50 leading-relaxed max-w-2xl font-medium">
-                        We're designing complex systems with tools built for arts and crafts.
+                        {t('problem.description')}
                     </p>
                 </div>
 
@@ -57,9 +59,9 @@ export function ProblemSection(): React.ReactElement {
                             </div>
                         </div>
                         <div className="mt-8">
-                            <h3 className="text-xl font-bold mb-3 text-white">Pixel Purgatory</h3>
+                            <h3 className="text-xl font-bold mb-3 text-white">{t('problem.pixelPurgatory')}</h3>
                             <p className="text-sm text-white/40 leading-relaxed font-medium">
-                                Wasting hours aligning boxes by hand. One new service breaks your entire layout.
+                                {t('problem.pixelPurgatoryDesc')}
                             </p>
                         </div>
                     </div>
@@ -85,9 +87,9 @@ export function ProblemSection(): React.ReactElement {
                             </div>
                         </div>
                         <div className="mt-8">
-                            <h3 className="text-xl font-bold mb-3 text-white">The Screenshot Trap</h3>
+                            <h3 className="text-xl font-bold mb-3 text-white">{t('problem.screenshotTrap')}</h3>
                             <p className="text-sm text-white/40 leading-relaxed font-medium">
-                                Docs drift the moment you take the screenshot. Static assets are dead assets.
+                                {t('problem.screenshotTrapDesc')}
                             </p>
                         </div>
                     </div>
@@ -112,9 +114,9 @@ export function ProblemSection(): React.ReactElement {
                             </div>
                         </div>
                         <div className="mt-8">
-                            <h3 className="text-xl font-bold mb-3 text-white">Enterprise Beige</h3>
+                            <h3 className="text-xl font-bold mb-3 text-white">{t('problem.enterpriseBeige')}</h3>
                             <p className="text-sm text-white/40 leading-relaxed font-medium">
-                                Locked into rigid, generic templates. Your architecture is unique; your diagrams shouldn't look like clipart.
+                                {t('problem.enterpriseBeigeDesc')}
                             </p>
                         </div>
                     </div>

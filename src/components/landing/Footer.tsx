@@ -1,5 +1,6 @@
 import React from 'react';
 import { Github } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { OpenFlowLogo } from '../icons/OpenFlowLogo';
 
 interface FooterProps {
@@ -7,6 +8,7 @@ interface FooterProps {
 }
 
 export function Footer({ onLaunch }: FooterProps): React.ReactElement {
+  const { t } = useTranslation();
   return (
     <footer className="bg-white border-t border-brand-border py-12 select-none">
       <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -17,7 +19,7 @@ export function Footer({ onLaunch }: FooterProps): React.ReactElement {
           </div>
           <span className="font-bold text-brand-primary text-sm tracking-tight">OpenFlowKit</span>
           <span className="text-brand-border mx-2">/</span>
-          <span className="text-brand-secondary text-xs font-medium">MIT Licensed</span>
+          <span className="text-brand-secondary text-xs font-medium">{t('footer.mitLicensed')}</span>
         </div>
 
         <div className="flex items-center gap-8">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Terminal,
     Figma,
@@ -8,6 +9,7 @@ import {
 } from 'lucide-react';
 
 export function UseCases(): React.ReactElement {
+    const { t } = useTranslation();
     return (
         <section id="workflows" className="py-32 bg-[#050505] relative overflow-hidden text-white selection:bg-brand-blue/30 border-t border-white/5">
 
@@ -23,14 +25,14 @@ export function UseCases(): React.ReactElement {
                 <div className="flex flex-col items-center text-center mb-24 max-w-4xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/60 mb-8 font-mono text-[10px] uppercase tracking-widest font-bold">
                         <Workflow className="w-3 h-3" />
-                        <span>Workflows</span>
+                        <span>{t('workflows.badge')}</span>
                     </div>
                     <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 text-white leading-[0.9]">
-                        One engine. <br />
-                        <span className="font-serif italic font-normal text-white/50">Three native workflows.</span>
+                        {t('workflows.title')} <br />
+                        <span className="font-serif italic font-normal text-white/50">{t('workflows.subtitle')}</span>
                     </h2>
                     <p className="text-xl text-white/50 max-w-2xl leading-relaxed text-balance font-medium">
-                        OpenFlowKit adapts to the tool you are already using. No new tabs to open. No context switching.
+                        {t('workflows.description')}
                     </p>
                 </div>
 
@@ -45,10 +47,10 @@ export function UseCases(): React.ReactElement {
                             <div className="w-12 h-12 rounded-xl bg-cyan-950/30 flex items-center justify-center border border-cyan-500/20 text-cyan-400 mb-6 group-hover:scale-110 transition-transform">
                                 <Terminal className="w-6 h-6" />
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Engineering</h3>
-                            <p className="text-sm text-cyan-400 font-mono mb-4">DIAGRAM AS CODE</p>
+                            <h3 className="text-2xl font-bold text-white mb-2">{t('workflows.engineering')}</h3>
+                            <p className="text-sm text-cyan-400 font-mono mb-4">{t('workflows.diagramAsCode')}</p>
                             <p className="text-neutral-400 text-sm leading-relaxed mb-8">
-                                Write diagrams in our DSL or Mermaid.js syntax. Paste code, get a fully laid-out diagram. Export as JSON to version control.
+                                {t('workflows.engineeringDesc')}
                             </p>
 
                             {/* Visual: Mini Code Editor */}
@@ -75,10 +77,10 @@ export function UseCases(): React.ReactElement {
                             <div className="w-12 h-12 rounded-xl bg-violet-950/30 flex items-center justify-center border border-violet-500/20 text-violet-400 mb-6 group-hover:scale-110 transition-transform">
                                 <Figma className="w-6 h-6" />
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Design</h3>
-                            <p className="text-sm text-violet-400 font-mono mb-4">THE VISUAL LAYER</p>
+                            <h3 className="text-2xl font-bold text-white mb-2">{t('workflows.design')}</h3>
+                            <p className="text-sm text-violet-400 font-mono mb-4">{t('workflows.theVisualLayer')}</p>
                             <p className="text-neutral-400 text-sm leading-relaxed mb-8">
-                                Stop rebuilding screens. Copy from the canvas and paste into Figma as editable SVG and text layers.
+                                {t('workflows.designDesc')}
                             </p>
 
                             {/* Visual: Figma Canvas */}
@@ -109,10 +111,10 @@ export function UseCases(): React.ReactElement {
                             <div className="w-12 h-12 rounded-xl bg-amber-950/30 flex items-center justify-center border border-amber-500/20 text-amber-400 mb-6 group-hover:scale-110 transition-transform">
                                 <Share2 className="w-6 h-6" />
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Export & Share</h3>
-                            <p className="text-sm text-amber-400 font-mono mb-4">PIXEL-PERFECT OUTPUT</p>
+                            <h3 className="text-2xl font-bold text-white mb-2">{t('workflows.exportShare')}</h3>
+                            <p className="text-sm text-amber-400 font-mono mb-4">{t('workflows.pixelPerfectOutput')}</p>
                             <p className="text-neutral-400 text-sm leading-relaxed mb-8">
-                                Export diagrams as SVG, PNG, or PDF. Copy to clipboard and paste into Figma with editable layers. Save as JSON to share or version control.
+                                {t('workflows.exportShareDesc')}
                             </p>
 
                             {/* Visual: Export Formats */}
@@ -120,15 +122,15 @@ export function UseCases(): React.ReactElement {
                                 <div className="space-y-2.5">
                                     <div className="flex items-center gap-3 p-2 bg-white/5 rounded border border-white/5 group-hover:border-amber-500/20 transition-colors">
                                         <div className="w-6 h-6 bg-amber-500/10 rounded flex items-center justify-center text-[9px] text-amber-400 font-bold">SVG</div>
-                                        <div className="text-[10px] text-white/60 font-mono">Vector • Editable in Figma</div>
+                                        <div className="text-[10px] text-white/60 font-mono">{t('workflows.vectorEditable')}</div>
                                     </div>
                                     <div className="flex items-center gap-3 p-2 bg-white/5 rounded border border-white/5 group-hover:border-amber-500/20 transition-colors">
                                         <div className="w-6 h-6 bg-amber-500/10 rounded flex items-center justify-center text-[9px] text-amber-400 font-bold">PNG</div>
-                                        <div className="text-[10px] text-white/60 font-mono">Raster • High-res export</div>
+                                        <div className="text-[10px] text-white/60 font-mono">{t('workflows.rasterHighRes')}</div>
                                     </div>
                                     <div className="flex items-center gap-3 p-2 bg-white/5 rounded border border-white/5 group-hover:border-amber-500/20 transition-colors">
                                         <div className="w-6 h-6 bg-amber-500/10 rounded flex items-center justify-center text-[9px] text-amber-400 font-bold">JSON</div>
-                                        <div className="text-[10px] text-white/60 font-mono">Data • Save & restore flows</div>
+                                        <div className="text-[10px] text-white/60 font-mono">{t('workflows.dataSaveRestore')}</div>
                                     </div>
                                 </div>
                             </div>

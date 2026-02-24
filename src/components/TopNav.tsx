@@ -10,6 +10,7 @@ import { useFlowStore } from '../store';
 import { SettingsModal } from './SettingsModal/SettingsModal';
 import { trackEvent } from '../lib/analytics';
 import { LanguageSelector } from './LanguageSelector';
+import { useTranslation } from 'react-i18next';
 
 interface TopNavProps {
     showMiniMap: boolean;
@@ -64,6 +65,7 @@ export const TopNav: React.FC<TopNavProps> = ({
     onGoHome,
     onPlay,
 }) => {
+    const { t } = useTranslation();
     const { brandConfig } = useFlowStore();
     const isBeveled = brandConfig.ui.buttonStyle === 'beveled';
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -99,14 +101,14 @@ export const TopNav: React.FC<TopNavProps> = ({
                             <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setIsMenuOpen(false)} />
                             <div className="absolute top-full left-0 mt-3 w-56 bg-white/90 backdrop-blur-xl rounded-[var(--radius-lg)] shadow-2xl border border-white/50 ring-1 ring-black/5 p-2 flex flex-col gap-1 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
                                 <div className="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
-                                    Menu
+                                    {t('menu.title', 'Menu')}
                                 </div>
                                 <button
                                     onClick={() => { onGoHome(); setIsMenuOpen(false); }}
                                     className="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] rounded-[var(--radius-sm)] transition-all font-medium"
                                 >
                                     <Home className="w-4 h-4" />
-                                    Go to Dashboard
+                                    {t('menu.goToDashboard', 'Go to Dashboard')}
                                 </button>
                                 <div className="my-1 border-t border-slate-100" />
                                 <button
@@ -114,7 +116,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                                     className="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] rounded-[var(--radius-sm)] transition-all"
                                 >
                                     <Settings className="w-4 h-4" />
-                                    Canvas Settings
+                                    {t('menu.canvasSettings', 'Canvas Settings')}
                                 </button>
 
                             </div>
@@ -148,9 +150,9 @@ export const TopNav: React.FC<TopNavProps> = ({
                                         />
                                     </div>
                                 ) : (
-                                    <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--brand-primary-50)] rounded-[var(--radius-md)] border border-[var(--brand-primary-100)] opacity-80 hover:opacity-100 transition-opacity cursor-help" title="Upload a wide logo in Brand Settings to see it here">
+                                    <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--brand-primary-50)] rounded-[var(--radius-md)] border border-[var(--brand-primary-100)] opacity-80 hover:opacity-100 transition-opacity cursor-help" title={t('menu.uploadWideLogo', 'Upload a wide logo in Brand Settings to see it here')}>
                                         <OpenFlowLogo className="w-4 h-4" />
-                                        <span className="text-xs font-semibold whitespace-nowrap">Your Wide Logo</span>
+                                        <span className="text-xs font-semibold whitespace-nowrap">{t('menu.wideLogo', 'Your Wide Logo')}</span>
                                     </div>
                                 )}
                             </div>
@@ -166,7 +168,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                         {/* BETA Chip */}
                         {(brandConfig.ui.showBeta ?? true) && (
                             <div className="flex items-center justify-center px-1.5 py-0.5 rounded-full bg-[var(--brand-primary-50)] border border-[var(--brand-primary-200)]">
-                                <span className="text-[10px] font-extrabold text-[var(--brand-primary)] tracking-widest leading-none">BETA</span>
+                                <span className="text-[10px] font-extrabold text-[var(--brand-primary)] tracking-widest leading-none">{t('menu.beta', 'BETA')}</span>
                             </div>
                         )}
                     </div>
@@ -190,7 +192,7 @@ export const TopNav: React.FC<TopNavProps> = ({
             {/* Right: Actions */}
             <div className="flex items-center gap-3 min-w-[240px] justify-end">
                 <div className="flex items-center gap-0.5 p-1 bg-slate-100/50 border border-slate-200/60 rounded-[var(--radius-md)]">
-                    <Tooltip text="Version History" side="bottom">
+                    <Tooltip text={t('nav.versionHistory', 'Version History')} side="bottom">
                         <button
                             onClick={onHistory}
                             className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-[var(--radius-sm)] transition-all"
@@ -199,7 +201,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                         </button>
                     </Tooltip>
                     <div className="w-px h-4 bg-slate-200 mx-0.5" />
-                    <Tooltip text="Load JSON" side="bottom">
+                    <Tooltip text={t('nav.loadJSON', 'Load JSON')} side="bottom">
                         <button
                             onClick={onImportJSON}
                             className="p-2 text-slate-500 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-50)] rounded-[var(--radius-sm)] transition-all"
@@ -216,14 +218,14 @@ export const TopNav: React.FC<TopNavProps> = ({
                     <LanguageSelector variant="minimal" />
 
                     {/* Playback Button */}
-                    <Tooltip text="Playback Mode" side="bottom">
+                    <Tooltip text={t('nav.playbackMode', 'Playback Mode')} side="bottom">
                         <Button
                             variant="secondary"
                             onClick={onPlay}
                             className="h-9 px-4 text-sm"
                             icon={<Play className="w-4 h-4 ml-1" />}
                         >
-                            Play
+                            {t('common.play', 'Play')}
                         </Button>
                     </Tooltip>
 

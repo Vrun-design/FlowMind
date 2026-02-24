@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navbar } from './landing/Navbar';
 import { HeroSection } from './landing/HeroSection';
 import { CodeDemo } from './landing/CodeDemo';
@@ -17,6 +18,7 @@ interface LandingPageProps {
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
+    const { t } = useTranslation();
     const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
@@ -51,17 +53,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/5 border border-brand-primary/10 text-brand-primary/60 mb-10 font-mono text-[10px] uppercase tracking-[0.2em] font-bold relative overflow-hidden ring-1 ring-brand-primary/5">
                                 <div className="absolute inset-0 bg-brand-primary/5 animate-pulse"></div>
                                 <RefreshCw className="w-3 h-3 text-brand-blue relative z-10 animate-spin-slow" />
-                                <span className="relative z-10">Live Preview</span>
+                                <span className="relative z-10">{t('demo.livePreview')}</span>
                             </div>
 
                             <h2 className="text-6xl md:text-[100px] font-bold text-brand-dark mb-10 tracking-[-0.05em] leading-[1.1] text-balance">
-                                Simple for sketching. <br className="hidden md:block" />
-                                <span className="font-serif italic font-normal text-brand-primary">Ready for production.</span>
+                                {t('demo.title')} <br className="hidden md:block" />
+                                <span className="font-serif italic font-normal text-brand-primary">{t('demo.subtitle')}</span>
                             </h2>
 
                             <p className="text-xl md:text-2xl text-brand-secondary leading-relaxed font-medium max-w-3xl text-balance opacity-80">
-                                Sketch your ideas fast. <br className="hidden md:block" />
-                                Export them production-ready.
+                                {t('demo.description1')} <br className="hidden md:block" />
+                                {t('demo.description2')}
                             </p>
                         </div>
 
@@ -82,8 +84,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
                                         <RefreshCw className="w-5 h-5 text-brand-blue" />
                                     </div>
                                     <div>
-                                        <div className="text-xs font-bold text-brand-dark">Live Sync</div>
-                                        <div className="text-[10px] text-brand-secondary">Edit code ↔ See changes instantly</div>
+                                        <div className="text-xs font-bold text-brand-dark">{t('demo.liveSync')}</div>
+                                        <div className="text-[10px] text-brand-secondary">{t('demo.liveSyncDesc')}</div>
                                     </div>
                                 </div>
                             </div>
@@ -99,7 +101,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
 
                 {/* Footer Banner */}
                 <div className="bg-brand-primary text-white py-2.5 text-center font-medium text-xs tracking-wide">
-                    🚀 We are shipping daily. <a href="#/docs/v1-beta-launch" className="underline cursor-pointer opacity-90 hover:opacity-100 ml-1">Check the Changelog.</a>
+                    🚀 {t('footerBanner.shipping')} <a href="#/docs/v1-beta-launch" className="underline cursor-pointer opacity-90 hover:opacity-100 ml-1">{t('footerBanner.checkChangelog')}</a>
                 </div>
             </main>
             <Footer onLaunch={onLaunch} />

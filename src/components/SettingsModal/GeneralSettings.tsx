@@ -1,34 +1,36 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFlowStore } from '../../store';
 import { Switch } from '../ui/Switch';
 import { Grid, Magnet, Map } from 'lucide-react';
 
 export const GeneralSettings = () => {
+    const { t } = useTranslation();
     const { viewSettings, toggleGrid, toggleSnap, toggleMiniMap } = useFlowStore();
 
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-sm font-semibold text-slate-700 mb-3">Canvas</h3>
+                <h3 className="text-sm font-semibold text-slate-700 mb-3">{t('settingsModal.canvas.title')}</h3>
                 <div className="space-y-2">
                     <SettingRow
                         icon={<Grid className="w-4 h-4" />}
-                        label="Show Grid"
-                        description="Display a dot grid on the canvas"
+                        label={t('settingsModal.canvas.showGrid')}
+                        description={t('settingsModal.canvas.showGridDesc')}
                         checked={viewSettings.showGrid}
                         onChange={toggleGrid}
                     />
                     <SettingRow
                         icon={<Magnet className="w-4 h-4" />}
-                        label="Snap to Grid"
-                        description="Snap nodes to the grid when moving"
+                        label={t('settingsModal.canvas.snapToGrid')}
+                        description={t('settingsModal.canvas.snapToGridDesc')}
                         checked={viewSettings.snapToGrid}
                         onChange={toggleSnap}
                     />
                     <SettingRow
                         icon={<Map className="w-4 h-4" />}
-                        label="Mini Map"
-                        description="Show mini-map in bottom right"
+                        label={t('settingsModal.canvas.miniMap')}
+                        description={t('settingsModal.canvas.miniMapDesc')}
                         checked={viewSettings.showMiniMap}
                         onChange={toggleMiniMap}
                     />

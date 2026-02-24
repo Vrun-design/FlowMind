@@ -11,6 +11,7 @@ import { DocsFooter } from './DocsFooter';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { useFlowStore } from '../../store';
 import { DocsChatbot } from './DocsChatbot';
+import { useTranslation } from 'react-i18next';
 
 // Helper to inject dynamic content and fix placeholders
 const processContent = (content: string, appName: string) => {
@@ -66,6 +67,7 @@ const extractToc = (content: string) => {
 };
 
 export const DocsPage: React.FC = () => {
+    const { t } = useTranslation();
     const { slug, lang } = useParams();
     const { content: rawContent, loading, error } = useDocsContent(slug, lang || 'en');
     const { brandConfig } = useFlowStore();
@@ -154,7 +156,7 @@ export const DocsPage: React.FC = () => {
             {slug !== 'ask-flowpilot' && (
                 <div className="hidden xl:block w-64 shrink-0">
                     <div className="sticky top-6">
-                        <h5 className="text-xs font-semibold text-slate-900 uppercase tracking-widest mb-4">On This Page</h5>
+                        <h5 className="text-xs font-semibold text-slate-900 uppercase tracking-widest mb-4">{t('docs.onThisPage')}</h5>
                         <ul className="space-y-2 text-sm border-l border-slate-100">
                             {toc.map((item, i) => (
                                 <li key={i}>

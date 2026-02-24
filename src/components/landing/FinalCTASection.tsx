@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Copy, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from './Button';
 
 interface FinalCTASectionProps {
@@ -7,6 +8,7 @@ interface FinalCTASectionProps {
 }
 
 export function FinalCTASection({ onLaunch }: FinalCTASectionProps): React.ReactElement {
+    const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
     const [terminalStep, setTerminalStep] = useState(0);
 
@@ -37,23 +39,23 @@ export function FinalCTASection({ onLaunch }: FinalCTASectionProps): React.React
                     <div className="mb-10 animate-float">
                         <div className="bg-white text-brand-dark px-6 py-2 rounded-full border border-gray-100 shadow-[inset_0px_1px_0px_0px_rgba(255,255,255,1),0px_10px_20px_-5px_rgba(0,0,0,0.05)] flex items-center gap-3">
                             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                            <span className="font-mono text-xs tracking-widest uppercase text-brand-secondary">Ready to use</span>
+                            <span className="font-mono text-xs tracking-widest uppercase text-brand-secondary">{t('cta.readyToUse')}</span>
                         </div>
                     </div>
 
                     <h2 className="text-6xl md:text-8xl font-bold text-brand-dark mb-8 tracking-tighter leading-[0.9] text-balance">
-                        Build diagrams that <br />
-                        <span className="font-serif italic font-light text-brand-primary">don’t look generic.</span>
+                        {t('cta.buildDiagrams')} <br />
+                        <span className="font-serif italic font-light text-brand-primary">{t('cta.dontLookGeneric')}</span>
                     </h2>
 
                     <p className="text-xl text-brand-secondary mb-10 max-w-xl mx-auto leading-relaxed">
-                        Join us in building the next generation of visual tools. Open source, local-first, and forever free.
+                        {t('cta.joinUs')}
                     </p>
 
                     {/* Final CTA Button above the block */}
                     <div className="animate-slide-up opacity-0 [animation-delay:300ms] mb-12">
                         <Button size="xl" className="transform hover:-translate-y-1 transition-all active:scale-95" onClick={onLaunch}>
-                            Get Started Now <ArrowRight className="w-4 h-4 ml-2" />
+                            {t('cta.getStartedNow')} <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
                     </div>
 
@@ -104,7 +106,7 @@ export function FinalCTASection({ onLaunch }: FinalCTASectionProps): React.React
                                     className="text-xs font-mono text-white/40 hover:text-white transition-colors flex items-center gap-2"
                                 >
                                     {copied ? <CheckCircle2 className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-                                    {copied ? 'Copied' : 'Copy'}
+                                    {copied ? t('cta.copied') : t('cta.copy')}
                                 </button>
                             </div>
                         </div>
@@ -112,11 +114,11 @@ export function FinalCTASection({ onLaunch }: FinalCTASectionProps): React.React
 
                     {/* Footer Links - Light Mode */}
                     <div className="mt-12 flex items-center gap-6 text-sm text-brand-secondary">
-                        <a href="#/docs" className="hover:text-brand-primary transition-colors">Documentation</a>
+                        <a href="#/docs" className="hover:text-brand-primary transition-colors">{t('cta.documentation')}</a>
                         <span className="opacity-30">•</span>
-                        <a href="https://github.com/Vrun-design/FlowMind" target="_blank" rel="noreferrer" className="hover:text-brand-primary transition-colors">GitHub</a>
+                        <a href="https://github.com/Vrun-design/FlowMind" target="_blank" rel="noreferrer" className="hover:text-brand-primary transition-colors">{t('cta.github')}</a>
                         <span className="opacity-30">•</span>
-                        <a href="#/docs/roadmap" className="hover:text-brand-primary transition-colors">Roadmap</a>
+                        <a href="#/docs/roadmap" className="hover:text-brand-primary transition-colors">{t('cta.roadmap')}</a>
                     </div>
 
                 </div>

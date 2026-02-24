@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { Send, Sparkles, Loader2, Bot, User, AlertCircle, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useFlowStore } from '../../store';
 import { OpenFlowLogo } from '../icons/OpenFlowLogo';
 import { chatWithDocs, ChatMessage } from '../../services/aiService';
@@ -20,6 +21,7 @@ const docsContext = Object.entries(markdownFiles)
     .join('\n');
 
 export const DocsChatbot: React.FC = () => {
+    const { t } = useTranslation();
     const { brandConfig, aiSettings } = useFlowStore();
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
@@ -37,19 +39,19 @@ export const DocsChatbot: React.FC = () => {
 
     const suggestedPrompts = [
         {
-            title: "Keyboard Shortcuts",
-            description: "What are the essential keyboard shortcuts?",
-            icon: "⌘"
+            title: t('chatbot.prompts.keyboardShortcuts.title'),
+            description: t('chatbot.prompts.keyboardShortcuts.description'),
+            icon: t('chatbot.prompts.keyboardShortcuts.icon')
         },
         {
-            title: "Node Types",
-            description: "How do I create a decision node?",
-            icon: "❖"
+            title: t('chatbot.prompts.nodeTypes.title'),
+            description: t('chatbot.prompts.nodeTypes.description'),
+            icon: t('chatbot.prompts.nodeTypes.icon')
         },
         {
-            title: "DSL Syntax",
-            description: "Show me an example of the FlowMind DSL.",
-            icon: "{}"
+            title: t('chatbot.prompts.dslSyntax.title'),
+            description: t('chatbot.prompts.dslSyntax.description'),
+            icon: t('chatbot.prompts.dslSyntax.icon')
         }
     ];
 
@@ -117,11 +119,11 @@ export const DocsChatbot: React.FC = () => {
                 </div>
 
                 <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-4 text-center bg-clip-text">
-                    Hello, how can I help you?
+                    {t('chatbot.greeting')}
                 </h1>
 
                 <p className="text-lg text-slate-500 mb-10 text-center max-w-2xl px-4">
-                    Your intelligent guide to understanding and using {brandConfig.appName}.
+                    {t('chatbot.tagline')} {brandConfig.appName}.
                 </p>
 
                 <div className="relative flex items-end gap-2 w-full max-w-2xl bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-200/50 p-1.5 focus-within:shadow-[0_8px_30px_rgb(0,0,0,0.08)] focus-within:ring-2 focus-within:ring-[var(--brand-primary)]/30 mb-10 transition-all">
@@ -129,7 +131,7 @@ export const DocsChatbot: React.FC = () => {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder={`Message ${brandConfig.appName} AI...`}
+                        placeholder={`${t('chatbot.messagePlaceholder')} ${brandConfig.appName} ${t('chatbot.aiSuffix')}`}
                         className="w-full min-h-[52px] max-h-[200px] border-0 px-4 py-3.5 text-[15px] focus:ring-0 resize-none placeholder:text-slate-400 custom-scrollbar block bg-transparent leading-relaxed"
                         rows={1}
                         autoFocus
@@ -138,7 +140,7 @@ export const DocsChatbot: React.FC = () => {
                         onClick={() => handleSend()}
                         disabled={!input.trim() || isLoading}
                         className="shrink-0 w-11 h-11 mb-1 mr-1 bg-slate-900 hover:bg-slate-800 text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:scale-95 shadow-sm"
-                        aria-label="Send message"
+                        aria-label={t('chatbot.sendMessage')}
                     >
                         <Send className="w-4 h-4 ml-0.5" />
                     </button>
@@ -172,8 +174,8 @@ export const DocsChatbot: React.FC = () => {
                         {renderLogo("w-full h-full drop-shadow-sm")}
                     </div>
                     <div>
-                        <h2 className="text-sm font-semibold text-slate-900 tracking-tight">{brandConfig.appName} Docs</h2>
-                        <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">AI Assistant</p>
+                        <h2 className="text-sm font-semibold text-slate-900 tracking-tight">{brandConfig.appName} {t('chatbot.docsTitle')}</h2>
+                        <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">{t('chatbot.aiAssistant')}</p>
                     </div>
                 </div>
                 <button
@@ -181,7 +183,7 @@ export const DocsChatbot: React.FC = () => {
                     className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
                 >
                     <Plus className="w-3.5 h-3.5" />
-                    New Chat
+                    {t('chatbot.newChat')}
                 </button>
             </div>
 
@@ -192,9 +194,9 @@ export const DocsChatbot: React.FC = () => {
                         {renderLogo("w-full h-full object-contain drop-shadow-sm")}
                     </div>
                     <div className="flex flex-col gap-1 items-start min-w-0">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">{brandConfig.appName} AI</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">{brandConfig.appName} {t('chatbot.aiName')}</span>
                         <div className="px-5 py-4 rounded-2xl text-sm shadow-sm bg-white border border-slate-100 rounded-tl-sm text-slate-700">
-                            <p>Hi! I'm the {brandConfig.appName} AI assistant. I have access to the complete documentation. How can I help you today?</p>
+                            <p>{t('chatbot.welcomeMessage', { appName: brandConfig.appName })}</p>
                         </div>
                     </div>
                 </div>
@@ -208,7 +210,7 @@ export const DocsChatbot: React.FC = () => {
                             </div>
                             <div className={`flex flex-col gap-1 min-w-0 ${isUser ? 'items-end' : 'items-start'}`}>
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">
-                                    {isUser ? 'You' : `${brandConfig.appName} AI`}
+                                    {isUser ? t('chatbot.you') : `${brandConfig.appName} ${t('chatbot.aiName')}`}
                                 </span>
                                 <div className={`px-4 py-3 rounded-2xl text-sm shadow-sm ${isUser ? 'bg-[var(--brand-primary)] text-white rounded-tr-sm' : 'bg-white border border-slate-100 rounded-tl-sm text-slate-700'}`}>
                                     {isUser ? (
@@ -236,10 +238,10 @@ export const DocsChatbot: React.FC = () => {
                             {renderLogo("w-full h-full object-contain drop-shadow-sm")}
                         </div>
                         <div className="flex flex-col gap-1 items-start">
-                            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-1">{brandConfig.appName} AI</span>
+                            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-1">{brandConfig.appName} {t('chatbot.aiName')}</span>
                             <div className="px-5 py-4 rounded-2xl bg-white border border-slate-100 rounded-tl-sm text-slate-700 shadow-sm flex items-center gap-2">
                                 <Loader2 className="w-4 h-4 animate-spin text-[var(--brand-primary)]" />
-                                <span className="text-sm text-slate-500">Searching docs...</span>
+                                <span className="text-sm text-slate-500">{t('chatbot.searchingDocs')}</span>
                             </div>
                         </div>
                     </div>
@@ -262,7 +264,7 @@ export const DocsChatbot: React.FC = () => {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder={`Message ${brandConfig.appName} AI...`}
+                        placeholder={`${t('chatbot.messagePlaceholder')} ${brandConfig.appName} ${t('chatbot.aiSuffix')}`}
                         className="w-full max-h-32 min-h-[44px] bg-transparent border-0 px-4 py-3 text-[15px] focus:ring-0 resize-none custom-scrollbar leading-relaxed"
                         rows={1}
                         disabled={isLoading}
@@ -272,13 +274,13 @@ export const DocsChatbot: React.FC = () => {
                         onClick={() => handleSend()}
                         disabled={!input.trim() || isLoading}
                         className="shrink-0 w-11 h-11 mb-0.5 mr-0.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:scale-95 shadow-sm"
-                        aria-label="Send message"
+                        aria-label={t('chatbot.sendMessage')}
                     >
                         <Send className="w-4 h-4 ml-0.5" />
                     </button>
                 </div>
                 <p className="text-[11px] text-center text-slate-400 mt-3 font-medium tracking-wide">
-                    AI can make mistakes. Verify important information.
+                    {t('chatbot.aiDisclaimer')}
                 </p>
             </div>
         </div>

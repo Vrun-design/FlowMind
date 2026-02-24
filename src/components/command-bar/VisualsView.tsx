@@ -1,5 +1,6 @@
 import React from 'react';
 import { Activity, Grid, Network, Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useFlowStore } from '../../store';
 import { ViewHeader } from './ViewHeader';
 
@@ -8,24 +9,25 @@ interface VisualsViewProps {
 }
 
 export const VisualsView = ({ onBack }: VisualsViewProps) => {
+    const { t } = useTranslation();
     const { globalEdgeOptions, setGlobalEdgeOptions, viewSettings, setDefaultIconsEnabled, setSmartRoutingEnabled, brandConfig } = useFlowStore();
     const isBeveled = brandConfig.ui.buttonStyle === 'beveled';
 
     return (
         <div className="flex flex-col h-full">
-            <ViewHeader title="Connection Styles" icon={<Activity className="w-4 h-4 text-[var(--brand-primary)]" />} onBack={onBack} />
+            <ViewHeader title={t('commandBar.visuals.title')} icon={<Activity className="w-4 h-4 text-[var(--brand-primary)]" />} onBack={onBack} />
 
             <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
 
                 {/* Edge Style */}
                 <div className="space-y-3">
-                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Edge Style</label>
+                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('commandBar.visuals.edgeStyle')}</label>
                     <div className="grid grid-cols-2 gap-3">
                         {[
-                            { type: 'default', label: 'Bezier', desc: 'Smooth curves' },
-                            { type: 'straight', label: 'Straight', desc: 'Direct lines' },
-                            { type: 'smoothstep', label: 'Smooth Step', desc: 'Rounded corners' },
-                            { type: 'step', label: 'Step', desc: 'Right angles' }
+                            { type: 'default', label: t('commandBar.visuals.bezier'), desc: t('commandBar.visuals.bezierDesc') },
+                            { type: 'straight', label: t('commandBar.visuals.straight'), desc: t('commandBar.visuals.straightDesc') },
+                            { type: 'smoothstep', label: t('commandBar.visuals.smoothStep'), desc: t('commandBar.visuals.smoothStepDesc') },
+                            { type: 'step', label: t('commandBar.visuals.step'), desc: t('commandBar.visuals.stepDesc') }
                         ].map((style) => (
                             <div
                                 key={style.type}
@@ -48,8 +50,8 @@ export const VisualsView = ({ onBack }: VisualsViewProps) => {
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-slate-100 rounded-[var(--radius-sm)] shadow-inner"><Grid className="w-4 h-4 text-slate-500" /></div>
                         <div>
-                            <div className="font-medium text-sm text-slate-700">Default Icons</div>
-                            <div className="text-[10px] text-slate-400">Show standard node icons</div>
+                            <div className="font-medium text-sm text-slate-700">{t('commandBar.visuals.defaultIcons')}</div>
+                            <div className="text-[10px] text-slate-400">{t('commandBar.visuals.defaultIconsDesc')}</div>
                         </div>
                     </div>
                     <button
@@ -65,8 +67,8 @@ export const VisualsView = ({ onBack }: VisualsViewProps) => {
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-slate-100 rounded-[var(--radius-sm)] shadow-inner"><Network className="w-4 h-4 text-emerald-500" /></div>
                         <div>
-                            <div className="font-medium text-sm text-slate-700">Intelligent Routing</div>
-                            <div className="text-[10px] text-slate-400">Auto-snap connections on drag</div>
+                            <div className="font-medium text-sm text-slate-700">{t('commandBar.visuals.intelligentRouting')}</div>
+                            <div className="text-[10px] text-slate-400">{t('commandBar.visuals.intelligentRoutingDesc')}</div>
                         </div>
                     </div>
                     <button
@@ -82,8 +84,8 @@ export const VisualsView = ({ onBack }: VisualsViewProps) => {
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-slate-100 rounded-[var(--radius-sm)] shadow-inner"><Zap className="w-4 h-4 text-amber-500" /></div>
                         <div>
-                            <div className="font-medium text-sm text-slate-700">Animated Edges</div>
-                            <div className="text-[10px] text-slate-400">Flowing particles</div>
+                            <div className="font-medium text-sm text-slate-700">{t('commandBar.visuals.animatedEdges')}</div>
+                            <div className="text-[10px] text-slate-400">{t('commandBar.visuals.animatedEdgesDesc')}</div>
                         </div>
                     </div>
                     <button
@@ -96,7 +98,7 @@ export const VisualsView = ({ onBack }: VisualsViewProps) => {
 
                 {/* Stroke Width */}
                 <div className="space-y-3">
-                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Stroke Width</label>
+                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('commandBar.visuals.strokeWidth')}</label>
                     <div className="flex gap-2">
                         {[1, 2, 3, 4, 5].map(w => (
                             <button

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useFlowStore } from '../../store';
 import { Palette, Check, Plus, ArrowLeft, MoreHorizontal, Copy, Trash2, Edit2, Download } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
 import { DesignSystemEditor } from './DesignSystemEditor';
 
@@ -10,6 +11,7 @@ interface DesignSystemViewProps {
 }
 
 export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, handleBack }) => {
+    const { t } = useTranslation();
     const {
         designSystems,
         activeDesignSystemId,
@@ -55,7 +57,7 @@ export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, han
                 </Button>
                 <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                     <Palette className="w-4 h-4 text-[var(--brand-primary)]" />
-                    Design Systems
+                    {t('commandBar.designSystem.title')}
                 </div>
             </div>
 
@@ -131,13 +133,13 @@ export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, han
                         icon={<Plus className="w-4 h-4" />}
                         onClick={handleCreateNew}
                     >
-                        Create New System
+                        {t('commandBar.designSystem.createNew')}
                     </Button>
 
                     <div className="grid grid-cols-2 gap-2">
                         <label className="flex items-center justify-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-[var(--radius-md)] text-xs font-medium text-slate-600 hover:bg-slate-50 cursor-pointer">
                             <Download className="w-3.5 h-3.5 rotate-180" />
-                            Import
+                            {t('commandBar.designSystem.import')}
                             <input
                                 type="file"
                                 accept=".json"

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { X, Layout, Shield } from 'lucide-react';
 import { OpenFlowLogo } from './icons/OpenFlowLogo';
 import { useFlowStore } from '../store';
+import { useTranslation } from 'react-i18next';
 
 export function WelcomeModal(): React.JSX.Element | null {
+    const { t } = useTranslation();
     const buttonStyle = useFlowStore(state => state.brandConfig.ui.buttonStyle);
     const isBeveled = buttonStyle === 'beveled';
     const [isOpen, setIsOpen] = useState(false);
@@ -54,23 +56,23 @@ export function WelcomeModal(): React.JSX.Element | null {
                             className="text-2xl font-bold text-slate-900 mb-2 tracking-tight"
                             style={{ fontFamily: 'var(--brand-font-family, inherit)' }}
                         >
-                            OpenFlowKit
+                            {t('welcome.title', 'OpenFlowKit')}
                         </h2>
                         <p className="text-slate-500 text-sm leading-relaxed mb-8 max-w-[280px]">
-                            Design beautiful, structured diagrams with a developer-first canvas.
+                            {t('welcome.description', 'Design beautiful, structured diagrams with a developer-first canvas.')}
                         </p>
                     </div>
 
                     <div className="space-y-5 mb-10">
                         <FeatureItem
                             icon={<Layout className="w-5 h-5" />}
-                            title="Beautiful by Default"
-                            desc="Automated layouts and professional themes."
+                            title={t('welcome.features.beautifulByDefault', 'Beautiful by Default')}
+                            desc={t('welcome.features.automatedLayouts', 'Automated layouts and professional themes.')}
                         />
                         <FeatureItem
                             icon={<Shield className="w-5 h-5" />}
-                            title="Private & Secure"
-                            desc="Local-first architecture keeps your data safe."
+                            title={t('welcome.features.privateSecure', 'Private & Secure')}
+                            desc={t('welcome.features.localFirst', 'Local-first architecture keeps your data safe.')}
                         />
                     </div>
 
@@ -82,17 +84,17 @@ export function WelcomeModal(): React.JSX.Element | null {
                             borderRadius: 'calc(var(--brand-radius, 24px) * 0.6)'
                         }}
                     >
-                        Get Started
+                        {t('common.getStarted', 'Get Started')}
                     </button>
 
                     <p className="text-center text-slate-400 text-[10px] mt-6 uppercase tracking-widest font-semibold">
-                        Press <kbd className="font-sans px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 text-slate-500">?</kbd> for shortcuts
+                        {t('welcome.press', 'Press')} <kbd className="font-sans px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 text-slate-500">?</kbd> {t('welcome.shortcuts', 'for shortcuts')}
                     </p>
 
                     <p className="text-center text-slate-300 text-[10px] mt-4 max-w-xs mx-auto leading-relaxed opacity-60 hover:opacity-100 transition-opacity">
-                        Your diagrams, API keys, and data stay locally on your device.
+                        {t('welcome.privacy', 'Your diagrams, API keys, and data stay locally on your device.')}
                         <br />
-                        We only count anonymous page visits.
+                        {t('welcome.analytics', 'We only count anonymous page visits.')}
                     </p>
                 </div>
             </div>

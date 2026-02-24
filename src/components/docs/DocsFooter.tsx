@@ -2,8 +2,10 @@ import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { useDocsNavigation } from './useDocsNavigation';
+import { useTranslation } from 'react-i18next';
 
 export const DocsFooter: React.FC = () => {
+    const { t } = useTranslation();
     const { prevEntry, nextEntry } = useDocsNavigation();
     const { lang } = useParams();
 
@@ -16,7 +18,7 @@ export const DocsFooter: React.FC = () => {
                 >
                     <span className="text-xs font-medium text-[var(--brand-secondary)] flex items-center gap-1 group-hover:text-[var(--brand-primary)]">
                         <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-1" />
-                        Previous
+                        {t('common.previous', 'Previous')}
                     </span>
                     <span className="text-sm font-semibold text-slate-900 group-hover:text-[var(--brand-primary-700)]">
                         {prevEntry.item.title}
@@ -30,7 +32,7 @@ export const DocsFooter: React.FC = () => {
                     className="group flex flex-col gap-1 p-4 rounded-lg border border-slate-200 hover:border-[var(--brand-primary-300)] hover:bg-[var(--brand-primary-50)] transition-all w-full sm:w-1/2 text-right items-end"
                 >
                     <span className="text-xs font-medium text-[var(--brand-secondary)] flex items-center gap-1 group-hover:text-[var(--brand-primary)]">
-                        Next
+                        {t('common.next', 'Next')}
                         <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                     </span>
                     <span className="text-sm font-semibold text-slate-900 group-hover:text-[var(--brand-primary-700)]">

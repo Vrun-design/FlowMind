@@ -1,7 +1,9 @@
 import React from 'react';
 import { Figma, ArrowRight, Command, Type, Layers, Scissors } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function FigmaSection(): React.ReactElement {
+    const { t } = useTranslation();
     return (
         <section id="figma" className="py-24 md:py-32 bg-[#F2F4F7] relative overflow-hidden border-y border-white">
             <div className="container mx-auto px-6 relative z-10">
@@ -11,16 +13,16 @@ export function FigmaSection(): React.ReactElement {
                     <div className="lg:w-1/2 text-center lg:text-left">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-gray-200 shadow-sm text-[10px] uppercase tracking-widest font-bold text-gray-900 mb-8 font-mono">
                             <Scissors className="w-3 h-3" />
-                            Zero Plugins Required
+                            {t('figma.badge')}
                         </div>
 
                         <h2 className="text-5xl md:text-7xl font-bold mb-6 tracking-tighter text-gray-900 leading-[0.9]">
-                            Copy the code.<br />
-                            <span className="font-serif italic font-normal text-brand-primary">Paste the design.</span>
+                            {t('figma.title')}<br />
+                            <span className="font-serif italic font-normal text-brand-primary">{t('figma.subtitle')}</span>
                         </h2>
 
                         <p className="text-xl text-gray-600 leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0 font-medium">
-                            Copy a diagram from OpenFlowKit and paste it straight into Figma — you'll get editable text and clean vector shapes, not a flat image. No plugins needed.
+                            {t('figma.description')}
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -28,13 +30,13 @@ export function FigmaSection(): React.ReactElement {
                                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
                                     <Type className="w-4 h-4 text-green-600" />
                                 </div>
-                                <span className="text-sm font-semibold text-gray-700">Editable Text</span>
+                                <span className="text-sm font-semibold text-gray-700">{t('figma.editableText')}</span>
                             </div>
                             <div className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl border border-gray-200 shadow-sm">
                                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
                                     <Layers className="w-4 h-4 text-green-600" />
                                 </div>
-                                <span className="text-sm font-semibold text-gray-700">Vector Fidelity</span>
+                                <span className="text-sm font-semibold text-gray-700">{t('figma.vectorFidelity')}</span>
                             </div>
                         </div>
                     </div>

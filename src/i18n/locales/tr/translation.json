@@ -1,20 +1,37 @@
-{
+﻿{
   "common": {
     "save": "Kaydet",
     "cancel": "İptal",
     "delete": "Sil",
     "edit": "Düzenle",
     "create": "Oluştur",
+    "createNew": "Yeni Oluştur",
+    "open": "Aç",
+    "openFile": "Dosya Aç",
     "close": "Kapat",
     "back": "Geri",
-    "next": "İleri",
+    "next": "Sonraki",
+    "previous": "Önceki",
     "done": "Tamam",
+    "undo": "Geri Al",
+    "redo": "Yinele",
+    "play": "Oynat",
+    "select": "Seç",
+    "selectAll": "Tümünü Seç",
+    "duplicate": "Çoğalt",
+    "copy": "Kopyala",
+    "paste": "Yapıştır",
+    "zoomIn": "Yakınlaştır",
+    "zoomOut": "Uzaklaştır",
+    "resetZoom": "Yakınlaştırmayı Sıfırla",
     "loading": "Yükleniyor...",
     "error": "Hata",
     "success": "Başarılı",
     "settings": "Ayarlar",
     "help": "Yardım",
-    "docs": "Dokümantasyon"
+    "docs": "Dokümantasyon",
+    "getStarted": "Hemen Başla",
+    "publicBeta": "v1.0 Public Beta"
   },
   "nav": {
     "home": "Ana Sayfa",
@@ -23,7 +40,18 @@
     "view": "Görünüm",
     "file": "Dosya",
     "history": "Geçmiş",
-    "playback": "Oynat"
+    "playback": "Oynatma",
+    "dashboard": "Gösterge Paneli",
+    "documentation": "Dokümantasyon",
+    "settings": "Ayarlar",
+    "goToDashboard": "Gösterge Paneline Git",
+    "canvasSettings": "Tuval Ayarları",
+    "wideLogo": "Geniş Logo",
+    "uploadWideLogo": "Marka Ayarlarından geniş logo yükleyerek burada görüntüleyin",
+    "beta": "BETA",
+    "versionHistory": "Sürüm Geçmişi",
+    "loadJSON": "JSON Yükle",
+    "playbackMode": "Oynatma Modu"
   },
   "menu": {
     "file": "Dosya",
@@ -57,10 +85,10 @@
   "import": {
     "title": "İçe Aktar",
     "json": "JSON İçe Aktar",
-    "selectFile": "Bir dosya seçin"
+    "selectFile": "Dosya seçin"
   },
   "editor": {
-    "untitled": "İsimsiz Akış",
+    "untitled": "Adsız Akış",
     "newTab": "Yeni Sekme",
     "renameTab": "Sekmeyi Yeniden Adlandır",
     "closeTab": "Sekmeyi Kapat",
@@ -74,14 +102,26 @@
       "figma": "Figma",
       "useCases": "Kullanım Alanları",
       "pricing": "Fiyatlandırma",
-      "viewGithub": "GitHub'da Görüntüle"
+      "viewGithub": "GitHub'da İncele"
     },
     "hero": {
       "title": "Güzel Akış Şemaları,",
       "subtitle": "Geliştiriciler İçin Yapıldı",
       "description": "Kod veya tuval ile çarpıcı akış şemaları oluşturun. İstediğiniz formata aktarın. Açık kaynak ve sonsuza kadar ücretsiz.",
-      "cta": "Başlayın",
-      "livePreview": "Canlı Önizleme"
+      "livePreview": "Canlı Önizleme",
+      "publicBeta": "v1.0 Public Beta",
+      "description1": "Diyagram motoru",
+      "description2": "Sizin gibi",
+      "description3": "",
+      "description4": "Geliştiriciler için %100 ücretsiz ve açık kaynaklı diyagram aracı. Kod yazın ya da sürükle-bırak yapın — her iki yöntemde de etkileyici sonuçlar.",
+      "forkOnGithub": "GitHub'da Forklayın",
+      "licence": "MIT Lisanslı",
+      "localFirst": "Yerel Öncelikli",
+      "noAuth": "Hesap Gerektirmez",
+      "thinks": "düşünen",
+      "draws": "çizen",
+      "builds": "inşa eden",
+      "ships": "sunan"
     },
     "problem": {
       "title": "Problem",
@@ -89,12 +129,12 @@
     },
     "solution": {
       "title": "Çözüm",
-      "description": "OpenFlowKit her iki dünyanın en iyisini birleştirir."
+      "description": "OpenFlowKit her iki dünyanın en iyisini bir araya getirir."
     },
     "demo": {
-      "title": "Eskiz için basit.",
+      "title": "Eskiz için sade.",
       "subtitle": "Üretime hazır.",
-      "description": "Fikirlerinizi hızlıca çizin. Üretime hazır şekilde aktarın."
+      "description": "Fikirlerinizi hızlıca çizin. Üretime hazır biçimde dışa aktarın."
     },
     "useCases": {
       "title": "Kullanım Alanları"
@@ -105,17 +145,25 @@
       "openSource": "Açık Kaynak"
     },
     "testimonials": {
-      "title": "İnsanlar Ne Diyor"
+      "title": "Kullanıcılar Ne Diyor"
     },
     "cta": {
-      "title": "Başlamaya Hazır Mısınız?",
+      "title": "Başlamaya Hazır mısınız?",
       "subtitle": "İlk akış şemanızı saniyeler içinde oluşturun.",
-      "button": "Uygulamayı Başlat"
+      "button": "Uygulamayı Aç"
     },
     "footer": {
       "rights": "Tüm hakları saklıdır.",
       "madeWith": "OpenFlowKit Ekibi tarafından ❤️ ile yapıldı"
     }
+  },
+  "home": {
+    "title": "Gösterge Paneli",
+    "description": "Akışlarınızı ve diyagramlarınızı yönetin.",
+    "recentFiles": "Son Dosyalar",
+    "files": "dosyalar",
+    "createFirstFlow": "İlk akışınızı oluşturun",
+    "startFromScratch": "Sıfırdan başlayın veya mevcut bir diyagramı içe aktarın."
   },
   "settings": {
     "title": "Ayarlar",
@@ -125,7 +173,7 @@
     "language": "Dil",
     "selectLanguage": "Dil Seçin",
     "appearance": "Görünüm",
-    "ai": "AI Ayarları",
+    "ai": "Yapay Zeka",
     "analytics": "Analitik",
     "about": "Hakkında",
     "brand": "Marka Ayarları",
@@ -135,11 +183,15 @@
     "title": "Klavye Kısayolları",
     "general": "Genel",
     "canvas": "Tuval",
-    "nodes": "Düğümler"
+    "nodes": "Düğümler",
+    "essentials": "Temel İşlemler",
+    "manipulation": "Düzenleme",
+    "navigation": "Gezinti",
+    "help": "Yardım"
   },
   "properties": {
     "title": "Özellikler",
-    "nodeType": "Düğüm Tipi",
+    "nodeType": "Düğüm Türü",
     "label": "Etiket",
     "description": "Açıklama",
     "color": "Renk",
@@ -147,11 +199,11 @@
     "size": "Boyut"
   },
   "ai": {
-    "generate": "AI ile Oluştur",
-    "provider": "AI Sağlayıcı",
+    "generate": "Yapay Zeka ile Oluştur",
+    "provider": "Yapay Zeka Sağlayıcı",
     "model": "Model",
     "apiKey": "API Anahtarı",
-    "placeholder": "Akış şemanızı tanımlayın..."
+    "placeholder": "Akış şemanızı açıklayın..."
   },
   "playback": {
     "title": "Oynatma",
@@ -167,10 +219,375 @@
     "clear": "Geçmişi Temizle"
   },
   "errors": {
-    "generic": "Bir şeyler yanlış gitti",
-    "loadFailed": "Yükleme başarısız",
-    "saveFailed": "Kaydetme başarısız",
-    "exportFailed": "Dışa aktarma başarısız",
-    "importFailed": "İçe aktarma başarısız"
+    "generic": "Bir şeyler ters gitti",
+    "loadFailed": "Yükleme başarısız oldu",
+    "saveFailed": "Kaydetme başarısız oldu",
+    "exportFailed": "Dışa aktarma başarısız oldu",
+    "importFailed": "İçe aktarma başarısız oldu"
+  },
+  "welcome": {
+    "title": "OpenFlowKit",
+    "description": "Geliştirici odaklı tuval üzerinde güzel, yapılandırılmış diyagramlar tasarlayın.",
+    "getStarted": "Hemen Başla",
+    "press": "Kısayollar için",
+    "shortcuts": "tuşlara basın",
+    "privacy": "Diyagramlarınız, API anahtarlarınız ve tüm verileriniz yalnızca cihazınızda saklanır.",
+    "analytics": "Yalnızca anonim sayfa ziyaretleri takip edilir.",
+    "features": {
+      "beautifulByDefault": "Varsayılan olarak güzel",
+      "automatedLayouts": "Otomatik düzenler ve profesyonel temalar.",
+      "privateSecure": "Özel ve Güvenli",
+      "localFirst": "Yerel öncelikli mimari verilerinizi her zaman güvende tutar."
+    }
+  },
+  "footer": {
+    "mitLicensed": "MIT Lisanslı"
+  },
+  "pricing": {
+    "title": "Premium özellikler.",
+    "subtitle": "Sıfır fiyat etiketi.",
+    "description": "OpenFlowKit %100 açık kaynak. Satış görüşmesi arkasına gizlenmiş \"Enterprise Edition\" yok.",
+    "mitLicense": "MIT Lisansı",
+    "freeForever": "Sonsuza Kadar Ücretsiz.",
+    "fullAccess": "Çekirdek motora tam erişim.",
+    "hostAnywhere": "İstediğiniz yerde barındırın. Özgürce değiştirin.",
+    "unlimitedUsage": "Sınırsız Kullanım",
+    "noAccount": "Hesap veya kredi kartı gerektirmez",
+    "everythingIncluded": "Her Şey Dahil",
+    "features": {
+      "unlimitedDiagrams": "Sınırsız diyagram ve proje",
+      "saveLocally": "Yerel olarak kaydedin, verileriniz cihazınızda kalır",
+      "whiteLabelBranding": "Kendi Markanızla",
+      "oneClickLayout": "Tek tıkla otomatik düzen",
+      "exportFormats": "SVG, PNG, JPG olarak dışa aktarın",
+      "figmaExport": "Figma'ya Aktarma",
+      "mermaidSupport": "Mermaid.js Desteği",
+      "aiGeneration": "Yapay zeka ile diyagram oluşturma (kendi API anahtarınızı getirin)"
+    },
+    "supportDevelopment": "GitHub'da geliştirmeyi destekleyin"
+  },
+  "cta": {
+    "readyToUse": "Kullanıma hazır",
+    "buildDiagrams": "Şu diyagramları oluşturun:",
+    "dontLookGeneric": "sıradan görünmeyen.",
+    "joinUs": "Yeni nesil görsel araçları inşa etmemize katılın. Açık kaynak, yerel öncelikli ve sonsuza kadar ücretsiz.",
+    "getStartedNow": "Hemen Başla",
+    "copied": "Kopyalandı",
+    "copy": "Kopyala",
+    "documentation": "Dokümantasyon",
+    "github": "GitHub",
+    "roadmap": "Yol Haritası"
+  },
+  "problem": {
+    "badge": "Problem",
+    "title": "Diyagramlar neden",
+    "subtitle": "her zaman zahmetli hissediyor?",
+    "description": "Karmaşık sistemleri el sanatları için tasarlanmış araçlarla tasarlıyoruz.",
+    "pixelPurgatory": "Piksel Cehennemi",
+    "pixelPurgatoryDesc": "Kutuları elle hizalayarak saatler harcamak. Yeni bir servis tüm düzeninizi bozuyor.",
+    "screenshotTrap": "Ekran Görüntüsü Tuzağı",
+    "screenshotTrapDesc": "Dokümantasyon ekran görüntüsü aldığınız anda eskiyor. Statik varlıklar ölü varlıklardır.",
+    "enterpriseBeige": "Kurumsal Bej",
+    "enterpriseBeigeDesc": "Katı, genel şablonlara kilitlendiniz. Mimariniz benzersiz; diyagramlarınız clipart gibi görünmemeli."
+  },
+  "solution": {
+    "badge": "Özellikler",
+    "title": "İhtiyacınız olan her şey.",
+    "subtitle": "İhtiyacınız olmayanlar yok.",
+    "description": "Nihai beyaz etiketli tuval. Tamamen özelleştirilebilir düğümler, kenarlar ve temalar — React Flow ile güçlendirilmiş. Bu sizin markanız, nefes almak için sonsuz alan verilmiş.",
+    "diagramAsCode": "Kod Olarak Diyagram",
+    "diagramAsCodeDesc": "Mermaid.js ve tip güvenli DSL'imiz için birinci sınıf destek. Mimarinizi kodla tanımlayın, JSON olarak dışa aktarın ve motorun düzeni halletmesine izin verin.",
+    "flowpilotAI": "Flowpilot AI",
+    "aiAssistant": "Yapay Zeka Asistanı",
+    "flowpilotAIDesc": "Diyagramınızla sohbet edin. \"Köşeleri daha yuvarlak yap\", \"Yük dengeleyici ekle\".",
+    "addRedisCache": "Veritabanının önüne Redis önbelleği ekle.",
+    "localPrivate": "Yerel ve Özel",
+    "localPrivateDesc": "Verilerinizi istemiyoruz. Her şey makinenizde kalır. Bulut kaydetme yok, izleme yok, sunucularımıza \"senkronizasyon\" yok. Tam özgürlüğe sahipsiniz.",
+    "offlineReady": "Çevrimdışı Hazır",
+    "localFileSystem": "Yerel Dosya Sistemi",
+    "amazingAesthetics": "İnanılmaz Estetik",
+    "amazingAestheticsDesc": "\"Kurumsal Bej\"den kurtulun. Tamamen özelleştirilebilir yazı tipleri, renkler ve şekiller. Dokümantasyon değil, sanat gibi görünen diyagramlar oluşturun.",
+    "sunsetRed": "Gün Batımı Kırmızısı",
+    "amberWarning": "Kehribar Uyarısı",
+    "successGreen": "Başarı Yeşili"
+  },
+  "workflows": {
+    "badge": "İş Akışları",
+    "title": "Bir motor.",
+    "subtitle": "Üç yerel iş akışı.",
+    "description": "OpenFlowKit, zaten kullanmakta olduğunuz araca uyum sağlar. Açılacak yeni sekme yok. Bağlam değiştirme yok.",
+    "engineering": "Mühendislik",
+    "diagramAsCode": "KOD OLARAK DİYAGRAM",
+    "engineeringDesc": "DSL'imizde veya Mermaid.js sözdiziminde diyagramlar yazın. Kodu yapıştırın, tamamen düzenlenmiş bir diyagram elde edin. Sürüm kontrolü için JSON olarak dışa aktarın.",
+    "design": "Tasarım",
+    "theVisualLayer": "GÖRSEL KATMAN",
+    "designDesc": "Ekranları yeniden oluşturmayı bırakın. Tuvalden kopyalayın ve düzenlenebilir SVG ve metin katmanları olarak Figma'ya yapıştırın.",
+    "exportShare": "Dışa Aktar ve Paylaş",
+    "pixelPerfectOutput": "PİKSEL MÜKEMMELİ ÇIKTI",
+    "exportShareDesc": "Diyagramları SVG, PNG veya PDF olarak dışa aktarın. Panoya kopyalayın ve düzenlenebilir katmanlarla Figma'ya yapıştırın. Paylaşmak veya sürüm kontrolü için JSON olarak kaydedin.",
+    "vectorEditable": "Vektör • Figma'da Düzenlenebilir",
+    "rasterHighRes": "Raster • Yüksek çözünürlüklü dışa aktarma",
+    "dataSaveRestore": "Veri • Akışları kaydet ve geri yükle"
+  },
+  "figma": {
+    "badge": "Eklenti Gerektirmez",
+    "title": "Kodu kopyalayın.",
+    "subtitle": "Tasarımı yapıştırın.",
+    "description": "OpenFlowKit'ten bir diyagram kopyalayın ve doğrudan Figma'ya yapıştırın — düz görüntü değil, düzenlenebilir metin ve temiz vektör şekiller elde edersiniz. Eklenti gerekmez.",
+    "editableText": "Düzenlenebilir Metin",
+    "vectorFidelity": "Vektör Sadakati",
+    "selected": "Seçili",
+    "vectorText": "Vektör + Metin",
+    "untitled": "Adsız"
+  },
+  "testimonials": {
+    "badge": "Yapım Aşamasında",
+    "title": "Açık geliştirin.",
+    "subtitle": "Motoru şekillendirin.",
+    "description": "OpenFlowKit yeni başlıyor. Çekirdek motoru açık olarak inşa ediyoruz. İlk günden bize katılın.",
+    "starTheRepo": "Repoyu Yıldızlayın",
+    "openSource": "Açık Kaynak",
+    "openSourceDesc": "Çekirdek motor MIT lisanslıdır. Kaynak kodunu okuyun, PR gönderin veya dahili araçlarınız için forklayın.",
+    "prsWelcome": "PR'ler Hoş Geldiniz",
+    "community": "Topluluk",
+    "communityDesc": "OpenFlowKit üzerinde çalışan geliştiricilere katılın.",
+    "roadmap": "Yol Haritası",
+    "coreRenderer": "Çekirdek Render",
+    "flowpilotAI": "Flowpilot AI",
+    "pdfExport": "PDF Dışa Aktarma"
+  },
+  "demo": {
+    "livePreview": "Canlı Önizleme",
+    "title": "Taslak için basit.",
+    "subtitle": "Üretime hazır.",
+    "description1": "Fikirlerinizi hızla çizin.",
+    "description2": "Üretime hazır şekilde dışa aktarın.",
+    "liveSync": "Canlı Senkronizasyon",
+    "liveSyncDesc": "Kodu düzenleyin ↔ Değişiklikleri anında görün"
+  },
+  "docs": {
+    "documentation": "Dokümantasyon",
+    "returnToCanvas": "Tuvale Dön",
+    "onThisPage": "Bu Sayfada"
+  },  
+  "chatbot": {
+    "greeting": "Merhaba, size nasıl yardımcı olabilirim?",
+    "tagline": "Akıllı rehberiniz",
+    "messagePlaceholder": "Mesaj",
+    "aiSuffix": "AI...",
+    "sendMessage": "Mesaj gönder",
+    "newChat": "Yeni Sohbet",
+    "docsTitle": "Dökümanlar",
+    "aiAssistant": "AI Asistan",
+    "aiName": "AI",
+    "you": "Siz",
+    "searchingDocs": "Dökümanlar aranıyor...",
+    "aiDisclaimer": "AI hata yapabilir. Önemli bilgileri doğrulayın.",
+    "welcomeMessage": "Merhaba! Ben {appName} AI asistanıyım. Tüm dokümantasyona erişimim var. Bugün size nasıl yardımcı olabilirim?",
+    "prompts": {
+      "keyboardShortcuts": {
+        "title": "Klavye Kısayolları",
+        "description": "Temel klavye kısayolları nelerdir?",
+        "icon": "⌘"
+      },
+      "nodeTypes": {
+        "title": "Düğüm Türleri",
+        "description": "Karar düğümü nasıl oluştururum?",
+        "icon": "❖"
+      },
+      "dslSyntax": {
+        "title": "DSL Sözdizimi",
+        "description": "FlowMind DSL'den bir örnek göster.",
+        "icon": "{}"
+      }
+    }
+  },
+  "footerBanner": {
+    "shipping": "Her gün yeni özellikler yayınlıyoruz.",
+    "checkChangelog": "Değişiklik Günlüğüne Göz Atın."
+  },
+  "commandBar": {
+    "ai": {
+      "title": "Flowpilot'a Sor",
+      "clearChat": "Sohbet Geçmişini Temizle",
+      "placeholder": "Ne oluşturmak istediğinizi açıklayın...",
+      "examples": {
+        "userRegistration": "Kullanıcı Kaydı",
+        "userRegistrationPrompt": "E-posta doğrulamalı kullanıcı kayıt akışı",
+        "ecommerceCheckout": "E-Ticaret Ödeme",
+        "ecommerceCheckoutPrompt": "Ödeme geçidi hata işlemeli e-ticaret ödeme süreci",
+        "cicdPipeline": "CI/CD Pipeline",
+        "cicdPipelinePrompt": "CI/CD pipeline mimarisi",
+        "oauth2Login": "OAuth2 Girişi",
+        "oauth2LoginPrompt": "OAuth2 giriş akışı"
+      }
+    },
+    "search": {
+      "title": "Düğümleri Ara",
+      "placeholder": "Etiket veya ID ile ara...",
+      "noResults": "Düğüm bulunamadı",
+      "untitled": "İsimsiz Düğüm",
+      "type": "Tür"
+    },
+    "templates": {
+      "title": "Şablonlar",
+      "placeholder": "Şablonlarda ara...",
+      "noResults": "Şablon bulunamadı"
+    },
+    "code": {
+      "mermaidTitle": "Mermaid İçe Aktar",
+      "dslTitle": "{appName} DSL İçe Aktar",
+      "mermaidPlaceholder": "Mermaid kodunu buraya yapıştırın...",
+      "dslPlaceholder": "{appName} DSL kodunu buraya yapıştırın...",
+      "applyShortcut": "⌘+Enter ile uygula",
+      "syntaxGuide": "Sözdizimi Kılavuzu",
+      "apply": "Uygula"
+    },
+    "layout": {
+      "title": "Düzen Stüdyosu",
+      "algorithm": "Algoritma",
+      "layered": "Katmanlı",
+      "layeredDesc": "Hiyerarşik, akışlar için iyi",
+      "tree": "Ağaç",
+      "treeDesc": "Katı ebeveyn-çocuk yapısı",
+      "force": "Kuvvet",
+      "forceDesc": "Organik, fizik tabanlı",
+      "radial": "Radyal",
+      "radialDesc": "Dairesel düzenleme",
+      "direction": "Yön",
+      "down": "Aşağı",
+      "up": "Yukarı",
+      "right": "Sağ",
+      "left": "Sol",
+      "spacing": "Boşluk",
+      "compact": "Sıkışık",
+      "normal": "Normal",
+      "loose": "Geniş",
+      "applyLayout": "Düzeni Uygula"
+    },
+    "designSystem": {
+      "title": "Tasarım Sistemleri",
+      "createNew": "Yeni Sistem Oluştur",
+      "import": "İçe Aktar",
+      "exportActive": "Aktifi Dışa Aktar"
+    },
+    "visuals": {
+      "title": "Bağlantı Stilleri",
+      "edgeStyle": "Kenar Stili",
+      "bezier": "Bezier",
+      "bezierDesc": "Yumuşak eğriler",
+      "straight": "Düz",
+      "straightDesc": "Doğrudan çizgiler",
+      "smoothStep": "Yumuşak Adım",
+      "smoothStepDesc": "Yuvarlatılmış köşeler",
+      "step": "Adım",
+      "stepDesc": "Dik açılar",
+      "defaultIcons": "Varsayılan Simgeler",
+      "defaultIconsDesc": "Standart düğüm simgelerini göster",
+      "intelligentRouting": "Akıllı Yönlendirme",
+      "intelligentRoutingDesc": "Sürüklerken bağlantıları otomatik hizala",
+      "animatedEdges": "Animasyonlu Kenarlar",
+      "animatedEdgesDesc": "Akan parçacıklar",
+      "strokeWidth": "Çizgi Kalınlığı"
+    }
+  },
+  "settingsModal": {
+    "title": "Ayarlar",
+    "general": "Genel",
+    "flowpilotAI": "Flowpilot AI",
+    "shortcuts": "Kısayollar",
+    "running": "{appName} Çalışıyor",
+    "generalSettings": "Genel Ayarlar",
+    "flowpilotConfigurations": "Flowpilot Yapılandırmaları",
+    "keyboardShortcuts": "Klavye Kısayolları",
+    "canvas": {
+      "title": "Tuval",
+      "showGrid": "Izgara Göster",
+      "showGridDesc": "Tuval üzerinde nokta ızgarası göster",
+      "snapToGrid": "Izgaraya Yapış",
+      "snapToGridDesc": "Düğümleri taşırken ızgaraya hizala",
+      "miniMap": "Mini Harita",
+      "miniMapDesc": "Sağ altta mini harita göster"
+    },
+    "ai": {
+      "provider": "Sağlayıcı",
+      "model": "Model",
+      "apiKey": "API Anahtarı",
+      "customBaseUrl": "Özel Taban URL",
+      "optional": "İsteğe bağlı",
+      "testConnection": "Bağlantıyı Test Et",
+      "testing": "Test ediliyor...",
+      "success": "Başarılı! {provider} ile bağlantı kuruldu",
+      "failed": "Başarısız: {error}",
+      "getApiKey": "{provider} API Anahtarı Al",
+      "openConsole": "{console} Aç",
+      "keySetupNote": "Anahtar Kurulum Notu",
+      "enterApiKey": "API anahtarınızı girin",
+      "selectModel": "Bir model seçin",
+      "customEndpoint": "Özel Taban URL (örn: https://api.example.com)",
+      "providers": {
+        "gemini": {
+          "hint": "Google · En iyi ücretsiz katman · Çok modlu",
+          "keySetupNote": "Ücretsiz katman mevcut — kredi kartı gerekmez"
+        },
+        "openai": {
+          "hint": "GPT-5 ailesi · Endüstri standardı",
+          "keySetupNote": "Ücretli hesap ve fatura kurulumu gerektirir"
+        },
+        "claude": {
+          "hint": "Anthropic · Lider akıl yürütme modeli",
+          "keySetupNote": "Ücretli hesap gerektirir (minimum $5 kredi)"
+        },
+        "groq": {
+          "hint": "Son derece hızlı · Cömert ücretsiz katman · Llama 4",
+          "keySetupNote": "Ücretsiz katman mevcut — kredi kartı gerekmez"
+        },
+        "nvidia": {
+          "hint": "NIM · Kimi-V2.5 · Sınır modelleri",
+          "keySetupNote": "Yeni hesapla ücretsiz krediler dahil"
+        },
+        "cerebras": {
+          "hint": "2,400 tok/s · Qwen 3 235B · WSE-3 hızı",
+          "keySetupNote": "Ücretsiz katman mevcut — kredi kartı gerekmez"
+        },
+        "mistral": {
+          "hint": "Le Chat · Codestral · Avrupalı AI lideri",
+          "keySetupNote": "Cömert limitlerle ücretsiz katman — kredi kartı gerekmez"
+        },
+        "custom": {
+          "hint": "Herhangi bir OpenAI uyumlu endpoint"
+        }
+      }
+    },
+    "brand": {
+      "title": "Marka Kitleri",
+      "subtitle": "Marka kimliklerinizi yönetin",
+      "active": "Aktif",
+      "editKit": "Kiti Düzenle",
+      "duplicate": "Çoğalt",
+      "delete": "Sil",
+      "deleteConfirm": "Bu kit silinsin mi?",
+      "createNewKit": "Yeni Kit Oluştur"
+    },
+    "shortcutsHint": "İstediğiniz zaman ? tuşuna basarak bunları görüntüleyebilirsiniz.",
+    "privacy": {
+      "manifesto": "Gizlilik Manifestomuz",
+      "manifestoText": "Tasarım gereği gizlilik ve kullanıcı özerkliğine inanıyoruz. E-postanızı toplamıyoruz, giriş sistemimiz yok ve verilerinizi sunucularımızda saklamıyoruz.",
+      "localFirst": "Yerel Öncelikli Depolama",
+      "noAccounts": "Kullanıcı Hesabı Yok",
+      "ownData": "Veriniz Size Ait",
+      "anonymous": "Yalnızca Anonim Kullanım",
+      "telemetry": "Telemetri ve Geri Bildirim",
+      "anonymousStats": "Anonim İstatistikler",
+      "anonymousStatsDesc": "Aracı geliştirmek için yalnızca ziyaretleri ve sınırlı anonim özellik kullanımını (dışa aktarma gibi) takip ediyoruz. Adlarınızı, IP adreslerinizi, girişlerinizi veya diyagram içeriğinizi takip etmiyoruz.",
+      "quote": "Her hareketinizi takip etmek yerine, neyin işe yaradığını bize söylemenize güveniyoruz.",
+      "helpImprove": "Geliştirmemize Yardımcı Olun",
+      "shareFeedback": "Geri Bildirim Paylaş",
+      "shareFeedbackDesc": "Geri bildirim verin, hataları bildirin ve özellik isteyin"
+    }
+  },
+  "customNodes": {
+    "browserContent": "Tarayıcı İçeriği",
+    "mobileContent": "Mobil İçerik"
   }
 }

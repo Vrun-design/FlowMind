@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Layout, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Input } from '../ui/Input';
 import { ViewHeader } from './ViewHeader';
 import { FLOW_TEMPLATES, FlowTemplate } from '../../services/templates';
@@ -15,6 +16,7 @@ export const TemplatesView = ({
     onClose,
     handleBack
 }: TemplatesViewProps) => {
+    const { t } = useTranslation();
     const [tSearch, setTSearch] = useState('');
 
     const filteredTemplates = useMemo(() => {
@@ -26,14 +28,14 @@ export const TemplatesView = ({
 
     return (
         <div className="flex flex-col h-full">
-            <ViewHeader title="Templates" icon={<Layout className="w-4 h-4 text-[var(--brand-primary)]" />} onBack={handleBack} />
+            <ViewHeader title={t('commandBar.templates.title')} icon={<Layout className="w-4 h-4 text-[var(--brand-primary)]" />} onBack={handleBack} />
 
             <div className="px-4 py-2 border-b border-slate-100">
                 <Input
                     value={tSearch}
                     onChange={e => setTSearch(e.target.value)}
                     onKeyDown={(e) => e.stopPropagation()}
-                    placeholder="Search templates..."
+                    placeholder={t('commandBar.templates.placeholder')}
                     className="w-full focus:border-[var(--brand-primary-400)]"
                     autoFocus
                 />
@@ -60,7 +62,7 @@ export const TemplatesView = ({
                     );
                 })}
                 {filteredTemplates.length === 0 && (
-                    <div className="text-center py-8 text-slate-400 text-sm">No templates found</div>
+                    <div className="text-center py-8 text-slate-400 text-sm">{t('commandBar.templates.noResults')}</div>
                 )}
             </div>
         </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Node, Edge } from 'reactflow';
 import { Link } from 'react-router-dom';
 import { Code2, FileCode, AlertCircle, BookOpen, Loader2, Play } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { ViewHeader } from './ViewHeader';
 import { toMermaid } from '../../services/exportService';
 import { toOpenFlowDSL } from '../../services/openFlowDSLExporter';
@@ -30,6 +31,7 @@ export const CodeView = ({
     onClose,
     handleBack
 }: CodeViewProps) => {
+    const { t } = useTranslation();
     const { brandConfig } = useFlowStore();
     const [code, setCode] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -102,7 +104,7 @@ export const CodeView = ({
     return (
         <div className="flex flex-col h-full">
             <ViewHeader
-                title={mode === 'mermaid' ? 'Import Mermaid' : `Import ${brandConfig.appName} DSL`}
+                title={mode === 'mermaid' ? t('commandBar.code.mermaidTitle') : t('commandBar.code.dslTitle', { appName: brandConfig.appName })}
                 icon={mode === 'mermaid' ? <Code2 className="w-4 h-4 text-[var(--brand-primary)]" /> : <FileCode className="w-4 h-4 text-[var(--brand-primary)]" />}
                 onBack={handleBack}
             />
@@ -112,7 +114,7 @@ export const CodeView = ({
                         value={code}
                         onChange={e => handleChange(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder={mode === 'mermaid' ? "Paste Mermaid code here..." : `Paste ${brandConfig.appName} DSL code here...`}
+                        placeholder={mode === 'mermaid' ? t('commandBar.code.mermaidPlaceholder') : t('commandBar.code.dslPlaceholder', { appName: brandConfig.appName })}
                         className={`h-full font-mono leading-relaxed resize-none transition-all
                                 ${error ? 'border-amber-300 bg-amber-50/30' : 'bg-slate-50/50'}
                             `}
@@ -130,7 +132,7 @@ export const CodeView = ({
 
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-4">
-                        <span className="text-xs text-slate-400">⌘+Enter to apply</span>
+                        <span className="text-xs text-slate-400">{t('commandBar.code.applyShortcut')}</span>
                         {mode === 'flowmind' && (
                             <a
                                 href="#/docs/openflow-dsl"
@@ -139,7 +141,7 @@ export const CodeView = ({
                                 className="flex items-center gap-1.5 text-xs font-medium text-[var(--brand-primary)] hover:text-[var(--brand-primary-700)] transition-colors"
                             >
                                 <BookOpen className="w-3.5 h-3.5" />
-                                Syntax Guide
+                                {t('commandBar.code.syntaxGuide')}
                             </a>
                         )}
                     </div>

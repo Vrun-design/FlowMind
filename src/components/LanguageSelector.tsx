@@ -11,8 +11,8 @@ interface Language {
 }
 
 const languages: Language[] = [
-  { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
-  { code: 'tr', name: 'Turkish', nativeName: 'Türkçe', flag: '🇹🇷' },
+  { code: 'en', name: 'English', nativeName: 'English', flag: "https://purecatamphetamine.github.io/country-flag-icons/3x2/US.svg" },
+  { code: 'tr', name: 'Turkish', nativeName: 'Türkçe', flag: "https://purecatamphetamine.github.io/country-flag-icons/3x2/TR.svg" },
 ];
 
 interface LanguageSelectorProps {
@@ -42,7 +42,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'd
           className="flex items-center justify-between w-full px-3 py-2 rounded-lg border border-slate-200 transition-all text-sm font-medium bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300"
         >
           <div className="flex items-center gap-2">
-            <span className="text-lg">{currentLanguage.flag}</span>
+            <img src={currentLanguage.flag} alt={currentLanguage.name} className="w-6 h-4" />
             <span>{currentLanguage.nativeName}</span>
           </div>
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? (placement === 'top' ? '' : 'rotate-180') : (placement === 'top' ? 'rotate-180' : '')}`} />
@@ -63,7 +63,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'd
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{language.flag}</span>
+                    <img src={language.flag} alt={language.name} className="w-6 h-4" />
                     <span>{language.nativeName}</span>
                   </div>
                   {i18n.language === language.code && <Check className="w-4 h-4" />}
@@ -85,7 +85,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'd
           className="flex items-center gap-1.5 px-2 py-1.5 rounded-md transition-all text-sm font-medium bg-transparent text-slate-600 hover:bg-slate-100"
           title="Change Language"
         >
-          <span className="text-base">{currentLanguage.flag}</span>
+          <img src={currentLanguage.flag} alt={currentLanguage.name} className="w-6 h-4" />
           <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? (placement === 'top' ? '' : 'rotate-180') : (placement === 'top' ? 'rotate-180' : '')}`} />
         </button>
 
@@ -104,7 +104,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'd
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-base">{language.flag}</span>
+                    <img src={language.flag} alt={language.name} className="w-6 h-4" />
                     <span>{language.nativeName}</span>
                   </div>
                   {i18n.language === language.code && <Check className="w-4 h-4" />}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Zap, GitGraph, Network, Move, Maximize2, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
 import { ViewHeader } from './ViewHeader';
 import { LayoutAlgorithm } from '../../services/elkLayout';
@@ -79,6 +80,7 @@ export const LayoutView = ({
     onClose,
     handleBack
 }: LayoutViewProps) => {
+    const { t } = useTranslation();
     const [algorithm, setAlgorithm] = useState<LayoutAlgorithm>('layered');
     const [direction, setDirection] = useState<'TB' | 'LR' | 'RL' | 'BT'>('TB');
     const [spacing, setSpacing] = useState<'compact' | 'normal' | 'loose'>('normal');
@@ -91,42 +93,42 @@ export const LayoutView = ({
 
     return (
         <div className="flex flex-col h-full">
-            <ViewHeader title="Layout Studio" icon={<Zap className="w-4 h-4 text-[var(--brand-primary)]" />} onBack={handleBack} />
+            <ViewHeader title={t('commandBar.layout.title')} icon={<Zap className="w-4 h-4 text-[var(--brand-primary)]" />} onBack={handleBack} />
 
             <div className="flex-1 overflow-y-auto p-4 space-y-6">
 
                 {/* Algorithms */}
                 <div className="space-y-3">
-                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Algorithm</label>
+                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('commandBar.layout.algorithm')}</label>
                     <div className="grid grid-cols-2 gap-3">
                         <AlgorithmCard
                             id="layered"
-                            label="Layered"
-                            desc="Hierarchical, good for flows"
+                            label={t('commandBar.layout.layered')}
+                            desc={t('commandBar.layout.layeredDesc')}
                             icon={<GitGraph className="w-4 h-4" />}
                             selected={algorithm === 'layered'}
                             onClick={() => setAlgorithm('layered')}
                         />
                         <AlgorithmCard
                             id="mrtree"
-                            label="Tree"
-                            desc="Strict parent-child structure"
+                            label={t('commandBar.layout.tree')}
+                            desc={t('commandBar.layout.treeDesc')}
                             icon={<Network className="w-4 h-4" />}
                             selected={algorithm === 'mrtree'}
                             onClick={() => setAlgorithm('mrtree')}
                         />
                         <AlgorithmCard
                             id="force"
-                            label="Force"
-                            desc="Organic, physics-based"
+                            label={t('commandBar.layout.force')}
+                            desc={t('commandBar.layout.forceDesc')}
                             icon={<Move className="w-4 h-4" />}
                             selected={algorithm === 'force'}
                             onClick={() => setAlgorithm('force')}
                         />
                         <AlgorithmCard
                             id="radial"
-                            label="Radial"
-                            desc="Circular arrangement"
+                            label={t('commandBar.layout.radial')}
+                            desc={t('commandBar.layout.radialDesc')}
                             icon={<Maximize2 className="w-4 h-4" />}
                             selected={algorithm === 'radial'}
                             onClick={() => setAlgorithm('radial')}
@@ -137,23 +139,23 @@ export const LayoutView = ({
                 {/* Direction (Conditional) */}
                 {(algorithm === 'layered' || algorithm === 'mrtree') && (
                     <div className="space-y-3 animate-in slide-in-from-top-2 duration-200">
-                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Direction</label>
+                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('commandBar.layout.direction')}</label>
                         <div className="flex bg-slate-100 p-1 rounded-[var(--radius-sm)]">
-                            <DirectionButton dir="TB" label="Down" selected={direction === 'TB'} onClick={() => setDirection('TB')} />
-                            <DirectionButton dir="BT" label="Up" selected={direction === 'BT'} onClick={() => setDirection('BT')} />
-                            <DirectionButton dir="LR" label="Right" selected={direction === 'LR'} onClick={() => setDirection('LR')} />
-                            <DirectionButton dir="RL" label="Left" selected={direction === 'RL'} onClick={() => setDirection('RL')} />
+                            <DirectionButton dir="TB" label={t('commandBar.layout.down')} selected={direction === 'TB'} onClick={() => setDirection('TB')} />
+                            <DirectionButton dir="BT" label={t('commandBar.layout.up')} selected={direction === 'BT'} onClick={() => setDirection('BT')} />
+                            <DirectionButton dir="LR" label={t('commandBar.layout.right')} selected={direction === 'LR'} onClick={() => setDirection('LR')} />
+                            <DirectionButton dir="RL" label={t('commandBar.layout.left')} selected={direction === 'RL'} onClick={() => setDirection('RL')} />
                         </div>
                     </div>
                 )}
 
                 {/* Spacing */}
                 <div className="space-y-3">
-                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Spacing</label>
+                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('commandBar.layout.spacing')}</label>
                     <div className="grid grid-cols-3 gap-2">
-                        <SpacingButton id="compact" label="Tight" selected={spacing === 'compact'} onClick={() => setSpacing('compact')} />
-                        <SpacingButton id="normal" label="Normal" selected={spacing === 'normal'} onClick={() => setSpacing('normal')} />
-                        <SpacingButton id="loose" label="Loose" selected={spacing === 'loose'} onClick={() => setSpacing('loose')} />
+                        <SpacingButton id="compact" label={t('commandBar.layout.compact')} selected={spacing === 'compact'} onClick={() => setSpacing('compact')} />
+                        <SpacingButton id="normal" label={t('commandBar.layout.normal')} selected={spacing === 'normal'} onClick={() => setSpacing('normal')} />
+                        <SpacingButton id="loose" label={t('commandBar.layout.loose')} selected={spacing === 'loose'} onClick={() => setSpacing('loose')} />
                     </div>
                 </div>
 
@@ -167,7 +169,7 @@ export const LayoutView = ({
                     className="w-full py-2.5 h-auto rounded-[var(--radius-md)] shadow-sm shadow-[var(--brand-primary-200)] justify-center"
                 >
                     <Zap className="w-4 h-4 mr-2" />
-                    Apply Layout
+                    {t('commandBar.layout.applyLayout')}
                 </Button>
             </div>
         </div>

@@ -1,7 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { KEYBOARD_SHORTCUTS } from '../../constants';
 
 export const ShortcutsSettings = () => {
+    const { t } = useTranslation();
     return (
         <div className="space-y-8">
             {KEYBOARD_SHORTCUTS.map((section) => (
@@ -26,7 +28,7 @@ export const ShortcutsSettings = () => {
                 </div>
             ))}
             <div className="text-xs text-slate-400 text-center pt-4">
-                You can also press <kbd className="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded mx-1 font-sans">?</kbd> to view these anytime.
+                {t('settingsModal.shortcutsHint')}
             </div>
         </div>
     );

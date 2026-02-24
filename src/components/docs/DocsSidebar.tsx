@@ -4,16 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { docsNavigation } from './docsData';
 import { Book, ChevronLeft, ArrowLeft } from 'lucide-react';
 import { LanguageSelector } from '../LanguageSelector';
+import { SidebarItem } from '../ui/SidebarItem';
+import { useFlowStore } from '../../store';
 
 interface DocsSidebarProps {
     className?: string;
     onClose?: () => void;
 }
 
-import { SidebarItem } from '../ui/SidebarItem';
-import { useFlowStore } from '../../store';
-
 export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClose }) => {
+    const { t } = useTranslation();
     const { brandConfig } = useFlowStore();
     const { i18n } = useTranslation();
     const { lang } = useParams();
@@ -25,7 +25,7 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClos
                 <Link
                     to="/home"
                     className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors"
-                    title="Return to Canvas"
+                    title={t('docs.returnToCanvas')}
                 >
                     <ArrowLeft className="w-4 h-4" />
                 </Link>
@@ -36,7 +36,7 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClos
                     <div className="p-1 rounded bg-[var(--brand-primary)]/10 text-[var(--brand-primary)]">
                         <Book className="w-3.5 h-3.5" />
                     </div>
-                    <span>Documentation</span>
+                    <span>{t('docs.documentation')}</span>
                 </div>
             </div>
 

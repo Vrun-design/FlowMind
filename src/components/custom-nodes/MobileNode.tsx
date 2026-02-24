@@ -1,10 +1,12 @@
 import React, { memo } from 'react';
 import { NodeProps, NodeResizer, Handle, Position } from 'reactflow';
+import { useTranslation } from 'react-i18next';
 import { NodeData } from '@/lib/types';
 import { User, Lock, Mail, ChevronLeft, Menu, Bell, Search } from 'lucide-react';
 import { NODE_COLOR_PALETTE } from '../../theme';
 
 function MobileNode({ data, selected }: NodeProps<NodeData>): React.ReactElement {
+    const { t } = useTranslation();
     const style = NODE_COLOR_PALETTE[data.color || 'slate'];
 
     // Render content based on variant
@@ -13,7 +15,7 @@ function MobileNode({ data, selected }: NodeProps<NodeData>): React.ReactElement
             return (
                 <img
                     src={data.imageUrl}
-                    alt="Mobile Content"
+                    alt={t('customNodes.mobileContent')}
                     className="w-full h-full object-cover"
                 />
             );

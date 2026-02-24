@@ -1,7 +1,9 @@
 import React from 'react';
 import { Github, ArrowUpRight, GitPullRequest, Construction, Users, Map, CheckCircle2, CircleDashed } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function Testimonials(): React.ReactElement {
+    const { t } = useTranslation();
     return (
         <section className="py-32 bg-[#08090A] border-t border-white/5 relative overflow-hidden select-none">
             {/* Background Effects */}
@@ -14,21 +16,21 @@ export function Testimonials(): React.ReactElement {
                     <div className="max-w-2xl">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/60 mb-6 font-mono text-[10px] uppercase tracking-widest font-bold">
                             <Construction className="w-3 h-3" />
-                            <span>Under Construction</span>
+                            <span>{t('testimonials.badge')}</span>
                         </div>
                         <h2 className="text-5xl md:text-7xl font-bold text-white tracking-tighter mb-4 leading-[0.9]">
-                            Build in public. <br />
-                            <span className="font-serif italic font-normal text-white/50">Shape the engine.</span>
+                            {t('testimonials.title')} <br />
+                            <span className="font-serif italic font-normal text-white/50">{t('testimonials.subtitle')}</span>
                         </h2>
                         <p className="text-xl text-white/50 leading-relaxed max-w-lg font-medium">
-                            OpenFlowKit is just getting started. We are building the core engine in the open. Join us on Day 1.
+                            {t('testimonials.description')}
                         </p>
                     </div>
 
                     <div className="flex items-center gap-4">
                         <a href="https://github.com/openflowkit/engine" target="_blank" className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-full font-bold text-sm hover:bg-gray-200 transition-colors">
                             <Github className="w-4 h-4" />
-                            Star the Repo
+                            {t('testimonials.starTheRepo')}
                         </a>
                     </div>
                 </div>
@@ -47,12 +49,12 @@ export function Testimonials(): React.ReactElement {
                         </div>
 
                         <div>
-                            <h3 className="text-xl font-bold text-white mb-2">Open Source</h3>
+                            <h3 className="text-xl font-bold text-white mb-2">{t('testimonials.openSource')}</h3>
                             <p className="text-white/50 text-sm leading-relaxed mb-6">
-                                The core engine is MIT licensed. Read the source, submit PRs, or fork it for your internal tools.
+                                {t('testimonials.openSourceDesc')}
                             </p>
                             <div className="flex items-center gap-3 text-xs font-mono text-white/40">
-                                <span className="flex items-center gap-1"><GitPullRequest className="w-3 h-3" /> PRs Welcome</span>
+                                <span className="flex items-center gap-1"><GitPullRequest className="w-3 h-3" /> {t('testimonials.prsWelcome')}</span>
                             </div>
                         </div>
                     </a>
@@ -68,9 +70,9 @@ export function Testimonials(): React.ReactElement {
                         </div>
 
                         <div>
-                            <h3 className="text-xl font-bold text-white mb-2">Community</h3>
+                            <h3 className="text-xl font-bold text-white mb-2">{t('testimonials.community')}</h3>
                             <p className="text-white/50 text-sm leading-relaxed mb-6">
-                                Join developers building on OpenFlowKit.
+                                {t('testimonials.communityDesc')}
                             </p>
 
                             <div className="flex items-center -space-x-3">
@@ -102,19 +104,19 @@ export function Testimonials(): React.ReactElement {
                         </div>
 
                         <div>
-                            <h3 className="text-xl font-bold text-white mb-4">Roadmap</h3>
+                            <h3 className="text-xl font-bold text-white mb-4">{t('testimonials.roadmap')}</h3>
                             <div className="space-y-3">
                                 <div className="flex items-center gap-3">
                                     <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                    <span className="text-white/60 text-sm line-through decoration-white/20">Core Renderer</span>
+                                    <span className="text-white/60 text-sm line-through decoration-white/20">{t('testimonials.coreRenderer')}</span>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                    <span className="text-white/60 text-sm line-through decoration-white/20">Flowpilot AI</span>
+                                    <span className="text-white/60 text-sm line-through decoration-white/20">{t('testimonials.flowpilotAI')}</span>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <CircleDashed className="w-4 h-4 text-purple-400 animate-spin-slow" />
-                                    <span className="text-white text-sm font-medium">PDF Export</span>
+                                    <span className="text-white text-sm font-medium">{t('testimonials.pdfExport')}</span>
                                 </div>
                             </div>
                         </div>

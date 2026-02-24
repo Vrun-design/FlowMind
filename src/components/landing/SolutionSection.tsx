@@ -1,7 +1,9 @@
 import React from 'react';
 import { Sparkles, FileCode, Palette, ShieldCheck, HardDrive, Layers, Lock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function SolutionSection(): React.ReactElement {
+    const { t } = useTranslation();
     return (
         <section id="architecture" className="py-32 bg-brand-canvas relative border-b border-brand-border/60 overflow-hidden">
 
@@ -13,15 +15,14 @@ export function SolutionSection(): React.ReactElement {
                 <div className="max-w-4xl">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/5 border border-brand-primary/10 text-brand-primary/60 mb-8 font-mono text-[10px] uppercase tracking-widest font-bold opacity-0 animate-slide-up [animation-delay:200ms]">
                         <Layers className="w-3 h-3" />
-                        The Features
+                        {t('solution.badge')}
                     </div>
                     <h2 className="text-5xl md:text-7xl font-bold text-brand-dark tracking-tighter leading-[1.1] mb-8 opacity-0 animate-slide-up [animation-delay:300ms]">
-                        Everything you need. <br />
-                        <span className="font-serif italic font-normal text-brand-primary">Nothing you don't.</span>
+                        {t('solution.title')} <br />
+                        <span className="font-serif italic font-normal text-brand-primary">{t('solution.subtitle')}</span>
                     </h2>
                     <p className="text-xl text-brand-secondary max-w-2xl leading-relaxed font-medium opacity-0 animate-slide-up [animation-delay:400ms] text-balance">
-                        The ultimate <span className="text-brand-dark font-bold">white-label</span> canvas. Fully customizable nodes, edges, and themes — powered by <span className="text-brand-dark font-bold">React Flow</span>.
-                        It's <span className="text-brand-primary">your brand</span>, given infinite space to breathe.
+                        {t('solution.description')}
                     </p>
                 </div>
             </div>
@@ -39,10 +40,9 @@ export function SolutionSection(): React.ReactElement {
                             <div className="w-12 h-12 rounded-2xl bg-brand-primary text-white flex items-center justify-center mb-6 shadow-lg shadow-brand-primary/20">
                                 <FileCode className="w-6 h-6" />
                             </div>
-                            <h3 className="text-3xl font-bold text-brand-dark mb-4 tracking-tight">Diagram as Code</h3>
+                            <h3 className="text-3xl font-bold text-brand-dark mb-4 tracking-tight">{t('solution.diagramAsCode')}</h3>
                             <p className="text-brand-secondary text-lg leading-relaxed">
-                                First-class support for <span className="font-semibold text-brand-primary">Mermaid.js</span> and our type-safe DSL.
-                                Define your architecture in code, export as JSON, and let the engine handle the layout.
+                                {t('solution.diagramAsCodeDesc')}
                             </p>
                         </div>
 
@@ -87,11 +87,11 @@ export function SolutionSection(): React.ReactElement {
                         <div className="relative z-20 mb-auto">
                             <div className="flex items-center gap-2 mb-3 text-brand-blue font-mono text-[10px] uppercase tracking-widest">
                                 <Sparkles className="w-3 h-3" />
-                                <span>AI Assistant</span>
+                                <span>{t('solution.aiAssistant')}</span>
                             </div>
-                            <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">Flowpilot AI</h3>
+                            <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">{t('solution.flowpilotAI')}</h3>
                             <p className="text-white/60 text-base leading-relaxed">
-                                Chat with your diagram. "Make the corners rounder", "Add a load balancer".
+                                {t('solution.flowpilotAIDesc')}
                             </p>
                         </div>
 
@@ -101,7 +101,7 @@ export function SolutionSection(): React.ReactElement {
                                 {/* User Message */}
                                 <div className="flex justify-end transform translate-x-0 transition-transform duration-500 delay-100">
                                     <div className="bg-[#222] border border-white/10 text-white text-xs px-4 py-3 rounded-2xl rounded-tr-sm shadow-lg max-w-[85%]">
-                                        Add a Redis cache in front of the DB.
+                                        {t('solution.addRedisCache')}
                                     </div>
                                 </div>
                                 {/* AI Thinking */}
@@ -143,21 +143,20 @@ export function SolutionSection(): React.ReactElement {
                             <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-900 mb-6 group-hover:scale-110 transition-transform border border-gray-100">
                                 <Lock className="w-6 h-6" />
                             </div>
-                            <h3 className="text-2xl font-bold text-brand-dark mb-3">Local & Private</h3>
+                            <h3 className="text-2xl font-bold text-brand-dark mb-3">{t('solution.localPrivate')}</h3>
                             <p className="text-brand-secondary text-lg leading-relaxed">
-                                We don't want your data. Everything stays on your machine.
-                                No cloud saves, no tracking, no "syncing" to our servers. You have full freedom.
+                                {t('solution.localPrivateDesc')}
                             </p>
                         </div>
 
                         <div className="relative z-10 mt-8 flex items-center gap-4">
                             <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100 text-[11px] font-mono text-gray-600 font-medium">
                                 <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                                Offline Ready
+                                {t('solution.offlineReady')}
                             </div>
                             <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100 text-[11px] font-mono text-gray-600 font-medium">
                                 <HardDrive className="w-3 h-3" />
-                                Local File System
+                                {t('solution.localFileSystem')}
                             </div>
                         </div>
                     </div>
@@ -172,10 +171,9 @@ export function SolutionSection(): React.ReactElement {
                             <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform border border-purple-100/50">
                                 <Palette className="w-6 h-6" />
                             </div>
-                            <h3 className="text-2xl font-bold text-brand-dark mb-3">Amazing Aesthetics</h3>
+                            <h3 className="text-2xl font-bold text-brand-dark mb-3">{t('solution.amazingAesthetics')}</h3>
                             <p className="text-brand-secondary text-lg leading-relaxed">
-                                Break free from "Enterprise Beige". Fully customizable fonts, colors, and shapes.
-                                Create diagrams that look like art, not documentation.
+                                {t('solution.amazingAestheticsDesc')}
                             </p>
                         </div>
 

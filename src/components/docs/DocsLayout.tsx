@@ -10,7 +10,7 @@ export const DocsLayout: React.FC = () => {
     useBrandTheme();
     const navigate = useNavigate();
     const location = useLocation();
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { lang } = useParams();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -33,7 +33,7 @@ export const DocsLayout: React.FC = () => {
         <div className="min-h-screen bg-[var(--brand-background)] text-[var(--brand-text)] flex">
             {/* Mobile Header */}
             <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-[var(--brand-surface)] border-b border-slate-200 z-30 flex items-center px-4 justify-between">
-                <div className="font-semibold text-slate-900">Documentation</div>
+                <div className="font-semibold text-slate-900">{t('docs.documentation')}</div>
                 <div className="flex items-center gap-2">
                     <LanguageSelector variant="minimal" />
                     <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-slate-500 hover:bg-slate-100 rounded-md">

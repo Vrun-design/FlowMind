@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { Sparkles, Loader2, ImagePlus, X, Send, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
 import { ViewHeader } from './ViewHeader';
 import { ChatMessage } from '../../services/geminiService';
@@ -25,6 +26,7 @@ export const AIView = ({
     chatMessages = [],
     onClearChat
 }: AIViewProps) => {
+    const { t } = useTranslation();
     const { brandConfig } = useFlowStore();
     const isBeveled = brandConfig.ui.buttonStyle === 'beveled';
     const [prompt, setPrompt] = useState(searchQuery || '');
@@ -71,10 +73,10 @@ export const AIView = ({
     };
 
     const EXAMPLES = [
-        { label: "User Registration", prompt: "User registration flow with email verification" },
-        { label: "E-Commerce Checkout", prompt: "E-commerce checkout process with payment gateway failure handling" },
-        { label: "CI/CD Pipeline", prompt: "CI/CD pipeline architecture" },
-        { label: "OAuth2 Login", prompt: "Oauth2 login flow" }
+        { label: t('commandBar.ai.examples.userRegistration'), prompt: t('commandBar.ai.examples.userRegistrationPrompt') },
+        { label: t('commandBar.ai.examples.ecommerceCheckout'), prompt: t('commandBar.ai.examples.ecommerceCheckoutPrompt') },
+        { label: t('commandBar.ai.examples.cicdPipeline'), prompt: t('commandBar.ai.examples.cicdPipelinePrompt') },
+        { label: t('commandBar.ai.examples.oauth2Login'), prompt: t('commandBar.ai.examples.oauth2LoginPrompt') }
     ];
 
     const hasHistory = chatMessages.length > 0;
@@ -82,7 +84,7 @@ export const AIView = ({
     return (
         <div className="flex flex-col h-full bg-slate-50 relative">
             <ViewHeader
-                title="Ask Flowpilot"
+                title={t('commandBar.ai.title')}
                 icon={<Sparkles className="w-4 h-4 text-[var(--brand-primary)]" />}
                 onBack={handleBack}
             />
@@ -91,7 +93,7 @@ export const AIView = ({
                 <button
                     onClick={onClearChat}
                     className="absolute top-3 right-12 p-1.5 text-slate-400 hover:text-red-500 transition-colors bg-white/50 rounded-md z-10"
-                    title="Clear Chat History"
+                    title={t('commandBar.ai.clearChat')}
                 >
                     <Trash2 className="w-4 h-4" />
                 </button>

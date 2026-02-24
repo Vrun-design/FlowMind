@@ -1,11 +1,13 @@
 import React, { memo } from 'react';
 import { NodeProps, NodeResizer, Handle, Position } from 'reactflow';
+import { useTranslation } from 'react-i18next';
 import { NodeData } from '@/lib/types';
 import { Layout, Cookie, Lock, X, Menu, Search } from 'lucide-react';
 
 import { NODE_COLOR_PALETTE } from '../../theme';
 
 const BrowserNode = ({ data, selected }: NodeProps<NodeData>): React.ReactElement => {
+    const { t } = useTranslation();
     const style = NODE_COLOR_PALETTE[data.color || 'slate'];
 
     // Render content based on variant
@@ -14,7 +16,7 @@ const BrowserNode = ({ data, selected }: NodeProps<NodeData>): React.ReactElemen
             return (
                 <img
                     src={data.imageUrl}
-                    alt="Browser Content"
+                    alt={t('customNodes.browserContent')}
                     className="w-full h-full object-cover object-top"
                 />
             );

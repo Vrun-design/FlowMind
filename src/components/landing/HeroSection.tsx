@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Copy, GitBranch, Terminal, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from './Button';
 import { trackEvent } from '../../lib/analytics';
+import { useFlowStore } from '../../store';
 
 interface HeroSectionProps {
   onLaunch: () => void;
 }
 
-const ROTATING_WORDS = ["thinks", "draws", "builds", "ships"];
-
-import { useFlowStore } from '../../store';
-
 export function HeroSection({ onLaunch }: HeroSectionProps): React.ReactElement {
+  const { t } = useTranslation();
   const { brandConfig } = useFlowStore();
   const [index, setIndex] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
+
+  const ROTATING_WORDS = [
+    t('landing.hero.thinks'),
+    t('landing.hero.draws'),
+    t('landing.hero.builds'),
+    t('landing.hero.ships')
+  ];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -59,27 +65,27 @@ export function HeroSection({ onLaunch }: HeroSectionProps): React.ReactElement 
         {/* Badge */}
         <div className="animate-slide-up opacity-0 [animation-delay:0ms] inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/5 border border-brand-primary/10 text-brand-primary/60 mb-6 font-mono text-[10px] uppercase tracking-widest font-bold ring-1 ring-brand-primary/5">
           <Terminal className="w-3 h-3" />
-          <span>v1.0 Public Beta</span>
+          <span>{t('landing.hero.publicBeta')}</span>
         </div>
 
         {/* Headline */}
         <h1 className="animate-slide-up opacity-0 [animation-delay:100ms] text-5xl sm:text-6xl md:text-[88px] font-bold tracking-[-0.04em] text-brand-dark mb-6 md:mb-8 max-w-5xl mx-auto leading-[1.1] text-balance">
-          The diagram engine <br />
+          {t('landing.hero.description1')} <br />
           <span className="font-serif italic font-normal text-brand-primary inline-flex items-center gap-[0.2em]">
-            that
+            {t('landing.hero.description2')}
             <span
               key={ROTATING_WORDS[index]}
               className={`inline-block ${isExiting ? '[animation:text-exit_0.5s_ease-in_forwards]' : '[animation:text-reveal_0.5s_ease-out_forwards]'}`}
             >
               {ROTATING_WORDS[index]}
             </span>
-            like you.
+            {t('landing.hero.description3')}
           </span>
         </h1>
 
         {/* Subhead */}
         <p className="animate-slide-up opacity-0 [animation-delay:200ms] text-lg md:text-xl text-brand-secondary mb-8 md:mb-10 max-w-2xl mx-auto leading-relaxed text-balance font-medium tracking-tight px-4 opacity-80">
-          100% free, open-source diagram tool for builders. Write code or drag and drop — get beautiful results either way.
+          {t('landing.hero.description4')}
         </p>
 
         {/* CTAs - Removed overriding shadow classes */}
@@ -93,7 +99,7 @@ export function HeroSection({ onLaunch }: HeroSectionProps): React.ReactElement 
             }}
           >
             <GitBranch className="w-4 h-4 mr-2" />
-            Fork on GitHub
+            {t('landing.hero.forkOnGithub')}
           </Button>
           <Button
             variant="secondary"
@@ -102,7 +108,7 @@ export function HeroSection({ onLaunch }: HeroSectionProps): React.ReactElement 
             className="w-full sm:w-auto h-14 px-10 transition-all active:scale-95 text-[15px]"
             onClick={onLaunch}
           >
-            Get Started
+            {t('common.getStarted')}
           </Button>
         </div>
         {/* Install Block */}
@@ -120,11 +126,11 @@ export function HeroSection({ onLaunch }: HeroSectionProps): React.ReactElement 
             )}
           </div>
           <div className="mt-4 text-[10px] font-mono text-brand-muted uppercase tracking-widest opacity-60 flex items-center justify-center gap-3">
-            <span>MIT Licensed</span>
+            <span>{t('landing.hero.licence')}</span>
             <span className="w-1 h-1 rounded-full bg-brand-muted/30"></span>
-            <span>Local First</span>
+            <span>{t('landing.hero.localFirst')}</span>
             <span className="w-1 h-1 rounded-full bg-brand-muted/30"></span>
-            <span>No Auth</span>
+            <span>{t('landing.hero.noAuth')}</span>
           </div>
         </div>
       </div>

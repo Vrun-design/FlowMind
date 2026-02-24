@@ -104,7 +104,7 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
                 className="px-5 text-[13px] h-9 transform hover:-translate-y-0.5 transition-all"
                 onClick={onLaunch}
               >
-                <span className="mr-1">{t('landing.hero.cta', 'Get Started')}</span>
+                <span className="mr-1"> {t('common.getStarted', 'Get Started')}</span>
               </Button>
             </div>
 
@@ -148,7 +148,7 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
                 onLaunch();
               }}
             >
-              <span>{t('landing.hero.cta', 'Get Started')}</span>
+              <span>{t('common.getStarted', 'Get Started')}</span>
               <Sparkles className="w-4 h-4" />
             </Button>
             <Button
