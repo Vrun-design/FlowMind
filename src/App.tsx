@@ -17,6 +17,9 @@ import { DocsPage } from './components/docs/DocsPage';
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { initAnalytics } from './lib/analytics';
 
+// Import i18n configuration
+import './i18n/config';
+
 // Initialize analytics once
 initAnalytics();
 
@@ -158,7 +161,7 @@ function App(): React.JSX.Element {
           <Route path="/canvas" element={<MobileGate><FlowCanvasRoute /></MobileGate>} />
           <Route path="/flow/:flowId" element={<MobileGate><FlowCanvasRoute /></MobileGate>} />
           <Route path="/docs" element={<DocsLayout />}>
-            <Route path=":slug" element={<DocsPage />} />
+            <Route path=":lang/:slug" element={<DocsPage />} />
           </Route>
         </Routes>
 

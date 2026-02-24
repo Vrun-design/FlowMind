@@ -1,0 +1,176 @@
+{
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "create": "Oluştur",
+    "close": "Kapat",
+    "back": "Geri",
+    "next": "İleri",
+    "done": "Tamam",
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "settings": "Ayarlar",
+    "help": "Yardım",
+    "docs": "Dokümantasyon"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "editor": "Editör",
+    "menu": "Menü",
+    "view": "Görünüm",
+    "file": "Dosya",
+    "history": "Geçmiş",
+    "playback": "Oynat"
+  },
+  "menu": {
+    "file": "Dosya",
+    "view": "Görünüm",
+    "settings": "Ayarlar",
+    "shortcuts": "Klavye Kısayolları",
+    "home": "Ana Sayfa",
+    "export": "Dışa Aktar",
+    "import": "İçe Aktar"
+  },
+  "view": {
+    "showGrid": "Izgarayı Göster",
+    "hideGrid": "Izgarayı Gizle",
+    "showMinimap": "Mini Haritayı Göster",
+    "hideMinimap": "Mini Haritayı Gizle",
+    "snapToGrid": "Izgaraya Yapıştır",
+    "zoomIn": "Yakınlaştır",
+    "zoomOut": "Uzaklaştır",
+    "fitView": "Görünüme Sığdır"
+  },
+  "export": {
+    "title": "Dışa Aktar",
+    "png": "PNG Olarak Dışa Aktar",
+    "jpeg": "JPEG Olarak Dışa Aktar",
+    "json": "JSON Olarak Dışa Aktar",
+    "mermaid": "Mermaid Olarak Dışa Aktar",
+    "plantuml": "PlantUML Olarak Dışa Aktar",
+    "openflowdsl": "OpenFlow DSL Olarak Dışa Aktar",
+    "figma": "Figma'ya Aktar"
+  },
+  "import": {
+    "title": "İçe Aktar",
+    "json": "JSON İçe Aktar",
+    "selectFile": "Bir dosya seçin"
+  },
+  "editor": {
+    "untitled": "İsimsiz Akış",
+    "newTab": "Yeni Sekme",
+    "renameTab": "Sekmeyi Yeniden Adlandır",
+    "closeTab": "Sekmeyi Kapat",
+    "addNode": "Düğüm Ekle",
+    "deleteNode": "Düğümü Sil",
+    "duplicateNode": "Düğümü Çoğalt"
+  },
+  "landing": {
+    "nav": {
+      "features": "Özellikler",
+      "figma": "Figma",
+      "useCases": "Kullanım Alanları",
+      "pricing": "Fiyatlandırma",
+      "viewGithub": "GitHub'da Görüntüle"
+    },
+    "hero": {
+      "title": "Güzel Akış Şemaları,",
+      "subtitle": "Geliştiriciler İçin Yapıldı",
+      "description": "Kod veya tuval ile çarpıcı akış şemaları oluşturun. İstediğiniz formata aktarın. Açık kaynak ve sonsuza kadar ücretsiz.",
+      "cta": "Başlayın",
+      "livePreview": "Canlı Önizleme"
+    },
+    "problem": {
+      "title": "Problem",
+      "description": "Geleneksel akış şeması araçları ya çok karmaşık ya da çok sınırlı."
+    },
+    "solution": {
+      "title": "Çözüm",
+      "description": "OpenFlowKit her iki dünyanın en iyisini birleştirir."
+    },
+    "demo": {
+      "title": "Eskiz için basit.",
+      "subtitle": "Üretime hazır.",
+      "description": "Fikirlerinizi hızlıca çizin. Üretime hazır şekilde aktarın."
+    },
+    "useCases": {
+      "title": "Kullanım Alanları"
+    },
+    "pricing": {
+      "title": "Fiyatlandırma",
+      "free": "Sonsuza Kadar Ücretsiz",
+      "openSource": "Açık Kaynak"
+    },
+    "testimonials": {
+      "title": "İnsanlar Ne Diyor"
+    },
+    "cta": {
+      "title": "Başlamaya Hazır Mısınız?",
+      "subtitle": "İlk akış şemanızı saniyeler içinde oluşturun.",
+      "button": "Uygulamayı Başlat"
+    },
+    "footer": {
+      "rights": "Tüm hakları saklıdır.",
+      "madeWith": "OpenFlowKit Ekibi tarafından ❤️ ile yapıldı"
+    }
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "general": "Genel",
+    "shortcuts": "Klavye Kısayolları",
+    "theme": "Tema",
+    "language": "Dil",
+    "selectLanguage": "Dil Seçin",
+    "appearance": "Görünüm",
+    "ai": "AI Ayarları",
+    "analytics": "Analitik",
+    "about": "Hakkında",
+    "brand": "Marka Ayarları",
+    "privacy": "Gizlilik"
+  },
+  "shortcuts": {
+    "title": "Klavye Kısayolları",
+    "general": "Genel",
+    "canvas": "Tuval",
+    "nodes": "Düğümler"
+  },
+  "properties": {
+    "title": "Özellikler",
+    "nodeType": "Düğüm Tipi",
+    "label": "Etiket",
+    "description": "Açıklama",
+    "color": "Renk",
+    "icon": "İkon",
+    "size": "Boyut"
+  },
+  "ai": {
+    "generate": "AI ile Oluştur",
+    "provider": "AI Sağlayıcı",
+    "model": "Model",
+    "apiKey": "API Anahtarı",
+    "placeholder": "Akış şemanızı tanımlayın..."
+  },
+  "playback": {
+    "title": "Oynatma",
+    "play": "Oynat",
+    "pause": "Duraklat",
+    "stop": "Durdur",
+    "speed": "Hız"
+  },
+  "history": {
+    "title": "Geçmiş",
+    "undo": "Geri Al",
+    "redo": "Yinele",
+    "clear": "Geçmişi Temizle"
+  },
+  "errors": {
+    "generic": "Bir şeyler yanlış gitti",
+    "loadFailed": "Yükleme başarısız",
+    "saveFailed": "Kaydetme başarısız",
+    "exportFailed": "Dışa aktarma başarısız",
+    "importFailed": "İçe aktarma başarısız"
+  }
+}

@@ -1,7 +1,9 @@
 import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { docsNavigation } from './docsData';
 import { Book, ChevronLeft, ArrowLeft } from 'lucide-react';
+import { LanguageSelector } from '../LanguageSelector';
 
 interface DocsSidebarProps {
     className?: string;
@@ -13,6 +15,9 @@ import { useFlowStore } from '../../store';
 
 export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClose }) => {
     const { brandConfig } = useFlowStore();
+    const { i18n } = useTranslation();
+    const { lang } = useParams();
+    const currentLang = lang || i18n.language || 'en';
 
     return (
         <aside className={`w-64 border-r border-slate-200 bg-[var(--brand-surface)] flex flex-col h-full fixed inset-y-0 left-0 z-20 transition-transform duration-300 lg:translate-x-0 ${className}`}>
@@ -45,7 +50,7 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClos
                             {section.items.map((item) => (
                                 <SidebarItem
                                     key={item.slug}
-                                    to={`/docs/${item.slug}`}
+                                    to={`/docs/${currentLang}/${item.slug}`}
                                     onClick={onClose}
                                 >
                                     {item.title.replace(/FlowMind|OpenFlowKit/g, brandConfig.appName)}
@@ -56,9 +61,14 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClos
                 ))}
             </nav>
 
-            <div className="p-4 border-t border-slate-100">
-                <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
-                    {brandConfig.appName} Docs v1.0
+            <div className="p-4 space-y-3">
+                <div className="hidden lg:block">
+                    <LanguageSelector variant="compact" placement="top" />
+                </div>
+                <div className="border-t border-slate-100 pt-3">
+                    <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+                        {brandConfig.appName} Docs v1.0
+                    </div>
                 </div>
             </div>
         </aside>

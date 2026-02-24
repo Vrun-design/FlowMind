@@ -9,6 +9,7 @@ import { Tooltip } from './Tooltip';
 import { useFlowStore } from '../store';
 import { SettingsModal } from './SettingsModal/SettingsModal';
 import { trackEvent } from '../lib/analytics';
+import { LanguageSelector } from './LanguageSelector';
 
 interface TopNavProps {
     showMiniMap: boolean;
@@ -211,6 +212,9 @@ export const TopNav: React.FC<TopNavProps> = ({
                 <div className="h-8 w-px bg-slate-200/50 mx-2" />
 
                 <div className="flex items-center gap-2">
+                    {/* Language Selector */}
+                    <LanguageSelector variant="minimal" />
+
                     {/* Playback Button */}
                     <Tooltip text="Playback Mode" side="bottom">
                         <Button

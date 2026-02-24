@@ -66,8 +66,8 @@ const extractToc = (content: string) => {
 };
 
 export const DocsPage: React.FC = () => {
-    const { slug } = useParams();
-    const { content: rawContent, loading, error } = useDocsContent(slug);
+    const { slug, lang } = useParams();
+    const { content: rawContent, loading, error } = useDocsContent(slug, lang || 'en');
     const { brandConfig } = useFlowStore();
 
     const content = useMemo(() => {

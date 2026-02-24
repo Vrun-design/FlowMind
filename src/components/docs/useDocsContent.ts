@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 
-// Use Vite's glob import to get raw content of all markdown files in root docs folder
-const markdownFiles = import.meta.glob('/docs/*.md', { query: '?raw', import: 'default' });
+// Use Vite's glob import to get raw content of all markdown files by language
+const markdownFiles = import.meta.glob('/docs/**/*.md', { query: '?raw', import: 'default' });
 
-export const useDocsContent = (slug: string | undefined) => {
+export const useDocsContent = (slug: string | undefined, lang: string = 'en') => {
     const [content, setContent] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -19,14 +19,21 @@ export const useDocsContent = (slug: string | undefined) => {
             setError(null);
 
             try {
-                // Construct path key relative to project root as Vite expects for glob keys
-                const path = `/docs/${slug}.md`;
+                // Construct path key relative to project root with language folder
+                const path = `/docs/${lang}/${slug}.md`;
+                const fallbackPath = `/docs/en/${slug}.md`;
 
-                const loader = markdownFiles[path];
+                let loader = markdownFiles[path];
+
+                // Fallback to English if translation doesn't exist
+                if (!loader && lang !== 'en') {
+                    console.log(`Translation not found for ${lang}, falling back to English`);
+                    loader = markdownFiles[fallbackPath];
+                }
 
                 if (!loader) {
                     console.warn(`Doc not found: ${path}. Available:`, Object.keys(markdownFiles));
-                    throw new Error(`Document not found: ${slug}`);
+                    throw new Error(`Document not found: ${slug} for language ${lang}`);
                 }
 
                 const rawContent = await loader() as string;
@@ -41,7 +48,7 @@ export const useDocsContent = (slug: string | undefined) => {
         };
 
         fetchContent();
-    }, [slug]);
+    }, [slug, lang]);
 
     return { content, loading, error };
 };

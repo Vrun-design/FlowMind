@@ -1,0 +1,176 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "settings": "Settings",
+    "help": "Help",
+    "docs": "Documentation"
+  },
+  "nav": {
+    "home": "Home",
+    "editor": "Editor",
+    "menu": "Menu",
+    "view": "View",
+    "file": "File",
+    "history": "History",
+    "playback": "Playback"
+  },
+  "menu": {
+    "file": "File",
+    "view": "View",
+    "settings": "Settings",
+    "shortcuts": "Keyboard Shortcuts",
+    "home": "Home",
+    "export": "Export",
+    "import": "Import"
+  },
+  "view": {
+    "showGrid": "Show Grid",
+    "hideGrid": "Hide Grid",
+    "showMinimap": "Show Minimap",
+    "hideMinimap": "Hide Minimap",
+    "snapToGrid": "Snap to Grid",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "fitView": "Fit View"
+  },
+  "export": {
+    "title": "Export",
+    "png": "Export as PNG",
+    "jpeg": "Export as JPEG",
+    "json": "Export as JSON",
+    "mermaid": "Export as Mermaid",
+    "plantuml": "Export as PlantUML",
+    "openflowdsl": "Export as OpenFlow DSL",
+    "figma": "Export to Figma"
+  },
+  "import": {
+    "title": "Import",
+    "json": "Import JSON",
+    "selectFile": "Select a file"
+  },
+  "editor": {
+    "untitled": "Untitled Flow",
+    "newTab": "New Tab",
+    "renameTab": "Rename Tab",
+    "closeTab": "Close Tab",
+    "addNode": "Add Node",
+    "deleteNode": "Delete Node",
+    "duplicateNode": "Duplicate Node"
+  },
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "figma": "Figma",
+      "useCases": "Use Cases",
+      "pricing": "Pricing",
+      "viewGithub": "View on GitHub"
+    },
+    "hero": {
+      "title": "Beautiful Flowcharts,",
+      "subtitle": "Built for Developers",
+      "description": "Create stunning flowcharts with code or canvas. Export to any format. Open source and free forever.",
+      "cta": "Get Started",
+      "livePreview": "Live Preview"
+    },
+    "problem": {
+      "title": "The Problem",
+      "description": "Traditional flowchart tools are either too complex or too limited."
+    },
+    "solution": {
+      "title": "The Solution",
+      "description": "OpenFlowKit combines the best of both worlds."
+    },
+    "demo": {
+      "title": "Simple for sketching.",
+      "subtitle": "Ready for production.",
+      "description": "Sketch your ideas fast. Export them production-ready."
+    },
+    "useCases": {
+      "title": "Use Cases"
+    },
+    "pricing": {
+      "title": "Pricing",
+      "free": "Free Forever",
+      "openSource": "Open Source"
+    },
+    "testimonials": {
+      "title": "What People Say"
+    },
+    "cta": {
+      "title": "Ready to Start?",
+      "subtitle": "Create your first flowchart in seconds.",
+      "button": "Launch App"
+    },
+    "footer": {
+      "rights": "All rights reserved.",
+      "madeWith": "Made with ❤️ by the OpenFlowKit Team"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "general": "General",
+    "shortcuts": "Keyboard Shortcuts",
+    "theme": "Theme",
+    "language": "Language",
+    "selectLanguage": "Select Language",
+    "appearance": "Appearance",
+    "ai": "AI Settings",
+    "analytics": "Analytics",
+    "about": "About",
+    "brand": "Brand Settings",
+    "privacy": "Privacy"
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "general": "General",
+    "canvas": "Canvas",
+    "nodes": "Nodes"
+  },
+  "properties": {
+    "title": "Properties",
+    "nodeType": "Node Type",
+    "label": "Label",
+    "description": "Description",
+    "color": "Color",
+    "icon": "Icon",
+    "size": "Size"
+  },
+  "ai": {
+    "generate": "Generate with AI",
+    "provider": "AI Provider",
+    "model": "Model",
+    "apiKey": "API Key",
+    "placeholder": "Describe your flowchart..."
+  },
+  "playback": {
+    "title": "Playback",
+    "play": "Play",
+    "pause": "Pause",
+    "stop": "Stop",
+    "speed": "Speed"
+  },
+  "history": {
+    "title": "History",
+    "undo": "Undo",
+    "redo": "Redo",
+    "clear": "Clear History"
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "loadFailed": "Failed to load",
+    "saveFailed": "Failed to save",
+    "exportFailed": "Failed to export",
+    "importFailed": "Failed to import"
+  }
+}

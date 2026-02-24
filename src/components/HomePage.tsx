@@ -15,6 +15,7 @@ import { AISettings } from './SettingsModal/AISettings';
 import { FlowSnapshot } from '@/lib/types';
 import { SidebarItem } from './ui/SidebarItem';
 import { WelcomeModal } from './WelcomeModal';
+import { LanguageSelector } from './LanguageSelector';
 import { trackEvent } from '../lib/analytics';
 
 
@@ -117,9 +118,12 @@ export const HomePage: React.FC<HomePageProps> = ({
                     </SidebarItem>
                 </div>
 
-                <div className="mt-auto p-4 border-t border-slate-100">
-                    <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
-                        v1.0 BETA • {brandConfig.appName}
+                <div className="mt-auto p-4 space-y-3">
+                    <LanguageSelector variant="compact" placement="top" />
+                    <div className="border-t border-slate-100 pt-3">
+                        <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+                            v1.0 BETA • {brandConfig.appName}
+                        </div>
                     </div>
                 </div>
             </aside>

@@ -1,16 +1,17 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useDocsNavigation } from './useDocsNavigation';
 
 export const DocsFooter: React.FC = () => {
     const { prevEntry, nextEntry } = useDocsNavigation();
+    const { lang } = useParams();
 
     return (
         <div className="mt-16 pt-8 border-t border-slate-100 flex flex-col sm:flex-row gap-4 justify-between">
             {prevEntry ? (
                 <Link
-                    to={`/docs/${prevEntry.item.slug}`}
+                    to={`/docs/${lang}/${prevEntry.item.slug}`}
                     className="group flex flex-col gap-1 p-4 rounded-lg border border-slate-200 hover:border-[var(--brand-primary-300)] hover:bg-[var(--brand-primary-50)] transition-all w-full sm:w-1/2"
                 >
                     <span className="text-xs font-medium text-[var(--brand-secondary)] flex items-center gap-1 group-hover:text-[var(--brand-primary)]">
@@ -25,7 +26,7 @@ export const DocsFooter: React.FC = () => {
 
             {nextEntry ? (
                 <Link
-                    to={`/docs/${nextEntry.item.slug}`}
+                    to={`/docs/${lang}/${nextEntry.item.slug}`}
                     className="group flex flex-col gap-1 p-4 rounded-lg border border-slate-200 hover:border-[var(--brand-primary-300)] hover:bg-[var(--brand-primary-50)] transition-all w-full sm:w-1/2 text-right items-end"
                 >
                     <span className="text-xs font-medium text-[var(--brand-secondary)] flex items-center gap-1 group-hover:text-[var(--brand-primary)]">

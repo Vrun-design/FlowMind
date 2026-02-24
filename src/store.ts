@@ -66,6 +66,7 @@ interface ViewSettings {
     defaultIconsEnabled: boolean;
     smartRoutingEnabled: boolean;
     analyticsEnabled: boolean;
+    language: string;
 }
 
 
@@ -262,6 +263,7 @@ export const useFlowStore = create<FlowState>()(
                 defaultIconsEnabled: true,
                 smartRoutingEnabled: true,
                 analyticsEnabled: true,
+                language: 'en',
             },
 
             globalEdgeOptions: {

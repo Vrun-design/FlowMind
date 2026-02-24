@@ -1,30 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { DocsSidebar } from './DocsSidebar';
 import { useBrandTheme } from '../../hooks/useBrandTheme';
 import { Menu, X } from 'lucide-react';
+import { LanguageSelector } from '../LanguageSelector';
 
 export const DocsLayout: React.FC = () => {
     useBrandTheme();
     const navigate = useNavigate();
     const location = useLocation();
+    const { i18n } = useTranslation();
+    const { lang } = useParams();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    // Redirect to AI Assistant if at root /docs
+    // Redirect to default language and page if at root /docs
     useEffect(() => {
         if (location.pathname === '/docs' || location.pathname === '/docs/') {
-            navigate('/docs/ask-flowpilot', { replace: true });
+            const currentLang = i18n.language || 'en';
+            navigate(`/docs/${currentLang}/ask-flowpilot`, { replace: true });
         }
-    }, [location.pathname, navigate]);
+    }, [location.pathname, navigate, i18n.language]);
+
+    // Sync i18n language with URL parameter
+    useEffect(() => {
+        if (lang && lang !== i18n.language) {
+            i18n.changeLanguage(lang);
+        }
+    }, [lang, i18n]);
 
     return (
         <div className="min-h-screen bg-[var(--brand-background)] text-[var(--brand-text)] flex">
             {/* Mobile Header */}
             <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-[var(--brand-surface)] border-b border-slate-200 z-30 flex items-center px-4 justify-between">
                 <div className="font-semibold text-slate-900">Documentation</div>
-                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-slate-500 hover:bg-slate-100 rounded-md">
-                    {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                </button>
+                <div className="flex items-center gap-2">
+                    <LanguageSelector variant="minimal" />
+                    <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-slate-500 hover:bg-slate-100 rounded-md">
+                        {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                    </button>
+                </div>
             </div>
 
             {/* Sidebar with Mobile State */}

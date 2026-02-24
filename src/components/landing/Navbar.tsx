@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Github, Menu, X, ChevronRight, Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from './Button';
 import { OpenFlowLogo } from '../icons/OpenFlowLogo';
+import { LanguageSelector } from '../LanguageSelector';
 
 interface NavbarProps {
   isScrolled: boolean;
@@ -10,6 +12,7 @@ interface NavbarProps {
 
 export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -29,10 +32,10 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
   };
 
   const navLinks = [
-    { name: 'Features', href: '#architecture' },
-    { name: 'Figma', href: '#figma' },
-    { name: 'Use Cases', href: '#workflows' },
-    { name: 'Pricing', href: '#pricing' },
+    { name: t('landing.nav.features', 'Features'), href: '#architecture' },
+    { name: t('landing.nav.figma', 'Figma'), href: '#figma' },
+    { name: t('landing.nav.useCases', 'Use Cases'), href: '#workflows' },
+    { name: t('landing.nav.pricing', 'Pricing'), href: '#pricing' },
   ];
 
   // Dynamic classes for the navbar container (The Pill)
@@ -79,6 +82,10 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
           {/* Actions */}
           <div className="flex items-center gap-3">
             <div className="hidden md:flex">
+              <LanguageSelector variant="minimal" />
+            </div>
+
+            <div className="hidden md:flex">
               <Button
                 variant="secondary"
                 size="sm"
@@ -97,7 +104,7 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
                 className="px-5 text-[13px] h-9 transform hover:-translate-y-0.5 transition-all"
                 onClick={onLaunch}
               >
-                <span className="mr-1">Get Started</span>
+                <span className="mr-1">{t('landing.hero.cta', 'Get Started')}</span>
               </Button>
             </div>
 
@@ -141,7 +148,7 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
                 onLaunch();
               }}
             >
-              <span>Get Started</span>
+              <span>{t('landing.hero.cta', 'Get Started')}</span>
               <Sparkles className="w-4 h-4" />
             </Button>
             <Button
@@ -151,8 +158,11 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
               onClick={() => window.open("https://github.com/Vrun-design/FlowMind", "_blank")}
             >
               <Github className="w-5 h-5 mr-2" />
-              View on GitHub
+              {t('landing.nav.viewGithub', 'View on GitHub')}
             </Button>
+            <div className="w-full flex justify-center pt-4">
+              <LanguageSelector variant="compact" placement="top" />
+            </div>
           </div>
         </div>
       </div>
