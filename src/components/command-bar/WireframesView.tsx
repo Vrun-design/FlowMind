@@ -35,7 +35,7 @@ export const WireframesView: React.FC<WireframesViewProps> = ({ onClose, handleB
             type === 'mobile' ? 'Mobile App' :
                 type === 'wireframe_button' ? 'Button' :
                     type === 'wireframe_input' ? 'Input' :
-                        type === 'wireframe_image' ? 'Image' : 'Icon';
+                        type === 'wireframe_image' ? 'Image' : 'Box';
 
         // Cast to any to avoid strict Node types check if needed, 
         // though standard FlowNode should work if types are aligned.

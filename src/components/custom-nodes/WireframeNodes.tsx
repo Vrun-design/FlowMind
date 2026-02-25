@@ -60,10 +60,25 @@ export const WireframeImageNode = memo(({ data, selected }: NodeProps<NodeData>)
 // This is different from the specific IconNode which uses the full Lucide library.
 // This is for generic wireframing.
 export const WireframeIconNode = memo(({ data, selected }: NodeProps<NodeData>) => {
-    const IconComponent = (Icons as any)[data.label] || Icons.Circle;
+    // The base "Icon" component from lucide-react requires an iconNode array and crashes if rendered directly
+    const iconName = data.label === 'Icon' ? 'Box' : (data.icon || data.label);
+    const IconComponent = (Icons as any)[iconName] || Icons.Circle;
+
+    const color = data.color || 'slate';
+    const colorMap: Record<string, string> = {
+        slate: 'text-slate-700',
+        blue: 'text-blue-500',
+        red: 'text-red-500',
+        green: 'text-green-500',
+        emerald: 'text-emerald-500',
+        amber: 'text-amber-500',
+        purple: 'text-purple-500',
+        pink: 'text-pink-500',
+    };
+    const textColor = colorMap[color] || 'text-slate-700';
 
     return (
-        <div className={`relative p-1 text-slate-700 flex items-center justify-center
+        <div className={`relative p-1 flex items-center justify-center ${textColor}
              ${selected ? 'ring-2 ring-indigo-500 ring-offset-1 rounded' : ''}`}
         >
             <DefaultHandles />

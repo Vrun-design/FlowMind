@@ -3,9 +3,9 @@ import React from 'react';
 
 // Filter out non-component exports from Lucide
 export const ICON_MAP = Object.entries(AllIcons).reduce((acc, [key, component]) => {
-    // Lucide icons are PascalCase. We filter out createLucideIcon and default.
+    // Lucide icons are PascalCase. We filter out createLucideIcon, default, and the base Icon component.
     // We also check if the key starts with an uppercase letter to catch components.
-    if (key !== 'createLucideIcon' && key !== 'default' && /^[A-Z]/.test(key)) {
+    if (key !== 'Icon' && key !== 'createLucideIcon' && key !== 'default' && /^[A-Z]/.test(key)) {
         acc[key] = component as React.ElementType;
     }
     return acc;

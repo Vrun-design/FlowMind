@@ -116,7 +116,12 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
     const isAnnotation = selectedNode.type === 'annotation';
     const isText = selectedNode.type === 'text';
     const isImage = selectedNode.type === 'image';
-    const isWireframe = selectedNode.type === 'browser' || selectedNode.type === 'mobile';
+    const isWireframeApp = selectedNode.type === 'browser' || selectedNode.type === 'mobile';
+    const isWireframeIcon = selectedNode.type === 'wireframe_icon';
+    const isWireframeImage = selectedNode.type === 'wireframe_image';
+    const isWireframeButton = selectedNode.type === 'wireframe_button';
+    const isWireframeInput = selectedNode.type === 'wireframe_input';
+    const isWireframeMisc = isWireframeIcon || isWireframeImage || isWireframeButton || isWireframeInput;
 
     // State for progressive disclosure (accordion)
     // Initialize open section based on node type
@@ -124,7 +129,8 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
 
     // Reset/Set default active section when selected node type changes
     useEffect(() => {
-        if (isWireframe) setActiveSection('variant');
+        if (isWireframeApp) setActiveSection('variant');
+        else if (isWireframeIcon) setActiveSection('icon');
         else if (isText) setActiveSection('content'); // Text nodes prioritize content
         else if (isAnnotation) setActiveSection('content');
         else setActiveSection('appearance'); // Standard nodes prioritize shape/appearance
@@ -167,7 +173,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
             <hr className="border-slate-100 mb-2" />
 
             {/* Wireframe Variant Section */}
-            {isWireframe && (
+            {isWireframeApp && (
                 <CollapsibleSection
                     title="Wireframe Variant"
                     icon={<Layout className="w-3.5 h-3.5" />}
@@ -211,7 +217,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
             )}
 
             {/* Appearance Section */}
-            {!isWireframe && !isAnnotation && !isText && !isImage && (
+            {!isWireframeApp && !isWireframeMisc && !isAnnotation && !isText && !isImage && (
                 <CollapsibleSection
                     title="Appearance"
                     icon={<Box className="w-3.5 h-3.5" />}
@@ -270,144 +276,146 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
             )}
 
             {/* Content Section: Refined Design */}
-            <CollapsibleSection
-                title="Content"
-                icon={<AlignLeft className="w-3.5 h-3.5" />}
-                isOpen={activeSection === 'content'}
-                onToggle={() => toggleSection('content')}
-            >
-                <div className="bg-[var(--brand-background)] rounded-[var(--brand-radius)] border border-slate-200 overflow-hidden shadow-sm transition-all">
+            {!isWireframeIcon && (
+                <CollapsibleSection
+                    title="Content"
+                    icon={<AlignLeft className="w-3.5 h-3.5" />}
+                    isOpen={activeSection === 'content'}
+                    onToggle={() => toggleSection('content')}
+                >
+                    <div className="bg-[var(--brand-background)] rounded-[var(--brand-radius)] border border-slate-200 overflow-hidden shadow-sm transition-all">
 
-                    {/* 1. PRIMARY STYLE BAR (Top) - Compact & Functional */}
-                    <div className="flex items-center justify-between px-3 py-1.5 border-b border-slate-100 bg-slate-50/80 gap-1.5">
-                        {/* Font Family Selector */}
-                        <div className="relative group flex-shrink min-w-[60px]">
-                            <select
-                                value={selectedNode.data?.fontFamily || 'inter'}
-                                onChange={(e) => onChange(selectedNode.id, { fontFamily: e.target.value })}
-                                className="w-full appearance-none bg-transparent text-[10px] font-semibold text-slate-700 hover:text-slate-900 cursor-pointer outline-none transition-colors py-0.5 truncate pr-2"
-                            >
-                                <option value="inter">Inter</option>
-                                <option value="roboto">Roboto</option>
-                                <option value="outfit">Outfit</option>
-                                <option value="playfair">Playfair</option>
-                                <option value="fira">Mono</option>
-                            </select>
+                        {/* 1. PRIMARY STYLE BAR (Top) - Compact & Functional */}
+                        <div className="flex items-center justify-between px-3 py-1.5 border-b border-slate-100 bg-slate-50/80 gap-1.5">
+                            {/* Font Family Selector */}
+                            <div className="relative group flex-shrink min-w-[60px]">
+                                <select
+                                    value={selectedNode.data?.fontFamily || 'inter'}
+                                    onChange={(e) => onChange(selectedNode.id, { fontFamily: e.target.value })}
+                                    className="w-full appearance-none bg-transparent text-[10px] font-semibold text-slate-700 hover:text-slate-900 cursor-pointer outline-none transition-colors py-0.5 truncate pr-2"
+                                >
+                                    <option value="inter">Inter</option>
+                                    <option value="roboto">Roboto</option>
+                                    <option value="outfit">Outfit</option>
+                                    <option value="playfair">Playfair</option>
+                                    <option value="fira">Mono</option>
+                                </select>
+                            </div>
+
+                            <div className="w-px h-3 bg-slate-200 shrink-0"></div>
+
+                            {/* Font Size Selector */}
+                            <div className="relative group shrink-0">
+                                <select
+                                    value={selectedNode.data?.fontSize || '14'}
+                                    onChange={(e) => onChange(selectedNode.id, { fontSize: e.target.value })}
+                                    className="appearance-none bg-transparent text-[10px] font-semibold text-slate-700 hover:text-slate-900 cursor-pointer outline-none transition-colors text-right pl-1 py-0.5 w-[36px]"
+                                >
+                                    <option value="12">12</option>
+                                    <option value="14">14</option>
+                                    <option value="16">16</option>
+                                    <option value="20">20</option>
+                                    <option value="24">24</option>
+                                    <option value="32">32</option>
+                                </select>
+                            </div>
+
+                            <div className="w-px h-3 bg-slate-200 shrink-0"></div>
+
+                            {/* Style Toggles (Weight / Style) */}
+                            <div className="flex items-center gap-0.5 shrink-0">
+                                <button
+                                    onMouseDown={(e) => { e.preventDefault(); handleStyleAction('bold'); }}
+                                    className={`p-1 rounded transition-all duration-200 ${selectedNode.data?.fontWeight === 'bold' ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
+                                    title="Bold (Cmd+B)"
+                                >
+                                    <Bold className="w-3.5 h-3.5" strokeWidth={selectedNode.data?.fontWeight === 'bold' ? 3 : 2.5} />
+                                </button>
+                                <button
+                                    onMouseDown={(e) => { e.preventDefault(); handleStyleAction('italic'); }}
+                                    className={`p-1 rounded transition-all duration-200 ${selectedNode.data?.fontStyle === 'italic' ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
+                                    title="Italic (Cmd+I)"
+                                >
+                                    <Italic className="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+
+                            <div className="w-px h-3 bg-slate-200 shrink-0"></div>
+
+                            {/* Alignment Controls */}
+                            <div className="flex items-center gap-0.5 shrink-0">
+                                <button
+                                    onClick={() => onChange(selectedNode.id, { align: 'left' })}
+                                    className={`p-1 rounded transition-all duration-200 ${(selectedNode.data?.align === 'left') ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
+                                    title="Align Left"
+                                >
+                                    <AlignLeft className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                    onClick={() => onChange(selectedNode.id, { align: 'center' })}
+                                    className={`p-1 rounded transition-all duration-200 ${(!selectedNode.data?.align || selectedNode.data?.align === 'center') ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
+                                    title="Align Center"
+                                >
+                                    <AlignCenter className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                    onClick={() => onChange(selectedNode.id, { align: 'right' })}
+                                    className={`p-1 rounded transition-all duration-200 ${(selectedNode.data?.align === 'right') ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
+                                    title="Align Right"
+                                >
+                                    <AlignRight className="w-3.5 h-3.5" />
+                                </button>
+                            </div>
                         </div>
 
-                        <div className="w-px h-3 bg-slate-200 shrink-0"></div>
-
-                        {/* Font Size Selector */}
-                        <div className="relative group shrink-0">
-                            <select
-                                value={selectedNode.data?.fontSize || '14'}
-                                onChange={(e) => onChange(selectedNode.id, { fontSize: e.target.value })}
-                                className="appearance-none bg-transparent text-[10px] font-semibold text-slate-700 hover:text-slate-900 cursor-pointer outline-none transition-colors text-right pl-1 py-0.5 w-[36px]"
-                            >
-                                <option value="12">12</option>
-                                <option value="14">14</option>
-                                <option value="16">16</option>
-                                <option value="20">20</option>
-                                <option value="24">24</option>
-                                <option value="32">32</option>
-                            </select>
-                        </div>
-
-                        <div className="w-px h-3 bg-slate-200 shrink-0"></div>
-
-                        {/* Style Toggles (Weight / Style) */}
-                        <div className="flex items-center gap-0.5 shrink-0">
-                            <button
-                                onMouseDown={(e) => { e.preventDefault(); handleStyleAction('bold'); }}
-                                className={`p-1 rounded transition-all duration-200 ${selectedNode.data?.fontWeight === 'bold' ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
-                                title="Bold (Cmd+B)"
-                            >
-                                <Bold className="w-3.5 h-3.5" strokeWidth={selectedNode.data?.fontWeight === 'bold' ? 3 : 2.5} />
-                            </button>
-                            <button
-                                onMouseDown={(e) => { e.preventDefault(); handleStyleAction('italic'); }}
-                                className={`p-1 rounded transition-all duration-200 ${selectedNode.data?.fontStyle === 'italic' ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
-                                title="Italic (Cmd+I)"
-                            >
-                                <Italic className="w-3.5 h-3.5" />
-                            </button>
-                        </div>
-
-                        <div className="w-px h-3 bg-slate-200 shrink-0"></div>
-
-                        {/* Alignment Controls */}
-                        <div className="flex items-center gap-0.5 shrink-0">
-                            <button
-                                onClick={() => onChange(selectedNode.id, { align: 'left' })}
-                                className={`p-1 rounded transition-all duration-200 ${(selectedNode.data?.align === 'left') ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
-                                title="Align Left"
-                            >
-                                <AlignLeft className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                                onClick={() => onChange(selectedNode.id, { align: 'center' })}
-                                className={`p-1 rounded transition-all duration-200 ${(!selectedNode.data?.align || selectedNode.data?.align === 'center') ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
-                                title="Align Center"
-                            >
-                                <AlignCenter className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                                onClick={() => onChange(selectedNode.id, { align: 'right' })}
-                                className={`p-1 rounded transition-all duration-200 ${(selectedNode.data?.align === 'right') ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
-                                title="Align Right"
-                            >
-                                <AlignRight className="w-3.5 h-3.5" />
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* 2. LABEL INPUT (Middle) - Prominent, clean */}
-                    <div className="px-3 py-3 border-b border-dashed border-slate-100 bg-white group/label hover:bg-slate-50/20 focus-within:bg-slate-50/30 transition-colors">
-                        <textarea
-                            ref={labelInputRef}
-                            value={selectedNode.data?.label || ''}
-                            onFocus={() => setActiveField('label')}
-                            onBlur={() => setTimeout(() => setActiveField(null), 200)} // Delay to allow button click
-                            onChange={(e) => {
-                                onChange(selectedNode.id, { label: e.target.value });
-                                e.target.style.height = 'auto';
-                                e.target.style.height = e.target.scrollHeight + 'px';
-                            }}
-                            onKeyDown={labelEditor.handleKeyDown}
-                            placeholder="Type label here..."
-                            rows={1}
-                            style={{ minHeight: '32px' }}
-                            className="w-full bg-transparent text-[15px] font-semibold text-[var(--brand-text)] outline-none resize-none placeholder:text-slate-300 leading-normal overflow-hidden"
-                        />
-                    </div>
-
-                    {/* 3. DESCRIPTION INPUT (Bottom) - Subtle, secondary */}
-                    {!isText && !isImage && !isWireframe && (
-                        <div className="relative group/desc bg-slate-50/20 hover:bg-slate-50/40 transition-colors">
+                        {/* 2. LABEL INPUT (Middle) - Prominent, clean */}
+                        <div className="px-3 py-3 border-b border-dashed border-slate-100 bg-white group/label hover:bg-slate-50/20 focus-within:bg-slate-50/30 transition-colors">
                             <textarea
-                                ref={descInputRef}
-                                value={selectedNode.data?.subLabel || ''} // Fallback to 'description' if needed, but using subLabel
-                                onFocus={() => setActiveField('subLabel')}
-                                onBlur={() => setTimeout(() => setActiveField(null), 200)}
+                                ref={labelInputRef}
+                                value={selectedNode.data?.label || ''}
+                                onFocus={() => setActiveField('label')}
+                                onBlur={() => setTimeout(() => setActiveField(null), 200)} // Delay to allow button click
                                 onChange={(e) => {
-                                    onChange(selectedNode.id, { subLabel: e.target.value });
+                                    onChange(selectedNode.id, { label: e.target.value });
                                     e.target.style.height = 'auto';
                                     e.target.style.height = e.target.scrollHeight + 'px';
                                 }}
-                                onKeyDown={descEditor.handleKeyDown}
-                                placeholder="Add description..."
-                                rows={1} // Start small
-                                style={{ minHeight: '40px' }}
-                                className="w-full px-3 py-2.5 text-xs font-medium text-slate-600 outline-none resize-none leading-relaxed placeholder:text-slate-300 bg-transparent focus:bg-white focus:text-slate-800 transition-colors overflow-hidden"
+                                onKeyDown={labelEditor.handleKeyDown}
+                                placeholder="Type label here..."
+                                rows={1}
+                                style={{ minHeight: '32px' }}
+                                className="w-full bg-transparent text-[15px] font-semibold text-[var(--brand-text)] outline-none resize-none placeholder:text-slate-300 leading-normal overflow-hidden"
                             />
-                            {/* Format Hint - Visible only on focus/hover */}
-                            <div className="absolute bottom-1 right-2 pointer-events-none opacity-0 group-focus-within/desc:opacity-100 transition-opacity">
-                                <span className="text-[9px] font-mono text-slate-300 tracking-tight">Markdown supported</span>
-                            </div>
                         </div>
-                    )}
-                </div>
-            </CollapsibleSection>
+
+                        {/* 3. DESCRIPTION INPUT (Bottom) - Subtle, secondary */}
+                        {!isText && !isImage && !isWireframeApp && !isWireframeMisc && (
+                            <div className="relative group/desc bg-slate-50/20 hover:bg-slate-50/40 transition-colors">
+                                <textarea
+                                    ref={descInputRef}
+                                    value={selectedNode.data?.subLabel || ''} // Fallback to 'description' if needed, but using subLabel
+                                    onFocus={() => setActiveField('subLabel')}
+                                    onBlur={() => setTimeout(() => setActiveField(null), 200)}
+                                    onChange={(e) => {
+                                        onChange(selectedNode.id, { subLabel: e.target.value });
+                                        e.target.style.height = 'auto';
+                                        e.target.style.height = e.target.scrollHeight + 'px';
+                                    }}
+                                    onKeyDown={descEditor.handleKeyDown}
+                                    placeholder="Add description..."
+                                    rows={1} // Start small
+                                    style={{ minHeight: '40px' }}
+                                    className="w-full px-3 py-2.5 text-xs font-medium text-slate-600 outline-none resize-none leading-relaxed placeholder:text-slate-300 bg-transparent focus:bg-white focus:text-slate-800 transition-colors overflow-hidden"
+                                />
+                                {/* Format Hint - Visible only on focus/hover */}
+                                <div className="absolute bottom-1 right-2 pointer-events-none opacity-0 group-focus-within/desc:opacity-100 transition-opacity">
+                                    <span className="text-[9px] font-mono text-slate-300 tracking-tight">Markdown supported</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </CollapsibleSection>
+            )}
 
             {/* Text Styling for Text Node */}
             {isText && (
@@ -446,7 +454,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                 </CollapsibleSection>
             )}
 
-            {!isImage && (
+            {!isImage && !isWireframeApp && !isWireframeImage && !isWireframeButton && !isWireframeInput && (
                 <CollapsibleSection
                     title="Color Theme"
                     icon={<Palette className="w-3.5 h-3.5" />}
@@ -460,7 +468,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                 </CollapsibleSection>
             )}
 
-            {!isAnnotation && !isText && !isImage && !isWireframe && (
+            {!isAnnotation && !isText && !isImage && !isWireframeApp && !isWireframeImage && !isWireframeButton && !isWireframeInput && (
                 <CollapsibleSection
                     title="Icon Theme"
                     icon={<Star className="w-3.5 h-3.5" />}
@@ -476,7 +484,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                 </CollapsibleSection>
             )}
 
-            {!isText && (
+            {!isText && !isWireframeApp && !isWireframeIcon && !isWireframeButton && !isWireframeInput && !isWireframeImage && (
                 <CollapsibleSection
                     title="Custom Image"
                     icon={<ImageStart className="w-3.5 h-3.5" />}

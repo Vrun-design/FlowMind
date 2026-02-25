@@ -13,12 +13,12 @@ When prompting an AI agent, just include a reference to this file.
 ### Example Prompt for Cursor IDE
 Open your Composer or Chat window and type:
 
-> `"Read https://yourdomain.com/llms.txt and then generate an architecture diagram showing our Next.js frontend connecting to a Supabase backend."`
+> `"Read https://openflowkit.com/llms.txt and then generate an architecture diagram showing our Next.js frontend connecting to a Supabase backend."`
 
 ### Example Prompt for ChatGPT
 If you are using ChatGPT with web-browsing enabled:
 
-> `"Go to https://yourdomain.com/llms.txt to learn the OpenFlowKit syntax. Then, write a flowchart detailing an OAuth2 login sequence. Output the result using the \`\`\`openflow code block."`
+> `"Go to https://openflowkit.com/llms.txt to learn the OpenFlowKit syntax. Then, write a flowchart detailing an OAuth2 login sequence. Output the result using the \`\`\`openflow code block."`
 
 ## Best Practices for Prompting
 
