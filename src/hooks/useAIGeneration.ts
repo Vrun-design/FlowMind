@@ -6,6 +6,7 @@ import { getElkLayout } from '../services/elkLayout';
 import { createDefaultEdge } from '../constants';
 import { useFlowStore } from '../store';
 import { useToast } from '../components/ui/ToastContext';
+import { trackEvent } from '../lib/analytics';
 
 export const useAIGeneration = (
   recordHistory: () => void
@@ -152,11 +153,12 @@ export const useAIGeneration = (
       setNodes(layoutedNodes);
       setEdges(finalEdges);
 
-      // Wait for render then fit view
       setTimeout(() => fitView({ duration: 800, padding: 0.2 }), 100);
 
+      trackEvent('ai_generate_success', { model: aiSettings.model, provider: aiSettings.provider });
       addToast('Diagram generated successfully!', 'success');
     } catch (error: any) {
+      trackEvent('ai_generate_error', { error_message: error.message || 'Unknown error', model: aiSettings.model, provider: aiSettings.provider });
       console.error('AI Generation failed:', error);
       addToast(`Failed to generate: ${error.message || 'Unknown error'}`, 'error');
     } finally {

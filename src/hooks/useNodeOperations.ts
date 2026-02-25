@@ -5,6 +5,7 @@ import { useFlowStore } from '../store';
 import { assignSmartHandles } from '../services/smartEdgeRouting';
 import { NODE_WIDTH, NODE_HEIGHT } from '../constants';
 import { useTranslation } from 'react-i18next';
+import { trackEvent } from '../lib/analytics';
 
 export const useNodeOperations = (recordHistory: () => void) => {
     const { t } = useTranslation();
@@ -41,10 +42,14 @@ export const useNodeOperations = (recordHistory: () => void) => {
 
     // --- Delete ---
     const deleteNode = useCallback((id: string) => {
+        const deletedNode = nodes.find(n => n.id === id);
         recordHistory();
         setNodes((nds) => nds.filter((n) => n.id !== id));
         setSelectedNodeId(null);
-    }, [setNodes, recordHistory, setSelectedNodeId]);
+        if (deletedNode) {
+            trackEvent('delete_node', { node_type: deletedNode.type });
+        }
+    }, [nodes, setNodes, recordHistory, setSelectedNodeId]);
 
     // --- Duplicate ---
     const duplicateNode = useCallback((id: string) => {
@@ -60,6 +65,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         };
         setNodes((nds) => [...nds.map((n) => ({ ...n, selected: false })), newNode]);
         setSelectedNodeId(newNodeId);
+        trackEvent('duplicate_node', { node_type: nodeToDuplicate.type });
     }, [nodes, recordHistory, setNodes, setSelectedNodeId]);
 
     // --- Add Nodes ---
@@ -74,6 +80,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
+        trackEvent('add_node', { node_type: 'process' });
     }, [setNodes, recordHistory, setSelectedNodeId, t]);
 
     const handleAddAnnotation = useCallback((position?: { x: number; y: number }) => {
@@ -87,6 +94,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
+        trackEvent('add_node', { node_type: 'annotation' });
     }, [setNodes, recordHistory, setSelectedNodeId, t]);
 
     const handleAddSection = useCallback((position?: { x: number; y: number }) => {
@@ -102,6 +110,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
+        trackEvent('add_node', { node_type: 'section' });
     }, [setNodes, recordHistory, setSelectedNodeId, t]);
 
     const handleAddTextNode = useCallback((position?: { x: number; y: number }) => {
@@ -115,6 +124,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
+        trackEvent('add_node', { node_type: 'text' });
     }, [setNodes, recordHistory, setSelectedNodeId, t]);
 
     const handleAddImage = useCallback((imageUrl: string, position?: { x: number; y: number }) => {
@@ -129,6 +139,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
+        trackEvent('add_node', { node_type: 'image' });
     }, [setNodes, recordHistory, setSelectedNodeId, t]);
 
     // --- Drag Operations ---

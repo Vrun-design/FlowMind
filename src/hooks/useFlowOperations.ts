@@ -6,6 +6,7 @@ import { useEdgeOperations } from './useEdgeOperations';
 import { useLayoutOperations } from './useLayoutOperations';
 import { useClipboardOperations } from './useClipboardOperations';
 import { useTranslation } from 'react-i18next';
+import { trackEvent } from '../lib/analytics';
 
 export const useFlowOperations = (
   recordHistory: () => void,
@@ -32,6 +33,7 @@ export const useFlowOperations = (
       recordHistory();
       setNodes([]);
       setEdges([]);
+      trackEvent('clear_canvas');
     }
   }, [setNodes, setEdges, recordHistory, t]);
 

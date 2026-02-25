@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { FlowHistoryState } from '@/lib/types';
 import { useFlowStore } from '../store';
+import { trackEvent } from '../lib/analytics';
 
 const MAX_HISTORY = 20;
 
@@ -22,6 +23,7 @@ export const useFlowHistory = () => {
     setFuture((old) => [{ nodes, edges }, ...old]);
     setNodes(previous.nodes);
     setEdges(previous.edges);
+    trackEvent('undo');
   }, [past, nodes, edges, setNodes, setEdges]);
 
   const redo = useCallback(() => {
@@ -31,6 +33,7 @@ export const useFlowHistory = () => {
     setPast((old) => [...old, { nodes, edges }].slice(-MAX_HISTORY)); // Ensure limit on redo too
     setNodes(next.nodes);
     setEdges(next.edges);
+    trackEvent('redo');
   }, [future, nodes, edges, setNodes, setEdges]);
 
   // Expose setPast/setFuture for AutoSave and Tab switching

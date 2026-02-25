@@ -4,6 +4,7 @@ import { useFlowStore } from '../store';
 import { NodeData } from '@/lib/types';
 import { DEFAULT_EDGE_OPTIONS, NODE_WIDTH, NODE_HEIGHT } from '../constants';
 import { useTranslation } from 'react-i18next';
+import { trackEvent } from '../lib/analytics';
 
 export const useEdgeOperations = (
     recordHistory: () => void,
@@ -21,6 +22,7 @@ export const useEdgeOperations = (
     const updateEdge = useCallback((id: string, updates: Partial<Edge>) => {
         recordHistory();
         setEdges((eds) => eds.map((edge) => edge.id === id ? { ...edge, ...updates } : edge));
+        trackEvent('update_edge');
     }, [setEdges, recordHistory]);
 
     const onEdgeUpdate = useCallback((oldEdge: Edge, newConnection: Connection) => {
@@ -45,6 +47,7 @@ export const useEdgeOperations = (
         recordHistory();
         setEdges((eds) => eds.filter((e) => e.id !== id));
         setSelectedEdgeId(null);
+        trackEvent('delete_edge');
     }, [setEdges, recordHistory, setSelectedEdgeId]);
 
     // --- Connections ---

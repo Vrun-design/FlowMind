@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Input } from '../ui/Input';
 import { ViewHeader } from './ViewHeader';
 import { FLOW_TEMPLATES, FlowTemplate } from '../../services/templates';
+import { trackEvent } from '../../lib/analytics';
 
 interface TemplatesViewProps {
     onSelectTemplate?: (t: FlowTemplate) => void;
@@ -18,6 +19,12 @@ export const TemplatesView = ({
 }: TemplatesViewProps) => {
     const { t } = useTranslation();
     const [tSearch, setTSearch] = useState('');
+
+    const handleSelect = (template: FlowTemplate) => {
+        trackEvent('use_template', { template_id: template.id, template_name: template.name });
+        onSelectTemplate?.(template);
+        onClose();
+    };
 
     const filteredTemplates = useMemo(() => {
         return FLOW_TEMPLATES.filter(t =>
@@ -47,7 +54,7 @@ export const TemplatesView = ({
                     return (
                         <div
                             key={t.id}
-                            onClick={() => { onSelectTemplate?.(t); onClose(); }}
+                            onClick={() => handleSelect(t)}
                             className="group flex items-start gap-3 p-3 rounded-[var(--radius-md)] hover:bg-[var(--brand-primary-50)] border border-transparent hover:border-[var(--brand-primary-100)] cursor-pointer transition-all"
                         >
                             <div className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-600)] flex items-center justify-center shrink-0 group-hover:bg-white group-hover:text-[var(--brand-primary-700)] group-hover:shadow-sm transition-all scale-100 group-hover:scale-105">

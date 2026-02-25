@@ -28,6 +28,7 @@ import { useFlowExport } from '../hooks/useFlowExport';
 import { useToast } from './ui/ToastContext';
 import { usePlayback } from '../hooks/usePlayback';
 import { PlaybackControls } from './PlaybackControls';
+import { trackEvent } from '../lib/analytics';
 
 interface FlowEditorProps {
     onGoHome: () => void;
@@ -59,6 +60,7 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
     const [commandBarView, setCommandBarView] = useState<'root' | 'ai' | 'mermaid' | 'flowmind' | 'templates' | 'search' | 'layout' | 'design-system' | 'wireframes'>('root');
 
     const openCommandBar = (view: 'root' | 'ai' | 'mermaid' | 'flowmind' | 'templates' | 'search' | 'layout' | 'design-system' | 'wireframes' = 'root') => {
+        trackEvent('open_command_bar', { view });
         setCommandBarView(view);
         setIsCommandBarOpen(true);
     };
