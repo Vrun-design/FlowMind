@@ -155,7 +155,7 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
               size="lg"
               variant="secondary"
               className="w-full justify-center h-14 text-base bg-gray-50 border-gray-200"
-              onClick={() => window.open("https://github.com/Vrun-design/FlowMind", "_blank")}
+              onClick={() => window.open("https://github.com/Vrun-design/openflowkit", "_blank")}
             >
               <Github className="w-5 h-5 mr-2" />
               {t('landing.nav.viewGithub', 'View on GitHub')}
