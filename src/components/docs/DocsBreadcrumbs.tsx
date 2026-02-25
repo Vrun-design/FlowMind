@@ -8,8 +8,35 @@ export const DocsBreadcrumbs: React.FC = () => {
 
     if (!currentEntry) return null;
 
+    const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Documentation",
+                "item": "https://openflowkit.com/docs"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": currentEntry.section
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": currentEntry.item.title,
+                "item": `https://openflowkit.com/docs/en/${currentEntry.item.slug}`
+            }
+        ]
+    };
+
     return (
         <nav className="flex items-center text-sm text-[var(--brand-secondary)] mb-6 overflow-x-auto whitespace-nowrap">
+            <script type="application/ld+json">
+                {JSON.stringify(breadcrumbSchema)}
+            </script>
             <Link to="/docs" className="hover:text-[var(--brand-primary)] transition-colors">
                 <Home className="w-4 h-4" />
             </Link>

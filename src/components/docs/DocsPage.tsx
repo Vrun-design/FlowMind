@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -12,6 +12,7 @@ import { Loader2, AlertCircle } from 'lucide-react';
 import { useFlowStore } from '../../store';
 import { DocsChatbot } from './DocsChatbot';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
 // Helper to inject dynamic content and fix placeholders
 const processContent = (content: string, appName: string) => {
@@ -81,6 +82,55 @@ export const DocsPage: React.FC = () => {
         if (!content) return [];
         return extractToc(content);
     }, [content]);
+
+    // SEO: Dynamic Meta Injection
+    const location = useLocation();
+    useEffect(() => {
+        if (!slug) return;
+
+        // Fallback title generation from slug
+        const titleCase = slug
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+
+        let title = `${titleCase} | OpenFlowKit Docs`;
+        let description = 'Learn how to use OpenFlowKit, the open-source Diagram-as-Code engine.';
+
+        // Try to extract an H1 from the actual markdown for a better title
+        if (content) {
+            const h1Match = content.match(/^#\s+(.*)$/m);
+            if (h1Match && h1Match[1]) {
+                title = `${stripEmojis(h1Match[1])} | OpenFlowKit Docs`;
+            }
+
+            // Try to extract the first paragraph for the description
+            const paragraphs = content.split('\n\n');
+            const firstPara = paragraphs.find(p => p.trim() && !p.startsWith('#') && !p.startsWith('>') && !p.startsWith('!'));
+            if (firstPara) {
+                // Remove markdown links and truncate to ~160 chars
+                description = firstPara.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').substring(0, 160).trim();
+                if (description.length === 160) description += '...';
+            }
+        }
+
+        document.title = title;
+
+        let metaDescription = document.querySelector('meta[name="description"]');
+        if (!metaDescription) {
+            metaDescription = document.createElement('meta');
+            metaDescription.setAttribute('name', 'description');
+            document.head.appendChild(metaDescription);
+        }
+        metaDescription.setAttribute('content', description);
+
+        // Cleanup function to avoid stale meta tags if the component unmounts entirely
+        return () => {
+            document.title = 'OpenFlowKit | Diagram-as-Code Engine';
+            if (metaDescription) metaDescription.setAttribute('content', 'OpenFlowKit is the open-source, white-label Diagram-as-Code engine built for modern workflows.');
+        }
+
+    }, [slug, content, location.pathname]);
 
     const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
         e.preventDefault();
