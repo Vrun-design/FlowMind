@@ -237,7 +237,12 @@ export function AISettings(): React.ReactElement {
         <div className="space-y-8 pb-4 animate-in fade-in duration-200 w-full min-w-0">
             {/* Header Text */}
             <div className="space-y-1">
-                <h3 className="text-base font-semibold text-slate-800">{t('settingsModal.flowpilotConfigurations')}</h3>
+                <div className="flex items-center justify-between">
+                    <h3 className="text-base font-semibold text-slate-800">{t('settingsModal.flowpilotConfigurations')}</h3>
+                    <a href="/docs/en/prompting-agents" target="_blank" rel="noopener noreferrer" className="text-[10px] font-semibold text-[var(--brand-primary)] hover:underline flex items-center gap-1">
+                        Prompting Guide <ExternalLink className="w-3 h-3" />
+                    </a>
+                </div>
                 <p className="text-xs text-slate-500">{t('ai.settingsSubtitle')}</p>
             </div>
 

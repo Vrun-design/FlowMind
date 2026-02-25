@@ -41,8 +41,11 @@ export const docsNavigation: DocSection[] = [
         ],
     },
     {
-        title: 'Guides',
+        title: 'Guides & Use Cases',
         items: [
+            { title: 'Mermaid vs. OpenFlow', slug: 'mermaid-vs-openflow' },
+            { title: 'AWS Architecture Diagram', slug: 'aws-architecture' },
+            { title: 'Payment Flow Visualization', slug: 'payment-flow' },
             { title: 'Mermaid Integration', slug: 'mermaid-integration' },
             { title: 'Exporting', slug: 'exporting' },
             { title: 'Keyboard Shortcuts', slug: 'keyboard-shortcuts' },

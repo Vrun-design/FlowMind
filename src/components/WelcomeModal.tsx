@@ -76,16 +76,27 @@ export function WelcomeModal(): React.JSX.Element | null {
                         />
                     </div>
 
-                    <button
-                        onClick={handleClose}
-                        className={`w-full py-3.5 text-white font-bold transition-all active:scale-[0.98] hover:-translate-y-0.5 ${isBeveled ? 'shadow-[inset_0px_1px_0px_0px_rgba(255,255,255,0.4),inset_0px_-2px_0px_0px_rgba(0,0,0,0.2),0px_10px_15px_-3px_rgba(0,0,0,0.1)] border border-white/20' : 'shadow-lg hover:shadow-xl'}`}
-                        style={{
-                            background: 'var(--brand-primary, #6366f1)',
-                            borderRadius: 'calc(var(--brand-radius, 24px) * 0.6)'
-                        }}
-                    >
-                        {t('common.getStarted', 'Get Started')}
-                    </button>
+                    <div className="mt-4 flex flex-col gap-3">
+                        <button
+                            onClick={handleClose}
+                            className={`w-full py-3.5 text-white font-bold transition-all active:scale-[0.98] hover:-translate-y-0.5 ${isBeveled ? 'shadow-[inset_0px_1px_0px_0px_rgba(255,255,255,0.4),inset_0px_-2px_0px_0px_rgba(0,0,0,0.2),0px_10px_15px_-3px_rgba(0,0,0,0.1)] border border-white/20' : 'shadow-lg hover:shadow-xl'}`}
+                            style={{
+                                background: 'var(--brand-primary, #6366f1)',
+                                borderRadius: 'calc(var(--brand-radius, 24px) * 0.6)'
+                            }}
+                        >
+                            {t('common.getStarted', 'Get Started')}
+                        </button>
+
+                        <a
+                            href="/docs/en/quick-start"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] font-semibold text-slate-500 hover:text-[var(--brand-primary)] text-center w-full transition-colors"
+                        >
+                            Read the Quick Start Guide →
+                        </a>
+                    </div>
 
                     <p className="text-center text-slate-400 text-[10px] mt-6 uppercase tracking-widest font-semibold">
                         {t('welcome.press', 'Press')} <kbd className="font-sans px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 text-slate-500">?</kbd> {t('welcome.shortcuts', 'for shortcuts')}
