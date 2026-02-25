@@ -1,0 +1,712 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "createNew": "Créer nouveau",
+    "open": "Ouvrir",
+    "openFile": "Ouvrir un fichier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "done": "Terminé",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "play": "Lire",
+    "select": "Sélectionner",
+    "selectAll": "Tout sélectionner",
+    "duplicate": "Dupliquer",
+    "duplicateDrag": "Dupliquer et glisser",
+    "copy": "Copier",
+    "paste": "Coller",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "zoomInOut": "Zoom avant/arrière",
+    "resetZoom": "Réinitialiser le zoom",
+    "panCanvas": "Déplacer le canevas",
+    "fitView": "Ajuster la vue",
+    "nudgeNode": "Déplacer le nœud",
+    "groupSelection": "Grouper la sélection",
+    "keyboardShortcuts": "Raccourcis clavier",
+    "commandBar": "Barre de commandes",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "help": "Aide",
+    "getStarted": "Commencer",
+    "bringToFront": "Mettre au premier plan",
+    "sendToBack": "Mettre en arrière-plan",
+    "reverseDirection": "Inverser la direction",
+    "deleteConnection": "Supprimer la connexion",
+    "itemsSelected": "{{count}} éléments sélectionnés",
+    "align": "Aligner",
+    "alignLeft": "Aligner à gauche",
+    "alignCenter": "Centrer",
+    "alignRight": "Aligner à droite",
+    "alignTop": "Aligner en haut",
+    "alignMiddle": "Centrer verticalement",
+    "alignBottom": "Aligner en bas",
+    "distribute": "Distribuer",
+    "distributeHorizontally": "Distribuer horizontalement",
+    "distributeVertically": "Distribuer verticalement",
+    "group": "Groupe"
+  },
+  "nav": {
+    "home": "Accueil",
+    "editor": "Éditeur",
+    "menu": "Menu",
+    "view": "Vue",
+    "file": "Fichier",
+    "history": "Historique",
+    "playback": "Lecture",
+    "dashboard": "Tableau de bord",
+    "documentation": "Documentation",
+    "settings": "Paramètres",
+    "goToDashboard": "Aller au tableau de bord",
+    "canvasSettings": "Paramètres du canevas",
+    "wideLogo": "Votre logo large",
+    "uploadWideLogo": "Téléchargez un logo large dans les paramètres de marque",
+    "beta": "BÊTA",
+    "versionHistory": "Historique des versions",
+    "loadJSON": "Charger JSON",
+    "playbackMode": "Mode lecture"
+  },
+  "menu": {
+    "file": "Fichier",
+    "view": "Vue",
+    "settings": "Paramètres",
+    "shortcuts": "Raccourcis clavier",
+    "home": "Accueil",
+    "export": "Exporter",
+    "import": "Importer"
+  },
+  "view": {
+    "showGrid": "Afficher la grille",
+    "hideGrid": "Masquer la grille",
+    "showMinimap": "Afficher la minimap",
+    "hideMinimap": "Masquer la minimap",
+    "snapToGrid": "Aligner sur la grille",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "fitView": "Ajuster la vue"
+  },
+  "export": {
+    "title": "Exporter",
+    "png": "Exporter en PNG",
+    "jpeg": "Exporter en JPEG",
+    "json": "Exporter en JSON",
+    "mermaid": "Exporter en Mermaid",
+    "plantuml": "Exporter en PlantUML",
+    "openflowdsl": "Exporter en OpenFlow DSL",
+    "figma": "Exporter vers Figma"
+  },
+  "import": {
+    "title": "Importer",
+    "json": "Importer JSON",
+    "selectFile": "Sélectionner un fichier"
+  },
+  "editor": {
+    "untitled": "Flux sans titre",
+    "newTab": "Nouvel onglet",
+    "renameTab": "Renommer l'onglet",
+    "closeTab": "Fermer l'onglet",
+    "addNode": "Ajouter un nœud",
+    "deleteNode": "Supprimer le nœud",
+    "duplicateNode": "Dupliquer le nœud"
+  },
+  "landing": {
+    "nav": {
+      "features": "Fonctionnalités",
+      "figma": "Figma",
+      "useCases": "Cas d'usage",
+      "pricing": "Tarifs",
+      "viewGithub": "Voir sur GitHub"
+    },
+    "hero": {
+      "title": "De beaux diagrammes,",
+      "subtitle": "Conçus pour les développeurs",
+      "description": "Créez des diagrammes avec du code ou un canvas.",
+      "livePreview": "Aperçu en direct",
+      "publicBeta": "v1.0 Bêta publique",
+      "description1": "Le moteur de diagrammes",
+      "description2": "qui",
+      "description3": "pense comme vous.",
+      "description4": "Outil de diagrammes 100% gratuit et open source.",
+      "forkOnGithub": "Forker sur GitHub",
+      "licence": "Licence MIT",
+      "localFirst": "Local d'abord",
+      "noAuth": "Sans authentification",
+      "thinks": "pense",
+      "draws": "dessine",
+      "builds": "construit",
+      "ships": "livre"
+    },
+    "problem": {
+      "title": "Le problème",
+      "description": "Les outils de diagrammes traditionnels sont trop complexes ou trop limités."
+    },
+    "solution": {
+      "title": "La solution",
+      "description": "OpenFlowKit combine le meilleur des deux mondes."
+    },
+    "demo": {
+      "title": "Simple pour esquisser.",
+      "subtitle": "Prêt pour la production.",
+      "description": "Esquissez vos idées rapidement. Exportez-les prêtes pour la production."
+    },
+    "useCases": {
+      "title": "Cas d'usage"
+    },
+    "pricing": {
+      "title": "Tarifs",
+      "free": "Gratuit pour toujours",
+      "openSource": "Open Source"
+    },
+    "testimonials": {
+      "title": "Ce que les gens disent"
+    },
+    "cta": {
+      "title": "Prêt à commencer ?",
+      "subtitle": "Créez votre premier diagramme en quelques secondes.",
+      "button": "Lancer l'application"
+    },
+    "footer": {
+      "rights": "Tous droits réservés.",
+      "madeWith": "Fait avec ❤️ par l'équipe OpenFlowKit"
+    }
+  },
+  "home": {
+    "title": "Tableau de bord",
+    "description": "Gérez vos flux et diagrammes.",
+    "recentFiles": "Fichiers récents",
+    "files": "fichiers",
+    "createFirstFlow": "Créer votre premier flux",
+    "startFromScratch": "Commencer de zéro ou importer un diagramme existant."
+  },
+  "settings": {
+    "title": "Paramètres",
+    "general": "Général",
+    "shortcuts": "Raccourcis clavier",
+    "theme": "Thème",
+    "language": "Langue",
+    "selectLanguage": "Sélectionner la langue",
+    "appearance": "Apparence",
+    "ai": "Paramètres IA",
+    "analytics": "Analytique",
+    "about": "À propos",
+    "brand": "Paramètres de marque",
+    "privacy": "Confidentialité"
+  },
+  "shortcuts": {
+    "title": "Raccourcis clavier",
+    "general": "Général",
+    "canvas": "Canevas",
+    "nodes": "Nœuds",
+    "essentials": "Essentiels",
+    "manipulation": "Manipulation",
+    "navigation": "Navigation",
+    "help": "Aide"
+  },
+  "properties": {
+    "title": "Propriétés",
+    "nodeType": "Type de nœud",
+    "label": "Étiquette",
+    "description": "Description",
+    "color": "Couleur",
+    "icon": "Icône",
+    "size": "Taille"
+  },
+  "ai": {
+    "generate": "Générer avec l'IA",
+    "provider": "Fournisseur IA",
+    "model": "Modèle",
+    "apiKey": "Clé API",
+    "placeholder": "Décrivez votre diagramme..."
+  },
+  "playback": {
+    "title": "Lecture",
+    "play": "Lire",
+    "pause": "Pause",
+    "stop": "Arrêter",
+    "speed": "Vitesse"
+  },
+  "history": {
+    "title": "Historique",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "clear": "Effacer l'historique"
+  },
+  "errors": {
+    "generic": "Quelque chose s'est mal passé",
+    "loadFailed": "Échec du chargement",
+    "saveFailed": "Échec de la sauvegarde",
+    "exportFailed": "Échec de l'exportation",
+    "importFailed": "Échec de l'importation"
+  },
+  "welcome": {
+    "title": "OpenFlowKit",
+    "description": "Concevez de beaux diagrammes structurés avec un canevas orienté développeur.",
+    "press": "Appuyez sur",
+    "shortcuts": "pour les raccourcis",
+    "privacy": "Vos diagrammes, clés API et données restent localement sur votre appareil.",
+    "analytics": "Nous ne comptons que les visites anonymes.",
+    "features": {
+      "beautifulByDefault": "Beau par défaut",
+      "automatedLayouts": "Mises en page automatisées et thèmes professionnels.",
+      "privateSecure": "Privé et sécurisé",
+      "localFirst": "Une architecture locale garde vos données en sécurité."
+    }
+  },
+  "footer": {
+    "mitLicensed": "Licence MIT"
+  },
+  "pricing": {
+    "title": "Fonctionnalités premium.",
+    "subtitle": "Prix à zéro euro.",
+    "description": "OpenFlowKit est 100% open source. Pas d'édition Enterprise cachée.",
+    "mitLicense": "Licence MIT",
+    "freeForever": "Gratuit pour toujours.",
+    "fullAccess": "Accès complet au moteur principal.",
+    "hostAnywhere": "Hébergez n'importe où. Modifiez librement.",
+    "unlimitedUsage": "Utilisation illimitée",
+    "noAccount": "Aucun compte ni carte de crédit requis",
+    "everythingIncluded": "Tout inclus",
+    "features": {
+      "unlimitedDiagrams": "Diagrammes & projets illimités",
+      "saveLocally": "Sauvegarde locale",
+      "whiteLabelBranding": "White-Label",
+      "oneClickLayout": "Mise en page automatique en un clic",
+      "exportFormats": "Export SVG, PNG, JPG",
+      "figmaExport": "Export Figma",
+      "mermaidSupport": "Support Mermaid.js",
+      "aiGeneration": "Génération IA (apportez votre clé API)"
+    },
+    "supportDevelopment": "Soutenir le développement sur GitHub"
+  },
+  "cta": {
+    "readyToUse": "Prêt à utiliser",
+    "buildDiagrams": "Créez des diagrammes qui",
+    "dontLookGeneric": "ne ressemblent pas à tous les autres.",
+    "joinUs": "Rejoignez-nous pour construire la prochaine génération d'outils visuels.",
+    "getStartedNow": "Commencer maintenant",
+    "copied": "Copié",
+    "copy": "Copier",
+    "documentation": "Documentation",
+    "github": "GitHub",
+    "roadmap": "Roadmap"
+  },
+  "problem": {
+    "badge": "Le problème",
+    "title": "Pourquoi les diagrammes",
+    "subtitle": "semblent toujours fastidieux ?",
+    "description": "Nous concevons des systèmes complexes avec des outils pour les arts et l'artisanat.",
+    "pixelPurgatory": "Purgatoire des pixels",
+    "pixelPurgatoryDesc": "Passer des heures à aligner des boîtes manuellement.",
+    "screenshotTrap": "Le piège de la capture",
+    "screenshotTrapDesc": "La documentation devient obsolète dès la capture.",
+    "enterpriseBeige": "Beige entreprise",
+    "enterpriseBeigeDesc": "Enfermé dans des modèles rigides et génériques."
+  },
+  "solution": {
+    "badge": "Les fonctionnalités",
+    "title": "Tout ce dont vous avez besoin.",
+    "subtitle": "Rien de superflu.",
+    "description": "Le canvas white-label ultime.",
+    "diagramAsCode": "Diagramme en code",
+    "diagramAsCodeDesc": "Support de Mermaid.js et DSL typé.",
+    "flowpilotAI": "Flowpilot IA",
+    "aiAssistant": "Assistant IA",
+    "flowpilotAIDesc": "Discutez avec votre diagramme.",
+    "addRedisCache": "Ajouter un cache Redis devant la DB.",
+    "localPrivate": "Local & Privé",
+    "localPrivateDesc": "Tout reste sur votre machine.",
+    "offlineReady": "Hors ligne",
+    "localFileSystem": "Système de fichiers local",
+    "amazingAesthetics": "Esthétique remarquable",
+    "amazingAestheticsDesc": "Polices, couleurs et formes entièrement personnalisables.",
+    "sunsetRed": "Rouge coucher de soleil",
+    "amberWarning": "Avertissement ambre",
+    "successGreen": "Vert succès"
+  },
+  "workflows": {
+    "badge": "Flux de travail",
+    "title": "Un moteur.",
+    "subtitle": "Trois flux natifs.",
+    "description": "OpenFlowKit s'adapte à votre outil.",
+    "engineering": "Ingénierie",
+    "diagramAsCode": "DIAGRAMME EN CODE",
+    "engineeringDesc": "Écrire des diagrammes en DSL ou Mermaid.js.",
+    "design": "Design",
+    "theVisualLayer": "LA COUCHE VISUELLE",
+    "designDesc": "Copier depuis le canvas et coller dans Figma.",
+    "exportShare": "Exporter & Partager",
+    "pixelPerfectOutput": "SORTIE PIXEL PERFECT",
+    "exportShareDesc": "Exporter en SVG, PNG ou PDF.",
+    "vectorEditable": "Vecteur • Éditable dans Figma",
+    "rasterHighRes": "Raster • Haute résolution",
+    "dataSaveRestore": "Données • Sauvegarder & restaurer"
+  },
+  "figma": {
+    "badge": "Aucun plugin requis",
+    "title": "Copier le code.",
+    "subtitle": "Coller le design.",
+    "description": "Copiez un diagramme et collez-le dans Figma — texte éditable et vecteurs propres.",
+    "editableText": "Texte éditable",
+    "vectorFidelity": "Fidélité vectorielle",
+    "selected": "Sélectionné",
+    "vectorText": "Vecteur + Texte",
+    "untitled": "Sans titre"
+  },
+  "testimonials": {
+    "badge": "En construction",
+    "title": "Construire en public.",
+    "subtitle": "Façonner le moteur.",
+    "description": "OpenFlowKit fait ses premiers pas. Rejoignez-nous dès le premier jour.",
+    "starTheRepo": "Mettre une étoile au dépôt",
+    "openSource": "Open Source",
+    "openSourceDesc": "Licence MIT. Lire le code, soumettre des PR.",
+    "prsWelcome": "PRs bienvenus",
+    "community": "Communauté",
+    "communityDesc": "Rejoindre les développeurs qui construisent avec OpenFlowKit.",
+    "roadmap": "Feuille de route",
+    "coreRenderer": "Moteur principal",
+    "flowpilotAI": "Flowpilot IA",
+    "pdfExport": "Export PDF"
+  },
+  "demo": {
+    "livePreview": "Aperçu en direct",
+    "title": "Simple pour esquisser.",
+    "subtitle": "Prêt pour la production.",
+    "description1": "Esquissez vos idées rapidement.",
+    "description2": "Exportez-les prêtes pour la production.",
+    "liveSync": "Sync en direct",
+    "liveSyncDesc": "Modifier le code ↔ Voir les changements instantanément"
+  },
+  "docs": {
+    "documentation": "Documentation",
+    "returnToCanvas": "Retour au canevas",
+    "onThisPage": "Sur cette page"
+  },
+  "chatbot": {
+    "greeting": "Bonjour, comment puis-je vous aider ?",
+    "tagline": "Votre guide intelligent pour",
+    "messagePlaceholder": "Message",
+    "aiSuffix": "IA...",
+    "sendMessage": "Envoyer le message",
+    "newChat": "Nouveau chat",
+    "docsTitle": "Docs",
+    "aiAssistant": "Assistant IA",
+    "aiName": "IA",
+    "you": "Vous",
+    "searchingDocs": "Recherche dans la documentation...",
+    "aiDisclaimer": "L'IA peut faire des erreurs. Vérifiez les informations importantes.",
+    "welcomeMessage": "Bonjour ! Je suis l'assistant IA {appName}. Comment puis-je vous aider ?",
+    "prompts": {
+      "keyboardShortcuts": {
+        "title": "Raccourcis clavier",
+        "description": "Quels sont les raccourcis essentiels ?",
+        "icon": "⌘"
+      },
+      "nodeTypes": {
+        "title": "Types de nœuds",
+        "description": "Comment créer un nœud de décision ?",
+        "icon": "❖"
+      },
+      "dslSyntax": {
+        "title": "Syntaxe DSL",
+        "description": "Montrez un exemple du DSL FlowMind.",
+        "icon": "{}"
+      }
+    }
+  },
+  "footerBanner": {
+    "shipping": "Nous livrons quotidiennement.",
+    "checkChangelog": "Voir le changelog."
+  },
+  "commandBar": {
+    "ai": {
+      "title": "Demander à Flowpilot",
+      "clearChat": "Effacer l'historique",
+      "placeholder": "Décrivez ce que vous voulez créer...",
+      "examples": {
+        "userRegistration": "Inscription utilisateur",
+        "userRegistrationPrompt": "Flux d'inscription avec vérification email",
+        "ecommerceCheckout": "Paiement e-commerce",
+        "ecommerceCheckoutPrompt": "Processus de paiement avec gestion des erreurs",
+        "cicdPipeline": "Pipeline CI/CD",
+        "cicdPipelinePrompt": "Architecture pipeline CI/CD",
+        "oauth2Login": "Connexion OAuth2",
+        "oauth2LoginPrompt": "Flux de connexion OAuth2"
+      }
+    },
+    "search": {
+      "title": "Rechercher des nœuds",
+      "placeholder": "Rechercher par étiquette ou ID...",
+      "noResults": "Aucun nœud trouvé",
+      "untitled": "Nœud sans titre",
+      "type": "Type"
+    },
+    "templates": {
+      "title": "Modèles",
+      "placeholder": "Rechercher des modèles...",
+      "noResults": "Aucun modèle trouvé"
+    },
+    "code": {
+      "mermaidTitle": "Importer Mermaid",
+      "dslTitle": "Importer {appName} DSL",
+      "mermaidPlaceholder": "Collez le code Mermaid ici...",
+      "dslPlaceholder": "Collez le code DSL ici...",
+      "applyShortcut": "⌘+Entrée pour appliquer",
+      "syntaxGuide": "Guide de syntaxe",
+      "apply": "Appliquer"
+    },
+    "layout": {
+      "title": "Studio de mise en page",
+      "algorithm": "Algorithme",
+      "layered": "Couches",
+      "layeredDesc": "Hiérarchique, bon pour les flux",
+      "tree": "Arbre",
+      "treeDesc": "Structure parent-enfant stricte",
+      "force": "Force",
+      "forceDesc": "Organique, basé sur la physique",
+      "radial": "Radial",
+      "radialDesc": "Disposition circulaire",
+      "direction": "Direction",
+      "down": "Bas",
+      "up": "Haut",
+      "right": "Droite",
+      "left": "Gauche",
+      "spacing": "Espacement",
+      "compact": "Compact",
+      "normal": "Normal",
+      "loose": "Espacé",
+      "applyLayout": "Appliquer la mise en page"
+    },
+    "designSystem": {
+      "title": "Systèmes de design",
+      "createNew": "Créer un nouveau système",
+      "import": "Importer",
+      "exportActive": "Exporter l'actif"
+    },
+    "visuals": {
+      "title": "Styles de connexion",
+      "edgeStyle": "Style de liaison",
+      "bezier": "Bezier",
+      "bezierDesc": "Courbes douces",
+      "straight": "Droit",
+      "straightDesc": "Lignes directes",
+      "smoothStep": "Pas smooth",
+      "smoothStepDesc": "Coins arrondis",
+      "step": "Pas",
+      "stepDesc": "Angles droits",
+      "defaultIcons": "Icônes par défaut",
+      "defaultIconsDesc": "Afficher les icônes standard",
+      "intelligentRouting": "Routage intelligent",
+      "intelligentRoutingDesc": "Connexions auto au glisser",
+      "animatedEdges": "Liaisons animées",
+      "animatedEdgesDesc": "Particules fluides",
+      "strokeWidth": "Épaisseur du trait"
+    }
+  },
+  "settingsModal": {
+    "title": "Paramètres",
+    "general": "Général",
+    "flowpilotAI": "Flowpilot IA",
+    "shortcuts": "Raccourcis",
+    "running": "{appName} en cours",
+    "generalSettings": "Paramètres généraux",
+    "flowpilotConfigurations": "Configurations Flowpilot",
+    "keyboardShortcuts": "Raccourcis clavier",
+    "canvas": {
+      "title": "Canevas",
+      "showGrid": "Afficher la grille",
+      "showGridDesc": "Afficher une grille de points",
+      "snapToGrid": "Aligner sur la grille",
+      "snapToGridDesc": "Aligner les nœuds sur la grille",
+      "miniMap": "Mini carte",
+      "miniMapDesc": "Afficher la mini carte en bas à droite"
+    },
+    "ai": {
+      "provider": "Fournisseur",
+      "model": "Modèle",
+      "apiKey": "Clé API",
+      "customBaseUrl": "URL de base personnalisée",
+      "optional": "Optionnel",
+      "testConnection": "Tester la connexion",
+      "testing": "Test en cours...",
+      "success": "Succès ! Connecté à {provider}",
+      "failed": "Échec : {error}",
+      "getApiKey": "Obtenir la clé API {provider}",
+      "openConsole": "Ouvrir {console}",
+      "keySetupNote": "Note de configuration",
+      "enterApiKey": "Entrez votre clé API",
+      "selectModel": "Sélectionner un modèle",
+      "customEndpoint": "URL de base personnalisée",
+      "providers": {
+        "gemini": {
+          "hint": "Google · Meilleur niveau gratuit",
+          "keySetupNote": "Niveau gratuit — sans carte de crédit"
+        },
+        "openai": {
+          "hint": "Famille GPT-5 · Standard industriel",
+          "keySetupNote": "Compte payant requis"
+        },
+        "claude": {
+          "hint": "Anthropic · Modèle de raisonnement",
+          "keySetupNote": "Compte payant requis (5$ min)"
+        },
+        "groq": {
+          "hint": "Ultra rapide · Llama 4",
+          "keySetupNote": "Niveau gratuit — sans carte de crédit"
+        },
+        "nvidia": {
+          "hint": "NIM · Modèles frontier",
+          "keySetupNote": "Crédits gratuits avec nouveau compte"
+        },
+        "cerebras": {
+          "hint": "2 400 tok/s · Qwen 3 235B",
+          "keySetupNote": "Niveau gratuit — sans carte de crédit"
+        },
+        "mistral": {
+          "hint": "Le Chat · Leader IA européen",
+          "keySetupNote": "Niveau gratuit — sans carte de crédit"
+        },
+        "custom": {
+          "hint": "Tout endpoint compatible OpenAI"
+        }
+      }
+    },
+    "brand": {
+      "title": "Kits de marque",
+      "subtitle": "Gérer vos identités de marque",
+      "active": "Actif",
+      "editKit": "Modifier le kit",
+      "deleteConfirm": "Supprimer ce kit ?",
+      "createNewKit": "Créer un nouveau kit",
+      "newIdentity": "Nouvelle identité",
+      "activeKit": "Kit actif",
+      "inactive": "Inactif",
+      "setActive": "Définir comme actif",
+      "resetToDefaults": "Réinitialiser"
+    },
+    "shortcutsHint": "Vous pouvez aussi appuyer sur ? pour les afficher.",
+    "privacy": {
+      "manifesto": "Notre manifeste de confidentialité",
+      "manifestoText": "Nous croyons en la protection des données et l'autonomie.",
+      "localFirst": "Stockage local",
+      "noAccounts": "Aucun compte utilisateur",
+      "ownData": "Vos données vous appartiennent",
+      "anonymous": "Usage anonyme uniquement",
+      "telemetry": "Télémétrie & Retours",
+      "anonymousStats": "Statistiques anonymes",
+      "anonymousStatsDesc": "Nous suivons uniquement les visites et l'usage anonyme.",
+      "quote": "Nous comptons sur vous pour nous dire ce qui marche.",
+      "helpImprove": "Aidez-nous à nous améliorer",
+      "shareFeedback": "Partager des retours",
+      "shareFeedbackDesc": "Donner des retours, signaler des bugs, demander des fonctionnalités"
+    },
+    "settings": "Paramètres"
+  },
+  "customNodes": {
+    "browserContent": "Contenu du navigateur",
+    "mobileContent": "Contenu mobile"
+  },
+  "keyboardShortcutsModal": {
+    "title": "Raccourcis clavier",
+    "subtitle": "Maîtrisez votre flux de travail avec rapidité.",
+    "closeAriaLabel": "Fermer la fenêtre des raccourcis",
+    "proTip": "Conseil pro: Maintenez <key>?</key> pour activer la boîte de sélection lors du glisser."
+  },
+  "toolbar": {
+    "selectMode": "Mode sélection (V)",
+    "panMode": "Mode déplacement (H)",
+    "flowpilot": "Flowpilot (Cmd+K)",
+    "templates": "Modèles",
+    "addItem": "Ajouter un élément",
+    "addToCanvas": "Ajouter au canevas",
+    "node": "Nœud",
+    "stickyNote": "Note adhésive",
+    "section": "Section",
+    "text": "Texte",
+    "wireframes": "Maquettes",
+    "image": "Image",
+    "autoLayout": "Mise en page auto",
+    "clearCanvas": "Effacer le canevas",
+    "undo": "Annuler (Ctrl+Z)",
+    "redo": "Rétablir (Ctrl+Y)"
+  },
+  "flowEditor": {
+    "cannotCloseLastTab": "Impossible de fermer le dernier onglet.",
+    "mermaidCopied": "Diagramme Mermaid copié!",
+    "plantUMLCopied": "Diagramme PlantUML copié!",
+    "dslCopied": "OpenFlow DSL copié!",
+    "dslCopyFailed": "Échec de la copie du DSL",
+    "figmaCopied": "Diagramme copié pour Figma!",
+    "figmaExportFailed": "Échec de l'export Figma: {{message}}",
+    "applyingLayout": "Application de la mise en page…",
+    "emptyState": {
+      "title": "Commencer à construire",
+      "description": "Votre canevas est vide. Générez un flux avec Flowpilot ou commencez de zéro.",
+      "generateWithFlowpilot": "Générer avec Flowpilot",
+      "browseTemplates": "Parcourir les modèles",
+      "addBlankNode": "Ajouter un nœud vide"
+    }
+  },
+  "annotationNode": {
+    "placeholder": "*Double-cliquez pour modifier la note*"
+  },
+  "connectMenu": {
+    "createNewNode": "Créer un nouveau nœud",
+    "process": "Processus",
+    "processDesc": "Action standard",
+    "decision": "Décision",
+    "decisionDesc": "Logique de branchement",
+    "database": "Base de données",
+    "databaseDesc": "Stockage de données",
+    "inputOutput": "Entrée / Sortie",
+    "inputOutputDesc": "Flux de données",
+    "note": "Note",
+    "noteDesc": "Documentation",
+    "releaseToConnect": "Relâcher pour connecter"
+  },
+  "errorBoundary": {
+    "title": "Quelque chose s'est mal passé",
+    "description": "Une erreur inattendue s'est produite. Veuillez actualiser la page.",
+    "reloadPage": "Recharger la page"
+  },
+  "navigationControls": {
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "fitView": "Ajuster la vue",
+    "keyboardShortcuts": "Raccourcis clavier"
+  },
+  "playbackControls": {
+    "stop": "Arrêter"
+  },
+  "snapshotsPanel": {
+    "title": "Historique des versions",
+    "saveCurrentVersion": "Sauvegarder la version actuelle",
+    "versionName": "Nom de la version (ex: Avant le refactoring)",
+    "noSnapshots": "Aucun instantané sauvegardé.",
+    "restoreVersion": "Restaurer la version",
+    "deleteVersion": "Supprimer la version",
+    "nodes": "{{count}} nœuds",
+    "edges": "{{count}} connexions"
+  },
+  "templatesPanel": {
+    "title": "Modèles de flux",
+    "searchPlaceholder": "Rechercher des modèles...",
+    "noTemplates": "Aucun modèle trouvé."
+  },
+  "propertiesPanel": {
+    "stickyNote": "Note adhésive",
+    "nodeSettings": "Paramètres du nœud",
+    "connection": "Connexion"
+  },
+  "flowTabs": {
+    "closeTab": "Fermer l'onglet",
+    "newFlowTab": "Nouvel onglet de flux"
+  }
+}

@@ -1,0 +1,712 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "createNew": "新建",
+    "open": "打开",
+    "openFile": "打开文件",
+    "close": "关闭",
+    "back": "返回",
+    "next": "下一步",
+    "done": "完成",
+    "undo": "撤销",
+    "redo": "重做",
+    "play": "播放",
+    "select": "选择",
+    "selectAll": "全选",
+    "duplicate": "复制",
+    "duplicateDrag": "复制并拖拽",
+    "copy": "复制",
+    "paste": "粘贴",
+    "zoomIn": "放大",
+    "zoomOut": "缩小",
+    "zoomInOut": "放大/缩小",
+    "resetZoom": "重置缩放",
+    "panCanvas": "平移画布",
+    "fitView": "适应视图",
+    "nudgeNode": "微移节点",
+    "groupSelection": "分组选择",
+    "keyboardShortcuts": "键盘快捷键",
+    "commandBar": "命令栏",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "help": "帮助",
+    "getStarted": "开始使用",
+    "bringToFront": "移至顶层",
+    "sendToBack": "移至底层",
+    "reverseDirection": "反转方向",
+    "deleteConnection": "删除连接",
+    "itemsSelected": "已选 {{count}} 项",
+    "align": "对齐",
+    "alignLeft": "左对齐",
+    "alignCenter": "居中对齐",
+    "alignRight": "右对齐",
+    "alignTop": "顶端对齐",
+    "alignMiddle": "垂直居中",
+    "alignBottom": "底端对齐",
+    "distribute": "分布",
+    "distributeHorizontally": "水平分布",
+    "distributeVertically": "垂直分布",
+    "group": "分组"
+  },
+  "nav": {
+    "home": "首页",
+    "editor": "编辑器",
+    "menu": "菜单",
+    "view": "视图",
+    "file": "文件",
+    "history": "历史",
+    "playback": "回放",
+    "dashboard": "仪表板",
+    "documentation": "文档",
+    "settings": "设置",
+    "goToDashboard": "前往仪表板",
+    "canvasSettings": "画布设置",
+    "wideLogo": "您的宽幅标志",
+    "uploadWideLogo": "在品牌设置中上传宽幅标志",
+    "beta": "测试版",
+    "versionHistory": "版本历史",
+    "loadJSON": "加载 JSON",
+    "playbackMode": "回放模式"
+  },
+  "menu": {
+    "file": "文件",
+    "view": "视图",
+    "settings": "设置",
+    "shortcuts": "键盘快捷键",
+    "home": "首页",
+    "export": "导出",
+    "import": "导入"
+  },
+  "view": {
+    "showGrid": "显示网格",
+    "hideGrid": "隐藏网格",
+    "showMinimap": "显示小地图",
+    "hideMinimap": "隐藏小地图",
+    "snapToGrid": "对齐网格",
+    "zoomIn": "放大",
+    "zoomOut": "缩小",
+    "fitView": "适应视图"
+  },
+  "export": {
+    "title": "导出",
+    "png": "导出为 PNG",
+    "jpeg": "导出为 JPEG",
+    "json": "导出为 JSON",
+    "mermaid": "导出为 Mermaid",
+    "plantuml": "导出为 PlantUML",
+    "openflowdsl": "导出为 OpenFlow DSL",
+    "figma": "导出到 Figma"
+  },
+  "import": {
+    "title": "导入",
+    "json": "导入 JSON",
+    "selectFile": "选择文件"
+  },
+  "editor": {
+    "untitled": "未命名流程",
+    "newTab": "新建标签页",
+    "renameTab": "重命名标签页",
+    "closeTab": "关闭标签页",
+    "addNode": "添加节点",
+    "deleteNode": "删除节点",
+    "duplicateNode": "复制节点"
+  },
+  "landing": {
+    "nav": {
+      "features": "功能",
+      "figma": "Figma",
+      "useCases": "应用场景",
+      "pricing": "价格",
+      "viewGithub": "在 GitHub 上查看"
+    },
+    "hero": {
+      "title": "精美的流程图，",
+      "subtitle": "为开发者打造",
+      "description": "使用代码或画布创建令人惊叹的图表。导出为任何格式。开源且永久免费。",
+      "livePreview": "实时预览",
+      "publicBeta": "v1.0 公测版",
+      "description1": "图表引擎",
+      "description2": "让它",
+      "description3": "像你一样思考。",
+      "description4": "100% 免费的开源开发者绘图工具。编写代码或拖拽 — 无论哪种方式都能获得精美结果。",
+      "forkOnGithub": "在 GitHub 上 Fork",
+      "licence": "MIT 开源协议",
+      "localFirst": "本地优先",
+      "noAuth": "无需登录",
+      "thinks": "思考",
+      "draws": "绘制",
+      "builds": "构建",
+      "ships": "发布"
+    },
+    "problem": {
+      "title": "面临的问题",
+      "description": "传统的绘图工具要么太复杂，要么太受限。"
+    },
+    "solution": {
+      "title": "解决方案",
+      "description": "OpenFlowKit 结合了两者的优点。"
+    },
+    "demo": {
+      "title": "轻松绘制草图。",
+      "subtitle": "随时投入生产。",
+      "description": "快速勾勒创意。导出生产可用图表。"
+    },
+    "useCases": {
+      "title": "应用场景"
+    },
+    "pricing": {
+      "title": "价格",
+      "free": "永久免费",
+      "openSource": "开源"
+    },
+    "testimonials": {
+      "title": "用户评价"
+    },
+    "cta": {
+      "title": "准备好开始了吗？",
+      "subtitle": "在几秒钟内创建你的第一个流程图。",
+      "button": "启动应用"
+    },
+    "footer": {
+      "rights": "保留所有权利。",
+      "madeWith": "由 OpenFlowKit 团队用心制作 ❤️"
+    }
+  },
+  "home": {
+    "title": "仪表板",
+    "description": "管理您的流程和图表。",
+    "recentFiles": "最近文件",
+    "files": "个文件",
+    "createFirstFlow": "创建您的第一个流程",
+    "startFromScratch": "从零开始或导入现有图表。"
+  },
+  "settings": {
+    "title": "设置",
+    "general": "通用",
+    "shortcuts": "键盘快捷键",
+    "theme": "主题",
+    "language": "语言",
+    "selectLanguage": "选择语言",
+    "appearance": "外观",
+    "ai": "AI 设置",
+    "analytics": "分析",
+    "about": "关于",
+    "brand": "品牌设置",
+    "privacy": "隐私"
+  },
+  "shortcuts": {
+    "title": "键盘快捷键",
+    "general": "通用",
+    "canvas": "画布",
+    "nodes": "节点",
+    "essentials": "基础",
+    "manipulation": "操作",
+    "navigation": "导航",
+    "help": "帮助"
+  },
+  "properties": {
+    "title": "属性",
+    "nodeType": "节点类型",
+    "label": "标签",
+    "description": "描述",
+    "color": "颜色",
+    "icon": "图标",
+    "size": "大小"
+  },
+  "ai": {
+    "generate": "使用 AI 生成",
+    "provider": "AI 提供商",
+    "model": "模型",
+    "apiKey": "API 密钥",
+    "placeholder": "描述你的流程图..."
+  },
+  "playback": {
+    "title": "回放",
+    "play": "播放",
+    "pause": "暂停",
+    "stop": "停止",
+    "speed": "速度"
+  },
+  "history": {
+    "title": "历史记录",
+    "undo": "撤销",
+    "redo": "重做",
+    "clear": "清除历史记录"
+  },
+  "errors": {
+    "generic": "出现了错误",
+    "loadFailed": "加载失败",
+    "saveFailed": "保存失败",
+    "exportFailed": "导出失败",
+    "importFailed": "导入失败"
+  },
+  "welcome": {
+    "title": "OpenFlowKit",
+    "description": "使用以开发者为中心的画布设计精美的结构化图表。",
+    "press": "按下",
+    "shortcuts": "查看快捷键",
+    "privacy": "您的图表、API 密钥和数据均保存在本地设备上。",
+    "analytics": "我们只统计匿名访问量。",
+    "features": {
+      "beautifulByDefault": "默认美观",
+      "automatedLayouts": "自动布局和专业主题。",
+      "privateSecure": "私密安全",
+      "localFirst": "本地优先架构确保您的数据安全。"
+    }
+  },
+  "footer": {
+    "mitLicensed": "MIT 开源协议"
+  },
+  "pricing": {
+    "title": "高级功能。",
+    "subtitle": "零成本。",
+    "description": "OpenFlowKit 100% 开源。没有隐藏在销售电话背后的企业版。",
+    "mitLicense": "MIT 协议",
+    "freeForever": "永久免费。",
+    "fullAccess": "完全访问核心引擎。",
+    "hostAnywhere": "在任何地方托管。自由修改。",
+    "unlimitedUsage": "无限使用",
+    "noAccount": "无需账号或信用卡",
+    "everythingIncluded": "包含所有功能",
+    "features": {
+      "unlimitedDiagrams": "无限的图表和项目",
+      "saveLocally": "本地保存，数据留在设备上",
+      "whiteLabelBranding": "白标定制体验",
+      "oneClickLayout": "一键自动布局",
+      "exportFormats": "导出 SVG, PNG, JPG",
+      "figmaExport": "Figma 导出",
+      "mermaidSupport": "Mermaid.js 支持",
+      "aiGeneration": "AI 图表生成"
+    },
+    "supportDevelopment": "在 GitHub 上支持开发"
+  },
+  "cta": {
+    "readyToUse": "准备就绪",
+    "buildDiagrams": "制作不落俗套的图表。",
+    "dontLookGeneric": "告别千篇一律。",
+    "joinUs": "加入我们，共同打造下一代可视化工具。开源、本地优先、永久免费。",
+    "getStartedNow": "立即开始",
+    "copied": "已复制",
+    "copy": "复制",
+    "documentation": "文档",
+    "github": "GitHub",
+    "roadmap": "路线图"
+  },
+  "problem": {
+    "badge": "面临的问题",
+    "title": "为什么画图",
+    "subtitle": "总感觉像是一件苦差事？",
+    "description": "我们正在用专为艺术设计打造的工具来设计复杂的系统。",
+    "pixelPurgatory": "像素地狱",
+    "pixelPurgatoryDesc": "浪费数小时手动对齐方块。一个新服务加入会打破整个布局。",
+    "screenshotTrap": "截图陷阱",
+    "screenshotTrapDesc": "截图的那一刻，文档就已经过时了。静态资产就是死资产。",
+    "enterpriseBeige": "企业风的沉闷",
+    "enterpriseBeigeDesc": "被死板、通用的模板锁死。你的架构是独一无二的；你的图表不应该看起来像剪贴画。"
+  },
+  "solution": {
+    "badge": "功能特性",
+    "title": "你需要的一切。",
+    "subtitle": "没有多余的废话。",
+    "description": "终极白标画布。",
+    "diagramAsCode": "代码即图表",
+    "diagramAsCodeDesc": "支持 Mermaid.js 和 DSL。",
+    "flowpilotAI": "Flowpilot AI",
+    "aiAssistant": "AI 助手",
+    "flowpilotAIDesc": "与你的图表对话。",
+    "addRedisCache": "在数据库前添加一个 Redis 缓存。",
+    "localPrivate": "本地且私密",
+    "localPrivateDesc": "一切都留在你的机器上。",
+    "offlineReady": "支持离线",
+    "localFileSystem": "本地文件系统",
+    "amazingAesthetics": "惊艳的美学设计",
+    "amazingAestheticsDesc": "完全可定制的字体、颜色和形状。",
+    "sunsetRed": "日落红",
+    "amberWarning": "琥珀警告",
+    "successGreen": "成功绿"
+  },
+  "workflows": {
+    "badge": "工作流",
+    "title": "一个引擎。",
+    "subtitle": "三种原生工作流。",
+    "description": "OpenFlowKit 适应你已经在使用的工具。",
+    "engineering": "工程",
+    "diagramAsCode": "代码即图表",
+    "engineeringDesc": "使用 DSL 或 Mermaid.js 语法编写图表。",
+    "design": "设计",
+    "theVisualLayer": "视觉层",
+    "designDesc": "从画布复制并作为可编辑的 SVG 粘贴到 Figma 中。",
+    "exportShare": "导出与分享",
+    "pixelPerfectOutput": "像素级完美输出",
+    "exportShareDesc": "将图表导出为 SVG、PNG 或 PDF。",
+    "vectorEditable": "矢量 • 在 Figma 中可编辑",
+    "rasterHighRes": "光栅 • 高分辨率导出",
+    "dataSaveRestore": "数据 • 保存与恢复流程"
+  },
+  "figma": {
+    "badge": "无需插件",
+    "title": "复制代码。",
+    "subtitle": "粘贴设计。",
+    "description": "从 OpenFlowKit 复制直贴到 Figma — 你将获得可编辑文本和矢量形状。",
+    "editableText": "可编辑文本",
+    "vectorFidelity": "矢量保真度",
+    "selected": "已选择",
+    "vectorText": "矢量 + 文本",
+    "untitled": "未命名"
+  },
+  "testimonials": {
+    "badge": "建设中",
+    "title": "公开构建。",
+    "subtitle": "塑造引擎。",
+    "description": "OpenFlowKit 才刚刚起步。从第一天起就加入我们。",
+    "starTheRepo": "给仓库点赞",
+    "openSource": "开源",
+    "openSourceDesc": "MIT 协议。阅读源码，提交 PR。",
+    "prsWelcome": "欢迎提交 PR",
+    "community": "社区",
+    "communityDesc": "加入构建者行列。",
+    "roadmap": "路线图",
+    "coreRenderer": "核心渲染器",
+    "flowpilotAI": "Flowpilot AI",
+    "pdfExport": "PDF 导出"
+  },
+  "demo": {
+    "livePreview": "实时预览",
+    "title": "轻松绘制草图。",
+    "subtitle": "随时投入生产。",
+    "description1": "快速勾勒创意。",
+    "description2": "导出生产图表。",
+    "liveSync": "实时同步",
+    "liveSyncDesc": "编辑代码 ↔ 立即看到改变"
+  },
+  "docs": {
+    "documentation": "文档",
+    "returnToCanvas": "返回画布",
+    "onThisPage": "本页内容"
+  },
+  "chatbot": {
+    "greeting": "你好，我能帮你什么？",
+    "tagline": "智能指南",
+    "messagePlaceholder": "消息",
+    "aiSuffix": "AI...",
+    "sendMessage": "发送消息",
+    "newChat": "新对话",
+    "docsTitle": "文档",
+    "aiAssistant": "AI 助手",
+    "aiName": "AI",
+    "you": "你",
+    "searchingDocs": "正在搜索文档...",
+    "aiDisclaimer": "AI 可能会犯错。请核实重要信息。",
+    "welcomeMessage": "你好！我是 {appName} AI 助手。今天能帮你什么？",
+    "prompts": {
+      "keyboardShortcuts": {
+        "title": "快捷键",
+        "description": "有哪些快捷键？",
+        "icon": "⌘"
+      },
+      "nodeTypes": {
+        "title": "节点类型",
+        "description": "如何创建决策节点？",
+        "icon": "❖"
+      },
+      "dslSyntax": {
+        "title": "DSL 语法",
+        "description": "给我看一个例子。",
+        "icon": "{}"
+      }
+    }
+  },
+  "footerBanner": {
+    "shipping": "我们每天都在发布新功能。",
+    "checkChangelog": "查看更新日志。"
+  },
+  "commandBar": {
+    "ai": {
+      "title": "询问 Flowpilot",
+      "clearChat": "清除聊天记录",
+      "placeholder": "描述你想创建的内容...",
+      "examples": {
+        "userRegistration": "用户注册",
+        "userRegistrationPrompt": "用户注册流程",
+        "ecommerceCheckout": "电商结账",
+        "ecommerceCheckoutPrompt": "电商结账流程",
+        "cicdPipeline": "CI/CD 流水线",
+        "cicdPipelinePrompt": "CI/CD 流水线架构",
+        "oauth2Login": "OAuth2 登录",
+        "oauth2LoginPrompt": "Oauth2 登录流程"
+      }
+    },
+    "search": {
+      "title": "搜索节点",
+      "placeholder": "通过标签或 ID 搜索...",
+      "noResults": "未找到节点",
+      "untitled": "未命名节点",
+      "type": "类型"
+    },
+    "templates": {
+      "title": "模板",
+      "placeholder": "搜索模板...",
+      "noResults": "未找到模板"
+    },
+    "code": {
+      "mermaidTitle": "导入 Mermaid",
+      "dslTitle": "导入 {appName} DSL",
+      "mermaidPlaceholder": "粘贴 Mermaid 代码...",
+      "dslPlaceholder": "粘贴 DSL 代码...",
+      "applyShortcut": "按 ⌘+Enter 应用",
+      "syntaxGuide": "语法指南",
+      "apply": "应用"
+    },
+    "layout": {
+      "title": "布局工作室",
+      "algorithm": "算法",
+      "layered": "分层",
+      "layeredDesc": "层级结构",
+      "tree": "树状",
+      "treeDesc": "严格父子结构",
+      "force": "力导向",
+      "forceDesc": "有机物理结构",
+      "radial": "放射状",
+      "radialDesc": "圆形排列",
+      "direction": "方向",
+      "down": "向下",
+      "up": "向上",
+      "right": "向右",
+      "left": "向左",
+      "spacing": "间距",
+      "compact": "紧凑",
+      "normal": "正常",
+      "loose": "宽松",
+      "applyLayout": "应用布局"
+    },
+    "designSystem": {
+      "title": "设计系统",
+      "createNew": "创建新系统",
+      "import": "导入",
+      "exportActive": "导出当前"
+    },
+    "visuals": {
+      "title": "连接线样式",
+      "edgeStyle": "连线样式",
+      "bezier": "贝塞尔曲线",
+      "bezierDesc": "平滑的曲线",
+      "straight": "直线",
+      "straightDesc": "直接相连",
+      "smoothStep": "平滑阶梯",
+      "smoothStepDesc": "圆角折线",
+      "step": "阶梯",
+      "stepDesc": "直角折线",
+      "defaultIcons": "默认图标",
+      "defaultIconsDesc": "显示标准节点图标",
+      "intelligentRouting": "智能路由",
+      "intelligentRoutingDesc": "拖动时自动吸附",
+      "animatedEdges": "动画连线",
+      "animatedEdgesDesc": "流动的粒子",
+      "strokeWidth": "线宽"
+    }
+  },
+  "settingsModal": {
+    "title": "设置",
+    "general": "通用",
+    "flowpilotAI": "Flowpilot AI",
+    "shortcuts": "快捷键",
+    "running": "正在运行 {appName}",
+    "generalSettings": "通用设置",
+    "flowpilotConfigurations": "Flowpilot 配置",
+    "keyboardShortcuts": "键盘快捷键",
+    "canvas": {
+      "title": "画布",
+      "showGrid": "显示网格",
+      "showGridDesc": "在画布上显示点状网格",
+      "snapToGrid": "对齐网格",
+      "snapToGridDesc": "移动时自动对齐",
+      "miniMap": "小地图",
+      "miniMapDesc": "右下角显示小地图"
+    },
+    "ai": {
+      "provider": "提供商",
+      "model": "模型",
+      "apiKey": "API 密钥",
+      "customBaseUrl": "自定义 URL",
+      "optional": "可选",
+      "testConnection": "测试连接",
+      "testing": "测试中...",
+      "success": "成功！",
+      "failed": "失败：{error}",
+      "getApiKey": "获取 API 密钥",
+      "openConsole": "打开控制台",
+      "keySetupNote": "设置说明",
+      "enterApiKey": "输入 API 密钥",
+      "selectModel": "选择模型",
+      "customEndpoint": "自定义 URL",
+      "providers": {
+        "gemini": {
+          "hint": "Google",
+          "keySetupNote": "免费额度"
+        },
+        "openai": {
+          "hint": "GPT-5",
+          "keySetupNote": "需付费账户"
+        },
+        "claude": {
+          "hint": "Anthropic",
+          "keySetupNote": "需付费账户"
+        },
+        "groq": {
+          "hint": "极快",
+          "keySetupNote": "免费额度"
+        },
+        "nvidia": {
+          "hint": "NIM",
+          "keySetupNote": "免费积分"
+        },
+        "cerebras": {
+          "hint": "2,400 tok/s",
+          "keySetupNote": "免费额度"
+        },
+        "mistral": {
+          "hint": "Le Chat",
+          "keySetupNote": "免费额度"
+        },
+        "custom": {
+          "hint": "OpenAI 兼容"
+        }
+      }
+    },
+    "brand": {
+      "title": "品牌套件",
+      "subtitle": "管理品牌标识",
+      "active": "使用中",
+      "editKit": "编辑套件",
+      "deleteConfirm": "确认删除此套件？",
+      "createNewKit": "创建新套件",
+      "newIdentity": "新标识",
+      "activeKit": "当前套件",
+      "inactive": "未激活",
+      "setActive": "设为当前使用",
+      "resetToDefaults": "重置为默认"
+    },
+    "shortcutsHint": "你也可以随时按下 ? 键来查看这些快捷键。",
+    "privacy": {
+      "manifesto": "我们的隐私宣言",
+      "manifestoText": "我们坚信基于设计的隐私保护。",
+      "localFirst": "本地优先存储",
+      "noAccounts": "没有用户账户",
+      "ownData": "你的数据你做主",
+      "anonymous": "仅限匿名使用",
+      "telemetry": "遥测与反馈",
+      "anonymousStats": "匿名统计",
+      "anonymousStatsDesc": "我们只跟踪访问量。",
+      "quote": "我们依靠您来告诉我们什么有效。",
+      "helpImprove": "帮助我们改进",
+      "shareFeedback": "分享反馈",
+      "shareFeedbackDesc": "提供反馈、报告错误"
+    },
+    "settings": "设置"
+  },
+  "customNodes": {
+    "browserContent": "浏览器内容",
+    "mobileContent": "移动端内容"
+  },
+  "keyboardShortcutsModal": {
+    "title": "键盘快捷键",
+    "subtitle": "用速度掌控您的工作流程。",
+    "closeAriaLabel": "关闭快捷键窗口",
+    "proTip": "专业技巧：拖动时按住 <key>?</key> 以启用选择框。"
+  },
+  "toolbar": {
+    "selectMode": "选择模式 (V)",
+    "panMode": "平移模式 (H)",
+    "flowpilot": "Flowpilot (Cmd+K)",
+    "templates": "模板",
+    "addItem": "添加元素",
+    "addToCanvas": "添加到画布",
+    "node": "节点",
+    "stickyNote": "便利贴",
+    "section": "分区",
+    "text": "文本",
+    "wireframes": "线框图",
+    "image": "图片",
+    "autoLayout": "自动布局",
+    "clearCanvas": "清除画布",
+    "undo": "撤销 (Ctrl+Z)",
+    "redo": "重做 (Ctrl+Y)"
+  },
+  "flowEditor": {
+    "cannotCloseLastTab": "无法关闭最后一个标签页。",
+    "mermaidCopied": "Mermaid 图表已复制到剪贴板！",
+    "plantUMLCopied": "PlantUML 图表已复制到剪贴板！",
+    "dslCopied": "OpenFlow DSL 已复制到剪贴板！",
+    "dslCopyFailed": "复制 DSL 失败",
+    "figmaCopied": "图表已复制，可粘贴到 Figma！",
+    "figmaExportFailed": "Figma 导出失败：{{message}}",
+    "applyingLayout": "正在应用布局…",
+    "emptyState": {
+      "title": "开始构建",
+      "description": "您的画布是空的。使用 Flowpilot 生成流程，或从空白开始。",
+      "generateWithFlowpilot": "使用 Flowpilot 生成",
+      "browseTemplates": "浏览模板",
+      "addBlankNode": "添加空白节点"
+    }
+  },
+  "annotationNode": {
+    "placeholder": "*双击编辑注释*"
+  },
+  "connectMenu": {
+    "createNewNode": "创建新节点",
+    "process": "流程",
+    "processDesc": "标准操作",
+    "decision": "决策",
+    "decisionDesc": "分支逻辑",
+    "database": "数据库",
+    "databaseDesc": "数据存储",
+    "inputOutput": "输入 / 输出",
+    "inputOutputDesc": "数据流",
+    "note": "注释",
+    "noteDesc": "文档说明",
+    "releaseToConnect": "松开以连接"
+  },
+  "errorBoundary": {
+    "title": "出现了错误",
+    "description": "遇到了意外错误。请刷新页面重试。",
+    "reloadPage": "重新加载页面"
+  },
+  "navigationControls": {
+    "zoomIn": "放大",
+    "zoomOut": "缩小",
+    "fitView": "适应视图",
+    "keyboardShortcuts": "键盘快捷键"
+  },
+  "playbackControls": {
+    "stop": "停止"
+  },
+  "snapshotsPanel": {
+    "title": "版本历史",
+    "saveCurrentVersion": "保存当前版本",
+    "versionName": "版本名称（如：重构前）",
+    "noSnapshots": "尚未保存快照。",
+    "restoreVersion": "恢复版本",
+    "deleteVersion": "删除版本",
+    "nodes": "{{count}} 个节点",
+    "edges": "{{count}} 条边"
+  },
+  "templatesPanel": {
+    "title": "流程模板",
+    "searchPlaceholder": "搜索模板...",
+    "noTemplates": "未找到模板。"
+  },
+  "propertiesPanel": {
+    "stickyNote": "便利贴",
+    "nodeSettings": "节点设置",
+    "connection": "连接"
+  },
+  "flowTabs": {
+    "closeTab": "关闭标签页",
+    "newFlowTab": "新建流程标签页"
+  }
+}

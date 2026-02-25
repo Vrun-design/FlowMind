@@ -1,0 +1,755 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "createNew": "Create New",
+    "open": "Open",
+    "openFile": "Open File",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "undo": "Undo",
+    "redo": "Redo",
+    "play": "Play",
+    "select": "Select",
+    "selectAll": "Select All",
+    "duplicate": "Duplicate",
+    "duplicateDrag": "Duplicate and Drag",
+    "upload": "Upload",
+    "copy": "Copy",
+    "paste": "Paste",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "zoomInOut": "Zoom In/Out",
+    "resetZoom": "Reset Zoom",
+    "panCanvas": "Pan Canvas",
+    "fitView": "Fit View",
+    "nudgeNode": "Nudge Node",
+    "groupSelection": "Group Selection",
+    "keyboardShortcuts": "Keyboard Shortcuts",
+    "commandBar": "Command Bar",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "help": "Help",
+    "getStarted": "Get Started",
+    "bringToFront": "Bring to Front",
+    "sendToBack": "Send to Back",
+    "reverseDirection": "Reverse Direction",
+    "deleteConnection": "Delete Connection",
+    "itemsSelected": "{{count}} items selected",
+    "align": "Align",
+    "alignLeft": "Align Left",
+    "alignCenter": "Align Center",
+    "alignRight": "Align Right",
+    "alignTop": "Align Top",
+    "alignMiddle": "Align Middle",
+    "alignBottom": "Align Bottom",
+    "distribute": "Distribute",
+    "distributeHorizontally": "Distribute Horizontally",
+    "distributeVertically": "Distribute Vertically",
+    "group": "Group",
+    "export": "Export",
+    "exportDiagram": "Export Diagram",
+    "exportAs": "Export As"
+  },
+  "nav": {
+    "home": "Home",
+    "editor": "Editor",
+    "menu": "Menu",
+    "view": "View",
+    "file": "File",
+    "history": "History",
+    "playback": "Playback",
+    "dashboard": "Dashboard",
+    "documentation": "Documentation",
+    "settings": "Settings",
+    "goToDashboard": "Go to Dashboard",
+    "canvasSettings": "Canvas Settings",
+    "wideLogo": "Your Wide Logo",
+    "uploadWideLogo": "Upload a wide logo in Brand Settings to see it here",
+    "beta": "BETA",
+    "versionHistory": "Version History",
+    "loadJSON": "Load JSON",
+    "playbackMode": "Playback Mode"
+  },
+  "menu": {
+    "file": "File",
+    "view": "View",
+    "settings": "Settings",
+    "shortcuts": "Keyboard Shortcuts",
+    "home": "Home",
+    "export": "Export",
+    "import": "Import"
+  },
+  "view": {
+    "showGrid": "Show Grid",
+    "hideGrid": "Hide Grid",
+    "showMinimap": "Show Minimap",
+    "hideMinimap": "Hide Minimap",
+    "snapToGrid": "Snap to Grid",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "fitView": "Fit View"
+  },
+  "export": {
+    "title": "Export",
+    "png": "Export as PNG",
+    "jpeg": "Export as JPEG",
+    "json": "Export as JSON",
+    "mermaid": "Export as Mermaid",
+    "plantuml": "Export as PlantUML",
+    "openflowdsl": "Export as OpenFlow DSL",
+    "figma": "Export to Figma"
+  },
+  "import": {
+    "title": "Import",
+    "json": "Import JSON",
+    "selectFile": "Select a file"
+  },
+  "editor": {
+    "untitled": "Untitled Flow",
+    "newTab": "New Tab",
+    "renameTab": "Rename Tab",
+    "closeTab": "Close Tab",
+    "addNode": "Add Node",
+    "deleteNode": "Delete Node",
+    "duplicateNode": "Duplicate Node"
+  },
+  "nodes": {
+    "newNode": "New Node",
+    "processStep": "Process Step",
+    "note": "Note",
+    "addCommentsHere": "Add your comments here.",
+    "newSection": "New Section",
+    "text": "Text",
+    "image": "Image",
+    "group": "Group",
+    "items": "items",
+    "database": "Database",
+    "inputOutput": "Input / Output",
+    "branch": "Branch"
+  },
+  "actions": {
+    "clearCanvasConfirm": "Are you sure you want to clear the canvas?"
+  },
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "figma": "Figma",
+      "useCases": "Use Cases",
+      "pricing": "Pricing",
+      "viewGithub": "View on GitHub"
+    },
+    "hero": {
+      "title": "Beautiful Flowcharts,",
+      "subtitle": "Built for Developers",
+      "description": "Create stunning flowcharts with code or canvas. Export to any format. Open source and free forever.",
+      "livePreview": "Live Preview",
+      "publicBeta": "v1.0 Public Beta",
+      "description1": "The diagram engine",
+      "description2": "that",
+      "description3": "like you.",
+      "description4": "100% free, open-source diagram tool for builders. Write code or drag and drop — get beautiful results either way.",
+      "forkOnGithub": "Fork on GitHub",
+      "licence": "MIT Licensed",
+      "localFirst": "Local First",
+      "noAuth": "No Auth",
+      "thinks": "thinks",
+      "draws": "draws",
+      "builds": "builds",
+      "ships": "ships"
+    },
+    "problem": {
+      "title": "The Problem",
+      "description": "Traditional flowchart tools are either too complex or too limited."
+    },
+    "solution": {
+      "title": "The Solution",
+      "description": "OpenFlowKit combines the best of both worlds."
+    },
+    "demo": {
+      "title": "Simple for sketching.",
+      "subtitle": "Ready for production.",
+      "description": "Sketch your ideas fast. Export them production-ready."
+    },
+    "useCases": {
+      "title": "Use Cases"
+    },
+    "pricing": {
+      "title": "Pricing",
+      "free": "Free Forever",
+      "openSource": "Open Source"
+    },
+    "testimonials": {
+      "title": "What People Say"
+    },
+    "cta": {
+      "title": "Ready to Start?",
+      "subtitle": "Create your first flowchart in seconds.",
+      "button": "Launch App"
+    },
+    "footer": {
+      "rights": "All rights reserved.",
+      "madeWith": "Made with ❤️ by the OpenFlowKit Team"
+    }
+  },
+  "home": {
+    "title": "Dashboard",
+    "description": "Manage your flows and diagrams.",
+    "recentFiles": "Recent Files",
+    "files": "files",
+    "createFirstFlow": "Create your first flow",
+    "startFromScratch": "Start from scratch or import an existing diagram."
+  },
+  "settings": {
+    "title": "Settings",
+    "general": "General",
+    "shortcuts": "Keyboard Shortcuts",
+    "theme": "Theme",
+    "language": "Language",
+    "selectLanguage": "Select Language",
+    "appearance": "Appearance",
+    "ai": "AI Settings",
+    "analytics": "Analytics",
+    "about": "About",
+    "brand": "Brand Settings",
+    "privacy": "Privacy"
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "general": "General",
+    "canvas": "Canvas",
+    "nodes": "Nodes",
+    "essentials": "Essentials",
+    "manipulation": "Manipulation",
+    "navigation": "Navigation",
+    "help": "Help"
+  },
+  "properties": {
+    "title": "Properties",
+    "nodeType": "Node Type",
+    "label": "Label",
+    "description": "Description",
+    "color": "Color",
+    "icon": "Icon",
+    "size": "Size"
+  },
+  "ai": {
+    "generate": "Generate with AI",
+    "provider": "AI Provider",
+    "model": "Model",
+    "apiKey": "API Key",
+    "placeholder": "Describe your flowchart...",
+    "settingsSubtitle": "Configure your preferred AI provider, model, and API key below.",
+    "howToGetKey": "How to get your API key",
+    "openConsole": "Open Console",
+    "pasteKeyStep": "Paste it in the field above — never shared with us",
+    "customEndpointTitle": "What is a custom endpoint?",
+    "customModelHint": "Enter the exact model ID for your endpoint",
+    "privacyTitle": "Privacy & Encryption"
+  },
+  "playback": {
+    "title": "Playback",
+    "play": "Play",
+    "pause": "Pause",
+    "stop": "Stop",
+    "speed": "Speed"
+  },
+  "history": {
+    "title": "History",
+    "undo": "Undo",
+    "redo": "Redo",
+    "clear": "Clear History"
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "loadFailed": "Failed to load",
+    "saveFailed": "Failed to save",
+    "exportFailed": "Failed to export",
+    "importFailed": "Failed to import"
+  },
+  "welcome": {
+    "title": "OpenFlowKit",
+    "description": "Design beautiful, structured diagrams with a developer-first canvas.",
+    "press": "Press",
+    "shortcuts": "for shortcuts",
+    "privacy": "Your diagrams, API keys, and data stay locally on your device.",
+    "analytics": "We only count anonymous page visits.",
+    "features": {
+      "beautifulByDefault": "Beautiful by default",
+      "automatedLayouts": "Automated layouts and professional themes.",
+      "privateSecure": "Private and Secure",
+      "localFirst": "Local-first architecture keeps your data safe."
+    }
+  },
+  "footer": {
+    "mitLicensed": "MIT Licensed"
+  },
+  "pricing": {
+    "title": "Premium features.",
+    "subtitle": "Zero dollar price tag.",
+    "description": "OpenFlowKit is 100% open source. There is no \"Enterprise Edition\" hidden behind a sales call.",
+    "mitLicense": "MIT License",
+    "freeForever": "Free Forever.",
+    "fullAccess": "Full access to the core engine.",
+    "hostAnywhere": "Host it anywhere. Modify it freely.",
+    "unlimitedUsage": "Unlimited Usage",
+    "noAccount": "No account or credit card required",
+    "everythingIncluded": "Everything Included",
+    "features": {
+      "unlimitedDiagrams": "Unlimited diagrams & projects",
+      "saveLocally": "Save locally, your data stays on your device",
+      "whiteLabelBranding": "White-Label Branding",
+      "oneClickLayout": "One-click auto-layout",
+      "exportFormats": "Export to SVG, PNG, JPG",
+      "figmaExport": "Figma Export",
+      "mermaidSupport": "Mermaid.js Support",
+      "aiGeneration": "AI diagram generation (bring your own API key)"
+    },
+    "supportDevelopment": "Support development on GitHub"
+  },
+  "cta": {
+    "readyToUse": "Ready to use",
+    "buildDiagrams": "Build diagrams that",
+    "dontLookGeneric": "don't look generic.",
+    "joinUs": "Join us in building the next generation of visual tools. Open source, local-first, and forever free.",
+    "getStartedNow": "Get Started Now",
+    "copied": "Copied",
+    "copy": "Copy",
+    "documentation": "Documentation",
+    "github": "GitHub",
+    "roadmap": "Roadmap"
+  },
+  "problem": {
+    "badge": "The Problem",
+    "title": "Why do diagrams",
+    "subtitle": "always feel like a chore?",
+    "description": "We're designing complex systems with tools built for arts and crafts.",
+    "pixelPurgatory": "Pixel Purgatory",
+    "pixelPurgatoryDesc": "Wasting hours aligning boxes by hand. One new service breaks your entire layout.",
+    "screenshotTrap": "The Screenshot Trap",
+    "screenshotTrapDesc": "Docs drift the moment you take the screenshot. Static assets are dead assets.",
+    "enterpriseBeige": "Enterprise Beige",
+    "enterpriseBeigeDesc": "Locked into rigid, generic templates. Your architecture is unique; your diagrams shouldn't look like clipart."
+  },
+  "solution": {
+    "badge": "The Features",
+    "title": "Everything you need.",
+    "subtitle": "Nothing you don't.",
+    "description": "The ultimate white-label canvas. Fully customizable nodes, edges, and themes — powered by React Flow. It's your brand, given infinite space to breathe.",
+    "diagramAsCode": "Diagram as Code",
+    "diagramAsCodeDesc": "First-class support for Mermaid.js and our type-safe DSL. Define your architecture in code, export as JSON, and let the engine handle the layout.",
+    "flowpilotAI": "Flowpilot AI",
+    "aiAssistant": "AI Assistant",
+    "flowpilotAIDesc": "Chat with your diagram. \"Make the corners rounder\", \"Add a load balancer\".",
+    "addRedisCache": "Add a Redis cache in front of the DB.",
+    "localPrivate": "Local & Private",
+    "localPrivateDesc": "We don't want your data. Everything stays on your machine. No cloud saves, no tracking, no \"syncing\" to our servers. You have full freedom.",
+    "offlineReady": "Offline Ready",
+    "localFileSystem": "Local File System",
+    "amazingAesthetics": "Amazing Aesthetics",
+    "amazingAestheticsDesc": "Break free from \"Enterprise Beige\". Fully customizable fonts, colors, and shapes. Create diagrams that look like art, not documentation.",
+    "sunsetRed": "Sunset Red",
+    "amberWarning": "Amber Warning",
+    "successGreen": "Success Green"
+  },
+  "workflows": {
+    "badge": "Workflows",
+    "title": "One engine.",
+    "subtitle": "Three native workflows.",
+    "description": "OpenFlowKit adapts to the tool you are already using. No new tabs to open. No context switching.",
+    "engineering": "Engineering",
+    "diagramAsCode": "DIAGRAM AS CODE",
+    "engineeringDesc": "Write diagrams in our DSL or Mermaid.js syntax. Paste code, get a fully laid-out diagram. Export as JSON to version control.",
+    "design": "Design",
+    "theVisualLayer": "THE VISUAL LAYER",
+    "designDesc": "Stop rebuilding screens. Copy from the canvas and paste into Figma as editable SVG and text layers.",
+    "exportShare": "Export & Share",
+    "pixelPerfectOutput": "PIXEL-PERFECT OUTPUT",
+    "exportShareDesc": "Export diagrams as SVG, PNG, or PDF. Copy to clipboard and paste into Figma with editable layers. Save as JSON to share or version control.",
+    "vectorEditable": "Vector • Editable in Figma",
+    "rasterHighRes": "Raster • High-res export",
+    "dataSaveRestore": "Data • Save & restore flows"
+  },
+  "figma": {
+    "badge": "Zero Plugins Required",
+    "title": "Copy the code.",
+    "subtitle": "Paste the design.",
+    "description": "Copy a diagram from OpenFlowKit and paste it straight into Figma — you'll get editable text and clean vector shapes, not a flat image. No plugins needed.",
+    "editableText": "Editable Text",
+    "vectorFidelity": "Vector Fidelity",
+    "selected": "Selected",
+    "vectorText": "Vector + Text",
+    "untitled": "Untitled"
+  },
+  "testimonials": {
+    "badge": "Under Construction",
+    "title": "Build in public.",
+    "subtitle": "Shape the engine.",
+    "description": "OpenFlowKit is just getting started. We are building the core engine in the open. Join us on Day 1.",
+    "starTheRepo": "Star the Repo",
+    "openSource": "Open Source",
+    "openSourceDesc": "The core engine is MIT licensed. Read the source, submit PRs, or fork it for your internal tools.",
+    "prsWelcome": "PRs Welcome",
+    "community": "Community",
+    "communityDesc": "Join developers building on OpenFlowKit.",
+    "roadmap": "Roadmap",
+    "coreRenderer": "Core Renderer",
+    "flowpilotAI": "Flowpilot AI",
+    "pdfExport": "PDF Export"
+  },
+  "demo": {
+    "livePreview": "Live Preview",
+    "title": "Simple for sketching.",
+    "subtitle": "Ready for production.",
+    "description1": "Sketch your ideas fast.",
+    "description2": "Export them production-ready.",
+    "liveSync": "Live Sync",
+    "liveSyncDesc": "Edit code ↔ See changes instantly"
+  },
+  "docs": {
+    "documentation": "Documentation",
+    "returnToCanvas": "Return to Canvas",
+    "onThisPage": "On This Page"
+  },
+  "chatbot": {
+    "greeting": "Hello, how can I help you?",
+    "tagline": "Your intelligent guide to understanding and using",
+    "messagePlaceholder": "Message",
+    "aiSuffix": "AI...",
+    "sendMessage": "Send message",
+    "newChat": "New Chat",
+    "docsTitle": "Docs",
+    "aiAssistant": "AI Assistant",
+    "aiName": "AI",
+    "you": "You",
+    "searchingDocs": "Searching docs...",
+    "aiDisclaimer": "AI can make mistakes. Verify important information.",
+    "welcomeMessage": "Hi! I'm the {appName} AI assistant. I have access to the complete documentation. How can I help you today?",
+    "prompts": {
+      "keyboardShortcuts": {
+        "title": "Keyboard Shortcuts",
+        "description": "What are the essential keyboard shortcuts?",
+        "icon": "⌘"
+      },
+      "nodeTypes": {
+        "title": "Node Types",
+        "description": "How do I create a decision node?",
+        "icon": "❖"
+      },
+      "dslSyntax": {
+        "title": "DSL Syntax",
+        "description": "Show me an example of the FlowMind DSL.",
+        "icon": "{}"
+      }
+    }
+  },
+  "footerBanner": {
+    "shipping": "We are shipping daily.",
+    "checkChangelog": "Check the Changelog."
+  },
+  "commandBar": {
+    "ai": {
+      "title": "Ask Flowpilot",
+      "clearChat": "Clear Chat History",
+      "placeholder": "Describe what you want to create...",
+      "examples": {
+        "userRegistration": "User Registration",
+        "userRegistrationPrompt": "User registration flow with email verification",
+        "ecommerceCheckout": "E-Commerce Checkout",
+        "ecommerceCheckoutPrompt": "E-commerce checkout process with payment gateway failure handling",
+        "cicdPipeline": "CI/CD Pipeline",
+        "cicdPipelinePrompt": "CI/CD pipeline architecture",
+        "oauth2Login": "OAuth2 Login",
+        "oauth2LoginPrompt": "Oauth2 login flow"
+      }
+    },
+    "search": {
+      "title": "Search Nodes",
+      "placeholder": "Search by label or ID...",
+      "noResults": "No nodes found",
+      "untitled": "Untitled Node",
+      "type": "Type"
+    },
+    "templates": {
+      "title": "Templates",
+      "placeholder": "Search templates...",
+      "noResults": "No templates found"
+    },
+    "code": {
+      "mermaidTitle": "Import Mermaid",
+      "dslTitle": "Import {appName} DSL",
+      "mermaidPlaceholder": "Paste Mermaid code here...",
+      "dslPlaceholder": "Paste {appName} DSL code here...",
+      "applyShortcut": "⌘+Enter to apply",
+      "syntaxGuide": "Syntax Guide",
+      "apply": "Apply"
+    },
+    "layout": {
+      "title": "Layout Studio",
+      "algorithm": "Algorithm",
+      "layered": "Layered",
+      "layeredDesc": "Hierarchical, good for flows",
+      "tree": "Tree",
+      "treeDesc": "Strict parent-child structure",
+      "force": "Force",
+      "forceDesc": "Organic, physics-based",
+      "radial": "Radial",
+      "radialDesc": "Circular arrangement",
+      "direction": "Direction",
+      "down": "Down",
+      "up": "Up",
+      "right": "Right",
+      "left": "Left",
+      "spacing": "Spacing",
+      "compact": "Compact",
+      "normal": "Normal",
+      "loose": "Loose",
+      "applyLayout": "Apply Layout"
+    },
+    "designSystem": {
+      "title": "Design Systems",
+      "createNew": "Create New System",
+      "import": "Import",
+      "exportActive": "Export Active"
+    },
+    "visuals": {
+      "title": "Connection Styles",
+      "edgeStyle": "Edge Style",
+      "bezier": "Bezier",
+      "bezierDesc": "Smooth curves",
+      "straight": "Straight",
+      "straightDesc": "Direct lines",
+      "smoothStep": "Smooth Step",
+      "smoothStepDesc": "Rounded corners",
+      "step": "Step",
+      "stepDesc": "Right angles",
+      "defaultIcons": "Default Icons",
+      "defaultIconsDesc": "Show standard node icons",
+      "intelligentRouting": "Intelligent Routing",
+      "intelligentRoutingDesc": "Auto-snap connections on drag",
+      "animatedEdges": "Animated Edges",
+      "animatedEdgesDesc": "Flowing particles",
+      "strokeWidth": "Stroke Width"
+    }
+  },
+  "settingsModal": {
+    "title": "Settings",
+    "general": "General",
+    "flowpilotAI": "Flowpilot AI",
+    "shortcuts": "Shortcuts",
+    "running": "Running {appName}",
+    "generalSettings": "General Settings",
+    "flowpilotConfigurations": "Flowpilot Configurations",
+    "keyboardShortcuts": "Keyboard Shortcuts",
+    "canvas": {
+      "title": "Canvas",
+      "showGrid": "Show Grid",
+      "showGridDesc": "Display a dot grid on the canvas",
+      "snapToGrid": "Snap to Grid",
+      "snapToGridDesc": "Snap nodes to the grid when moving",
+      "miniMap": "Mini Map",
+      "miniMapDesc": "Show mini-map in bottom right"
+    },
+    "ai": {
+      "provider": "Provider",
+      "model": "Model",
+      "apiKey": "API Key",
+      "customBaseUrl": "Custom Base URL",
+      "optional": "Optional",
+      "testConnection": "Test Connection",
+      "testing": "Testing...",
+      "success": "Success! Connected to {provider}",
+      "failed": "Failed: {error}",
+      "getApiKey": "Get {provider} API Key",
+      "openConsole": "Open {console}",
+      "keySetupNote": "Key Setup Note",
+      "enterApiKey": "Enter your API key",
+      "selectModel": "Select a model",
+      "customEndpoint": "Custom Base URL (e.g., https://api.example.com)",
+      "providers": {
+        "gemini": {
+          "hint": "Google · Best free tier · Multimodal",
+          "keySetupNote": "Free tier available — no credit card needed"
+        },
+        "openai": {
+          "hint": "GPT-5 family · Industry standard",
+          "keySetupNote": "Requires a paid account and billing setup"
+        },
+        "claude": {
+          "hint": "Anthropic · Leading reasoning model",
+          "keySetupNote": "Requires a paid account ($5 min credit top-up)"
+        },
+        "groq": {
+          "hint": "Blazing fast · Generous free tier · Llama 4",
+          "keySetupNote": "Free tier available — no credit card needed"
+        },
+        "nvidia": {
+          "hint": "NIM · Kimi-V2.5 · Frontier models",
+          "keySetupNote": "Free credits included with a new account"
+        },
+        "cerebras": {
+          "hint": "2,400 tok/s · Qwen 3 235B · WSE-3 speed",
+          "keySetupNote": "Free tier available — no credit card needed"
+        },
+        "mistral": {
+          "hint": "Le Chat · Codestral · European AI leader",
+          "keySetupNote": "Free tier with generous limits — no credit card needed"
+        },
+        "custom": {
+          "hint": "Any OpenAI-compatible endpoint"
+        }
+      }
+    },
+    "brand": {
+      "title": "Brand Kits",
+      "subtitle": "Manage your brand identities",
+      "active": "Active",
+      "editKit": "Edit Kit",
+      "deleteConfirm": "Delete this kit?",
+      "createNewKit": "Create New Kit",
+      "newIdentity": "New Identity",
+      "activeKit": "Active Kit",
+      "inactive": "Inactive",
+      "setActive": "Set Active",
+      "resetToDefaults": "Reset to Defaults",
+      "tabIdentity": "Identity",
+      "tabColors": "Colors",
+      "tabType": "Type",
+      "tabUI": "UI & Shape",
+      "appName": "App Name",
+      "logo": "Logo",
+      "favicon": "Favicon",
+      "logoStyle": "Logo Style",
+      "fontFamily": "Font Family",
+      "googleFontsHint": "Dynamically loaded from Google Fonts",
+      "cornerRadius": "Corner Radius",
+      "glassmorphism": "Glassmorphism",
+      "beveledButtons": "Beveled Buttons",
+      "beveledButtonsHint": "Add depth and borders to buttons",
+      "showBetaBadge": "Show Beta Badge",
+      "showBetaBadgeHint": "Display the BETA chip next to logo"
+    },
+    "shortcutsHint": "You can also press ? to view these anytime.",
+    "privacy": {
+      "manifesto": "Our Privacy Manifesto",
+      "manifestoText": "We believe in privacy by design and user autonomy. We don't collect your email, we don't have a login system, and we don't store your data on our servers.",
+      "localFirst": "Local-First Storage",
+      "noAccounts": "No User Accounts",
+      "ownData": "Own Your Data",
+      "anonymous": "Anonymous Usage Only",
+      "telemetry": "Telemetry & Feedback",
+      "anonymousStats": "Anonymous Stats",
+      "anonymousStatsDesc": "We only track visits and limited anonymous feature usage (like exports) to improve the tool. We do not track your names, IP addresses, inputs, or diagram content.",
+      "quote": "We rely on you to tell us what works, rather than tracking your every move.",
+      "helpImprove": "Help Us Improve",
+      "shareFeedback": "Share Feedback",
+      "shareFeedbackDesc": "Give feedback, report bugs, and ask for features"
+    }
+  },
+  "customNodes": {
+    "browserContent": "Browser Content",
+    "mobileContent": "Mobile Content"
+  },
+  "keyboardShortcutsModal": {
+    "title": "Keyboard Shortcuts",
+    "subtitle": "Master your workflow with speed.",
+    "closeAriaLabel": "Close shortcuts modal",
+    "proTip": "Pro tip: Hold <key>?</key> to enable selection box while dragging."
+  },
+  "toolbar": {
+    "selectMode": "Select Mode (V)",
+    "panMode": "Pan Mode (H)",
+    "flowpilot": "Flowpilot (Cmd+K)",
+    "templates": "Templates",
+    "addItem": "Add Item",
+    "addToCanvas": "Add to Canvas",
+    "node": "Node",
+    "stickyNote": "Sticky Note",
+    "section": "Section",
+    "text": "Text",
+    "wireframes": "Wireframes",
+    "image": "Image",
+    "autoLayout": "Auto Layout",
+    "clearCanvas": "Clear Canvas",
+    "undo": "Undo (Ctrl+Z)",
+    "redo": "Redo (Ctrl+Y)"
+  },
+  "flowEditor": {
+    "cannotCloseLastTab": "Cannot close the last tab.",
+    "mermaidCopied": "Mermaid diagram copied to clipboard!",
+    "plantUMLCopied": "PlantUML diagram copied to clipboard!",
+    "dslCopied": "OpenFlow DSL copied to clipboard!",
+    "dslCopyFailed": "Failed to copy DSL",
+    "figmaCopied": "Diagram copied for Figma! You can now paste (Cmd+V) in Figma.",
+    "figmaExportFailed": "Figma Export Failed: {{message}}",
+    "applyingLayout": "Applying layout…",
+    "emptyState": {
+      "title": "Start Building",
+      "description": "Your canvas is empty. Generate a flow with Flowpilot, use a template, or start from scratch.",
+      "generateWithFlowpilot": "Generate with Flowpilot",
+      "browseTemplates": "Browse Templates",
+      "addBlankNode": "Add Blank Node"
+    }
+  },
+  "annotationNode": {
+    "placeholder": "*Double click to edit note*"
+  },
+  "connectMenu": {
+    "createNewNode": "Create New Node",
+    "process": "Process",
+    "processDesc": "Standard action",
+    "decision": "Decision",
+    "decisionDesc": "Branching logic",
+    "database": "Database",
+    "databaseDesc": "Data storage",
+    "inputOutput": "Input / Output",
+    "inputOutputDesc": "Data flow",
+    "note": "Note",
+    "noteDesc": "Documentation",
+    "releaseToConnect": "Release to connect"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "We encountered an unexpected error. Please try refreshing the page.",
+    "reloadPage": "Reload Page"
+  },
+  "navigationControls": {
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "fitView": "Fit View",
+    "keyboardShortcuts": "Keyboard Shortcuts"
+  },
+  "playbackControls": {
+    "stop": "Stop"
+  },
+  "snapshotsPanel": {
+    "title": "Version History",
+    "saveCurrentVersion": "Save Current Version",
+    "versionName": "Version Name (e.g. 'Before Refactor')",
+    "noSnapshots": "No snapshots saved yet.",
+    "restoreVersion": "Restore version",
+    "deleteVersion": "Delete version",
+    "nodes": "{{count}} nodes",
+    "edges": "{{count}} edges"
+  },
+  "templatesPanel": {
+    "title": "Flow Templates",
+    "searchPlaceholder": "Search templates...",
+    "noTemplates": "No templates found."
+  },
+  "propertiesPanel": {
+    "stickyNote": "Sticky Note",
+    "nodeSettings": "Node Settings",
+    "connection": "Connection"
+  },
+  "flowTabs": {
+    "closeTab": "Close Tab",
+    "newFlowTab": "New Flow Tab"
+  }
+}
