@@ -90,7 +90,7 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
                 variant="secondary"
                 size="sm"
                 className="h-9 px-4"
-                onClick={() => window.open("https://github.com/Vrun-design/FlowMind", "_blank")}
+                onClick={() => window.open("https://github.com/Vrun-design/openflowkit", "_blank")}
               >
                 <Github className="w-4 h-4 mr-2" />
                 <span>Github</span>

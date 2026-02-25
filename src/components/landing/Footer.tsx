@@ -37,7 +37,7 @@ export function Footer({ onLaunch }: FooterProps): React.ReactElement {
               className="h-8 w-auto"
             />
           </a>
-          <a href="https://github.com/Vrun-design/FlowMind" target="_blank" rel="noreferrer" className="text-brand-secondary hover:text-brand-primary transition-colors group" aria-label="GitHub">
+          <a href="https://github.com/Vrun-design/openflowkit" target="_blank" rel="noreferrer" className="text-brand-secondary hover:text-brand-primary transition-colors group" aria-label="GitHub">
             <Github className="w-4 h-4 group-hover:scale-110 transition-transform" />
           </a>
         </div>
