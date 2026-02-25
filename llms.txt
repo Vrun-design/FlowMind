@@ -1,0 +1,106 @@
+# OpenFlowKit - Diagram as Code Engine
+
+> OpenFlowKit is an open-source, local-first Diagram-as-Code engine built for modern workflows.
+> It allows users to write simple text (DSL) and instantly get beautiful, presentation-ready diagrams.
+
+## App Name & Branding
+- App Name: OpenFlowKit
+- Main Repository: https://github.com/Vrun-design/openflowkit
+- Architecture: React (Vite), ReactFlow, Zustand, TailwindCSS
+
+## OpenFlow DSL V2 Syntax Rules
+If a user asks you to "Generate a diagram" or "Draw a flowchart for OpenFlowKit", you MUST output the exact syntax described below. Do NOT use Mermaid syntax unless explicitly asked.
+
+Wrap your output in standard markdown code blocks, but use `openflow` as the language trigger (e.g., `\`\`\`openflow`).
+
+### 1. Metadata (Optional, must be at the top)
+You can define global diagram properties using `key: value`.
+```openflow
+direction: TB
+theme: light
+```
+- `direction`: "TB" (Top to Bottom), "LR" (Left to Right), "RL", "BT"
+
+### 2. Nodes
+Format: `[type] id: Label { attributes }`
+- `[type]`: The visual shape/style of the node.
+- `id`: Unique identifier (no spaces). If omitted, the label is used as the ID.
+- `Label`: The text displayed inside the node.
+- `{ attributes }`: Optional JSON-like string of extra properties.
+
+**Supported Node Types (MUST use exactly one of these):**
+- `[start]` / `[end]`: Rounded pill shapes for entry/exit points.
+- `[process]`: Standard rectangle.
+- `[decision]`: Diamond shape for logic branching.
+- `[system]`: Hexagon shape.
+- `[note]`: A sticky note appearance.
+- `[browser]`: A window frame that looks like a web browser.
+- `[mobile]`: A frame that looks like an iPhone.
+- `[button]`: A UI wireframe button.
+- `[input]`: A UI wireframe text input.
+- `[placeholder]`: An image wireframe block.
+
+**Examples:**
+```openflow
+[start] start1: User Opens App
+[browser] web: E-Commerce Store
+[decision] checkAuth: Is Logged In?
+[process] db: Query Database { icon: "database" }
+```
+
+### 3. Edges
+Format: `source -> target` or `source ->|Label| target { attributes }`
+- `source` / `target`: Must match the `id` of a defined node. If the node is not defined, it is created implicitly as a `[process]` node.
+- `->`: Standard solid arrow.
+- `-->`: Curved/smoothstep arrow.
+- `..>`: Dashed line arrow.
+- `==>`: Thick line arrow.
+- `|Label|`: Text to display on the edge.
+
+**Examples:**
+```openflow
+start1 -> checkAuth
+checkAuth ->|yes| web
+checkAuth ..>|no| loginPage { styleType: "dashed" }
+```
+
+### 4. Groups
+Format: `group "Label" { ...nodes and edges... }`
+Groups create visual bounding boxes around nodes.
+
+**Example:**
+```openflow
+group "Authentication Service" {
+  [process] auth: Auth Gateway
+  [process] token: Token Generator
+  auth -> token
+}
+```
+
+## Complete Example
+When generating a diagram, combine the rules above:
+
+```openflow
+direction: LR
+
+[start] start: App Launched
+[browser] ui: Dashboard UI
+
+group "Backend Services" {
+  [process] api: API Gateway
+  [decision] cache: Check Redis
+  [process] db: Postgres Database
+}
+
+start -> ui
+ui ->|fetch data| api
+api --> cache
+cache ->|hit| ui
+cache ..>|miss| db
+db ==>|return data| cache
+```
+
+## Important Notes for LLMs
+- ALWAYS use the `[type]` prefix for nodes. If you aren't sure, use `[process]`.
+- Attributes inside `{ }` must be comma-separated like a JS object: `{ key: "value", number: 123 }`. Quotes around string values are optional but recommended.
+- Do NOT use hyphens `-` or spaces in Node IDs. Use camelCase or snake_case.

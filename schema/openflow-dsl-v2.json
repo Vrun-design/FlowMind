@@ -1,0 +1,11 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://openflowkit.com/schema/openflow-dsl-v2.json",
+    "title": "OpenFlowKit DSL V2",
+    "description": "Validation schema for OpenFlowKit Diagram-as-Code Engine",
+    "type": "string",
+    "pattern": "^(?:.*\n)*$",
+    "examples": [
+        "direction: TB\n[start] user: User Opens App\n[browser] ui: Web Interface\nuser -> ui\n"
+    ]
+}
