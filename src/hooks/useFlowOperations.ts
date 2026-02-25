@@ -5,11 +5,13 @@ import { useNodeOperations } from './useNodeOperations';
 import { useEdgeOperations } from './useEdgeOperations';
 import { useLayoutOperations } from './useLayoutOperations';
 import { useClipboardOperations } from './useClipboardOperations';
+import { useTranslation } from 'react-i18next';
 
 export const useFlowOperations = (
   recordHistory: () => void,
   onShowConnectMenu?: (position: { x: number; y: number }, sourceId: string, sourceHandle: string | null) => void
 ) => {
+  const { t } = useTranslation();
   const { setNodes, setEdges, setSelectedNodeId, setSelectedEdgeId } = useFlowStore();
 
   // Compose specialized hooks
@@ -26,12 +28,12 @@ export const useFlowOperations = (
 
   // --- Clear Canvas ---
   const handleClear = useCallback(() => {
-    if (window.confirm('Are you sure you want to clear the canvas?')) {
+    if (window.confirm(t('actions.clearCanvasConfirm'))) {
       recordHistory();
       setNodes([]);
       setEdges([]);
     }
-  }, [setNodes, setEdges, recordHistory]);
+  }, [setNodes, setEdges, recordHistory, t]);
 
   return {
     // Node Ops

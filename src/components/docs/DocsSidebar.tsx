@@ -44,7 +44,7 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClos
                 {docsNavigation.map((section, idx) => (
                     <div key={`${section.title}-${idx}`}>
                         <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">
-                            {section.title}
+                            {t(section.title)}
                         </h3>
                         <div className="space-y-0.5">
                             {section.items.map((item) => (
@@ -53,7 +53,7 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClos
                                     to={`/docs/${currentLang}/${item.slug}`}
                                     onClick={onClose}
                                 >
-                                    {item.title.replace(/FlowMind|OpenFlowKit/g, brandConfig.appName)}
+                                    {t(item.title).replace(/FlowMind|OpenFlowKit/g, brandConfig.appName)}
                                 </SidebarItem>
                             ))}
                         </div>

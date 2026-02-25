@@ -9,6 +9,7 @@ import { ColorPicker } from './ColorPicker';
 import { IconPicker } from './IconPicker';
 import { ImageUpload } from './ImageUpload';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
+import { useTranslation } from 'react-i18next';
 
 interface NodePropertiesProps {
     selectedNode: Node<NodeData>;
@@ -113,6 +114,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
     onDuplicate,
     onDelete
 }) => {
+    const { t } = useTranslation();
     const isAnnotation = selectedNode.type === 'annotation';
     const isText = selectedNode.type === 'text';
     const isImage = selectedNode.type === 'image';
@@ -169,7 +171,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
             {/* Wireframe Variant Section */}
             {isWireframe && (
                 <CollapsibleSection
-                    title="Wireframe Variant"
+                    title={t("nodes.wireframeVariant")}
                     icon={<Layout className="w-3.5 h-3.5" />}
                     isOpen={activeSection === 'variant'}
                     onToggle={() => toggleSection('variant')}
@@ -186,7 +188,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                                                 ? 'bg-[var(--brand-primary-50)] border-[var(--brand-primary-200)] text-[var(--brand-primary)]'
                                                 : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'}`}
                                     >
-                                        {variant.charAt(0).toUpperCase() + variant.slice(1)}
+                                        {t(`nodes.wireframeVariants.${variant}`)}
                                     </button>
                                 ))}
                             </>
@@ -201,7 +203,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                                                 ? 'bg-[var(--brand-primary-50)] border-[var(--brand-primary-200)] text-[var(--brand-primary)]'
                                                 : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'}`}
                                     >
-                                        {variant.charAt(0).toUpperCase() + variant.slice(1)}
+                                        {t(`nodes.wireframeVariants.${variant}`)}
                                     </button>
                                 ))}
                             </>
@@ -213,7 +215,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
             {/* Appearance Section */}
             {!isWireframe && !isAnnotation && !isText && !isImage && (
                 <CollapsibleSection
-                    title="Appearance"
+                    title={t("nodes.appearance")}
                     icon={<Box className="w-3.5 h-3.5" />}
                     isOpen={activeSection === 'appearance'}
                     onToggle={() => toggleSection('appearance')}
@@ -228,7 +230,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
             {/* Image Settings Section */}
             {isImage && (
                 <CollapsibleSection
-                    title="Image Settings"
+                    title={t("nodes.imageSettings")}
                     icon={<ImageIcon className="w-3.5 h-3.5" />}
                     isOpen={activeSection === 'image'}
                     onToggle={() => toggleSection('image')}
@@ -236,7 +238,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                     {/* Transparency */}
                     <div className="space-y-1 mb-3">
                         <div className="flex justify-between text-xs text-slate-500">
-                            <span>Transparency</span>
+                            <span>{t("nodes.transparency")}</span>
                             <span>{Math.round((1 - (selectedNode.data?.transparency ?? 1)) * 100)}%</span>
                         </div>
                         <input
@@ -253,7 +255,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                     {/* Rotation */}
                     <div className="space-y-1 mb-2">
                         <div className="flex justify-between text-xs text-slate-500">
-                            <span>Rotation</span>
+                            <span>{t("nodes.rotation")}</span>
                             <span>{selectedNode.data?.rotation ?? 0}°</span>
                         </div>
                         <input
@@ -271,7 +273,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
 
             {/* Content Section: Refined Design */}
             <CollapsibleSection
-                title="Content"
+                title={t("nodes.content")}
                 icon={<AlignLeft className="w-3.5 h-3.5" />}
                 isOpen={activeSection === 'content'}
                 onToggle={() => toggleSection('content')}
@@ -287,11 +289,11 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                                 onChange={(e) => onChange(selectedNode.id, { fontFamily: e.target.value })}
                                 className="w-full appearance-none bg-transparent text-[10px] font-semibold text-slate-700 hover:text-slate-900 cursor-pointer outline-none transition-colors py-0.5 truncate pr-2"
                             >
-                                <option value="inter">Inter</option>
-                                <option value="roboto">Roboto</option>
-                                <option value="outfit">Outfit</option>
-                                <option value="playfair">Playfair</option>
-                                <option value="fira">Mono</option>
+                                <option value="inter">{t("nodes.fontFamilies.inter")}</option>
+                                <option value="roboto">{t("nodes.fontFamilies.roboto")}</option>
+                                <option value="outfit">{t("nodes.fontFamilies.outfit")}</option>
+                                <option value="playfair">{t("nodes.fontFamilies.playfair")}</option>
+                                <option value="fira">{t("nodes.fontFamilies.fira")}</option>
                             </select>
                         </div>
 
@@ -320,14 +322,14 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                             <button
                                 onMouseDown={(e) => { e.preventDefault(); handleStyleAction('bold'); }}
                                 className={`p-1 rounded transition-all duration-200 ${selectedNode.data?.fontWeight === 'bold' ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
-                                title="Bold (Cmd+B)"
+                                title={t("nodes.boldShortcut")}
                             >
                                 <Bold className="w-3.5 h-3.5" strokeWidth={selectedNode.data?.fontWeight === 'bold' ? 3 : 2.5} />
                             </button>
                             <button
                                 onMouseDown={(e) => { e.preventDefault(); handleStyleAction('italic'); }}
                                 className={`p-1 rounded transition-all duration-200 ${selectedNode.data?.fontStyle === 'italic' ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
-                                title="Italic (Cmd+I)"
+                                title={t("nodes.italicShortcut")}
                             >
                                 <Italic className="w-3.5 h-3.5" />
                             </button>
@@ -340,21 +342,21 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                             <button
                                 onClick={() => onChange(selectedNode.id, { align: 'left' })}
                                 className={`p-1 rounded transition-all duration-200 ${(selectedNode.data?.align === 'left') ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
-                                title="Align Left"
+                                title={t("nodes.alignLeft")}
                             >
                                 <AlignLeft className="w-3.5 h-3.5" />
                             </button>
                             <button
                                 onClick={() => onChange(selectedNode.id, { align: 'center' })}
                                 className={`p-1 rounded transition-all duration-200 ${(!selectedNode.data?.align || selectedNode.data?.align === 'center') ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
-                                title="Align Center"
+                                title={t("nodes.alignCenter")}
                             >
                                 <AlignCenter className="w-3.5 h-3.5" />
                             </button>
                             <button
                                 onClick={() => onChange(selectedNode.id, { align: 'right' })}
                                 className={`p-1 rounded transition-all duration-200 ${(selectedNode.data?.align === 'right') ? 'bg-white shadow text-slate-900 ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-200/50'}`}
-                                title="Align Right"
+                                title={t("nodes.alignRight")}
                             >
                                 <AlignRight className="w-3.5 h-3.5" />
                             </button>
@@ -374,7 +376,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                                 e.target.style.height = e.target.scrollHeight + 'px';
                             }}
                             onKeyDown={labelEditor.handleKeyDown}
-                            placeholder="Type label here..."
+                            placeholder={t("nodes.typeLabelHere")}
                             rows={1}
                             style={{ minHeight: '32px' }}
                             className="w-full bg-transparent text-[15px] font-semibold text-[var(--brand-text)] outline-none resize-none placeholder:text-slate-300 leading-normal overflow-hidden"
@@ -395,14 +397,14 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                                     e.target.style.height = e.target.scrollHeight + 'px';
                                 }}
                                 onKeyDown={descEditor.handleKeyDown}
-                                placeholder="Add description..."
+                                placeholder={t("nodes.addDescription")}
                                 rows={1} // Start small
                                 style={{ minHeight: '40px' }}
                                 className="w-full px-3 py-2.5 text-xs font-medium text-slate-600 outline-none resize-none leading-relaxed placeholder:text-slate-300 bg-transparent focus:bg-white focus:text-slate-800 transition-colors overflow-hidden"
                             />
                             {/* Format Hint - Visible only on focus/hover */}
                             <div className="absolute bottom-1 right-2 pointer-events-none opacity-0 group-focus-within/desc:opacity-100 transition-opacity">
-                                <span className="text-[9px] font-mono text-slate-300 tracking-tight">Markdown supported</span>
+                                <span className="text-[9px] font-mono text-slate-300 tracking-tight">{t("nodes.markdownSupported")}</span>
                             </div>
                         </div>
                     )}
@@ -412,7 +414,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
             {/* Text Styling for Text Node */}
             {isText && (
                 <CollapsibleSection
-                    title="Text Style"
+                    title={t("nodes.textStyle")}
                     icon={<Type className="w-3.5 h-3.5" />}
                     isOpen={activeSection === 'textStyle'}
                     onToggle={() => toggleSection('textStyle')}
@@ -426,7 +428,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                                     className={`flex-1 px-2 py-1.5 rounded-[calc(var(--brand-radius)-4px)] text-[10px] font-bold uppercase whitespace-nowrap
                                         ${(selectedNode.data?.fontFamily || 'inter') === font ? 'bg-[var(--brand-surface)] shadow-sm text-[var(--brand-primary)]' : 'text-[var(--brand-secondary)] hover:text-[var(--brand-text)]'}`}
                                 >
-                                    {font}
+                                    {t(`nodes.fontFamilies.${font}`)}
                                 </button>
                             ))}
                         </div>
@@ -448,7 +450,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
 
             {!isImage && (
                 <CollapsibleSection
-                    title="Color Theme"
+                    title={t("nodes.colorTheme")}
                     icon={<Palette className="w-3.5 h-3.5" />}
                     isOpen={activeSection === 'color'}
                     onToggle={() => toggleSection('color')}
@@ -462,7 +464,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
 
             {!isAnnotation && !isText && !isImage && !isWireframe && (
                 <CollapsibleSection
-                    title="Icon Theme"
+                    title={t("nodes.iconTheme")}
                     icon={<Star className="w-3.5 h-3.5" />}
                     isOpen={activeSection === 'icon'}
                     onToggle={() => toggleSection('icon')}
@@ -478,7 +480,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
 
             {!isText && (
                 <CollapsibleSection
-                    title="Custom Image"
+                    title={t("nodes.customImage")}
                     icon={<ImageStart className="w-3.5 h-3.5" />}
                     isOpen={activeSection === 'upload'}
                     onToggle={() => toggleSection('upload')}
@@ -497,7 +499,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                     className="flex-1"
                     icon={<Copy className="w-4 h-4" />}
                 >
-                    Duplicate
+                    {t("common.duplicate")}
                 </Button>
                 <Button
                     onClick={() => onDelete(selectedNode.id)}
@@ -505,7 +507,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                     className="flex-1"
                     icon={<Trash2 className="w-4 h-4" />}
                 >
-                    Delete
+                    {t("common.delete")}
                 </Button>
             </div>
         </>

@@ -2,8 +2,10 @@ import { useCallback } from 'react';
 import { Node } from 'reactflow';
 import { useFlowStore } from '../store';
 import { alignNodes, distributeNodes } from '../services/AlignDistribute';
+import { useTranslation } from 'react-i18next';
 
 export const useLayoutOperations = (recordHistory: () => void) => {
+    const { t } = useTranslation();
     const { setNodes } = useFlowStore();
 
     const handleAlignNodes = useCallback((direction: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
@@ -52,13 +54,13 @@ export const useLayoutOperations = (recordHistory: () => void) => {
             type: 'group',
             position: { x: minX - padding, y: minY - padding },
             style: { width: maxX - minX + padding * 2, height: maxY - minY + padding * 2 },
-            data: { label: 'Group', subLabel: `${selectedNodes.length} items` },
+            data: { label: t('nodes.group'), subLabel: `${selectedNodes.length} ${t('nodes.items')}` },
             selected: true,
             zIndex: -1
         };
 
         setNodes((nds) => [groupNode, ...nds]);
-    }, [recordHistory, setNodes]);
+    }, [recordHistory, setNodes, t]);
 
     return {
         handleAlignNodes,

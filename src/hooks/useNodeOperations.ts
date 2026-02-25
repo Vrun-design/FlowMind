@@ -4,8 +4,10 @@ import { NodeData } from '@/lib/types';
 import { useFlowStore } from '../store';
 import { assignSmartHandles } from '../services/smartEdgeRouting';
 import { NODE_WIDTH, NODE_HEIGHT } from '../constants';
+import { useTranslation } from 'react-i18next';
 
 export const useNodeOperations = (recordHistory: () => void) => {
+    const { t } = useTranslation();
     const { nodes, setNodes, setEdges, setSelectedNodeId } = useFlowStore();
     const { screenToFlowPosition } = useReactFlow();
 
@@ -67,12 +69,12 @@ export const useNodeOperations = (recordHistory: () => void) => {
         const newNode: Node = {
             id,
             position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
-            data: { label: 'New Node', subLabel: 'Process Step', color: 'slate' },
+            data: { label: t('nodes.newNode'), subLabel: t('nodes.processStep'), color: 'slate' },
             type: 'process',
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
-    }, [setNodes, recordHistory, setSelectedNodeId]);
+    }, [setNodes, recordHistory, setSelectedNodeId, t]);
 
     const handleAddAnnotation = useCallback((position?: { x: number; y: number }) => {
         recordHistory();
@@ -80,12 +82,12 @@ export const useNodeOperations = (recordHistory: () => void) => {
         const newNode: Node = {
             id,
             position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
-            data: { label: 'Note', subLabel: 'Add your comments here.', color: 'yellow' },
+            data: { label: t('nodes.note'), subLabel: t('nodes.addCommentsHere'), color: 'yellow' },
             type: 'annotation',
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
-    }, [setNodes, recordHistory, setSelectedNodeId]);
+    }, [setNodes, recordHistory, setSelectedNodeId, t]);
 
     const handleAddSection = useCallback((position?: { x: number; y: number }) => {
         recordHistory();
@@ -93,14 +95,14 @@ export const useNodeOperations = (recordHistory: () => void) => {
         const newNode: Node = {
             id,
             position: position || { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },
-            data: { label: 'New Section', subLabel: '', color: 'blue' },
+            data: { label: t('nodes.newSection'), subLabel: '', color: 'blue' },
             type: 'section',
             style: { width: 500, height: 400 },
             zIndex: -1,
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
-    }, [setNodes, recordHistory, setSelectedNodeId]);
+    }, [setNodes, recordHistory, setSelectedNodeId, t]);
 
     const handleAddTextNode = useCallback((position?: { x: number; y: number }) => {
         recordHistory();
@@ -108,12 +110,12 @@ export const useNodeOperations = (recordHistory: () => void) => {
         const newNode: Node = {
             id,
             position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
-            data: { label: 'Text', subLabel: '', color: 'slate' },
+            data: { label: t('nodes.text'), subLabel: '', color: 'slate' },
             type: 'text',
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
-    }, [setNodes, recordHistory, setSelectedNodeId]);
+    }, [setNodes, recordHistory, setSelectedNodeId, t]);
 
     const handleAddImage = useCallback((imageUrl: string, position?: { x: number; y: number }) => {
         recordHistory();
@@ -121,13 +123,13 @@ export const useNodeOperations = (recordHistory: () => void) => {
         const newNode: Node = {
             id,
             position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
-            data: { label: 'Image', imageUrl, transparency: 1, rotation: 0 },
+            data: { label: t('nodes.image'), imageUrl, transparency: 1, rotation: 0 },
             type: 'image',
             style: { width: 200, height: 200 },
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
-    }, [setNodes, recordHistory, setSelectedNodeId]);
+    }, [setNodes, recordHistory, setSelectedNodeId, t]);
 
     // --- Drag Operations ---
     const onNodeDragStart = useCallback((event: React.MouseEvent, node: Node) => {

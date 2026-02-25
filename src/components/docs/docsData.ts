@@ -10,50 +10,50 @@ export type DocItem = {
 
 export const docsNavigation: DocSection[] = [
     {
-        title: 'AI Assistant',
+        title: 'docs.aiAssistant',
         items: [
-            { title: 'Ask Flowpilot', slug: 'ask-flowpilot' },
+            { title: 'docs.askFlowpilot', slug: 'ask-flowpilot' },
         ],
     },
     {
-        title: 'Getting Started',
+        title: 'docs.gettingStarted',
         items: [
-            { title: 'Introduction', slug: 'introduction' },
-            { title: 'Quick Start', slug: 'quick-start' },
+            { title: 'docs.introduction', slug: 'introduction' },
+            { title: 'docs.quickStart', slug: 'quick-start' },
         ],
     },
     {
-        title: 'Core Features',
+        title: 'docs.coreFeatures',
         items: [
-            { title: 'Canvas Basics', slug: 'canvas-basics' },
-            { title: 'Node Types', slug: 'node-types' },
-            { title: 'Properties Panel', slug: 'properties-panel' },
-            { title: 'Command Center', slug: 'command-center' },
+            { title: 'docs.canvasBasics', slug: 'canvas-basics' },
+            { title: 'docs.nodeTypes', slug: 'node-types' },
+            { title: 'docs.propertiesPanel', slug: 'properties-panel' },
+            { title: 'docs.commandCenter', slug: 'command-center' },
         ],
     },
     {
-        title: 'Advanced Tools',
+        title: 'docs.advancedTools',
         items: [
-            { title: 'AI Generation', slug: 'ai-generation' },
-            { title: 'Smart Layout', slug: 'smart-layout' },
-            { title: 'Playback & History', slug: 'playback-history' },
-            { title: 'FlowMind DSL (V2)', slug: 'openflow-dsl' },
+            { title: 'docs.aiGeneration', slug: 'ai-generation' },
+            { title: 'docs.smartLayouts', slug: 'smart-layout' },
+            { title: 'docs.playbackAndHistory', slug: 'playback-history' },
+            { title: 'docs.flowMindDSL', slug: 'openflow-dsl' },
         ],
     },
     {
-        title: 'Guides',
+        title: 'docs.guides',
         items: [
-            { title: 'Mermaid Integration', slug: 'mermaid-integration' },
-            { title: 'Exporting', slug: 'exporting' },
-            { title: 'Keyboard Shortcuts', slug: 'keyboard-shortcuts' },
-            { title: 'Theming', slug: 'theming' },
+            { title: 'docs.mermaidIntegration', slug: 'mermaid-integration' },
+            { title: 'docs.exporting', slug: 'exporting' },
+            { title: 'docs.keyboardShortcuts', slug: 'keyboard-shortcuts' },
+            { title: 'docs.theming', slug: 'theming' },
         ],
     },
     {
-        title: 'Announcements',
+        title: 'docs.announcements',
         items: [
-            { title: 'V1 Beta Launch', slug: 'v1-beta-launch' },
-            { title: 'Future Roadmap', slug: 'roadmap' },
+            { title: 'docs.v1BetaLaunch', slug: 'v1-beta-launch' },
+            { title: 'docs.futureRoadmap', slug: 'roadmap' },
         ],
     },
 ];

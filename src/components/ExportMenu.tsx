@@ -3,6 +3,7 @@ import { Download, Image, FileJson, GitBranch, FileCode, Wand2, X, Figma } from 
 import { useFlowStore } from '../store';
 import { Tooltip } from './Tooltip';
 import { Button } from './ui/Button';
+import { useTranslation } from 'react-i18next';
 
 interface ExportMenuProps {
     onExportPNG: (format: 'png' | 'jpeg') => void;
@@ -21,6 +22,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
     onExportOpenFlowDSL,
     onExportFigma,
 }) => {
+    const { t } = useTranslation();
     const { brandConfig } = useFlowStore();
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -64,20 +66,20 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
 
     return (
         <div className="relative" ref={menuRef}>
-            <Tooltip text="Export Diagram" side="bottom">
+            <Tooltip text={t("common.exportDiagram")} side="bottom">
                 <Button
                     onClick={() => setIsOpen(!isOpen)}
                     className="h-9 px-4 text-sm"
                 >
                     <Download className="w-4 h-4 mr-2" />
-                    Export
+                    {t("common.export")}
                 </Button>
             </Tooltip>
 
             {isOpen && (
                 <div className="absolute top-full right-0 mt-2 w-52 bg-white/95 backdrop-blur-xl rounded-[var(--radius-lg)] shadow-xl border border-white/20 ring-1 ring-black/5 p-1.5 flex flex-col gap-0.5 animate-in fade-in zoom-in-95 duration-100 origin-top-right z-50">
                     <div className="px-2 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                        Export As
+                        {t("common.exportAs")}
                     </div>
                     {exportOptions.map(({ key, label, hint, Icon }) => (
                         <button

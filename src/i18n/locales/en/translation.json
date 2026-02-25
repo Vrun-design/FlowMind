@@ -51,7 +51,10 @@
     "distribute": "Distribute",
     "distributeHorizontally": "Distribute Horizontally",
     "distributeVertically": "Distribute Vertically",
-    "group": "Group"
+    "group": "Group",
+    "export": "Export",
+    "exportDiagram": "Export Diagram",
+    "exportAs": "Export As"
   },
   "nav": {
     "home": "Home",
@@ -115,6 +118,61 @@
     "addNode": "Add Node",
     "deleteNode": "Delete Node",
     "duplicateNode": "Duplicate Node"
+  },
+  "nodes": {
+    "newNode": "New Node",
+    "processStep": "Process Step",
+    "note": "Note",
+    "addCommentsHere": "Add your comments here.",
+    "newSection": "New Section",
+    "text": "Text",
+    "image": "Image",
+    "group": "Group",
+    "items": "items",
+    "database": "Database",
+    "inputOutput": "Input / Output",
+    "branch": "Branch",
+    "appearance": "Appearance",
+    "content": "Content",
+    "imageSettings": "Image Settings",
+    "textStyle": "Text Style",
+    "colorTheme": "Color Theme",
+    "iconTheme": "Icon Theme",
+    "customImage": "Custom Image",
+    "addDescription": "Add description...",
+    "markdownSupported": "Markdown supported",
+    "transparency": "Transparency",
+    "rotation": "Rotation",
+    "wireframeVariant": "Wireframe Variant",
+    "typeLabelHere": "Type label here...",
+    "alignLeft": "Align Left",
+    "alignCenter": "Align Center",
+    "alignRight": "Align Right",
+    "boldShortcut": "Bold (Cmd+B)",
+    "italicShortcut": "Italic (Cmd+I)",
+    "fontFamilies": {
+      "inter": "Inter",
+      "roboto": "Roboto",
+      "outfit": "Outfit",
+      "playfair": "Playfair",
+      "fira": "Mono"
+    },
+    "wireframeVariants": {
+      "landing": "Landing",
+      "dashboard": "Dashboard",
+      "form": "Form",
+      "modal": "Modal",
+      "cookie": "Cookie",
+      "pricing": "Pricing",
+      "login": "Login",
+      "social": "Social",
+      "chat": "Chat",
+      "product": "Product",
+      "list": "List"
+    }
+  },
+  "actions": {
+    "clearCanvasConfirm": "Are you sure you want to clear the canvas?"
   },
   "landing": {
     "nav": {
@@ -221,9 +279,144 @@
   "ai": {
     "generate": "Generate with AI",
     "provider": "AI Provider",
+    "aiProvider": "AI Provider",
+    "selectProvider": "Select {{name}} as AI provider",
     "model": "Model",
     "apiKey": "API Key",
-    "placeholder": "Describe your flowchart..."
+    "placeholder": "Describe your flowchart...",
+    "modelPlaceholder": "e.g. llama3-70b-8192 or gpt-4o",
+    "flowpilotSettings": "Flowpilot Settings",
+    "flowpilotDesc": "Configure your preferred AI provider, model, and API key below.",
+    "modelSelection": "Model Selection",
+    "modelId": "Enter the exact model ID for your endpoint",
+    "selectAModel": "Select a model...",
+    "howToGetApiKey": "How to get your API key",
+    "goToConsole": "Go to {{consoleName}}",
+    "pasteInField": "Paste it in the field above — never shared with us",
+    "whatsCustomEndpoint": "What is a custom endpoint?",
+    "openAICompatible": "OpenAI-compatible",
+    "customEndpointDesc": "API endpoint — local or remote. Great for:",
+    "baseUrl": "Base URL",
+    "mustSupport": "Must support ",
+    "postChatCompletions": "POST /chat/completions",
+    "openAIFormat": "(OpenAI format)",
+    "privacy": "Privacy & Encryption",
+    "providers": {
+      "gemini": {
+        "hint": "Google · Best free tier · Multimodal",
+        "keyLinkLabel": "Get a Gemini API Key",
+        "consoleName": "Google AI Studio",
+        "keySetupNote": "Free tier available — no credit card needed"
+      },
+      "openai": {
+        "hint": "GPT-5 family · Industry standard",
+        "keyLinkLabel": "Get an OpenAI API Key",
+        "consoleName": "OpenAI Platform",
+        "keySetupNote": "Requires a paid account and billing setup"
+      },
+      "claude": {
+        "hint": "Anthropic · Leading reasoning model",
+        "keyLinkLabel": "Get a Claude API Key",
+        "consoleName": "Anthropic Console",
+        "keySetupNote": "Requires a paid account ($5 min credit top-up)"
+      },
+      "groq": {
+        "hint": "Blazing fast · Generous free tier · Llama 4",
+        "keyLinkLabel": "Get a Groq API Key",
+        "consoleName": "Groq Console",
+        "keySetupNote": "Free tier available — no credit card needed"
+      },
+      "nvidia": {
+        "hint": "NIM · Kimi-V2.5 · Frontier models",
+        "keyLinkLabel": "Get an NVIDIA API Key",
+        "consoleName": "NVIDIA Build",
+        "keySetupNote": "Free credits included with a new account"
+      },
+      "cerebras": {
+        "hint": "2,400 tok/s · Qwen 3 235B · WSE-3 speed",
+        "keyLinkLabel": "Get a Cerebras API Key",
+        "consoleName": "Cerebras Cloud",
+        "keySetupNote": "Free tier available — no credit card needed"
+      },
+      "mistral": {
+        "hint": "Le Chat · Codestral · European AI leader",
+        "keyLinkLabel": "Get a Mistral API Key",
+        "consoleName": "Mistral Console (La Plateforme)",
+        "keySetupNote": "Free tier with generous limits — no credit card needed"
+      },
+      "custom": {
+        "hint": "Any OpenAI-compatible endpoint"
+      }
+    },
+    "byokReasons": {
+      "dataPrivacy": "Your data never passes through our servers",
+      "fullControl": "Full control over cost and rate limits",
+      "switchAnytime": "Switch providers anytime without re-linking",
+      "accessLatest": "Access cutting-edge models as soon as they launch"
+    },
+    "customEndpointExamples": {
+      "ollama": "Local · Free",
+      "lmStudio": "Local · Free",
+      "togetherAi": "Cloud · Fast"
+    },
+    "anyPrefix": "Any",
+    "customModel": "Custom Model",
+    "categories": {
+      "speed": "Speed",
+      "flagship": "Flagship",
+      "reasoning": "Reasoning",
+      "performance": "Performance",
+      "coding": "Coding",
+      "multimodal": "Multimodal",
+      "custom": "Custom",
+      "legacy": "Legacy"
+    },
+    "badges": {
+      "default": "Default",
+      "new": "New",
+      "free": "Free",
+      "flagship": "Flagship",
+      "performance": "Performance",
+      "code": "Code",
+      "vision": "Vision",
+      "fastest": "Fastest",
+      "reasoning": "Reasoning"
+    },
+    "models": {
+      "gemini-2.5-flash-lite": "Fastest · Free tier default",
+      "gemini-2.5-flash": "Best price/performance balance",
+      "gemini-2.5-pro": "Best reasoning · Complex diagrams",
+      "gemini-3-flash": "Frontier speed + intelligence",
+      "gemini-3-pro": "Most powerful · Multimodal",
+      "gpt-5-mini": "Fast · Cost-efficient",
+      "gpt-5": "Flagship model · Most capable",
+      "gpt-5.2": "Latest update · Improved reasoning",
+      "o4-mini": "Advanced reasoning · Fast",
+      "o3": "Deep reasoning · Complex tasks",
+      "claude-haiku-4-5": "Fastest · Most affordable",
+      "claude-sonnet-4-5": "Balanced intelligence & speed",
+      "claude-sonnet-4-6": "Latest Sonnet · Best coding",
+      "claude-opus-4-6": "Most intelligent · 1M token context",
+      "meta-llama/llama-4-scout-17b-16e-instruct": "Free tier · Very fast",
+      "meta-llama/llama-4-maverick-17b-128e-instruct": "More capable · Free tier",
+      "qwen/qwen3-32b": "Advanced reasoning · Tool use",
+      "llama-3.3-70b-versatile": "Versatile model",
+      "meta/llama-4-scout-17b-16e-instruct": "Efficient · Multi-modal",
+      "nvidia/nemotron-nano-12b-v2-vl": "Lightweight · Vision-language · Fast",
+      "deepseek/deepseek-v3-2": "Latest · GPT-5 comparable",
+      "qwen/qwq-32b": "Strong reasoning model",
+      "moonshotai/kimi-k2-thinking": "Advanced reasoning · Tool use",
+      "gpt-oss-120b": "120B params · Fast on WSE-3",
+      "qwen-3-32b": "2,403 tok/s · Industry fastest",
+      "qwen-3-235b-a22b": "Flagship · Best quality",
+      "zai-glm-4.7": "Advanced reasoning · Tool use",
+      "mistral-small-latest": "Fast · Cost-efficient · 32k context",
+      "mistral-medium-latest": "Balanced quality-cost · Best default",
+      "mistral-large-latest": "Most capable · 128k context · Flagship",
+      "codestral-latest": "Code-optimized · 256k context",
+      "pixtral-large-latest": "Vision + reasoning · Multimodal",
+      "custom": "Enter your model ID below"
+    }
   },
   "playback": {
     "title": "Playback",
@@ -387,7 +580,30 @@
   "docs": {
     "documentation": "Documentation",
     "returnToCanvas": "Return to Canvas",
-    "onThisPage": "On This Page"
+    "onThisPage": "On This Page",
+    "aiAssistant": "AI Assistant",
+    "askFlowpilot": "Ask Flowpilot",
+    "gettingStarted": "Getting Started",
+    "introduction": "Introduction",
+    "quickStart": "Quick Start",
+    "coreFeatures": "Core Features",
+    "canvasBasics": "Canvas Basics",
+    "nodeTypes": "Node Types",
+    "propertiesPanel": "Properties Panel",
+    "commandCenter": "Command Center",
+    "advancedTools": "Advanced Tools",
+    "aiGeneration": "AI Generation",
+    "smartLayouts": "Smart Layout",
+    "playbackAndHistory": "Playback & History",
+    "flowMindDSL": "FlowMind DSL (V2)",
+    "guides": "Guides",
+    "mermaidIntegration": "Mermaid Integration",
+    "exporting": "Exporting",
+    "keyboardShortcuts": "Keyboard Shortcuts",
+    "theming": "Theming",
+    "announcement": "Announcement",
+    "v1BetaLaunch": "V1 Beta Launch",
+    "futureRoadmap": "Future Roadmap"
   },
   "chatbot": {
     "greeting": "Hello, how can I help you?",

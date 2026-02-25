@@ -4,6 +4,7 @@ import { Input } from '../ui/Input';
 import { Label } from '../ui/Label';
 import { Select } from '../ui/Select';
 import { ExternalLink, Check, Shield, Lock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Provider metadata
 interface ProviderMeta {
@@ -189,10 +190,10 @@ const PROVIDER_MODELS: Record<AIProvider, { id: string; label: string; hint: str
 };
 
 const BYOK_REASONS = [
-    'Your data never passes through our servers',
-    'Full control over cost and rate limits',
-    'Switch providers anytime without re-linking',
-    'Access cutting-edge models as soon as they launch',
+    'ai.byokReasons.dataPrivacy',
+    'ai.byokReasons.fullControl',
+    'ai.byokReasons.switchAnytime',
+    'ai.byokReasons.accessLatest',
 ] as const;
 
 // Helper for logo with fallback
@@ -244,6 +245,7 @@ function Step({ n, text }: { n: number; text: string }): React.ReactElement {
 }
 
 export function AISettings(): React.ReactElement {
+    const { t } = useTranslation();
     const { aiSettings, setAISettings } = useFlowStore();
 
     const currentProvider = aiSettings.provider ?? 'gemini';
@@ -260,13 +262,13 @@ export function AISettings(): React.ReactElement {
         <div className="space-y-8 pb-4 animate-in fade-in duration-200 w-full min-w-0">
             {/* Header Text */}
             <div className="space-y-1">
-                <h3 className="text-base font-semibold text-slate-800">Flowpilot Settings</h3>
-                <p className="text-xs text-slate-500">Configure your preferred AI provider, model, and API key below.</p>
+                <h3 className="text-base font-semibold text-slate-800">{t('ai.flowpilotSettings')}</h3>
+                <p className="text-xs text-slate-500">{t('ai.flowpilotDesc')}</p>
             </div>
 
             {/* Provider Section - Logo Dock */}
             <div className="space-y-4">
-                <Label>AI Provider</Label>
+                <Label>{t('ai.aiProvider')}</Label>
                 {/* Fixed-size containers — inner icon scales avoids layout jerk */}
                 <div className="flex items-center gap-2 overflow-x-auto px-1 py-3 custom-scrollbar">
                     {PROVIDERS.map(p => {
@@ -289,7 +291,7 @@ export function AISettings(): React.ReactElement {
                                 key={p.id}
                                 onClick={() => selectProvider(p.id)}
                                 title={p.name}
-                                aria-label={`Select ${p.name} as AI provider`}
+                                aria-label={t('ai.selectProvider', { name: p.name })}
                                 className={`group relative flex flex-col items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl border transition-all duration-200 ${buttonClass}`}
                             >
                                 <div className={`pointer-events-none transition-transform duration-200 ${iconWrapperClass}`}>
@@ -307,7 +309,7 @@ export function AISettings(): React.ReactElement {
                     <img src={providerMeta.logoPath} alt={providerMeta.name} className="w-6 h-6 object-contain shrink-0" />
                     <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold text-slate-800">{providerMeta.name}</p>
-                        <p className="text-[10px] text-slate-400 truncate">{providerMeta.hint}</p>
+                        <p className="text-[10px] text-slate-400 truncate">{t(`ai.providers.${currentProvider}.hint`)}</p>
                     </div>
                     {providerMeta.id === 'custom' && <span className="text-[9px] bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded font-medium text-slate-500">BYOK</span>}
                 </div>
@@ -319,35 +321,41 @@ export function AISettings(): React.ReactElement {
             <div className="space-y-6">
                 {/* Model Selector */}
                 <div className="space-y-3">
-                    <Label>Model Selection</Label>
+                    <Label>{t('ai.modelSelection')}</Label>
                     {currentProvider === 'custom' ? (
                         <div className="space-y-2">
                             <Input
                                 value={currentModel === 'custom' ? '' : currentModel}
                                 onChange={e => setAISettings({ model: e.target.value })}
-                                placeholder="e.g. llama3-70b-8192 or gpt-4o"
+                                placeholder={t('ai.modelPlaceholder')}
                             />
-                            <p className="text-[10px] text-slate-400">Enter the exact model ID for your endpoint</p>
+                            <p className="text-[10px] text-slate-400">{t('ai.modelId')}</p>
                         </div>
                     ) : (
                         <Select
                             value={currentModel}
                             onChange={(val) => setAISettings({ model: val })}
-                            options={models.map(m => ({
-                                value: m.id,
-                                label: m.label,
-                                hint: m.hint,
-                                badge: m.badge,
-                                group: m.category
-                            }))}
-                            placeholder="Select a model..."
+                            options={models.map(m => {
+                                // Normalize badge for translation lookup
+                                let badgeKey = m.badge?.toLowerCase().replace(/[^a-z]/g, '');
+                                const badgeText = badgeKey ? t(`ai.badges.${badgeKey}`) : undefined;
+                                
+                                return {
+                                    value: m.id,
+                                    label: m.id === 'custom' ? t('ai.customModel') : m.label,
+                                    hint: t(`ai.models.${m.id.replace(/\//g, '/')}`),
+                                    badge: badgeText,
+                                    group: t(`ai.categories.${m.category.toLowerCase()}`)
+                                };
+                            })}
+                            placeholder={t('ai.selectAModel')}
                         />
                     )}
                 </div>
 
                 {/* API Key */}
                 <div className="space-y-3">
-                    <Label>{providerMeta.name} API Key</Label>
+                    <Label>{providerMeta.name} {t('ai.apiKey')}</Label>
                     <div className="relative group">
                         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
                             <Lock className="w-4 h-4" />
@@ -365,20 +373,20 @@ export function AISettings(): React.ReactElement {
                     {!aiSettings.apiKey && providerMeta.keyLink && (
                         <div className="rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
                             <div className="px-3 py-2 border-b border-slate-200 flex items-center justify-between">
-                                <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wider">How to get your API key</span>
+                                <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wider">{t('ai.howToGetApiKey')}</span>
                                 <a
                                     href={providerMeta.keyLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--brand-primary)] hover:underline"
                                 >
-                                    Open Console <ExternalLink className="w-3 h-3" />
+                                    {t(`ai.providers.${currentProvider}.keyLinkLabel`)} <ExternalLink className="w-3 h-3" />
                                 </a>
                             </div>
                             <div className="px-3 py-2.5 space-y-2">
-                                <Step n={1} text={`Go to ${providerMeta.consoleName}`} />
-                                <Step n={2} text={providerMeta.keySetupNote} />
-                                <Step n={3} text="Paste it in the field above — never shared with us" />
+                                <Step n={1} text={t('ai.goToConsole', { consoleName: t(`ai.providers.${currentProvider}.consoleName`) })} />
+                                <Step n={2} text={t(`ai.providers.${currentProvider}.keySetupNote`)} />
+                                <Step n={3} text={t('ai.pasteInField')} />
                             </div>
                         </div>
                     )}
@@ -389,34 +397,34 @@ export function AISettings(): React.ReactElement {
                     <div className="space-y-3">
                         <div className="rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
                             <div className="px-3 py-2 border-b border-slate-200">
-                                <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wider">What is a custom endpoint?</span>
+                                <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wider">{t('ai.whatsCustomEndpoint')}</span>
                             </div>
                             <div className="px-3 py-2.5 space-y-1.5">
                                 <p className="text-[11px] text-slate-600 leading-snug">
-                                    Any <span className="font-semibold text-slate-800">OpenAI-compatible</span> API endpoint — local or remote. Great for:
+                                    {t('ai.anyPrefix')} <span className="font-semibold text-slate-800">{t('ai.openAICompatible')}</span> {t('ai.customEndpointDesc')}
                                 </p>
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 mt-2">
                                     {[
-                                        { name: 'Ollama', hint: 'Local · Free' },
-                                        { name: 'LM Studio', hint: 'Local · Free' },
-                                        { name: 'Together.ai', hint: 'Cloud · Fast' },
+                                        { name: 'Ollama', hintKey: 'ollama' },
+                                        { name: 'LM Studio', hintKey: 'lmStudio' },
+                                        { name: 'Together.ai', hintKey: 'togetherAi' },
                                     ].map(ex => (
                                         <div key={ex.name} className="flex flex-col items-center px-2 py-1.5 bg-white rounded-lg border border-slate-200 text-center">
                                             <span className="text-[10px] font-semibold text-slate-700">{ex.name}</span>
-                                            <span className="text-[9px] text-slate-400">{ex.hint}</span>
+                                            <span className="text-[9px] text-slate-400">{t(`ai.customEndpointExamples.${ex.hintKey}`)}</span>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         </div>
 
-                        <Label>Base URL</Label>
+                        <Label>{t('ai.baseUrl')}</Label>
                         <Input
                             value={aiSettings.customBaseUrl ?? ''}
                             onChange={e => setAISettings({ customBaseUrl: e.target.value })}
                             placeholder="https://localhost:11434/v1"
                         />
-                        <p className="text-[11px] text-slate-500">Must support <code className="bg-slate-100 px-1 rounded text-[10px]">POST /chat/completions</code> (OpenAI format)</p>
+                        <p className="text-[11px] text-slate-500">{t('ai.mustSupport')} <code className="bg-slate-100 px-1 rounded text-[10px]">{t('ai.postChatCompletions')}</code> {t('ai.openAIFormat')}</p>
                     </div>
                 )}
             </div>
@@ -426,13 +434,13 @@ export function AISettings(): React.ReactElement {
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 shadow-sm">
                     <div className="flex items-center gap-2 mb-3 text-slate-800">
                         <Shield className="w-4 h-4 text-[var(--brand-primary)]" />
-                        <span className="text-xs font-semibold uppercase tracking-wider">Privacy & Encryption</span>
+                        <span className="text-xs font-semibold uppercase tracking-wider">{t('ai.privacy')}</span>
                     </div>
                     <ul className="grid grid-cols-1 gap-2">
                         {BYOK_REASONS.map((item, i) => (
                             <li key={i} className="flex gap-2 text-[11px] text-slate-600 items-start">
                                 <Check className="w-3.5 h-3.5 text-green-600 shrink-0 mt-0.5" />
-                                <span className="leading-tight">{item}</span>
+                                <span className="leading-tight">{t(item)}</span>
                             </li>
                         ))}
                     </ul>

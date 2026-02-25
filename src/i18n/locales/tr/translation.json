@@ -55,7 +55,10 @@
     "distribute": "Dağıt",
     "distributeHorizontally": "Yatay Dağıt",
     "distributeVertically": "Dikey Dağıt",
-    "group": "Grupla"
+    "group": "Grupla",
+    "export": "Dışa Aktar",
+    "exportDiagram": "Diyagramı Dışa Aktar",
+    "exportAs": "Olarak Dışa Aktar"
   },
   "nav": {
     "home": "Ana Sayfa",
@@ -119,6 +122,61 @@
     "addNode": "Düğüm Ekle",
     "deleteNode": "Düğümü Sil",
     "duplicateNode": "Düğümü Çoğalt"
+  },
+  "nodes": {
+    "newNode": "Yeni Düğüm",
+    "processStep": "İşlem Adımı",
+    "note": "Not",
+    "addCommentsHere": "Yorumlarınızı buraya ekleyin.",
+    "newSection": "Yeni Bölüm",
+    "text": "Metin",
+    "image": "Görsel",
+    "group": "Grup",
+    "items": "öğe",
+    "database": "Veritabanı",
+    "inputOutput": "Girdi / Çıktı",
+    "branch": "Dallanma",
+    "appearance": "Görünüm",
+    "imageSettings": "Resim Ayarları",
+    "content": "İçerik",
+    "textStyle": "Metin Stili",
+    "colorTheme": "Renk Teması",
+    "iconTheme": "İkon Teması",
+    "customImage": "Özel Görsel",
+    "addDescription": "Açıklama ekle...",
+    "markdownSupported": "Markdown destekleniyor",
+    "transparency": "Şeffaflık",
+    "rotation": "Dönme",
+    "wireframeVariant": "Tel Kafes Varyantı",
+    "typeLabelHere": "Etiketi buraya yazın...",
+    "alignLeft": "Sola Hizala",
+    "alignCenter": "Ortala",
+    "alignRight": "Sağa Hizala",
+    "boldShortcut": "Kalın (Cmd+B)",
+    "italicShortcut": "İtalik (Cmd+I)",
+    "fontFamilies": {
+      "inter": "Inter",
+      "roboto": "Roboto",
+      "outfit": "Outfit",
+      "playfair": "Playfair",
+      "fira": "Mono"
+    },
+    "wireframeVariants": {
+      "landing": "Giriş Sayfası",
+      "dashboard": "Gösterge Paneli",
+      "form": "Form",
+      "modal": "Modal",
+      "cookie": "Çerez",
+      "pricing": "Fiyatlandırma",
+      "login": "Giriş",
+      "social": "Sosyal",
+      "chat": "Sohbet",
+      "product": "Ürün",
+      "list": "Liste"
+    }
+  },
+  "actions": {
+    "clearCanvasConfirm": "Tuvali temizlemek istediğinizden emin misiniz?"
   },
   "landing": {
     "nav": {
@@ -225,9 +283,144 @@
   "ai": {
     "generate": "Yapay Zeka ile Oluştur",
     "provider": "Yapay Zeka Sağlayıcı",
+    "aiProvider": "Yapay Zeka Sağlayıcı",
+    "selectProvider": "{{name}} sağlayıcısını seç",
     "model": "Model",
     "apiKey": "API Anahtarı",
-    "placeholder": "Akış şemanızı açıklayın..."
+    "placeholder": "Akış şemanızı açıklayın...",
+    "modelPlaceholder": "örn. llama3-70b-8192 veya gpt-4o",
+    "flowpilotSettings": "Flowpilot Ayarları",
+    "flowpilotDesc": "Tercih ettiğiniz yapay zeka sağlayıcısını, modelini ve API anahtarını aşağıda yapılandırın.",
+    "modelSelection": "Model Seçimi",
+    "modelId": "Uç noktanız için tam model kimliğini girin",
+    "selectAModel": "Bir model seçin...",
+    "howToGetApiKey": "API anahtarınızı nasıl alabilirsiniz",
+    "goToConsole": "{{consoleName}} adresine gidin",
+    "pasteInField": "Yukarıdaki alana yapıştırın — bizimle asla paylaşılmaz",
+    "whatsCustomEndpoint": "Özel bir uç nokta nedir?",
+    "openAICompatible": "OpenAI uyumlu",
+    "customEndpointDesc": "API uç noktası — yerel veya uzak. Şunlar için idealdir:",
+    "baseUrl": "Temel URL",
+    "mustSupport": "Şunu desteklemelidir ",
+    "postChatCompletions": "POST /chat/completions",
+    "openAIFormat": "(OpenAI formatı)",
+    "privacy": "Gizlilik ve Güvenlik",
+    "providers": {
+      "gemini": {
+        "hint": "Google · En iyi ücretsiz plan · Çok modelli",
+        "keyLinkLabel": "Gemini API Anahtarı Alın",
+        "consoleName": "Google AI Studio",
+        "keySetupNote": "Ücretsiz plan mevcut — kredi kartı gerekmez"
+      },
+      "openai": {
+        "hint": "GPT-5 ailesi · Endüstri standardı",
+        "keyLinkLabel": "OpenAI API Anahtarı Alın",
+        "consoleName": "OpenAI Platform",
+        "keySetupNote": "Ücretli hesap ve fatura kurulumu gerektirir"
+      },
+      "claude": {
+        "hint": "Anthropic · Önde gelen akıl yürütme modeli",
+        "keyLinkLabel": "Claude API Anahtarı Alın",
+        "consoleName": "Anthropic Konsol",
+        "keySetupNote": "Ücretli hesap gerektirir (minimum 5$ kredi yüklemesi)"
+      },
+      "groq": {
+        "hint": "Son derece hızlı · Cömert ücretsiz plan · Llama 4",
+        "keyLinkLabel": "Groq API Anahtarı Alın",
+        "consoleName": "Groq Konsol",
+        "keySetupNote": "Ücretsiz plan mevcut — kredi kartı gerekmez"
+      },
+      "nvidia": {
+        "hint": "NIM · Kimi-V2.5 · Sınır modelleri",
+        "keyLinkLabel": "NVIDIA API Anahtarı Alın",
+        "consoleName": "NVIDIA Build",
+        "keySetupNote": "Yeni hesaplarda ücretsiz krediler dahildir"
+      },
+      "cerebras": {
+        "hint": "2,400 tok/s · Qwen 3 235B · WSE-3 hızı",
+        "keyLinkLabel": "Cerebras API Anahtarı Alın",
+        "consoleName": "Cerebras Cloud",
+        "keySetupNote": "Ücretsiz plan mevcut — kredi kartı gerekmez"
+      },
+      "mistral": {
+        "hint": "Le Chat · Codestral · Avrupa yapay zeka lideri",
+        "keyLinkLabel": "Mistral API Anahtarı Alın",
+        "consoleName": "Mistral Konsol (La Plateforme)",
+        "keySetupNote": "Cömert limitlerle ücretsiz plan — kredi kartı gerekmez"
+      },
+      "custom": {
+        "hint": "Herhangi bir OpenAI uyumlu uç nokta"
+      }
+    },
+    "byokReasons": {
+      "dataPrivacy": "Verileriniz asla sunucularımızdan geçmez",
+      "fullControl": "Maliyet ve hız limitleri üzerinde tam kontrol",
+      "switchAnytime": "Yeniden bağlantı kurmadan istediğiniz zaman sağlayıcı değiştirin",
+      "accessLatest": "Yeni modellere yayınlandıkları anda erişin"
+    },
+    "customEndpointExamples": {
+      "ollama": "Yerel · Ücretsiz",
+      "lmStudio": "Yerel · Ücretsiz",
+      "togetherAi": "Bulut · Hızlı"
+    },
+    "anyPrefix": "Herhangi bir",
+    "customModel": "Özel Model",
+    "categories": {
+      "speed": "Hız",
+      "flagship": "Amiral Gemisi",
+      "reasoning": "Akıl Yürütme",
+      "performance": "Performans",
+      "coding": "Kodlama",
+      "multimodal": "Çok Modlu",
+      "custom": "Özel",
+      "legacy": "Eski"
+    },
+    "badges": {
+      "default": "Varsayılan",
+      "new": "Yeni",
+      "free": "Ücretsiz",
+      "flagship": "Amiral",
+      "performance": "Performans",
+      "code": "Kod",
+      "vision": "Görüş",
+      "fastest": "En Hızlı",
+      "reasoning": "Akıl Yürütme"
+    },
+    "models": {
+      "gemini-2.5-flash-lite": "En hızlı · Ücretsiz plan varsayılanı",
+      "gemini-2.5-flash": "En iyi fiyat/performans dengesi",
+      "gemini-2.5-pro": "En iyi akıl yürütme · Karmaşık diyagramlar",
+      "gemini-3-flash": "Sınır hızı + zeka",
+      "gemini-3-pro": "En güçlü · Çok modlu",
+      "gpt-5-mini": "Hızlı · Maliyet etkin",
+      "gpt-5": "Amiral gemi modeli · En yetenekli",
+      "gpt-5.2": "Son güncelleme · Gelişmiş akıl yürütme",
+      "o4-mini": "Gelişmiş akıl yürütme · Hızlı",
+      "o3": "Derin akıl yürütme · Karmaşık görevler",
+      "claude-haiku-4-5": "En hızlı · En uygun fiyatlı",
+      "claude-sonnet-4-5": "Dengeli zeka ve hız",
+      "claude-sonnet-4-6": "Son Sonnet · En iyi kodlama",
+      "claude-opus-4-6": "En zeki · 1M token bağlamı",
+      "meta-llama/llama-4-scout-17b-16e-instruct": "Ücretsiz plan · Çok hızlı",
+      "meta-llama/llama-4-maverick-17b-128e-instruct": "Daha yetenekli · Ücretsiz plan",
+      "qwen/qwen3-32b": "Gelişmiş akıl yürütme · Araç kullanımı",
+      "llama-3.3-70b-versatile": "Çok yönlü model",
+      "meta/llama-4-scout-17b-16e-instruct": "Verimli · Çok modlu",
+      "nvidia/nemotron-nano-12b-v2-vl": "Hafif · Görsel-dil · Hızlı",
+      "deepseek/deepseek-v3-2": "En yeni · GPT-5 ile karşılaştırılabilir",
+      "qwen/qwq-32b": "Güçlü akıl yürütme modeli",
+      "moonshotai/kimi-k2-thinking": "Gelişmiş akıl yürütme · Araç kullanımı",
+      "gpt-oss-120b": "120B parametre · WSE-3'te hızlı",
+      "qwen-3-32b": "2,403 tok/s · Sektörün en hızlısı",
+      "qwen-3-235b-a22b": "Amiral gemi · En iyi kalite",
+      "zai-glm-4.7": "Gelişmiş akıl yürütme · Araç kullanımı",
+      "mistral-small-latest": "Hızlı · Maliyet etkin · 32k bağlam",
+      "mistral-medium-latest": "Dengeli kalite-maliyet · En iyi varsayılan",
+      "mistral-large-latest": "En yetenekli · 128k bağlam · Amiral gemi",
+      "codestral-latest": "Kod optimize · 256k bağlam",
+      "pixtral-large-latest": "Görüş + akıl yürütme · Çok modlu",
+      "custom": "Aşağıya model kimliğinizi girin"
+    }
   },
   "playback": {
     "title": "Oynatma",
@@ -392,7 +585,30 @@
   "docs": {
     "documentation": "Dokümantasyon",
     "returnToCanvas": "Tuvale Dön",
-    "onThisPage": "Bu Sayfada"
+    "onThisPage": "Bu Sayfada",
+    "aiAssistant": "AI Asistan",
+    "askFlowpilot": "Flowpilot'a Sor",
+    "gettingStarted": "Başlarken",
+    "introduction": "Giriş",
+    "quickStart": "Hızlı Başlangıç",
+    "coreFeatures": "Temel Özellikler",
+    "canvasBasics": "Tuval Temelleri",
+    "nodeTypes": "Düğüm Türleri",
+    "propertiesPanel": "Özellikler Paneli",
+    "commandCenter": "Komut Merkezi",
+    "advancedTools": "Gelişmiş Araçlar",
+    "aiGeneration": "AI Üretimi",
+    "smartLayouts": "Akıllı Düzenler",
+    "playbackAndHistory": "Oynatma ve Geçmiş",
+    "flowMindDSL": "FlowMind DSL (V2)",
+    "guides": "Kılavuzlar",
+    "mermaidIntegration": "Mermaid Entegrasyonu",
+    "exporting": "Dışa Aktarma",
+    "keyboardShortcuts": "Klavye Kısayolları",
+    "theming": "Tema",
+    "announcement": "Duyuru",
+    "v1BetaLaunch": "V1 Beta Lansmanı",
+    "futureRoadmap": "Gelecek Yol Haritası"
   },  
   "chatbot": {
     "greeting": "Merhaba, size nasıl yardımcı olabilirim?",

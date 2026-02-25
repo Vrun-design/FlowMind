@@ -3,11 +3,13 @@ import { Edge, Connection, addEdge, useReactFlow } from 'reactflow';
 import { useFlowStore } from '../store';
 import { NodeData } from '@/lib/types';
 import { DEFAULT_EDGE_OPTIONS, NODE_WIDTH, NODE_HEIGHT } from '../constants';
+import { useTranslation } from 'react-i18next';
 
 export const useEdgeOperations = (
     recordHistory: () => void,
     onShowConnectMenu?: (position: { x: number; y: number }, sourceId: string, sourceHandle: string | null) => void
 ) => {
+    const { t } = useTranslation();
     const { nodes, edges, setNodes, setEdges, setSelectedNodeId, setSelectedEdgeId } = useFlowStore();
     const { screenToFlowPosition } = useReactFlow();
 
@@ -143,8 +145,14 @@ export const useEdgeOperations = (
             id,
             position,
             data: {
-                label: type === 'annotation' ? 'Note' : (shape === 'cylinder' ? 'Database' : shape === 'parallelogram' ? 'Input / Output' : 'New Node'),
-                subLabel: type === 'decision' ? 'Branch' : 'Process Step',
+                label: type === 'annotation' 
+                    ? t('nodes.note') 
+                    : (shape === 'cylinder' 
+                        ? t('nodes.database') 
+                        : shape === 'parallelogram' 
+                            ? t('nodes.inputOutput') 
+                            : t('nodes.newNode')),
+                subLabel: type === 'decision' ? t('nodes.branch') : t('nodes.processStep'),
                 icon: type === 'decision' ? 'GitBranch' : (type === 'annotation' ? 'StickyNote' : (shape === 'cylinder' ? 'Database' : 'Settings')),
                 color: type === 'annotation' ? 'yellow' : (type === 'decision' ? 'amber' : (shape === 'cylinder' ? 'emerald' : 'slate')),
                 ...(shape ? { shape } : {}),
@@ -163,7 +171,7 @@ export const useEdgeOperations = (
             })
         );
         setSelectedNodeId(id);
-    }, [setNodes, setEdges, recordHistory, setSelectedNodeId]);
+    }, [setNodes, setEdges, recordHistory, setSelectedNodeId, t]);
 
     return {
         updateEdge,
