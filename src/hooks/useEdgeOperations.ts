@@ -3,6 +3,7 @@ import { Edge, Connection, addEdge, useReactFlow } from 'reactflow';
 import { useFlowStore } from '../store';
 import { NodeData } from '@/lib/types';
 import { DEFAULT_EDGE_OPTIONS, NODE_WIDTH, NODE_HEIGHT } from '../constants';
+import { NODE_DEFAULTS } from '../theme';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '../lib/analytics';
 
@@ -144,15 +145,16 @@ export const useEdgeOperations = (
     const handleAddAndConnect = useCallback((type: string, position: { x: number; y: number }, sourceId: string, sourceHandle: string | null, shape?: NodeData['shape']) => {
         recordHistory();
         const id = `${Date.now()}`;
+        const defaultStyle = NODE_DEFAULTS[type] || NODE_DEFAULTS['process'];
         const newNode = {
             id,
             position,
             data: {
                 label: type === 'annotation' ? t('nodes.note') : (shape === 'cylinder' ? t('nodes.database') : shape === 'parallelogram' ? t('nodes.inputOutput') : t('nodes.newNode')),
                 subLabel: type === 'decision' ? t('nodes.branch') : t('nodes.processStep'),
-                icon: type === 'decision' ? 'GitBranch' : (type === 'annotation' ? 'StickyNote' : (shape === 'cylinder' ? 'Database' : 'Settings')),
-                color: type === 'annotation' ? 'yellow' : (type === 'decision' ? 'amber' : (shape === 'cylinder' ? 'emerald' : 'slate')),
-                ...(shape ? { shape } : {}),
+                icon: defaultStyle?.icon && defaultStyle.icon !== 'none' ? defaultStyle.icon : (type === 'decision' ? 'GitBranch' : (type === 'annotation' ? 'StickyNote' : (shape === 'cylinder' ? 'Database' : 'Settings'))),
+                color: defaultStyle?.color || (type === 'annotation' ? 'yellow' : (type === 'decision' ? 'amber' : (shape === 'cylinder' ? 'emerald' : 'slate'))),
+                shape: (shape || defaultStyle?.shape) as NodeData['shape'],
             },
             type,
         };

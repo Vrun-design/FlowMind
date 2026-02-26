@@ -4,6 +4,7 @@ import { NodeData } from '@/lib/types';
 import { useFlowStore } from '../store';
 import { assignSmartHandles } from '../services/smartEdgeRouting';
 import { NODE_WIDTH, NODE_HEIGHT } from '../constants';
+import { NODE_DEFAULTS } from '../theme';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '../lib/analytics';
 
@@ -72,10 +73,17 @@ export const useNodeOperations = (recordHistory: () => void) => {
     const handleAddNode = useCallback((position?: { x: number; y: number }) => {
         recordHistory();
         const id = `${Date.now()}`;
+        const defaultStyle = NODE_DEFAULTS['process'];
         const newNode: Node = {
             id,
             position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
-            data: { label: t('nodes.newNode'), subLabel: t('nodes.processStep'), color: 'slate' },
+            data: {
+                label: t('nodes.newNode'),
+                subLabel: t('nodes.processStep'),
+                color: defaultStyle?.color || 'slate',
+                shape: defaultStyle?.shape as NodeData['shape'],
+                icon: defaultStyle?.icon && defaultStyle.icon !== 'none' ? defaultStyle.icon : undefined
+            },
             type: 'process',
         };
         setNodes((nds) => nds.concat(newNode));

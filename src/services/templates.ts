@@ -1,6 +1,7 @@
 import { Node, Edge } from 'reactflow';
 import { NodeType } from '@/lib/types';
 import { createDefaultEdge } from '../constants';
+import { NODE_DEFAULTS } from '../theme';
 import {
   Layout, Database, Shield, Server, Mail, AlertTriangle, Play, FileText, CheckCircle,
   CreditCard, Globe, Cpu, Truck, Package, GitBranch, GitMerge, Terminal, Code,
@@ -19,7 +20,7 @@ export interface FlowTemplate {
 }
 
 
-export const FLOW_TEMPLATES: FlowTemplate[] = [
+const RAW_TEMPLATES: FlowTemplate[] = [
   {
     id: 'saas-onboarding',
     name: 'SaaS Subscription Flow',
@@ -149,3 +150,19 @@ export const FLOW_TEMPLATES: FlowTemplate[] = [
     ]
   }
 ];
+
+export const FLOW_TEMPLATES: FlowTemplate[] = RAW_TEMPLATES.map(template => ({
+  ...template,
+  nodes: template.nodes.map(node => {
+    const defaultStyle = NODE_DEFAULTS[node.type || 'process'] || NODE_DEFAULTS['process'];
+    return {
+      ...node,
+      data: {
+        shape: defaultStyle?.shape,
+        color: defaultStyle?.color,
+        ...(defaultStyle?.icon && defaultStyle.icon !== 'none' ? { icon: defaultStyle.icon } : {}),
+        ...node.data // Let specific node configuration override the defaults
+      }
+    };
+  })
+}));

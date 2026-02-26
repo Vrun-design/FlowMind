@@ -1,4 +1,5 @@
 import { Node, Edge } from 'reactflow';
+import { NODE_DEFAULTS } from '../theme';
 
 // --- Types ---
 
@@ -220,6 +221,8 @@ export function parseFlowMindDSL(input: string): DSLResult {
 
     // 1. Process explicit nodes
     dslNodes.forEach((n) => {
+        const defaultStyle = NODE_DEFAULTS[n.type] || NODE_DEFAULTS['process'];
+
         // Layout placeholder (will be handled by ELK layout)
         const node: Node & { parentId?: string } = {
             id: n.id,
@@ -227,6 +230,9 @@ export function parseFlowMindDSL(input: string): DSLResult {
             position: { x: 0, y: 0 },
             data: {
                 label: n.label,
+                shape: defaultStyle?.shape,
+                color: defaultStyle?.color,
+                icon: defaultStyle?.icon && defaultStyle.icon !== 'none' ? defaultStyle.icon : undefined,
                 ...n.attributes
             },
             parentNode: n.parentId,
@@ -243,12 +249,19 @@ export function parseFlowMindDSL(input: string): DSLResult {
         const targetId = labelToIdMap.get(e.targetId) || e.targetId;
 
         // If nodes parse as "A -> B" and A wasn't defined, create a default process node
+        const defaultProcessStyle = NODE_DEFAULTS['process'];
+
         if (!createdNodeIds.has(sourceId)) {
             finalNodes.push({
                 id: sourceId,
                 type: 'process',
                 position: { x: 0, y: 0 },
-                data: { label: sourceId }
+                data: {
+                    label: sourceId,
+                    shape: defaultProcessStyle?.shape,
+                    color: defaultProcessStyle?.color,
+                    icon: defaultProcessStyle?.icon && defaultProcessStyle.icon !== 'none' ? defaultProcessStyle.icon : undefined,
+                }
             });
             createdNodeIds.add(sourceId);
             labelToIdMap.set(sourceId, sourceId);
@@ -258,7 +271,12 @@ export function parseFlowMindDSL(input: string): DSLResult {
                 id: targetId,
                 type: 'process',
                 position: { x: 0, y: 0 },
-                data: { label: targetId }
+                data: {
+                    label: targetId,
+                    shape: defaultProcessStyle?.shape,
+                    color: defaultProcessStyle?.color,
+                    icon: defaultProcessStyle?.icon && defaultProcessStyle.icon !== 'none' ? defaultProcessStyle.icon : undefined,
+                }
             });
             createdNodeIds.add(targetId);
             labelToIdMap.set(targetId, targetId);
