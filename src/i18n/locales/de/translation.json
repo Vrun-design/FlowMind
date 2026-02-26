@@ -328,7 +328,9 @@
     "amazingAestheticsDesc": "Vollständig anpassbare Schriften, Farben und Formen.",
     "sunsetRed": "Sonnenuntergangs-Rot",
     "amberWarning": "Bernstein-Warnung",
-    "successGreen": "Erfolgs-Grün"
+    "successGreen": "Erfolgs-Grün",
+    "localization": "Globales Design",
+    "localizationDesc": "Verfügbar in mehreren Sprachen, darunter Englisch, Türkisch, Deutsch, Französisch, Spanisch, Chinesisch und Japanisch."
   },
   "workflows": {
     "badge": "Arbeitsabläufe",

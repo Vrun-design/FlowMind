@@ -328,7 +328,9 @@
     "amazingAestheticsDesc": "Polices, couleurs et formes entièrement personnalisables.",
     "sunsetRed": "Rouge coucher de soleil",
     "amberWarning": "Avertissement ambre",
-    "successGreen": "Vert succès"
+    "successGreen": "Vert succès",
+    "localization": "Conception globale",
+    "localizationDesc": "Disponible en plusieurs langues, dont l'anglais, le turc, l'allemand, le français, l'espagnol, le chinois et le japonais."
   },
   "workflows": {
     "badge": "Flux de travail",

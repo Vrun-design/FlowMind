@@ -33,7 +33,7 @@ export const SnapshotsPanel: React.FC<SnapshotsPanelProps> = ({
     };
 
     return (
-        <div className="absolute top-20 right-6 w-80 bg-white/95 backdrop-blur-md rounded-[var(--radius-lg)] shadow-2xl border border-white/20 ring-1 ring-black/5 flex flex-col overflow-hidden max-h-[calc(100vh-140px)] z-50 animate-in slide-in-from-right-10 duration-200">
+        <div className="absolute top-20 right-6 w-80 bg-white/95 backdrop-blur-md rounded-[var(--radius-lg)] shadow-2xl border border-white/20 ring-1 ring-black/5 flex flex-col overflow-hidden max-h-[calc(100vh-140px)] z-40 animate-in slide-in-from-right-10 duration-200">
             <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/80">
                 <h3 className="font-semibold text-slate-800 flex items-center gap-2">
                     <Clock className="w-4 h-4 text-[var(--brand-primary)]" />

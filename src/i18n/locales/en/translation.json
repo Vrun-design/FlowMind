@@ -365,7 +365,9 @@
     "amazingAestheticsDesc": "Break free from \"Enterprise Beige\". Fully customizable fonts, colors, and shapes. Create diagrams that look like art, not documentation.",
     "sunsetRed": "Sunset Red",
     "amberWarning": "Amber Warning",
-    "successGreen": "Success Green"
+    "successGreen": "Success Green",
+    "localization": "Global by Design",
+    "localizationDesc": "Available in multiple languages including English, Turkish, German, French, Spanish, Chinese, and Japanese."
   },
   "workflows": {
     "badge": "Workflows",

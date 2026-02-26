@@ -328,7 +328,9 @@
     "amazingAestheticsDesc": "完全可定制的字体、颜色和形状。",
     "sunsetRed": "日落红",
     "amberWarning": "琥珀警告",
-    "successGreen": "成功绿"
+    "successGreen": "成功绿",
+    "localization": "全球化设计",
+    "localizationDesc": "支持多种语言，包括英语、土耳其语、德语、法语、西班牙语、中文和日语。"
   },
   "workflows": {
     "badge": "工作流",

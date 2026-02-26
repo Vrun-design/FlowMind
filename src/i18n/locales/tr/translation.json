@@ -370,7 +370,9 @@
     "amazingAestheticsDesc": "\"Kurumsal Bej\"den kurtulun. Tamamen özelleştirilebilir yazı tipleri, renkler ve şekiller. Dokümantasyon değil, sanat gibi görünen diyagramlar oluşturun.",
     "sunsetRed": "Gün Batımı Kırmızısı",
     "amberWarning": "Kehribar Uyarısı",
-    "successGreen": "Başarı Yeşili"
+    "successGreen": "Başarı Yeşili",
+    "localization": "Küresel Tasarım",
+    "localizationDesc": "İngilizce, Türkçe, Almanca, Fransızca, İspanyolca, Çince ve Japonca dahil olmak üzere birden fazla dilde mevcuttur."
   },
   "workflows": {
     "badge": "İş Akışları",

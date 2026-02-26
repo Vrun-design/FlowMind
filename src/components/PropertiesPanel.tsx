@@ -32,13 +32,13 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     onClose
 }) => {
     const { t } = useTranslation();
-    
+
     if (!selectedNode && !selectedEdge) return null;
 
     const isAnnotation = selectedNode?.type === 'annotation';
 
     return (
-        <div className="absolute top-20 right-6 w-80 bg-[var(--brand-surface)]/95 backdrop-blur-md rounded-[var(--radius-lg)] shadow-2xl border border-white/20 ring-1 ring-black/5 flex flex-col overflow-hidden max-h-[calc(100vh-140px)] z-50 animate-in slide-in-from-right-10 duration-200">
+        <div className="absolute top-20 right-6 w-80 bg-[var(--brand-surface)]/95 backdrop-blur-md rounded-[var(--radius-lg)] shadow-2xl border border-white/20 ring-1 ring-black/5 flex flex-col overflow-hidden max-h-[calc(100vh-140px)] z-40 animate-in slide-in-from-right-10 duration-200">
             <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-[var(--brand-surface)]">
                 <h3 className="font-semibold text-[var(--brand-text)] flex items-center gap-2">
                     {selectedNode ? (

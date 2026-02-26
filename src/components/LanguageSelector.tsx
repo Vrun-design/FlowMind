@@ -67,7 +67,7 @@ function LanguageDropdown({
               }`}
           >
             <div className="flex items-center gap-2">
-              <img src={lang.flag} alt={lang.name} className="w-5 h-3.5 object-cover rounded-[2px]" />
+              <img src={lang.flag} alt={lang.name} className="w-5 h-3.5 object-cover rounded-[2px] border border-slate-200 shadow-sm" />
               <span className="flex items-center gap-2">
                 {lang.nativeName}
                 {lang.scope === 'ui' && (
@@ -123,7 +123,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           className="flex items-center justify-between w-full px-3 py-2 rounded-lg border border-slate-200 transition-all text-sm font-medium bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300"
         >
           <div className="flex items-center gap-2">
-            <img src={currentLanguage.flag} alt={currentLanguage.name} className="w-5 h-3.5 object-cover rounded-[2px]" />
+            <img src={currentLanguage.flag} alt={currentLanguage.name} className="w-5 h-3.5 object-cover rounded-[2px] border border-slate-200 shadow-sm" />
             <span>{currentLanguage.nativeName}</span>
           </div>
           <ChevronDown className={`w-4 h-4 ${chevronClass}`} />
@@ -148,7 +148,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           className="flex items-center gap-1.5 px-2 py-1.5 rounded-md transition-all text-sm font-medium bg-transparent text-slate-600 hover:bg-slate-100"
           title="Change Language"
         >
-          <img src={currentLanguage.flag} alt={currentLanguage.name} className="w-5 h-3.5 object-cover rounded-[2px]" />
+          <img src={currentLanguage.flag} alt={currentLanguage.name} className="w-5 h-3.5 object-cover rounded-[2px] border border-slate-200 shadow-sm" />
           <ChevronDown className={`w-3 h-3 ${chevronClass}`} />
         </button>
         <LanguageDropdown
@@ -173,7 +173,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       >
         <Globe className="w-4 h-4" />
         <span className="hidden sm:inline">
-          <img src={currentLanguage.flag} alt={currentLanguage.name} className="inline w-5 h-3.5 object-cover rounded-[2px] mr-1.5" />
+          <img src={currentLanguage.flag} alt={currentLanguage.name} className="inline w-5 h-3.5 object-cover rounded-[2px] border border-slate-200 shadow-sm mr-1.5" />
           {currentLanguage.nativeName}
         </span>
         <ChevronDown className={`w-3.5 h-3.5 ${chevronClass}`} />

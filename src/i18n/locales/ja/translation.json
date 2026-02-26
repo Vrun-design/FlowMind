@@ -328,7 +328,9 @@
     "amazingAestheticsDesc": "完全にカスタマイズ可能なフォント、色、形。",
     "sunsetRed": "サンセットレッド",
     "amberWarning": "アンバー警告",
-    "successGreen": "サクセスグリーン"
+    "successGreen": "サクセスグリーン",
+    "localization": "グローバルデザイン",
+    "localizationDesc": "英語、トルコ語、ドイツ語、フランス語、スペイン語、中国語、日本語など、複数の言語で利用できます。"
   },
   "workflows": {
     "badge": "ワークフロー",

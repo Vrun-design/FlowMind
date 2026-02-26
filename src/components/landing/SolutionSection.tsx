@@ -2,6 +2,19 @@ import React from 'react';
 import { Sparkles, FileCode, Palette, ShieldCheck, HardDrive, Layers, Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+function getFlagCode(country: string): string {
+    switch (country) {
+        case 'UK':
+            return 'gb';
+        case 'CN':
+            return 'cn';
+        case 'JP':
+            return 'jp';
+        default:
+            return country.toLowerCase();
+    }
+}
+
 export function SolutionSection(): React.ReactElement {
     const { t } = useTranslation();
     return (
@@ -133,8 +146,8 @@ export function SolutionSection(): React.ReactElement {
                         </div>
                     </div>
 
-                    {/* Card 3: Local First (Span 6) */}
-                    <div className="md:col-span-6 bg-white rounded-[2.5rem] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-brand-primary/20 transition-all relative overflow-hidden min-h-[320px]">
+                    {/* Card 3: Local First (Span 4) */}
+                    <div className="md:col-span-4 bg-white rounded-[2.5rem] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-brand-primary/20 transition-all relative overflow-hidden min-h-[320px]">
                         <div className="absolute right-0 top-0 p-12 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-110 duration-700 pointer-events-none">
                             <ShieldCheck className="w-64 h-64" />
                         </div>
@@ -161,8 +174,8 @@ export function SolutionSection(): React.ReactElement {
                         </div>
                     </div>
 
-                    {/* Card 4: Aesthetics (Span 6) */}
-                    <div className="md:col-span-6 bg-gradient-to-br from-gray-50 via-white to-purple-50/30 rounded-[2.5rem] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-purple-200 transition-all relative overflow-hidden min-h-[320px]">
+                    {/* Card 4: Aesthetics (Span 4) */}
+                    <div className="md:col-span-4 bg-gradient-to-br from-gray-50 via-white to-purple-50/30 rounded-[2.5rem] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-purple-200 transition-all relative overflow-hidden min-h-[320px]">
                         {/* Decorative Background */}
                         <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] opacity-30"></div>
                         <div className="absolute -right-20 -top-20 w-64 h-64 bg-gradient-to-br from-brand-blue/20 to-purple-500/20 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
@@ -207,6 +220,32 @@ export function SolutionSection(): React.ReactElement {
                                     font-family: 'Inter', sans-serif;
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Card 5: Localization (Span 4) */}
+                    <div className="md:col-span-4 bg-white rounded-[2.5rem] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-green-200 transition-all relative overflow-hidden min-h-[320px]">
+                        <div className="absolute right-0 bottom-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:-translate-y-2 duration-700 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-globe"><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></svg>
+                        </div>
+
+                        <div className="relative z-10 max-w-md">
+                            <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 mb-6 group-hover:scale-110 transition-transform border border-green-100/50">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-globe"><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></svg>
+                            </div>
+                            <h3 className="text-2xl font-bold text-brand-dark mb-3">{t('solution.localization')}</h3>
+                            <p className="text-brand-secondary text-lg leading-relaxed">
+                                {t('solution.localizationDesc')}
+                            </p>
+                        </div>
+
+                        {/* Visual: Language Flags */}
+                        <div className="relative z-10 mt-8 flex flex-wrap gap-3">
+                            {['US', 'TR', 'DE', 'FR', 'ES', 'CN', 'JP'].map((country) => (
+                                <div key={country} className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center shadow-sm overflow-hidden group-hover:-translate-y-1 transition-transform hover:!scale-110 duration-300" style={{ transitionDelay: `${Math.random() * 150}ms` }}>
+                                    <img src={`https://flagcdn.com/w40/${getFlagCode(country)}.png`} alt={`${country} flag`} className="w-full h-full object-cover" />
+                                </div>
+                            ))}
                         </div>
                     </div>
 

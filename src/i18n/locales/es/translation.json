@@ -328,7 +328,9 @@
     "amazingAestheticsDesc": "Fuentes, colores y formas completamente personalizables.",
     "sunsetRed": "Rojo atardecer",
     "amberWarning": "Advertencia ámbar",
-    "successGreen": "Verde éxito"
+    "successGreen": "Verde éxito",
+    "localization": "Diseño global",
+    "localizationDesc": "Disponible en varios idiomas, incluyendo inglés, turco, alemán, francés, español, chino y japonés."
   },
   "workflows": {
     "badge": "Flujos de trabajo",
