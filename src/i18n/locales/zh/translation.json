@@ -19,6 +19,11 @@
     "selectAll": "全选",
     "duplicate": "复制",
     "duplicateDrag": "复制并拖拽",
+    "mobileGate": {
+      "title": "专为更大屏幕设计",
+      "description": "为获得最佳体验，OpenFlowKit 的图表编辑器需要桌面端或平板尺寸的屏幕。请在更大的设备上打开。",
+      "backToHome": "返回首页"
+    },
     "copy": "复制",
     "paste": "粘贴",
     "zoomIn": "放大",

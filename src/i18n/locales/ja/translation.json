@@ -19,6 +19,11 @@
     "selectAll": "すべて選択",
     "duplicate": "複製",
     "duplicateDrag": "複製してドラッグ",
+    "mobileGate": {
+      "title": "より大きな画面向けに設計されています",
+      "description": "最適な体験のため、OpenFlowKit の図表エディターはデスクトップまたはタブレットサイズの画面が必要です。より大きなデバイスで開いてください。",
+      "backToHome": "ホームに戻る"
+    },
     "copy": "コピー",
     "paste": "貼り付け",
     "zoomIn": "ズームイン",

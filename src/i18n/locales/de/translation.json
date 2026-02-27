@@ -124,6 +124,11 @@
       "pricing": "Preise",
       "viewGithub": "Auf GitHub ansehen"
     },
+  "mobileGate": {
+    "title": "Für größere Bildschirme entwickelt",
+    "description": "Für das beste Erlebnis benötigt der Diagramm-Editor von OpenFlowKit einen Desktop- oder Tablet-Bildschirm. Bitte öffnen Sie die App auf einem größeren Gerät.",
+    "backToHome": "Zur Startseite"
+  },
     "hero": {
       "title": "Schöne Flussdiagramme,",
       "subtitle": "Für Entwickler gebaut",

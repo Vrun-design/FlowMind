@@ -215,6 +215,11 @@
     "createFirstFlow": "Create your first flow",
     "startFromScratch": "Start from scratch or import an existing diagram."
   },
+  "mobileGate": {
+    "title": "Designed for larger screens",
+    "description": "OpenFlowKit's diagram editor needs a desktop or tablet-sized screen for the best experience. Please open this on a larger device.",
+    "backToHome": "Back to Home"
+  },
   "settings": {
     "title": "Settings",
     "general": "General",

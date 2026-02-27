@@ -124,6 +124,11 @@
       "pricing": "Tarifs",
       "viewGithub": "Voir sur GitHub"
     },
+  "mobileGate": {
+    "title": "Conçu pour les écrans plus grands",
+    "description": "Pour une expérience optimale, l'éditeur de diagrammes d'OpenFlowKit nécessite un écran d'ordinateur ou de tablette. Veuillez l'ouvrir sur un appareil plus grand.",
+    "backToHome": "Retour à l'accueil"
+  },
     "hero": {
       "title": "De beaux diagrammes,",
       "subtitle": "Conçus pour les développeurs",

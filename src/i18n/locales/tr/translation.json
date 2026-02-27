@@ -219,6 +219,11 @@
     "createFirstFlow": "İlk akışınızı oluşturun",
     "startFromScratch": "Sıfırdan başlayın veya mevcut bir diyagramı içe aktarın."
   },
+  "mobileGate": {
+    "title": "Daha büyük ekranlar için tasarlandı",
+    "description": "En iyi deneyim için OpenFlowKit'in diyagram editörünü masaüstü veya tablet boyutunda bir ekranda kullanın. Lütfen bu sayfayı daha büyük bir cihazda açın.",
+    "backToHome": "Ana Sayfaya Dön"
+  },
   "settings": {
     "title": "Ayarlar",
     "general": "Genel",

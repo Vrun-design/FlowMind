@@ -16,6 +16,7 @@ import { DocsPage } from './components/docs/DocsPage';
 
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal';
 import { initAnalytics } from './lib/analytics';
+import { useTranslation } from 'react-i18next';
 
 // Import i18n configuration
 import './i18n/config';
@@ -91,6 +92,7 @@ function HomePageRoute(): React.JSX.Element {
 // Mobile gate — shows a friendly message on screens < md (768px)
 function MobileGate({ children }: { children: React.ReactNode }): React.JSX.Element {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -105,11 +107,11 @@ function MobileGate({ children }: { children: React.ReactNode }): React.JSX.Elem
         </div>
 
         <h2 className="text-2xl font-bold text-brand-dark mb-3 tracking-tight">
-          Designed for larger screens
+          {t('mobileGate.title')}
         </h2>
 
         <p className="text-brand-secondary text-base leading-relaxed max-w-sm mb-10">
-          OpenFlowKit's diagram editor needs a desktop or tablet-sized screen for the best experience. Please open this on a larger device.
+          {t('mobileGate.description')}
         </p>
 
         <button
@@ -117,7 +119,7 @@ function MobileGate({ children }: { children: React.ReactNode }): React.JSX.Elem
           className="inline-flex items-center gap-2 text-sm font-medium text-brand-primary hover:text-brand-primary/80 transition-colors px-5 py-2.5 rounded-full border border-brand-primary/20 hover:bg-brand-primary/5"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Home
+          {t('mobileGate.backToHome')}
         </button>
       </div>
 
