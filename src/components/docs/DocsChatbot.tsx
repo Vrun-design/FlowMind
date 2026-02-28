@@ -196,7 +196,7 @@ export const DocsChatbot: React.FC = () => {
                     <div className="flex flex-col gap-1 items-start min-w-0">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">{brandConfig.appName} {t('chatbot.aiName')}</span>
                         <div className="px-5 py-4 rounded-2xl text-sm shadow-sm bg-white border border-slate-100 rounded-tl-sm text-slate-700">
-                            <p>{t('chatbot.welcomeMessage', { appName: brandConfig.appName })}</p>
+                            <p>{t('chatbot.welcomeMessage').replace('{appName}', brandConfig.appName)}</p>
                         </div>
                     </div>
                 </div>

@@ -19,6 +19,11 @@
     "selectAll": "全选",
     "duplicate": "复制",
     "duplicateDrag": "复制并拖拽",
+    "mobileGate": {
+      "title": "专为更大屏幕设计",
+      "description": "为获得最佳体验，OpenFlowKit 的图表编辑器需要桌面端或平板尺寸的屏幕。请在更大的设备上打开。",
+      "backToHome": "返回首页"
+    },
     "copy": "复制",
     "paste": "粘贴",
     "zoomIn": "放大",
@@ -220,9 +225,6 @@
   },
   "ai": {
     "generate": "使用 AI 生成",
-    "provider": "AI 提供商",
-    "model": "模型",
-    "apiKey": "API 密钥",
     "placeholder": "描述你的流程图..."
   },
   "playback": {
@@ -545,7 +547,14 @@
       "keySetupNote": "设置说明",
       "enterApiKey": "输入 API 密钥",
       "selectModel": "选择模型",
+      "goToProvider": "前往 {provider}",
+      "howToGetKey": "如何获取 API 密钥",
+      "privacyTitle":"隐私与加密",
+      "promptingGuide": "提示指南",
+      "pasteKeyStep": "粘贴到上方字段 — 永不与我们共享",
       "customEndpoint": "自定义 URL",
+      "customEndpointTitle": "什么是自定义端点？",
+      "customModelHint": "输入端点的确切模型 ID",
       "providers": {
         "gemini": {
           "hint": "Google",

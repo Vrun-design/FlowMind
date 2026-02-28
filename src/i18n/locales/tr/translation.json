@@ -219,6 +219,11 @@
     "createFirstFlow": "İlk akışınızı oluşturun",
     "startFromScratch": "Sıfırdan başlayın veya mevcut bir diyagramı içe aktarın."
   },
+  "mobileGate": {
+    "title": "Daha büyük ekranlar için tasarlandı",
+    "description": "En iyi deneyim için OpenFlowKit'in diyagram editörünü masaüstü veya tablet boyutunda bir ekranda kullanın. Lütfen bu sayfayı daha büyük bir cihazda açın.",
+    "backToHome": "Ana Sayfaya Dön"
+  },
   "settings": {
     "title": "Ayarlar",
     "general": "Genel",
@@ -254,17 +259,8 @@
   },
   "ai": {
     "generate": "Yapay Zeka ile Oluştur",
-    "provider": "Yapay Zeka Sağlayıcı",
-    "model": "Model",
-    "apiKey": "API Anahtarı",
     "placeholder": "Akış şemanızı açıklayın...",
-    "settingsSubtitle": "Tercih ettiğiniz yapay zeka sağlayıcısını, modeli ve API anahtarını aşağıdan yapılandırın.",
-    "howToGetKey": "API anahtarı nasıl alınır",
-    "openConsole": "Konsolu Aç",
-    "pasteKeyStep": "Yukarıdaki alana yapıştırın — asla bizimle paylaşılmaz",
-    "customEndpointTitle": "Özel endpoint nedir?",
-    "customModelHint": "Endpoint'iniz için tam model kimliğini girin",
-    "privacyTitle": "Gizlilik ve Şifreleme"
+    "settingsSubtitle": "Tercih ettiğiniz yapay zeka sağlayıcısını, modeli ve API anahtarını aşağıdan yapılandırın."
   },
   "playback": {
     "title": "Oynatma",
@@ -587,7 +583,14 @@
       "keySetupNote": "Anahtar Kurulum Notu",
       "enterApiKey": "API anahtarınızı girin",
       "selectModel": "Bir model seçin",
+      "goToProvider": "{provider} adresine git",
+      "howToGetKey": "API anahtarınızı nasıl alırsınız",
+      "privacyTitle":"Gizlilik ve Şifreleme",
+      "promptingGuide": "Prompting Kılavuzu",
+      "pasteKeyStep": "Yukarıdaki alana yapıştırın — asla bizimle paylaşılmaz",
       "customEndpoint": "Özel Taban URL (örn: https://api.example.com)",
+      "customEndpointTitle": "Özel endpoint nedir?",
+      "customModelHint": "Endpoint'iniz için tam model kimliğini girin",
       "providers": {
         "gemini": {
           "hint": "Google · En iyi ücretsiz katman · Çok modlu",
