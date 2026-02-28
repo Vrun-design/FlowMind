@@ -255,17 +255,8 @@
   },
   "ai": {
     "generate": "Generate with AI",
-    "provider": "AI Provider",
-    "model": "Model",
-    "apiKey": "API Key",
     "placeholder": "Describe your flowchart...",
-    "settingsSubtitle": "Configure your preferred AI provider, model, and API key below.",
-    "howToGetKey": "How to get your API key",
-    "openConsole": "Open Console",
-    "pasteKeyStep": "Paste it in the field above — never shared with us",
-    "customEndpointTitle": "What is a custom endpoint?",
-    "customModelHint": "Enter the exact model ID for your endpoint",
-    "privacyTitle": "Privacy & Encryption"
+    "settingsSubtitle": "Configure your preferred AI provider, model, and API key below."
   },
   "playback": {
     "title": "Playback",
@@ -587,7 +578,14 @@
       "keySetupNote": "Key Setup Note",
       "enterApiKey": "Enter your API key",
       "selectModel": "Select a model",
+      "goToProvider": "Go to {provider}",
+      "howToGetKey": "How to get your API key",
+      "privacyTitle":"Privacy & Encryption",
+      "promptingGuide": "Prompting Guide",
+      "pasteKeyStep": "Paste into the field above — never shared with us",
       "customEndpoint": "Custom Base URL (e.g., https://api.example.com)",
+      "customEndpointTitle": "What is a custom endpoint?",
+      "customModelHint": "Enter the exact model ID for your endpoint",
       "providers": {
         "gemini": {
           "hint": "Google · Best free tier · Multimodal",

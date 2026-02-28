@@ -225,9 +225,6 @@
   },
   "ai": {
     "generate": "AIで生成",
-    "provider": "AIプロバイダー",
-    "model": "モデル",
-    "apiKey": "APIキー",
     "placeholder": "フローチャートを説明してください..."
   },
   "playback": {
@@ -550,7 +547,14 @@
       "keySetupNote": "セットアップの注意点",
       "enterApiKey": "APIキーを入力",
       "selectModel": "モデルを選択",
+      "goToProvider": "{provider} に移動",
+      "howToGetKey": "APIキーの取得方法",
+      "privacyTitle":"プライバシーと暗号化",
+      "promptingGuide": "プロンプトガイド",
+      "pasteKeyStep": "上記のフィールドに貼り付け — 当社と共有されることはありません",
       "customEndpoint": "カスタムURL",
+      "customEndpointTitle": "カスタムエンドポイントとは？",
+      "customModelHint": "エンドポイントの正確なモデルIDを入力",
       "providers": {
         "gemini": {
           "hint": "Google",

@@ -225,9 +225,6 @@
   },
   "ai": {
     "generate": "Générer avec l'IA",
-    "provider": "Fournisseur IA",
-    "model": "Modèle",
-    "apiKey": "Clé API",
     "placeholder": "Décrivez votre diagramme..."
   },
   "playback": {
@@ -550,7 +547,14 @@
       "keySetupNote": "Note de configuration",
       "enterApiKey": "Entrez votre clé API",
       "selectModel": "Sélectionner un modèle",
+      "goToProvider": "Aller à {provider}",
+      "howToGetKey": "Comment obtenir votre clé API",
+      "privacyTitle":"Confidentialité & Chiffrement",
+      "promptingGuide": "Guide de prompts",
+      "pasteKeyStep": "Collez dans le champ ci-dessus — jamais partagé avec nous.",
       "customEndpoint": "URL de base personnalisée",
+      "customEndpointTitle": "Qu'est-ce qu'un endpoint personnalisé ?",
+      "customModelHint": "Entrez l'ID exact du modèle pour votre endpoint",
       "providers": {
         "gemini": {
           "hint": "Google · Meilleur niveau gratuit",

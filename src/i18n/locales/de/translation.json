@@ -225,9 +225,6 @@
   },
   "ai": {
     "generate": "Mit KI generieren",
-    "provider": "KI-Anbieter",
-    "model": "Modell",
-    "apiKey": "API-Schlüssel",
     "placeholder": "Flussdiagramm beschreiben..."
   },
   "playback": {
@@ -550,7 +547,14 @@
       "keySetupNote": "Schlüssel-Setup-Hinweis",
       "enterApiKey": "API-Schlüssel eingeben",
       "selectModel": "Modell auswählen",
+      "goToProvider": "Gehe zu {provider}",
+      "howToGetKey": "Wie Sie Ihren API-Schlüssel erhalten",
+      "privacyTitle":"Datenschutz & Verschlüsselung",
+      "promptingGuide": "Prompting-Leitfaden",
+      "pasteKeyStep": "In das obige Feld einfügen — wird niemals mit uns geteilt",
       "customEndpoint": "Benutzerdefinierte Basis-URL",
+      "customEndpointTitle": "Was ist ein benutzerdefinierter Endpunkt?",
+      "customModelHint": "Geben Sie die genaue Modell-ID für Ihren Endpunkt ein",
       "providers": {
         "gemini": {
           "hint": "Google · Bestes kostenloses Kontingent",

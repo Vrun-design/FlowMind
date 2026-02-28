@@ -5,6 +5,7 @@ import { Label } from '../ui/Label';
 import { Select } from '../ui/Select';
 import { ExternalLink, Check, Shield, Lock } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
+import i18n from '@/i18n/config';
 
 // Provider metadata
 interface ProviderMeta {
@@ -223,6 +224,7 @@ export function AISettings(): React.ReactElement {
     const { aiSettings, setAISettings } = useFlowStore();
     const { t } = useTranslation();
 
+    const currentLanguage = i18n.language;
     const currentProvider = aiSettings.provider ?? 'gemini';
     const providerMeta = PROVIDERS.find(p => p.id === currentProvider) ?? PROVIDERS[0];
     const models = PROVIDER_MODELS[currentProvider] ?? [];
@@ -239,8 +241,8 @@ export function AISettings(): React.ReactElement {
             <div className="space-y-1">
                 <div className="flex items-center justify-between">
                     <h3 className="text-base font-semibold text-slate-800">{t('settingsModal.flowpilotConfigurations')}</h3>
-                    <a href="/docs/en/prompting-agents" target="_blank" rel="noopener noreferrer" className="text-[10px] font-semibold text-[var(--brand-primary)] hover:underline flex items-center gap-1">
-                        Prompting Guide <ExternalLink className="w-3 h-3" />
+                    <a href={`#/docs/${currentLanguage}/prompting-agents`} target="_blank" rel="noopener noreferrer" className="text-[10px] font-semibold text-[var(--brand-primary)] hover:underline flex items-center gap-1">
+                        {t('settingsModal.ai.promptingGuide')} <ExternalLink className="w-3 h-3" />
                     </a>
                 </div>
                 <p className="text-xs text-slate-500">{t('ai.settingsSubtitle')}</p>
@@ -248,7 +250,7 @@ export function AISettings(): React.ReactElement {
 
             {/* Provider Section - Logo Dock */}
             <div className="space-y-4">
-                <Label>{t('ai.provider')}</Label>
+                <Label>{t('settingsModal.ai.provider')}</Label>
                 {/* Fixed-size containers — inner icon scales avoids layout jerk */}
                 <div className="flex items-center gap-2 overflow-x-auto px-1 py-3 custom-scrollbar">
                     {PROVIDERS.map(p => {
@@ -353,11 +355,11 @@ export function AISettings(): React.ReactElement {
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--brand-primary)] hover:underline"
                                 >
-                                    {t('settingsModal.ai.openConsole', { console: providerMeta.consoleName })} <ExternalLink className="w-3 h-3" />
+                                    {t('settingsModal.ai.openConsole').replace("{console}", providerMeta.consoleName)} <ExternalLink className="w-3 h-3" />
                                 </a>
                             </div>
                             <div className="px-3 py-2.5 space-y-2">
-                                <Step n={1} text={`Go to ${providerMeta.consoleName}`} />
+                                <Step n={1} text={t('settingsModal.ai.goToProvider').replace("{provider}", providerMeta.consoleName)} />
                                 <Step n={2} text={t(`settingsModal.ai.providers.${currentProvider}.keySetupNote`)} />
                                 <Step n={3} text={t('settingsModal.ai.pasteKeyStep')} />
                             </div>

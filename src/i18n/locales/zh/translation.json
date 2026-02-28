@@ -225,9 +225,6 @@
   },
   "ai": {
     "generate": "使用 AI 生成",
-    "provider": "AI 提供商",
-    "model": "模型",
-    "apiKey": "API 密钥",
     "placeholder": "描述你的流程图..."
   },
   "playback": {
@@ -550,7 +547,14 @@
       "keySetupNote": "设置说明",
       "enterApiKey": "输入 API 密钥",
       "selectModel": "选择模型",
+      "goToProvider": "前往 {provider}",
+      "howToGetKey": "如何获取 API 密钥",
+      "privacyTitle":"隐私与加密",
+      "promptingGuide": "提示指南",
+      "pasteKeyStep": "粘贴到上方字段 — 永不与我们共享",
       "customEndpoint": "自定义 URL",
+      "customEndpointTitle": "什么是自定义端点？",
+      "customModelHint": "输入端点的确切模型 ID",
       "providers": {
         "gemini": {
           "hint": "Google",
