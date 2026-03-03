@@ -7,6 +7,7 @@ import { createDefaultEdge } from '../constants';
 import { useFlowStore } from '../store';
 import { useToast } from '../components/ui/ToastContext';
 import { trackEvent } from '../lib/analytics';
+import { createId } from '../lib/id';
 
 export const useAIGeneration = (
   recordHistory: () => void
@@ -137,7 +138,7 @@ export const useAIGeneration = (
             strokeWidth: globalEdgeOptions.strokeWidth,
             ...(globalEdgeOptions.color ? { stroke: globalEdgeOptions.color } : {})
           },
-          id: `e-${sourceId}-${targetId}-${Date.now()}` // Ensure unique edge ID
+          id: createId(`e-${sourceId}-${targetId}`)
         };
       }).filter(Boolean) as Edge[];
 

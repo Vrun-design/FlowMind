@@ -1,27 +1,7 @@
 import { getSystemInstruction, ChatMessage, generateDiagramFromChat as generateDiagramFromChatGemini, chatWithDocsGemini } from './geminiService';
+import { DEFAULT_MODELS, PROVIDER_BASE_URLS } from '@/config/aiProviders';
 
 export type AIProvider = 'gemini' | 'openai' | 'claude' | 'groq' | 'nvidia' | 'cerebras' | 'mistral' | 'openrouter' | 'custom';
-
-const PROVIDER_BASE_URLS: Record<string, string> = {
-    openai: 'https://api.openai.com/v1',
-    groq: 'https://api.groq.com/openai/v1',
-    nvidia: 'https://integrate.api.nvidia.com/v1',
-    cerebras: 'https://api.cerebras.ai/v1',
-    mistral: 'https://api.mistral.ai/v1',
-    openrouter: 'https://openrouter.ai/api/v1',
-};
-
-const DEFAULT_MODELS: Record<string, string> = {
-    gemini: 'gemini-2.5-flash-lite',
-    openai: 'gpt-5-mini',
-    claude: 'claude-sonnet-4-6',
-    groq: 'meta-llama/llama-4-scout-17b-16e-instruct',
-    nvidia: 'meta/llama-4-scout-17b-16e-instruct',
-    cerebras: 'gpt-oss-120b',
-    mistral: 'mistral-medium-latest',
-    openrouter: 'google/gemini-2.5-flash',
-    custom: 'gpt-4o',
-};
 
 function getEnvApiKey(provider: AIProvider): string | undefined {
     // Vite uses import.meta.env
@@ -146,7 +126,7 @@ export async function generateDiagramFromChat(
     }
 
     // All remaining providers (OpenAI, Groq, NVIDIA, Cerebras, Mistral, Custom) share the OpenAI wire format
-    let baseUrl = PROVIDER_BASE_URLS[provider];
+    let baseUrl = PROVIDER_BASE_URLS[provider as keyof typeof PROVIDER_BASE_URLS];
     if (provider === 'custom') {
         baseUrl = customBaseUrlSetting || import.meta.env.VITE_CUSTOM_AI_BASE_URL || PROVIDER_BASE_URLS.openai;
     }
@@ -159,7 +139,7 @@ export async function generateDiagramFromChat(
         { role: 'user', content: userPrompt },
     ];
 
-    return callOpenAICompatible(baseUrl, apiKey, modelId || DEFAULT_MODELS[provider] || 'gpt-4o', messages);
+    return callOpenAICompatible(baseUrl, apiKey, modelId || DEFAULT_MODELS[provider], messages);
 }
 
 // --- Chat with Docs Function ---
@@ -229,7 +209,7 @@ ${docsContext}
         return text;
     }
 
-    let baseUrl = PROVIDER_BASE_URLS[provider];
+    let baseUrl = PROVIDER_BASE_URLS[provider as keyof typeof PROVIDER_BASE_URLS];
     if (provider === 'custom') {
         baseUrl = customBaseUrlSetting || import.meta.env.VITE_CUSTOM_AI_BASE_URL || PROVIDER_BASE_URLS.openai;
     }
@@ -242,7 +222,7 @@ ${docsContext}
         { role: 'user', content: newMessage },
     ];
 
-    return callOpenAICompatible(baseUrl, apiKey, modelId || DEFAULT_MODELS[provider] || 'gpt-4o', messages);
+    return callOpenAICompatible(baseUrl, apiKey, modelId || DEFAULT_MODELS[provider], messages);
 }
 
 // Re-export for compatibility

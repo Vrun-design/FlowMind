@@ -4,6 +4,7 @@ import { Palette, Check, Plus, ArrowLeft, MoreHorizontal, Copy, Trash2, Edit2, D
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
 import { DesignSystemEditor } from './DesignSystemEditor';
+import { createId } from '@/lib/id';
 
 interface DesignSystemViewProps {
     onClose: () => void;
@@ -39,7 +40,7 @@ export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, han
     const handleCreateNew = () => {
         // Find default or use static default
         const base = designSystems.find(ds => ds.isDefault) || designSystems[0];
-        const newId = `ds-${Date.now()}`;
+        const newId = createId('ds');
         addDesignSystem({
             ...base,
             id: newId,
@@ -152,7 +153,7 @@ export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, han
                                             try {
                                                 const ds = JSON.parse(ev.target?.result as string);
                                                 if (ds.id && ds.colors && ds.components) {
-                                                    addDesignSystem({ ...ds, id: `imported-${Date.now()}`, name: `${ds.name} (Imported)`, isDefault: false });
+                                                    addDesignSystem({ ...ds, id: createId('imported'), name: `${ds.name} (Imported)`, isDefault: false });
                                                 }
                                             } catch (err) {
                                                 console.error('Invalid Design System JSON');

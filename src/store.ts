@@ -14,6 +14,7 @@ import { FlowNode, FlowEdge, FlowTab, FlowHistoryState, GlobalEdgeOptions, Desig
 import { INITIAL_NODES, INITIAL_EDGES, createDefaultEdge } from './constants';
 import { NODE_DEFAULTS } from './theme';
 import { assignSmartHandles } from './services/smartEdgeRouting';
+import { createId } from './lib/id';
 
 // --- Default Design System ---
 export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
@@ -361,7 +362,7 @@ export const useFlowStore = create<FlowState>()(
                     t.id === activeTabId ? { ...t, nodes: get().nodes, edges: get().edges } : t
                 );
 
-                const newTabId = `tab-${Date.now()}`;
+                const newTabId = createId('tab');
                 const newTab: FlowTab = {
                     id: newTabId,
                     name: 'New Flow',
@@ -429,7 +430,7 @@ export const useFlowStore = create<FlowState>()(
                 set((state) => {
                     const original = state.designSystems.find(ds => ds.id === id);
                     if (!original) return {};
-                    const newId = `ds-${Date.now()}`;
+                    const newId = createId('ds');
                     const newSystem: DesignSystem = {
                         ...original,
                         id: newId,
@@ -541,7 +542,7 @@ export const useFlowStore = create<FlowState>()(
             }),
 
             addBrandKit: (name: string, base?: BrandConfig) => set((state) => {
-                const newId = `brand-${Date.now()}`;
+                const newId = createId('brand');
                 const baseConfig = base || state.brandConfig;
                 const newKit: BrandKit = {
                     ...baseConfig,

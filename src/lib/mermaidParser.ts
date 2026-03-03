@@ -1,6 +1,7 @@
 import { MarkerType } from 'reactflow';
 import type React from 'react';
 import { FlowNode, FlowEdge, NodeData } from './types';
+import { createId } from './id';
 
 // ---- Inlined edge factory (from app constants) ----
 // Kept here so the lib has zero cross-boundary dependencies.
@@ -21,7 +22,7 @@ const DEFAULT_EDGE_OPTIONS = {
 
 function createDefaultEdge(source: string, target: string, label?: string, id?: string) {
     return {
-        id: id || `e-${source}-${target}-${Date.now()}`,
+        id: id || createId(`e-${source}-${target}`),
         source,
         target,
         label,

@@ -3,6 +3,7 @@ import path from 'node:path';
 
 const ROOT = process.cwd();
 const SRC_LOCALES_ROOT = path.join(ROOT, 'src', 'i18n', 'locales');
+const PUBLIC_LOCALES_ROOT = path.join(ROOT, 'public', 'locales');
 const EN_SOURCE_FILE = path.join(SRC_LOCALES_ROOT, 'en', 'translation.json');
 const ARGS = new Set(process.argv.slice(2));
 const SHOULD_WRITE = ARGS.has('--sync');
@@ -169,6 +170,19 @@ function main() {
       console.log(`Updated src locale: ${lang}`);
     }
 
+    const publicFile = path.join(PUBLIC_LOCALES_ROOT, lang, 'translation.json');
+    const publicDoc = fs.existsSync(publicFile) ? readJson(publicFile) : null;
+    const publicDiffers = !publicDoc || JSON.stringify(publicDoc) !== JSON.stringify(srcDoc);
+    if (publicDiffers && !SHOULD_WRITE) {
+      console.error(`Public locale out of sync: ${lang}`);
+      process.exitCode = 1;
+    }
+    if (SHOULD_WRITE && publicDiffers) {
+      fs.mkdirSync(path.dirname(publicFile), { recursive: true });
+      writeJson(publicFile, srcDoc);
+      console.log(`Synced public locale: ${lang}`);
+    }
+
   }
 
   if (SHOULD_WRITE && enChanged) {
@@ -177,7 +191,9 @@ function main() {
   }
 
   if (!SHOULD_WRITE) {
-    console.log('i18n check passed.');
+    if (!process.exitCode) {
+      console.log('i18n check passed.');
+    }
   }
 }
 

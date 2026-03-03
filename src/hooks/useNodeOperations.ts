@@ -7,11 +7,18 @@ import { NODE_WIDTH, NODE_HEIGHT } from '../constants';
 import { NODE_DEFAULTS } from '../theme';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '../lib/analytics';
+import { createId } from '../lib/id';
 
 export const useNodeOperations = (recordHistory: () => void) => {
     const { t } = useTranslation();
     const { nodes, setNodes, setEdges, setSelectedNodeId } = useFlowStore();
     const { screenToFlowPosition } = useReactFlow();
+    function getDefaultNodePosition(count: number, baseX: number, baseY: number): { x: number; y: number } {
+        const columns = 4;
+        const column = count % columns;
+        const row = Math.floor(count / columns);
+        return { x: baseX + column * 80, y: baseY + row * 80 };
+    }
 
     // --- Node Data Updates ---
     const updateNodeData = useCallback((id: string, data: Partial<NodeData>) => {
@@ -57,7 +64,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         const nodeToDuplicate = nodes.find((n) => n.id === id);
         if (!nodeToDuplicate) return;
         recordHistory();
-        const newNodeId = `${Date.now()}`;
+        const newNodeId = createId();
         const newNode: Node = {
             ...nodeToDuplicate,
             id: newNodeId,
@@ -72,11 +79,11 @@ export const useNodeOperations = (recordHistory: () => void) => {
     // --- Add Nodes ---
     const handleAddNode = useCallback((position?: { x: number; y: number }) => {
         recordHistory();
-        const id = `${Date.now()}`;
+        const id = createId();
         const defaultStyle = NODE_DEFAULTS['process'];
         const newNode: Node = {
             id,
-            position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
+            position: position || getDefaultNodePosition(nodes.length, 100, 100),
             data: {
                 label: t('nodes.newNode'),
                 subLabel: t('nodes.processStep'),
@@ -89,28 +96,28 @@ export const useNodeOperations = (recordHistory: () => void) => {
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
         trackEvent('add_node', { node_type: 'process' });
-    }, [setNodes, recordHistory, setSelectedNodeId, t]);
+    }, [setNodes, recordHistory, setSelectedNodeId, t, nodes.length]);
 
     const handleAddAnnotation = useCallback((position?: { x: number; y: number }) => {
         recordHistory();
-        const id = `${Date.now()}`;
+        const id = createId();
         const newNode: Node = {
             id,
-            position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
+            position: position || getDefaultNodePosition(nodes.length, 100, 100),
             data: { label: t('nodes.note'), subLabel: t('nodes.addCommentsHere'), color: 'yellow' },
             type: 'annotation',
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
         trackEvent('add_node', { node_type: 'annotation' });
-    }, [setNodes, recordHistory, setSelectedNodeId, t]);
+    }, [setNodes, recordHistory, setSelectedNodeId, t, nodes.length]);
 
     const handleAddSection = useCallback((position?: { x: number; y: number }) => {
         recordHistory();
-        const id = `section-${Date.now()}`;
+        const id = createId('section');
         const newNode: Node = {
             id,
-            position: position || { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },
+            position: position || getDefaultNodePosition(nodes.length, 50, 50),
             data: { label: t('nodes.newSection'), subLabel: '', color: 'blue' },
             type: 'section',
             style: { width: 500, height: 400 },
@@ -119,28 +126,28 @@ export const useNodeOperations = (recordHistory: () => void) => {
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
         trackEvent('add_node', { node_type: 'section' });
-    }, [setNodes, recordHistory, setSelectedNodeId, t]);
+    }, [setNodes, recordHistory, setSelectedNodeId, t, nodes.length]);
 
     const handleAddTextNode = useCallback((position?: { x: number; y: number }) => {
         recordHistory();
-        const id = `text-${Date.now()}`;
+        const id = createId('text');
         const newNode: Node = {
             id,
-            position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
+            position: position || getDefaultNodePosition(nodes.length, 100, 100),
             data: { label: t('nodes.text'), subLabel: '', color: 'slate' },
             type: 'text',
         };
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
         trackEvent('add_node', { node_type: 'text' });
-    }, [setNodes, recordHistory, setSelectedNodeId, t]);
+    }, [setNodes, recordHistory, setSelectedNodeId, t, nodes.length]);
 
     const handleAddImage = useCallback((imageUrl: string, position?: { x: number; y: number }) => {
         recordHistory();
-        const id = `image-${Date.now()}`;
+        const id = createId('image');
         const newNode: Node = {
             id,
-            position: position || { x: Math.random() * 200 + 100, y: Math.random() * 200 + 100 },
+            position: position || getDefaultNodePosition(nodes.length, 100, 100),
             data: { label: t('nodes.image'), imageUrl, transparency: 1, rotation: 0 },
             type: 'image',
             style: { width: 200, height: 200 },
@@ -148,7 +155,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         setNodes((nds) => nds.concat(newNode));
         setSelectedNodeId(id);
         trackEvent('add_node', { node_type: 'image' });
-    }, [setNodes, recordHistory, setSelectedNodeId, t]);
+    }, [setNodes, recordHistory, setSelectedNodeId, t, nodes.length]);
 
     // --- Drag Operations ---
     const onNodeDragStart = useCallback((event: React.MouseEvent, node: Node) => {
@@ -156,7 +163,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
 
         // Alt + Drag Duplication
         if (event.altKey) {
-            const newNodeId = `${Date.now()}`;
+            const newNodeId = createId();
             const newNode: Node = {
                 ...node,
                 id: newNodeId,

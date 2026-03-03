@@ -10,6 +10,9 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dist-lib
+src/lib/dist
+src/lib/*.tgz
 playwright-report
 test-results
 *.local

@@ -19,7 +19,6 @@ import { toMermaid, toPlantUML } from '../services/exportService';
 import { toFigmaSVG } from '../services/figmaExportService';
 import { toOpenFlowDSL } from '../services/openFlowDSLExporter';
 import { useSnapshots } from '../hooks/useSnapshots';
-import { useAutoSave } from '../hooks/useAutoSave';
 import { useFlowHistory } from '../hooks/useFlowHistory';
 import { useFlowOperations } from '../hooks/useFlowOperations';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
@@ -29,6 +28,7 @@ import { useToast } from './ui/ToastContext';
 import { usePlayback } from '../hooks/usePlayback';
 import { PlaybackControls } from './PlaybackControls';
 import { trackEvent } from '../lib/analytics';
+import { createId } from '../lib/id';
 
 interface FlowEditorProps {
     onGoHome: () => void;
@@ -76,14 +76,6 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
 
     // --- History ---
     const { recordHistory, undo, redo, canUndo, canRedo, setPast, setFuture } = useFlowHistory();
-
-    // --- Auto Save ---
-    useAutoSave(
-        tabs, activeTabId, nodes, edges,
-        setTabs, setActiveTabId,
-        setNodes, setEdges,
-        setPast, setFuture
-    );
 
     // --- Tab Management ---
     const handleSwitchTab = useCallback((newTabId: string) => {
@@ -188,7 +180,7 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
 
         const newNodes = template.nodes.map((n) => ({
             ...n,
-            id: `${n.id}-${Date.now()}`,
+            id: createId(n.id),
             position: { x: n.position.x + startX, y: n.position.y + startY },
             selected: false,
         }));
@@ -198,7 +190,7 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
 
         const newEdges = template.edges.map((e) => ({
             ...e,
-            id: `${e.id}-${Date.now()}`,
+            id: createId(e.id),
             source: idMap.get(e.source)!,
             target: idMap.get(e.target)!,
         }));

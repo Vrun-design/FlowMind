@@ -9,16 +9,7 @@ import { OpenFlowLogo } from '../icons/OpenFlowLogo';
 import { chatWithDocs, ChatMessage } from '../../services/aiService';
 import { MarkdownComponents } from './MarkdownComponents';
 
-// Pre-load all documentation at build/runtime
-const markdownFiles = import.meta.glob('/docs/*.md', { query: '?raw', import: 'default', eager: true });
-
-// Concatenate all docs into a single context string
-const docsContext = Object.entries(markdownFiles)
-    .map(([path, content]) => {
-        const filename = path.split('/').pop()?.replace('.md', '') || '';
-        return `--- FILE: ${filename} ---\n${content}\n`;
-    })
-    .join('\n');
+const markdownFiles = import.meta.glob('/docs/**/*.md', { query: '?raw', import: 'default' });
 
 export const DocsChatbot: React.FC = () => {
     const { t } = useTranslation();
@@ -27,7 +18,29 @@ export const DocsChatbot: React.FC = () => {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [docsContext, setDocsContext] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        async function loadDocsContext(): Promise<void> {
+            const entries = await Promise.all(
+                Object.entries(markdownFiles).map(async ([path, loader]) => {
+                    const content = await loader();
+                    const filename = path.split('/').pop()?.replace('.md', '') || '';
+                    return `--- FILE: ${filename} ---\n${content}\n`;
+                })
+            );
+            const merged = entries.join('\n');
+            setDocsContext(merged);
+            if (!merged.trim()) {
+                setError('Documentation context is unavailable. Please refresh or rebuild docs.');
+            }
+        }
+
+        loadDocsContext().catch(() => {
+            setError('Documentation context is unavailable. Please refresh or rebuild docs.');
+        });
+    }, []);
 
     const renderLogo = (className: string) => {
         return brandConfig.faviconUrl ? (
@@ -73,7 +86,7 @@ export const DocsChatbot: React.FC = () => {
 
     const handleSend = async (overrideMsg?: string) => {
         const msgToSend = overrideMsg || input.trim();
-        if (!msgToSend || isLoading) return;
+        if (!msgToSend || isLoading || !docsContext.trim()) return;
 
         setInput('');
         setError(null);

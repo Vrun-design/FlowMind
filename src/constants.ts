@@ -1,5 +1,6 @@
 import { Edge, Node, MarkerType } from 'reactflow';
 import { NodeType } from '@/lib/types';
+import { createId } from '@/lib/id';
 
 // --- Edge Styles (inline for reliable SVG rendering) ---
 export const EDGE_STYLE = { stroke: '#94a3b8', strokeWidth: 2 };
@@ -25,7 +26,7 @@ export const createDefaultEdge = (
   label?: string,
   id?: string
 ): Edge => ({
-  id: id || `e-${source}-${target}-${Date.now()}`,
+  id: id || createId(`e-${source}-${target}`),
   source,
   target,
   label,

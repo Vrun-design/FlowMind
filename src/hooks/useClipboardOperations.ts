@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { Node, Edge } from 'reactflow';
 import { useFlowStore } from '../store';
+import { createId } from '../lib/id';
 
 export const useClipboardOperations = (recordHistory: () => void) => {
     const { nodes, edges, setNodes, setEdges, setSelectedNodeId } = useFlowStore();
@@ -42,7 +43,7 @@ export const useClipboardOperations = (recordHistory: () => void) => {
             const idMap = new Map<string, string>();
 
             const newNodes = copiedNodes.map((node: Node) => {
-                const newId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                const newId = createId();
                 idMap.set(node.id, newId);
 
                 return {
@@ -62,7 +63,7 @@ export const useClipboardOperations = (recordHistory: () => void) => {
                 .filter((edge: Edge) => idMap.has(edge.source) && idMap.has(edge.target))
                 .map((edge: Edge) => ({
                     ...edge,
-                    id: `e-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    id: createId('e'),
                     source: idMap.get(edge.source)!,
                     target: idMap.get(edge.target)!,
                     selected: true

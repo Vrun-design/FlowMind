@@ -841,7 +841,12 @@
           "name": "Together.ai",
           "hint": "Cloud · Fast"
         }
-      }
+      },
+      "howToGetKey": "How to get your API key",
+      "pasteKeyStep": "Paste it in the field above — never shared with us",
+      "customEndpointTitle": "What is a custom endpoint?",
+      "customModelHint": "Enter the exact model ID for your endpoint",
+      "privacyTitle": "Privacy & Encryption"
     },
     "brand": {
       "title": "Brand Kits",

@@ -3,6 +3,7 @@ import { Node } from 'reactflow';
 import { useFlowStore } from '../store';
 import { alignNodes, distributeNodes } from '../services/AlignDistribute';
 import { useTranslation } from 'react-i18next';
+import { createId } from '@/lib/id';
 
 export const useLayoutOperations = (recordHistory: () => void) => {
     const { t } = useTranslation();
@@ -50,7 +51,7 @@ export const useLayoutOperations = (recordHistory: () => void) => {
 
         const padding = 40;
         const groupNode: Node = {
-            id: `group-${Date.now()}`,
+            id: createId('group'),
             type: 'group',
             position: { x: minX - padding, y: minY - padding },
             style: { width: maxX - minX + padding * 2, height: maxY - minY + padding * 2 },

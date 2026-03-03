@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { createId } from '@/lib/id';
 
 // Types
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
@@ -76,7 +77,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const addToast = useCallback((message: string, type: ToastType = 'info', duration = 4000) => {
-        const id = Math.random().toString(36).substring(2, 9);
+        const id = createId('toast');
         setToasts((prev) => [...prev, { id, message, type, duration }]);
 
         if (duration > 0) {

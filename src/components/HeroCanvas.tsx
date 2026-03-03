@@ -100,7 +100,7 @@ export const HeroCanvas = () => {
             const newNode = {
                 id,
                 position: {
-                    x: 250 + (Math.random() * 100 - 50) + (nds.length === 1 ? 0 : (Math.random() > 0.5 ? 150 : -150)),
+                    x: 250 + (nds.length % 2 === 0 ? -150 : 150),
                     y: 150 + (nds.length * 100)
                 },
                 data: { label: `Service ${nds.length}` },

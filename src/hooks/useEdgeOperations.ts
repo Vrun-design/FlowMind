@@ -6,6 +6,7 @@ import { DEFAULT_EDGE_OPTIONS, NODE_WIDTH, NODE_HEIGHT } from '../constants';
 import { NODE_DEFAULTS } from '../theme';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '../lib/analytics';
+import { createId } from '../lib/id';
 
 export const useEdgeOperations = (
     recordHistory: () => void,
@@ -144,7 +145,7 @@ export const useEdgeOperations = (
 
     const handleAddAndConnect = useCallback((type: string, position: { x: number; y: number }, sourceId: string, sourceHandle: string | null, shape?: NodeData['shape']) => {
         recordHistory();
-        const id = `${Date.now()}`;
+        const id = createId();
         const defaultStyle = NODE_DEFAULTS[type] || NODE_DEFAULTS['process'];
         const newNode = {
             id,

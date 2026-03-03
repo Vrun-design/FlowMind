@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "save": "Kaydet",
     "cancel": "İptal",
@@ -846,7 +846,12 @@
           "name": "Together.ai",
           "hint": "Bulut · Hızlı"
         }
-      }
+      },
+      "howToGetKey": "API anahtarı nasıl alınır",
+      "pasteKeyStep": "Yukarıdaki alana yapıştırın — asla bizimle paylaşılmaz",
+      "customEndpointTitle": "Özel endpoint nedir?",
+      "customModelHint": "Endpoint'iniz için tam model kimliğini girin",
+      "privacyTitle": "Gizlilik ve Şifreleme"
     },
     "brand": {
       "title": "Marka Kitleri",

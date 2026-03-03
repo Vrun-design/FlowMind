@@ -229,7 +229,7 @@ export async function generateDiagramFromChat(
   userApiKey?: string,
   modelId?: string
 ): Promise<string> {
-  const apiKey = userApiKey || process.env.API_KEY;
+  const apiKey = userApiKey;
 
   if (!apiKey) {
     throw new Error("API Key is missing. Please add it in Settings → Flowpilot AI.");
