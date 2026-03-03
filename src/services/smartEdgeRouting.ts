@@ -60,34 +60,110 @@ function getNodeDimensions(node: Node): { width: number, height: number } {
     };
 }
 
-export function assignSmartHandles(nodes: Node[], edges: Edge[]): Edge[] {
+type PairMeta = {
+    hasReverseDirection: boolean;
+    siblingIndexByEdge: Map<Edge, number>;
+    directionCount: Map<string, number>;
+};
+
+type RoutingContext = {
+    nodeMap: Map<string, Node>;
+    nodeCenterMap: Map<string, { x: number; y: number }>;
+    pairMetaByKey: Map<string, PairMeta>;
+};
+
+const routingContextCache = new WeakMap<Node[], WeakMap<Edge[], RoutingContext>>();
+
+function preserveEdgeLabelPlacement(originalEdge: Edge, nextEdge: Edge): Edge {
+    const originalData = originalEdge.data as {
+        labelPosition?: number;
+        labelOffsetX?: number;
+        labelOffsetY?: number;
+    } | undefined;
+
+    if (!originalData) return nextEdge;
+
+    const hasLabelPlacement =
+        typeof originalData.labelPosition === 'number'
+        || typeof originalData.labelOffsetX === 'number'
+        || typeof originalData.labelOffsetY === 'number';
+    if (!hasLabelPlacement) return nextEdge;
+
+    return {
+        ...nextEdge,
+        data: {
+            ...(nextEdge.data || {}),
+            labelPosition: originalData.labelPosition,
+            labelOffsetX: originalData.labelOffsetX,
+            labelOffsetY: originalData.labelOffsetY,
+        },
+    };
+}
+
+function buildRoutingContext(nodes: Node[], edges: Edge[]): RoutingContext {
     const nodeMap = new Map<string, Node>();
     for (const node of nodes) {
         nodeMap.set(node.id, node);
     }
 
-    // Track handle usage per node to distribute multiple connections
-    // Key: "nodeId-handleSide", Value: count of edges using this handle
-    const handleUsage = new Map<string, number>();
+    const nodeCenterMap = new Map<string, { x: number; y: number }>();
+    for (const node of nodes) {
+        const { width, height } = getNodeDimensions(node);
+        const absolutePosition = getAbsolutePosition(node, nodeMap);
+        nodeCenterMap.set(node.id, {
+            x: absolutePosition.x + width / 2,
+            y: absolutePosition.y + height / 2,
+        });
+    }
 
-    const getUsageCount = (nodeId: string, handle: string) => {
-        const key = `${nodeId}-${handle}`;
-        return handleUsage.get(key) || 0;
-    };
-
-    const recordUsage = (nodeId: string, handle: string) => {
-        const key = `${nodeId}-${handle}`;
-        handleUsage.set(key, (handleUsage.get(key) || 0) + 1);
-    };
-
-    // Group edges by source-target pair (considering both directions)
-    const pairGroups = new Map<string, Edge[]>();
+    const pairMetaByKey = new Map<string, PairMeta>();
     for (const edge of edges) {
         const key = [edge.source, edge.target].sort().join('::');
-        const group = pairGroups.get(key) || [];
-        group.push(edge);
-        pairGroups.set(key, group);
+        let pairMeta = pairMetaByKey.get(key);
+        if (!pairMeta) {
+            pairMeta = {
+                hasReverseDirection: false,
+                siblingIndexByEdge: new Map<Edge, number>(),
+                directionCount: new Map<string, number>(),
+            };
+            pairMetaByKey.set(key, pairMeta);
+        }
+
+        const directionKey = `${edge.source}->${edge.target}`;
+        const siblingIndex = pairMeta.directionCount.get(directionKey) || 0;
+        pairMeta.siblingIndexByEdge.set(edge, siblingIndex);
+        pairMeta.directionCount.set(directionKey, siblingIndex + 1);
+
+        if (!pairMeta.hasReverseDirection) {
+            const reverseKey = `${edge.target}->${edge.source}`;
+            if (pairMeta.directionCount.has(reverseKey)) {
+                pairMeta.hasReverseDirection = true;
+            }
+        }
     }
+
+    return { nodeMap, nodeCenterMap, pairMetaByKey };
+}
+
+function getRoutingContext(nodes: Node[], edges: Edge[]): RoutingContext {
+    let edgeCache = routingContextCache.get(nodes);
+    if (!edgeCache) {
+        edgeCache = new WeakMap<Edge[], RoutingContext>();
+        routingContextCache.set(nodes, edgeCache);
+    }
+
+    const cached = edgeCache.get(edges);
+    if (cached) {
+        return cached;
+    }
+
+    const fresh = buildRoutingContext(nodes, edges);
+    edgeCache.set(edges, fresh);
+    return fresh;
+}
+
+export function assignSmartHandles(nodes: Node[], edges: Edge[]): Edge[] {
+    const { nodeMap, nodeCenterMap, pairMetaByKey } = getRoutingContext(nodes, edges);
 
     return edges.map((edge) => {
         const sourceNode = nodeMap.get(edge.source);
@@ -98,17 +174,14 @@ export function assignSmartHandles(nodes: Node[], edges: Edge[]): Edge[] {
         // Self-loop: handled by CustomEdge already
         if (edge.source === edge.target) return edge;
 
-        const { width: sw, height: sh } = getNodeDimensions(sourceNode);
-        const { width: tw, height: th } = getNodeDimensions(targetNode);
+        const sourceCenter = nodeCenterMap.get(sourceNode.id);
+        const targetCenter = nodeCenterMap.get(targetNode.id);
+        if (!sourceCenter || !targetCenter) return edge;
 
-        // Use center positions (calculated absolutely)
-        const sourcePos = getAbsolutePosition(sourceNode, nodeMap);
-        const targetPos = getAbsolutePosition(targetNode, nodeMap);
-
-        const sx = sourcePos.x + sw / 2;
-        const sy = sourcePos.y + sh / 2;
-        const tx = targetPos.x + tw / 2;
-        const ty = targetPos.y + th / 2;
+        const sx = sourceCenter.x;
+        const sy = sourceCenter.y;
+        const tx = targetCenter.x;
+        const ty = targetCenter.y;
 
         const dx = tx - sx;
         const dy = ty - sy;
@@ -116,12 +189,10 @@ export function assignSmartHandles(nodes: Node[], edges: Edge[]): Edge[] {
         let sourceHandle: string;
         let targetHandle: string;
 
-        // Check if this is a bidirectional pair
         const pairKey = [edge.source, edge.target].sort().join('::');
-        const pairGroup = pairGroups.get(pairKey) || [];
-        const isReverse = pairGroup.some(e => e.source === edge.target && e.target === edge.source);
-        const sameDirectionSiblings = pairGroup.filter(e => e.source === edge.source && e.target === edge.target);
-        const siblingIndex = sameDirectionSiblings.indexOf(edge);
+        const pairMeta = pairMetaByKey.get(pairKey);
+        const isReverse = pairMeta?.hasReverseDirection ?? false;
+        const siblingIndex = pairMeta?.siblingIndexByEdge.get(edge) ?? 0;
 
         if (Math.abs(dy) >= Math.abs(dx)) {
             // Vertical dominance
@@ -181,18 +252,16 @@ export function assignSmartHandles(nodes: Node[], edges: Edge[]): Edge[] {
             }
         }
 
-        recordUsage(edge.source, sourceHandle);
-        recordUsage(edge.target, targetHandle);
-
         // Optimization: Only create new object if handles changed
         if (edge.sourceHandle === sourceHandle && edge.targetHandle === targetHandle) {
             return edge;
         }
 
-        return {
+        const nextEdge = {
             ...edge,
             sourceHandle,
             targetHandle,
         };
+        return preserveEdgeLabelPlacement(edge, nextEdge);
     });
 }

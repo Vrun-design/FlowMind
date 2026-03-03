@@ -50,9 +50,9 @@ const SwimlaneNode = ({ id, data, selected }: NodeProps<NodeData>) => {
                     }}
                 >
                     {iconName ? (
-                        <NamedIcon name={iconName} fallbackName="Rows3" className="w-4 h-4" style={{ color: lane.text }} />
+                        <NamedIcon name={iconName} fallbackName="Rows3" className="w-4 h-4 flow-lod-far-target" style={{ color: lane.text }} />
                     ) : (
-                        <Rows3 className="w-4 h-4" style={{ color: lane.text }} />
+                        <Rows3 className="w-4 h-4 flow-lod-far-target" style={{ color: lane.text }} />
                     )}
                     <span
                         className="font-bold text-sm uppercase tracking-wider"
@@ -62,7 +62,7 @@ const SwimlaneNode = ({ id, data, selected }: NodeProps<NodeData>) => {
                     </span>
                     {data.subLabel && (
                         <span
-                            className="text-xs font-medium px-2 py-0.5 rounded-full ml-auto"
+                            className="text-xs font-medium px-2 py-0.5 rounded-full ml-auto flow-lod-secondary"
                             style={{
                                 backgroundColor: `${lane.border}30`,
                                 color: lane.text,

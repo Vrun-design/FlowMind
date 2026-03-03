@@ -1,4 +1,5 @@
 import { Node, Edge } from 'reactflow';
+import { orderGraphForSerialization, type ExportSerializationMode } from './canonicalSerialization';
 
 const TYPE_TO_DSL: Record<string, string> = {
     start: 'start',
@@ -20,8 +21,46 @@ const TYPE_TO_DSL: Record<string, string> = {
 /**
  * Export FlowMind nodes/edges to our custom DSL V2 text format.
  */
-export const toOpenFlowDSL = (nodes: Node[], edges: Edge[]): string => {
+export interface OpenFlowDSLExportOptions {
+    mode?: ExportSerializationMode;
+}
+
+export interface OpenFlowDSLExportDiagnostic {
+    edgeId: string;
+    source: string;
+    target: string;
+    message: string;
+}
+
+export function getOpenFlowDSLExportDiagnostics(nodes: Node[], edges: Edge[]): OpenFlowDSLExportDiagnostic[] {
+    const nodeIdSet = new Set(nodes.map((node) => node.id));
+    const diagnostics: OpenFlowDSLExportDiagnostic[] = [];
+
+    edges.forEach((edge) => {
+        const sourceNodeExists = nodeIdSet.has(edge.source);
+        const targetNodeExists = nodeIdSet.has(edge.target);
+        if (sourceNodeExists && targetNodeExists) return;
+
+        const missingParts: string[] = [];
+        if (!sourceNodeExists) missingParts.push(`source "${edge.source}"`);
+        if (!targetNodeExists) missingParts.push(`target "${edge.target}"`);
+
+        diagnostics.push({
+            edgeId: edge.id,
+            source: edge.source,
+            target: edge.target,
+            message: `Edge "${edge.id}" skipped in DSL export (missing ${missingParts.join(' and ')}).`,
+        });
+    });
+
+    return diagnostics;
+}
+
+export const toOpenFlowDSL = (nodes: Node[], edges: Edge[], options: OpenFlowDSLExportOptions = {}): string => {
     const lines: string[] = [];
+    const mode = options.mode ?? 'deterministic';
+    const { nodes: orderedNodes, edges: orderedEdges } = orderGraphForSerialization(nodes, edges, mode);
+    const diagnosticsByEdgeId = new Set(getOpenFlowDSLExportDiagnostics(orderedNodes, orderedEdges).map((item) => item.edgeId));
 
     // Metadata
     lines.push('flow: "Untitled Flow"');
@@ -51,8 +90,9 @@ export const toOpenFlowDSL = (nodes: Node[], edges: Edge[]): string => {
     // Let's filter out sections/groups and handle them if they are parent nodes?
     // ReactFlow uses `parentId`.
 
-    const parentNodes = nodes.filter(n => !n.parentId);
-    const childNodes = nodes.filter(n => n.parentId);
+    const getParentRef = (node: Node & { parentId?: string }) => node.parentNode ?? node.parentId;
+    const parentNodes = orderedNodes.filter(n => !getParentRef(n as Node & { parentId?: string }));
+    const childNodes = orderedNodes.filter(n => Boolean(getParentRef(n as Node & { parentId?: string })));
 
     // We need to recursively print nodes? Or just one level deep for groups?
 
@@ -73,7 +113,7 @@ export const toOpenFlowDSL = (nodes: Node[], edges: Edge[]): string => {
         lines.push(`${indent}[${dslType}] ${id}: ${label}${formatAttributes(node.data)}`);
 
         // Print children
-        const children = childNodes.filter(c => c.parentId === node.id);
+        const children = childNodes.filter(c => getParentRef(c as Node & { parentId?: string }) === node.id);
         if (children.length > 0) {
             // It's a group?
             // Wait, dsl parser handles "group" keyword.
@@ -118,17 +158,13 @@ export const toOpenFlowDSL = (nodes: Node[], edges: Edge[]): string => {
         }
     };
 
-    parentNodes.forEach(n => renderNode(n));
+    parentNodes.forEach((n) => renderNode(n));
 
     if (edges.length > 0) {
         lines.push('');
         lines.push('# Edges');
-        for (const edge of edges) {
-            const sourceNode = nodes.find((n) => n.id === edge.source);
-            const targetNode = nodes.find((n) => n.id === edge.target);
-
-            // If nodes are missing, skip
-            if (!sourceNode || !targetNode) continue;
+        for (const edge of orderedEdges) {
+            if (diagnosticsByEdgeId.has(edge.id)) continue;
 
             // We use IDs for connections in V2
             const arrow = '->';

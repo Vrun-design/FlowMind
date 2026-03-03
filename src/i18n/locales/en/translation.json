@@ -483,6 +483,8 @@
     "search": {
       "title": "Search Nodes",
       "placeholder": "Search by label or ID...",
+      "showingCount": "Showing: {{count}}",
+      "totalCount": "Total on canvas: {{count}}",
       "noResults": "No nodes found",
       "untitled": "Untitled Node",
       "type": "Type"

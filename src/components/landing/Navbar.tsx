@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Github, Menu, X, ChevronRight, Sparkles } from 'lucide-react';
+import { Github, Menu, X, ChevronRight, WandSparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './Button';
 import { OpenFlowLogo } from '../icons/OpenFlowLogo';
@@ -149,7 +149,7 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
               }}
             >
               <span>{t('common.getStarted', 'Get Started')}</span>
-              <Sparkles className="w-4 h-4" />
+              <WandSparkles className="w-4 h-4" />
             </Button>
             <Button
               size="lg"

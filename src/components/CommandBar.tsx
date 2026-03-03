@@ -8,7 +8,6 @@ import { CodeView } from './command-bar/CodeView';
 import { TemplatesView } from './command-bar/TemplatesView';
 import { SearchView } from './command-bar/SearchView';
 import { LayoutView } from './command-bar/LayoutView';
-import { VisualsView } from './command-bar/VisualsView';
 
 import { DesignSystemView } from './command-bar/DesignSystemView';
 import { WireframesView } from './command-bar/WireframesView';
@@ -77,9 +76,6 @@ function OpenCommandBarContent({
                         setView={setView}
                         inputRef={inputRef}
                     />
-                )}
-                {view === 'visuals' && (
-                    <VisualsView onBack={handleBack} />
                 )}
                 {view === 'design-system' && (
                     <DesignSystemView

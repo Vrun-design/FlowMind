@@ -10,7 +10,16 @@ interface VisualsViewProps {
 
 export const VisualsView = ({ onBack }: VisualsViewProps) => {
     const { t } = useTranslation();
-    const { globalEdgeOptions, setGlobalEdgeOptions, viewSettings, setDefaultIconsEnabled, setSmartRoutingEnabled, brandConfig } = useFlowStore();
+    const {
+        globalEdgeOptions,
+        setGlobalEdgeOptions,
+        viewSettings,
+        setViewSettings,
+        setDefaultIconsEnabled,
+        setSmartRoutingEnabled,
+        setLargeGraphSafetyMode,
+        brandConfig
+    } = useFlowStore();
     const isBeveled = brandConfig.ui.buttonStyle === 'beveled';
 
     return (
@@ -94,6 +103,65 @@ export const VisualsView = ({ onBack }: VisualsViewProps) => {
                     >
                         <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${isBeveled ? 'border border-black/5 shadow-md' : ''} ${globalEdgeOptions.animated ? 'translate-x-5' : 'translate-x-0'}`} />
                     </button>
+                </div>
+
+                <div className="space-y-3">
+                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        {t('commandBar.visuals.largeGraphSafety', 'Large Graph Safety')}
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                        {[
+                            { mode: 'auto', label: t('commandBar.visuals.largeGraphSafetyAuto', 'Auto') },
+                            { mode: 'on', label: t('commandBar.visuals.largeGraphSafetyOn', 'On') },
+                            { mode: 'off', label: t('commandBar.visuals.largeGraphSafetyOff', 'Off') },
+                        ].map((option) => (
+                            <button
+                                key={option.mode}
+                                onClick={() => setLargeGraphSafetyMode(option.mode as 'auto' | 'on' | 'off')}
+                                className={`h-9 rounded-[var(--radius-sm)] border text-xs font-semibold transition-all active:scale-95
+                                    ${viewSettings.largeGraphSafetyMode === option.mode
+                                        ? `border-[var(--brand-primary)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-700)] ${isBeveled ? 'btn-beveled' : ''}`
+                                        : `border-slate-200 text-slate-600 hover:border-[var(--brand-primary-200)] ${isBeveled ? 'btn-beveled hover:bg-slate-50' : ''}`
+                                    }`}
+                            >
+                                {option.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="space-y-3">
+                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        {t('commandBar.visuals.exportMode', 'Export Mode')}
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                        {[
+                            {
+                                mode: 'deterministic',
+                                label: t('commandBar.visuals.exportModeDeterministic', 'Deterministic'),
+                            },
+                            {
+                                mode: 'legacy',
+                                label: t('commandBar.visuals.exportModeLegacy', 'Legacy'),
+                            },
+                        ].map((option) => (
+                            <button
+                                key={option.mode}
+                                onClick={() => {
+                                    setViewSettings({
+                                        exportSerializationMode: option.mode as 'deterministic' | 'legacy',
+                                    });
+                                }}
+                                className={`h-9 rounded-[var(--radius-sm)] border text-xs font-semibold transition-all active:scale-95
+                                    ${viewSettings.exportSerializationMode === option.mode
+                                        ? `border-[var(--brand-primary)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-700)] ${isBeveled ? 'btn-beveled' : ''}`
+                                        : `border-slate-200 text-slate-600 hover:border-[var(--brand-primary-200)] ${isBeveled ? 'btn-beveled hover:bg-slate-50' : ''}`
+                                    }`}
+                            >
+                                {option.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Stroke Width */}

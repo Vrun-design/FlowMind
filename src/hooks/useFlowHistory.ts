@@ -6,17 +6,42 @@ import { trackEvent } from '../lib/analytics';
 const MAX_HISTORY = 20;
 
 export const useFlowHistory = () => {
-  const { nodes, edges, setNodes, setEdges } = useFlowStore();
+  const {
+    nodes,
+    edges,
+    tabs,
+    activeTabId,
+    viewSettings,
+    setNodes,
+    setEdges,
+    recordHistoryV2,
+    undoV2,
+    redoV2,
+    canUndoV2,
+    canRedoV2,
+  } = useFlowStore();
 
   const [past, setPast] = useState<FlowHistoryState[]>([]);
   const [future, setFuture] = useState<FlowHistoryState[]>([]);
+  const useStoreHistoryV2 = viewSettings.historyModelV2Enabled;
+  const activeTab = tabs.find((tab) => tab.id === activeTabId);
+  const v2Past = activeTab?.history.past ?? [];
+  const v2Future = activeTab?.history.future ?? [];
 
   const recordHistory = useCallback(() => {
+    if (useStoreHistoryV2) {
+      recordHistoryV2();
+      return;
+    }
     setPast((old) => [...old, { nodes, edges }].slice(-MAX_HISTORY));
     setFuture([]);
-  }, [nodes, edges]);
+  }, [useStoreHistoryV2, recordHistoryV2, nodes, edges]);
 
   const undo = useCallback(() => {
+    if (useStoreHistoryV2) {
+      undoV2();
+      return;
+    }
     if (past.length === 0) return;
     const previous = past[past.length - 1];
     setPast((old) => old.slice(0, -1));
@@ -24,9 +49,13 @@ export const useFlowHistory = () => {
     setNodes(previous.nodes);
     setEdges(previous.edges);
     trackEvent('undo');
-  }, [past, nodes, edges, setNodes, setEdges]);
+  }, [useStoreHistoryV2, undoV2, past, nodes, edges, setNodes, setEdges]);
 
   const redo = useCallback(() => {
+    if (useStoreHistoryV2) {
+      redoV2();
+      return;
+    }
     if (future.length === 0) return;
     const next = future[0];
     setFuture((old) => old.slice(1));
@@ -34,9 +63,19 @@ export const useFlowHistory = () => {
     setNodes(next.nodes);
     setEdges(next.edges);
     trackEvent('redo');
-  }, [future, nodes, edges, setNodes, setEdges]);
+  }, [useStoreHistoryV2, redoV2, future, nodes, edges, setNodes, setEdges]);
 
   // Expose setPast/setFuture for AutoSave and Tab switching
   // Ideally these should also be in store or handled differently, but for now we expose them.
-  return { past, future, setPast, setFuture, recordHistory, undo, redo, canUndo: past.length > 0, canRedo: future.length > 0 };
+  return {
+    past: useStoreHistoryV2 ? v2Past : past,
+    future: useStoreHistoryV2 ? v2Future : future,
+    setPast,
+    setFuture,
+    recordHistory,
+    undo,
+    redo,
+    canUndo: useStoreHistoryV2 ? canUndoV2() : past.length > 0,
+    canRedo: useStoreHistoryV2 ? canRedoV2() : future.length > 0,
+  };
 };

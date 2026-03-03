@@ -23,6 +23,8 @@ import { useFlowEditorCallbacks } from '@/hooks/useFlowEditorCallbacks';
 import { FlowEditorPanels } from './FlowEditorPanels';
 import { FlowEditorLayoutOverlay } from './FlowEditorLayoutOverlay';
 import { FlowEditorEmptyState } from './FlowEditorEmptyState';
+import { useStoragePressureGuard } from '@/hooks/useStoragePressureGuard';
+import { useAnimatedEdgePerformanceWarning } from '@/hooks/useAnimatedEdgePerformanceWarning';
 
 interface FlowEditorProps {
     onGoHome: () => void;
@@ -116,6 +118,18 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
     const { fileInputRef, handleExport, handleExportJSON, handleImportJSON, onFileImport } = useFlowExport(
         recordHistory, reactFlowWrapper
     );
+    const storageGuardTrigger = useMemo(
+        () => `${tabs.length}:${snapshots.length}:${nodes.length}:${edges.length}`,
+        [tabs.length, snapshots.length, nodes.length, edges.length]
+    );
+    useStoragePressureGuard({
+        trigger: storageGuardTrigger,
+        onExportJSON: handleExportJSON,
+    });
+    useAnimatedEdgePerformanceWarning({
+        nodeCount: nodes.length,
+        edges,
+    });
 
     // --- Playback ---
     const {
@@ -146,6 +160,7 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
         fitView,
         t,
         addToast,
+        exportSerializationMode: viewSettings.exportSerializationMode,
     });
 
     // --- Derived State ---

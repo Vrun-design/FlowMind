@@ -212,7 +212,13 @@ export function parseFlowMindDSL(input: string): DSLResult {
             labelToIdMap.set(id, id);    // Map ID to ID
             return;
         }
+
+        errors.push(`Line ${lineIndex + 1}: Unrecognized syntax "${line}"`);
     });
+
+    if (currentGroupStack.length > 0) {
+        errors.push(`Line ${lines.length}: Unclosed group block (missing closing "}")`);
+    }
 
     // Post-processing: Resolve implicit nodes and edge IDs
     const finalNodes: Node[] = [];

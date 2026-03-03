@@ -22,7 +22,10 @@
     "test": "vitest",
     "build:lib": "vite build -c vite.lib.config.ts",
     "build:lib:watch": "vite build -c vite.lib.config.ts --watch",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "bench:harness": "node scripts/benchmark-harness.mjs",
+    "bench:summary": "node scripts/benchmark-summary.mjs",
+    "bench:check": "node scripts/check-benchmark-results.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.40.0",

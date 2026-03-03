@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useFlowStore } from '../store';
-import { X, Keyboard, Command, MousePointer2, Pencil, Sparkles } from 'lucide-react';
+import { X, Keyboard, Command, MousePointer2, Pencil } from 'lucide-react';
 import { KEYBOARD_SHORTCUTS } from '../constants';
 
 export function KeyboardShortcutsModal(): React.JSX.Element | null {
@@ -80,7 +80,7 @@ function getSectionIcon(title: string) {
         case 'essentials': return <Command className="w-4 h-4 text-slate-400" />;
         case 'manipulation': return <Pencil className="w-4 h-4 text-slate-400" />;
         case 'navigation': return <MousePointer2 className="w-4 h-4 text-slate-400" />;
-        default: return <Sparkles className="w-4 h-4 text-slate-400" />;
+        default: return <Keyboard className="w-4 h-4 text-slate-400" />;
     }
 }
 

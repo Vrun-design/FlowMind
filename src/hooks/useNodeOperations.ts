@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Node, useReactFlow } from 'reactflow';
 import { NodeData } from '@/lib/types';
 import { useFlowStore } from '../store';
@@ -15,11 +15,21 @@ import {
     createTextNode,
     getDefaultNodePosition,
 } from './node-operations/utils';
+import { getDragStopReconcileDelayMs } from './node-operations/dragStopReconcilePolicy';
 
 export const useNodeOperations = (recordHistory: () => void) => {
     const { t } = useTranslation();
-    const { nodes, setNodes, setEdges, setSelectedNodeId } = useFlowStore();
+    const { nodes, setNodes, setSelectedNodeId } = useFlowStore();
     const { screenToFlowPosition } = useReactFlow();
+    const dragStopReconcileTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (dragStopReconcileTimerRef.current !== null) {
+                clearTimeout(dragStopReconcileTimerRef.current);
+            }
+        };
+    }, []);
 
     // --- Node Data Updates ---
     const updateNodeData = useCallback((id: string, data: Partial<NodeData>) => {
@@ -167,36 +177,43 @@ export const useNodeOperations = (recordHistory: () => void) => {
         }
     }, [recordHistory, setNodes]);
 
-    const onNodeDrag = useCallback((_event: React.MouseEvent, _node: Node, draggedNodes: Node[]) => {
-        const { nodes: storeNodes, edges, setEdges, viewSettings } = useFlowStore.getState();
-
-        if (!viewSettings.smartRoutingEnabled) return;
-
-        // "draggedNodes" contains only the nodes being dragged.
-        // "storeNodes" contains all nodes, but newly dragged ones might be stale in store until commit?
-        // Actually store updates on drag? ReactFlow updates internal state, and onNodesChange updates store.
-        // But onNodeDrag happens frequently.
-
-        // Merge logic to ensure valid routing
-        const draggedNodesMap = new Map(draggedNodes.map(n => [n.id, n]));
-        const mergedNodes = storeNodes.map(n => draggedNodesMap.get(n.id) || n);
-
-        const smartEdges = assignSmartHandles(mergedNodes, edges);
-        setEdges(smartEdges);
+    const onNodeDrag = useCallback((_event: React.MouseEvent, _node: Node, _draggedNodes: Node[]) => {
+        // Intentionally no smart-routing work during active drag to protect frame budget.
+        // Full reconciliation still runs on drag stop via `onNodeDragStop`.
     }, []);
 
     const onNodeDragStop = useCallback((_event: React.MouseEvent, draggedNode: Node) => {
         const { nodes: currentNodes } = useFlowStore.getState();
-        const updatedNodes = applySectionParenting(currentNodes, draggedNode);
-        if (updatedNodes === currentNodes) return;
-        setNodes(updatedNodes);
-
-        // Smart Routing Recalc on Drop
-        const { edges, setEdges, viewSettings } = useFlowStore.getState();
-        if (viewSettings.smartRoutingEnabled) {
-            const smartEdges = assignSmartHandles(updatedNodes, edges);
-            setEdges(smartEdges);
+        const parentedNodes = applySectionParenting(currentNodes, draggedNode);
+        if (parentedNodes !== currentNodes) {
+            setNodes(parentedNodes);
         }
+
+        const runReconcile = () => {
+            const { nodes: latestNodes, edges: latestEdges, setEdges: setLatestEdges, viewSettings } = useFlowStore.getState();
+            if (!viewSettings.smartRoutingEnabled) return;
+            const smartEdges = assignSmartHandles(latestNodes, latestEdges);
+            setLatestEdges(smartEdges);
+        };
+
+        const { edges } = useFlowStore.getState();
+        const delayMs = getDragStopReconcileDelayMs(parentedNodes.length, edges.length);
+        if (delayMs === 0) {
+            if (dragStopReconcileTimerRef.current !== null) {
+                clearTimeout(dragStopReconcileTimerRef.current);
+                dragStopReconcileTimerRef.current = null;
+            }
+            runReconcile();
+            return;
+        }
+
+        if (dragStopReconcileTimerRef.current !== null) {
+            clearTimeout(dragStopReconcileTimerRef.current);
+        }
+        dragStopReconcileTimerRef.current = setTimeout(() => {
+            dragStopReconcileTimerRef.current = null;
+            runReconcile();
+        }, delayMs);
 
     }, [setNodes]);
 

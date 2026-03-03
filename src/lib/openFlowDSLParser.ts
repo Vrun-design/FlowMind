@@ -2,11 +2,46 @@
 import { Node, Edge } from 'reactflow';
 import { parseFlowMindDSL } from './flowmindDSLParserV2';
 
+export interface ParseDiagnostic {
+    message: string;
+    line?: number;
+    snippet?: string;
+    hint?: string;
+}
+
 export interface ParseResult {
     nodes: Node[];
     edges: Edge[];
     title?: string;
     error?: string;
+    diagnostics?: ParseDiagnostic[];
+}
+
+function buildDiagnosticFromError(rawError: string, inputLines: string[]): ParseDiagnostic {
+    const lineMatch = rawError.match(/^Line\s+(\d+):\s*(.+)$/);
+    if (!lineMatch) {
+        return { message: rawError };
+    }
+
+    const line = Number(lineMatch[1]);
+    const message = lineMatch[2];
+    const snippet = inputLines[line - 1]?.trim();
+    let hint: string | undefined;
+    if (message.startsWith('Unexpected')) {
+        hint = 'Check block delimiters and remove extra closing braces.';
+    } else if (message.startsWith('Unrecognized syntax')) {
+        hint = 'Use DSL forms like `[type] id: Label`, `A -> B`, or `group "Name" { ... }`.';
+    }
+
+    return { message, line, snippet, hint };
+}
+
+function formatDiagnosticsError(diagnostics: ParseDiagnostic[]): string {
+    if (diagnostics.length === 0) return 'Failed to parse DSL.';
+    const first = diagnostics[0];
+    const linePrefix = typeof first.line === 'number' ? `Line ${first.line}: ` : '';
+    const hintSuffix = first.hint ? ` Hint: ${first.hint}` : '';
+    return `${linePrefix}${first.message}${hintSuffix}`;
 }
 
 /**
@@ -15,13 +50,20 @@ export interface ParseResult {
  */
 export const parseOpenFlowDSL = (input: string): ParseResult => {
     const result = parseFlowMindDSL(input);
+    const inputLines = input.split('\n');
+    const diagnostics = result.errors.map((error) => buildDiagnosticFromError(error, inputLines));
 
     if (result.nodes.length === 0 && result.errors.length === 0) {
+        const noNodeDiagnostic: ParseDiagnostic = {
+            message: 'No nodes found.',
+            hint: 'Add at least one node, for example: [process] n1: Start',
+        };
         return {
             nodes: [],
             edges: [],
             title: result.metadata?.flow || 'Untitled Flow',
-            error: 'No nodes found. Use: [type] Label'
+            diagnostics: [noNodeDiagnostic],
+            error: formatDiagnosticsError([noNodeDiagnostic]),
         };
     }
 
@@ -30,6 +72,7 @@ export const parseOpenFlowDSL = (input: string): ParseResult => {
         nodes: result.nodes,
         edges: result.edges,
         title: result.metadata?.flow || result.metadata?.title || 'Untitled Flow',
-        error: result.errors.length > 0 ? result.errors.join('\n') : undefined
+        diagnostics: diagnostics.length > 0 ? diagnostics : undefined,
+        error: diagnostics.length > 0 ? formatDiagnosticsError(diagnostics) : undefined,
     };
 };

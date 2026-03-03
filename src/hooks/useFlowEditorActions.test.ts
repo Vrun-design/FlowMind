@@ -3,9 +3,11 @@ import type { TFunction } from 'i18next';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useFlowEditorActions } from './useFlowEditorActions';
 import type { FlowEdge, FlowNode } from '@/lib/types';
+import { getOpenFlowDSLExportDiagnostics, toOpenFlowDSL } from '@/services/openFlowDSLExporter';
 
 vi.mock('@/services/openFlowDSLExporter', () => ({
     toOpenFlowDSL: vi.fn(() => 'mock-dsl'),
+    getOpenFlowDSLExportDiagnostics: vi.fn(() => []),
 }));
 
 vi.mock('@/services/figmaExportService', () => ({
@@ -51,6 +53,7 @@ describe('useFlowEditorActions', () => {
                 fitView: vi.fn(),
                 t: createTranslator((key: string) => key),
                 addToast,
+                exportSerializationMode: 'deterministic',
             })
         );
 
@@ -58,6 +61,11 @@ describe('useFlowEditorActions', () => {
             await result.current.handleExportOpenFlowDSL();
         });
 
+        expect(toOpenFlowDSL).toHaveBeenCalledWith(
+            expect.any(Array),
+            expect.any(Array),
+            { mode: 'deterministic' }
+        );
         expect(navigator.clipboard.writeText).toHaveBeenCalledWith('mock-dsl');
         expect(addToast).toHaveBeenCalledWith('flowEditor.dslCopied', 'success');
     });
@@ -77,6 +85,7 @@ describe('useFlowEditorActions', () => {
                 fitView: vi.fn(),
                 t: createTranslator((key: string, options?: Record<string, unknown>) => options?.message ? `${key}:${String(options.message)}` : key),
                 addToast,
+                exportSerializationMode: 'deterministic',
             })
         );
 
@@ -85,5 +94,39 @@ describe('useFlowEditorActions', () => {
         });
 
         expect(addToast).toHaveBeenCalledWith('flowEditor.figmaExportFailed:copy failed', 'error');
+    });
+
+    it('shows warning toast when export skips dangling edges', async () => {
+        const addToast = vi.fn();
+        vi.mocked(getOpenFlowDSLExportDiagnostics).mockReturnValueOnce([
+            {
+                edgeId: 'e-dangling',
+                source: 'missing-a',
+                target: 'missing-b',
+                message: 'Edge skipped',
+            },
+        ]);
+        const { result } = renderHook(() =>
+            useFlowEditorActions({
+                nodes: [createNode('n1')],
+                edges: [createEdge('e1', 'n1', 'n1')],
+                recordHistory: vi.fn(),
+                setNodes: vi.fn(),
+                setEdges: vi.fn(),
+                fitView: vi.fn(),
+                t: createTranslator((key: string, options?: Record<string, unknown>) => {
+                    if (key === 'flowEditor.dslExportSkippedEdges') return `${String(options?.count)} skipped`;
+                    return key;
+                }),
+                addToast,
+                exportSerializationMode: 'deterministic',
+            })
+        );
+
+        await act(async () => {
+            await result.current.handleExportOpenFlowDSL();
+        });
+
+        expect(addToast).toHaveBeenCalledWith('1 skipped', 'warning');
     });
 });

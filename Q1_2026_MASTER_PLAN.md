@@ -47,6 +47,42 @@ By March 31, 2026, on a defined reference machine profile:
 - Every risky change ships behind a runtime flag (default OFF until validated).
 - "Definition of done" includes tests + benchmark update + rollback path.
 
+### Execution Protocol (One-by-One, No Breakage)
+
+Use this protocol for every task in every phase:
+
+1. Pick exactly one scoped change.
+2. Define pre-checks (tests/benchmarks) before editing.
+3. Implement only the minimal diff for that scope.
+4. Run post-checks against the same baseline.
+5. Record result, risk notes, and rollback command/path.
+6. Merge only when checks are green; otherwise revert the scoped change.
+
+Per-change tracking template:
+
+| Field | Required Entry |
+| --- | --- |
+| Change ID | `P{phase}-{n}` (example: `P1-03`) |
+| Scope | One sentence, single behavior/objective |
+| Flagged? | `Yes/No` (default `Yes` for risky changes) |
+| Pre-check baseline | Test/benchmark names + current value/status |
+| Post-check result | Pass/fail + deltas |
+| Rollback path | Exact command or commit to restore prior behavior |
+| Owner + date | Engineer + `YYYY-MM-DD` |
+
+Definition of "safe to continue":
+
+- No correctness regression.
+- No unplanned performance regression on relevant fixture.
+- No schema/export compatibility regression.
+
+Mandatory approval gate before execution:
+
+1. Share a short risk brief for the exact scoped change.
+2. Share the planned checks and rollback path.
+3. Wait for explicit user approval.
+4. Execute only after approval and log results in [Q1 Execution Tracker](docs/q1_execution_tracker.md).
+
 ---
 
 ## Phase 0 (Week 1): Baseline, Guardrails, and Risk Burn-Down
@@ -62,6 +98,7 @@ Objective: establish measurement and safety before changing core behavior.
   - Layout execution time
   - Heap growth during typical session
 - Store baseline metrics in versioned artifacts in repo.
+- Use [Benchmark Baseline Runbook](docs/benchmark-baseline.md) for command sequence, output paths, and reporting caveats.
 
 ### 0.2 Correctness Gates (Before Perf Work)
 
@@ -76,6 +113,7 @@ Objective: establish measurement and safety before changing core behavior.
 
 - Add feature-flag infrastructure for high-risk behavior changes.
 - Add release gate checklist (perf delta, bundle delta, correctness delta).
+- Use [Release Gate Checklist](docs/release-gate-checklist.md) before merge/release decisions.
 
 Exit criteria:
 
@@ -94,11 +132,13 @@ Objective: eliminate corruption risk and persistence fragility before throughput
 - Replace fragile whole-object reference snapshots with safe immutable snapshots or patch-based commands.
 - Enforce deterministic history limits by both count and memory budget.
 - Add invariant checks: state graph valid after undo/redo loops.
+- Use [History Model Gap Analysis](docs/history-model-gap-analysis.md) as implementation baseline for Phase 1 history changes.
 
 ### 1.2 Persistence Consolidation
 
 - Consolidate persistence strategy (single source of truth for autosave/store persistence).
 - Implement File System Access API to save actual files directly to the user's local device, eliminating browser storage eviction risks.
+- Add proactive storage-pressure guard: when estimated `localStorage` usage reaches 70% of quota, show warning banner/modal and prompt immediate download/export.
 - Remove redundant full-payload writes and use selective persistence for temporary in-browser autosaves.
 - Add schema version field and migration scaffolding for saved docs.
 
@@ -118,6 +158,10 @@ Exit criteria:
 ## Phase 2 (Weeks 4-5): Performance Core (Routing + Rendering Cost)
 
 Objective: remove highest runtime hotspots with minimal behavioral change.
+
+Execution kickoff:
+
+- Establish routing-hotspot benchmark baseline before optimization changes (`P2-01`).
 
 ### 2.1 Smart Routing Cost Control
 
@@ -143,6 +187,7 @@ Exit criteria:
 1. 500-node drag interactions meet jank target.
 2. Large fixture no longer triggers pathological reroute behavior.
 3. No regression in edge correctness semantics.
+4. Exit signoff captured in [Phase 2 Exit Signoff](docs/phase2-exit-signoff-2026-03-03.md).
 
 ---
 
@@ -174,6 +219,7 @@ Exit criteria:
 1. Repeated layout runs produce stable output under fixed inputs.
 2. Grouped diagrams are visually consistent with preset expectations.
 3. Label placement preservation tests pass.
+4. Exit signoff captured in [Phase 3 Exit Signoff](docs/phase3-exit-signoff-2026-03-03.md).
 
 ---
 
@@ -197,12 +243,14 @@ Objective: make text workflows trustworthy and PR-friendly.
 
 - Version DSL/document schema explicitly.
 - Publish compatibility matrix and migration guarantees.
+- Reference: [Schema Compatibility Matrix](docs/schema-compatibility-matrix.md)
 
 Exit criteria:
 
 1. >= 98% round-trip fidelity on corpus.
 2. Deterministic export verified by repeated-run hash checks.
 3. Migration path documented and tested.
+4. Exit signoff captured in [Phase 4 Exit Signoff](docs/phase4-exit-signoff-2026-03-03.md).
 
 ---
 
@@ -214,21 +262,25 @@ Objective: convert engineering quality into transparent trust.
 
 - Publish method, fixture definitions, machine profile, and raw numbers.
 - Include confidence ranges and known caveats.
+- Baseline package: [Benchmark Reproducibility Pack (2026-03-03)](docs/benchmark-reproducibility-2026-03-03.md)
 
 ### 5.2 Engineering Decision Records
 
 - Document tradeoffs in routing, history model, and determinism strategy.
+- Decision records: [Engineering Decision Records (2026-03-03)](docs/engineering-decision-records-2026-03-03.md)
 
 ### 5.3 Contributor Workflow
 
 - Provide step-by-step profiling and regression triage guide.
 - Include "how to add a new perf fixture" and "how to validate no regressions".
+- Contributor guide: [Contributor Profiling and Regression Guide (2026-03-03)](docs/contributor-profiling-regression-guide-2026-03-03.md)
 
 Exit criteria:
 
 1. Benchmarks and method publicly reproducible.
 2. Core architectural decisions documented.
 3. Contributors can reproduce perf/correctness workflows locally.
+4. Exit signoff captured in [Phase 5 Exit Signoff](docs/phase5-exit-signoff-2026-03-03.md).
 
 ---
 
@@ -298,6 +350,8 @@ Ship Q1 only if all are true:
 4. Contributors can reproduce profiling and regression checks from docs.
 
 This plan maximizes shipping confidence by solving correctness first, then performance, then deterministic developer workflows.
+
+Final closeout signoff: [Q1 Final Closeout Signoff (2026-03-03)](docs/q1-final-closeout-signoff-2026-03-03.md)
 
 ---
 

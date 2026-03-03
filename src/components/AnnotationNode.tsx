@@ -17,7 +17,7 @@ const AnnotationNode = ({ data, selected }: NodeProps<NodeData>) => {
       />
       <div
         className={`
-          relative flex flex-col h-full shadow-md rounded-br-3xl rounded-tl-sm rounded-tr-sm rounded-bl-sm border border-yellow-300 transition-all duration-200
+          relative flex flex-col h-full shadow-md flow-lod-shadow rounded-br-3xl rounded-tl-sm rounded-tr-sm rounded-bl-sm border border-yellow-300 transition-all duration-200
           bg-yellow-100/90
           ${selected ? `ring-2 ring-yellow-400 ring-offset-2 z-10` : 'hover:shadow-lg'}
         `}
@@ -29,7 +29,7 @@ const AnnotationNode = ({ data, selected }: NodeProps<NodeData>) => {
                     {data.label}
                 </div>
             )}
-            <div className="text-xs text-yellow-800 font-medium leading-relaxed markdown-content flex-1 overflow-hidden">
+            <div className="text-xs text-yellow-800 font-medium leading-relaxed markdown-content flex-1 overflow-hidden flow-lod-secondary">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {data.subLabel || t('annotationNode.placeholder')}
                 </ReactMarkdown>

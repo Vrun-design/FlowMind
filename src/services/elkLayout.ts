@@ -32,6 +32,122 @@ export interface LayoutOptions {
     direction?: 'TB' | 'LR' | 'RL' | 'BT';
     algorithm?: LayoutAlgorithm;
     spacing?: 'compact' | 'normal' | 'loose';
+    preset?: 'hierarchical' | 'orthogonal-compact' | 'orthogonal-spacious';
+}
+
+type ResolvedLayoutConfiguration = {
+    algorithm: LayoutAlgorithm;
+    direction: 'TB' | 'LR' | 'RL' | 'BT';
+    spacing: 'compact' | 'normal' | 'loose';
+    elkDirection: LayoutDirection;
+    isHorizontal: boolean;
+    dims: {
+        nodeNode: string;
+        nodeLayer: string;
+        component: string;
+    };
+    layoutOptions: Record<string, string>;
+};
+
+type NormalizedLayoutInputs = {
+    topLevelNodes: Node[];
+    childrenByParent: Map<string, Node[]>;
+    sortedEdges: Edge[];
+};
+
+function buildComponentOrderIndex(nodes: Node[], edges: Edge[]): Map<string, number> {
+    const nodeIds = nodes.map((node) => node.id).sort((a, b) => a.localeCompare(b));
+    const nodeIdSet = new Set(nodeIds);
+    const adjacency = new Map<string, string[]>();
+
+    for (const nodeId of nodeIds) {
+        adjacency.set(nodeId, []);
+    }
+
+    for (const edge of edges) {
+        if (!nodeIdSet.has(edge.source) || !nodeIdSet.has(edge.target)) continue;
+        adjacency.get(edge.source)?.push(edge.target);
+        adjacency.get(edge.target)?.push(edge.source);
+    }
+
+    for (const [nodeId, neighbors] of adjacency.entries()) {
+        neighbors.sort((a, b) => a.localeCompare(b));
+        adjacency.set(nodeId, neighbors);
+    }
+
+    const visited = new Set<string>();
+    const componentOrder = new Map<string, number>();
+    let componentIndex = 0;
+
+    for (const startNodeId of nodeIds) {
+        if (visited.has(startNodeId)) continue;
+
+        const queue = [startNodeId];
+        visited.add(startNodeId);
+
+        while (queue.length > 0) {
+            const current = queue.shift();
+            if (!current) continue;
+            componentOrder.set(current, componentIndex);
+
+            const neighbors = adjacency.get(current) || [];
+            for (const neighbor of neighbors) {
+                if (visited.has(neighbor)) continue;
+                visited.add(neighbor);
+                queue.push(neighbor);
+            }
+        }
+
+        componentIndex += 1;
+    }
+
+    return componentOrder;
+}
+
+export function normalizeLayoutInputsForDeterminism(nodes: Node[], edges: Edge[]): NormalizedLayoutInputs {
+    const sortedNodes = [...nodes].sort((a, b) => a.id.localeCompare(b.id));
+    const componentOrderIndex = buildComponentOrderIndex(sortedNodes, edges);
+    const childrenByParent = new Map<string, Node[]>();
+    const topLevelNodes: Node[] = [];
+
+    for (const node of sortedNodes) {
+        if (!node.parentNode) {
+            topLevelNodes.push(node);
+            continue;
+        }
+        const children = childrenByParent.get(node.parentNode) || [];
+        children.push(node);
+        childrenByParent.set(node.parentNode, children);
+    }
+
+    const sortNodesByComponentAndId = (a: Node, b: Node) => {
+        const aComponent = componentOrderIndex.get(a.id) ?? Number.POSITIVE_INFINITY;
+        const bComponent = componentOrderIndex.get(b.id) ?? Number.POSITIVE_INFINITY;
+        if (aComponent !== bComponent) return aComponent - bComponent;
+        return a.id.localeCompare(b.id);
+    };
+
+    topLevelNodes.sort(sortNodesByComponentAndId);
+    for (const [parentId, children] of childrenByParent.entries()) {
+        children.sort(sortNodesByComponentAndId);
+        childrenByParent.set(parentId, children);
+    }
+
+    const sortedEdges = [...edges].sort((a, b) => {
+        const aSourceComponent = componentOrderIndex.get(a.source) ?? Number.POSITIVE_INFINITY;
+        const bSourceComponent = componentOrderIndex.get(b.source) ?? Number.POSITIVE_INFINITY;
+        if (aSourceComponent !== bSourceComponent) return aSourceComponent - bSourceComponent;
+
+        const aTargetComponent = componentOrderIndex.get(a.target) ?? Number.POSITIVE_INFINITY;
+        const bTargetComponent = componentOrderIndex.get(b.target) ?? Number.POSITIVE_INFINITY;
+        if (aTargetComponent !== bTargetComponent) return aTargetComponent - bTargetComponent;
+
+        if (a.source !== b.source) return a.source.localeCompare(b.source);
+        if (a.target !== b.target) return a.target.localeCompare(b.target);
+        return a.id.localeCompare(b.id);
+    });
+
+    return { topLevelNodes, childrenByParent, sortedEdges };
 }
 
 /**
@@ -86,13 +202,17 @@ function getAlgorithmOptions(algorithm: LayoutAlgorithm, layerSpacing: number) {
     if (algorithm === 'layered') {
         Object.assign(options, {
             'elk.layered.crossingMinimization.strategy': 'LAYER_SWEEP',
-            'elk.layered.crossingMinimization.thoroughness': '20',
+            'elk.layered.crossingMinimization.thoroughness': '30',
             'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
             'elk.edgeRouting': 'ORTHOGONAL',
             'elk.layered.spacing.edgeNodeBetweenLayers': '50',
             'elk.layered.spacing.edgeEdgeBetweenLayers': '40',
             'elk.separateConnectedComponents': 'true',
             'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
+        });
+    } else if (algorithm === 'mrtree') {
+        Object.assign(options, {
+            'elk.separateConnectedComponents': 'true',
         });
     } else if (algorithm === 'force') {
         Object.assign(options, {
@@ -108,6 +228,68 @@ function getAlgorithmOptions(algorithm: LayoutAlgorithm, layerSpacing: number) {
     return options;
 }
 
+export function getDeterministicSeedOptions(algorithm: LayoutAlgorithm): Record<string, string> {
+    // ELK seed support is most relevant for force/stress/radial families.
+    // For other algorithms we rely on deterministic input ordering/model-order options.
+    if (algorithm === 'force' || algorithm === 'stress' || algorithm === 'radial') {
+        return { 'elk.randomSeed': '1337' };
+    }
+    return {};
+}
+
+export function resolveLayoutPresetOptions(options: LayoutOptions): Pick<LayoutOptions, 'algorithm' | 'direction' | 'spacing'> {
+    if (!options.preset) {
+        return {
+            algorithm: options.algorithm ?? 'layered',
+            direction: options.direction ?? 'TB',
+            spacing: options.spacing ?? 'normal',
+        };
+    }
+
+    if (options.preset === 'hierarchical') {
+        return { algorithm: 'layered', direction: 'TB', spacing: 'normal' };
+    }
+
+    if (options.preset === 'orthogonal-compact') {
+        return { algorithm: 'layered', direction: 'LR', spacing: 'compact' };
+    }
+
+    return { algorithm: 'layered', direction: 'LR', spacing: 'loose' };
+}
+
+export function buildResolvedLayoutConfiguration(options: LayoutOptions): ResolvedLayoutConfiguration {
+    const {
+        direction = 'TB',
+        algorithm = 'layered',
+        spacing = 'normal',
+    } = resolveLayoutPresetOptions(options);
+    const elkDirection = DIRECTION_MAP[direction] || 'DOWN';
+    const isHorizontal = direction === 'LR' || direction === 'RL';
+
+    const dims = getSpacingDimensions(spacing, isHorizontal);
+    const algoOptions = getAlgorithmOptions(algorithm, parseFloat(dims.nodeLayer));
+    const deterministicSeedOptions = getDeterministicSeedOptions(algorithm);
+    const layoutOptions = {
+        'elk.direction': elkDirection,
+        'elk.spacing.nodeNode': dims.nodeNode,
+        'elk.layered.spacing.nodeNodeBetweenLayers': dims.nodeLayer,
+        'elk.spacing.componentComponent': dims.component,
+        'elk.padding': '[top=50,left=50,bottom=50,right=50]',
+        ...algoOptions,
+        ...deterministicSeedOptions,
+    };
+
+    return {
+        algorithm,
+        direction,
+        spacing,
+        elkDirection,
+        isHorizontal,
+        dims,
+        layoutOptions,
+    };
+}
+
 /**
  * Perform auto-layout using ELK.
  * Returns a new array of nodes with updated positions.
@@ -121,26 +303,12 @@ export async function getElkLayout(
     edges: Edge[],
     options: LayoutOptions = {}
 ): Promise<Node[]> {
-    const { direction = 'TB', algorithm = 'layered', spacing = 'normal' } = options;
-
-    const elkDirection = DIRECTION_MAP[direction] || 'DOWN';
-    const isHorizontal = direction === 'LR' || direction === 'RL';
-
-    // 1. Calculate Configuration
-    const dims = getSpacingDimensions(spacing, isHorizontal);
-    const algoOptions = getAlgorithmOptions(algorithm, parseFloat(dims.nodeLayer));
-    const layoutOptions = {
-        'elk.direction': elkDirection,
-        'elk.spacing.nodeNode': dims.nodeNode,
-        'elk.layered.spacing.nodeNodeBetweenLayers': dims.nodeLayer,
-        'elk.spacing.componentComponent': dims.component,
-        'elk.padding': '[top=50,left=50,bottom=50,right=50]',
-        ...algoOptions,
-    };
+    const { layoutOptions } = buildResolvedLayoutConfiguration(options);
+    const { topLevelNodes, childrenByParent, sortedEdges } = normalizeLayoutInputsForDeterminism(nodes, edges);
 
     // 2. Build Hierarchy
     const buildElkNode = (node: Node): ElkNode => {
-        const children = nodes.filter(n => n.parentNode === node.id);
+        const children = childrenByParent.get(node.id) || [];
 
         // Better estimation for unmeasured nodes (e.g. fresh from AI)
         let w = (node as any).measured?.width ?? node.width ?? (node.data as any)?.width;
@@ -168,13 +336,11 @@ export async function getElkLayout(
         };
     };
 
-    const topLevelNodes = nodes.filter(n => !n.parentNode);
-
     const elkGraph: ElkNode = {
         id: 'root',
         layoutOptions,
         children: topLevelNodes.map(buildElkNode),
-        edges: edges.map((edge) => ({
+        edges: sortedEdges.map((edge) => ({
             id: edge.id,
             sources: [edge.source],
             targets: [edge.target],

@@ -7,7 +7,7 @@ import { ViewHeader } from './ViewHeader';
 import { toMermaid } from '../../services/exportService';
 import { toOpenFlowDSL } from '../../services/openFlowDSLExporter';
 import { parseMermaid } from '@/lib/mermaidParser';
-import { parseOpenFlowDSL } from '@/lib/openFlowDSLParser';
+import { parseOpenFlowDSL, type ParseDiagnostic } from '@/lib/openFlowDSLParser';
 import { getElkLayout } from '../../services/elkLayout';
 import { assignSmartHandles } from '../../services/smartEdgeRouting';
 import { Button } from '../ui/Button';
@@ -35,6 +35,7 @@ export const CodeView = ({
     const { brandConfig } = useFlowStore();
     const [code, setCode] = useState('');
     const [error, setError] = useState<string | null>(null);
+    const [diagnostics, setDiagnostics] = useState<ParseDiagnostic[]>([]);
     const [isApplying, setIsApplying] = useState(false);
 
     // No initial sync - start empty for import
@@ -44,13 +45,21 @@ export const CodeView = ({
 
     const handleChange = (val: string) => {
         setCode(val);
-        if (error) setError(null);
+        if (error) {
+            setError(null);
+            setDiagnostics([]);
+        }
     };
 
     const handleApply = async () => {
         const res = mode === 'mermaid' ? parseMermaid(code) : parseOpenFlowDSL(code);
         if (res.error) {
             setError(res.error);
+            if ('diagnostics' in res && Array.isArray(res.diagnostics)) {
+                setDiagnostics(res.diagnostics);
+            } else {
+                setDiagnostics([]);
+            }
             return;
         }
 
@@ -124,9 +133,23 @@ export const CodeView = ({
                 </div>
 
                 {error && (
-                    <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-xs shadow-sm">
-                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                        <span className="font-medium truncate">{error}</span>
+                    <div className="px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-xs shadow-sm space-y-2">
+                        <div className="flex items-center gap-2">
+                            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                            <span className="font-medium">{error}</span>
+                        </div>
+                        {diagnostics.length > 0 && (
+                            <div className="space-y-1">
+                                {diagnostics.slice(0, 3).map((diagnostic, index) => (
+                                    <div key={`${diagnostic.message}-${index}`} className="text-[11px] leading-relaxed text-amber-800 whitespace-pre-wrap">
+                                        {typeof diagnostic.line === 'number' ? `Line ${diagnostic.line}: ` : ''}
+                                        {diagnostic.message}
+                                        {diagnostic.snippet ? `\n> ${diagnostic.snippet}` : ''}
+                                        {diagnostic.hint ? `\nHint: ${diagnostic.hint}` : ''}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
 

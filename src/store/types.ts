@@ -6,6 +6,7 @@ import type {
     OnNodesChange,
 } from 'reactflow';
 import type { DesignSystem, FlowEdge, FlowNode, FlowTab, GlobalEdgeOptions } from '@/lib/types';
+import type { ExportSerializationMode } from '@/services/canonicalSerialization';
 
 export interface ViewSettings {
     showGrid: boolean;
@@ -14,6 +15,9 @@ export interface ViewSettings {
     isShortcutsHelpOpen: boolean;
     defaultIconsEnabled: boolean;
     smartRoutingEnabled: boolean;
+    largeGraphSafetyMode: 'auto' | 'on' | 'off';
+    exportSerializationMode: ExportSerializationMode;
+    historyModelV2Enabled: boolean;
     analyticsEnabled: boolean;
     language: string;
 }
@@ -113,6 +117,7 @@ export interface FlowState {
     setGlobalEdgeOptions: (options: Partial<GlobalEdgeOptions>) => void;
     setDefaultIconsEnabled: (enabled: boolean) => void;
     setSmartRoutingEnabled: (enabled: boolean) => void;
+    setLargeGraphSafetyMode: (mode: ViewSettings['largeGraphSafetyMode']) => void;
     toggleAnalytics: (enabled: boolean) => void;
     setAISettings: (settings: Partial<AISettings>) => void;
     setBrandConfig: (config: Partial<BrandConfig>) => void;
@@ -123,6 +128,11 @@ export interface FlowState {
     setActiveBrandKitId: (id: string) => void;
     setSelectedNodeId: (id: string | null) => void;
     setSelectedEdgeId: (id: string | null) => void;
+    recordHistoryV2: () => void;
+    undoV2: () => void;
+    redoV2: () => void;
+    canUndoV2: () => boolean;
+    canRedoV2: () => boolean;
 }
 
 export type { EdgeChange, NodeChange };
