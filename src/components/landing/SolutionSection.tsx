@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, FileCode, Palette, ShieldCheck, HardDrive, Layers, Lock } from 'lucide-react';
+import { WandSparkles, FileCode, Palette, ShieldCheck, HardDrive, Layers, Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 function getFlagCode(country: string): string {
@@ -99,7 +99,7 @@ export function SolutionSection(): React.ReactElement {
                         {/* Content Top */}
                         <div className="relative z-20 mb-auto">
                             <div className="flex items-center gap-2 mb-3 text-brand-blue font-mono text-[10px] uppercase tracking-widest">
-                                <Sparkles className="w-3 h-3" />
+                                <WandSparkles className="w-3 h-3" />
                                 <span>{t('solution.aiAssistant')}</span>
                             </div>
                             <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">{t('solution.flowpilotAI')}</h3>
@@ -121,7 +121,7 @@ export function SolutionSection(): React.ReactElement {
                                 <div className="flex justify-start">
                                     <div className="flex items-center gap-2">
                                         <div className="w-6 h-6 rounded-full bg-brand-blue/20 flex items-center justify-center border border-brand-blue/30">
-                                            <Sparkles className="w-3 h-3 text-brand-blue animate-pulse" />
+                                            <WandSparkles className="w-3 h-3 text-brand-blue animate-pulse" />
                                         </div>
                                         <div className="h-1 w-1 bg-brand-blue rounded-full animate-bounce [animation-delay:0ms]"></div>
                                         <div className="h-1 w-1 bg-brand-blue rounded-full animate-bounce [animation-delay:150ms]"></div>

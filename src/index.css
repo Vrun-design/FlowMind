@@ -217,6 +217,37 @@ body {
   background-color: var(--brand-background);
 }
 
+/* Low-detail mode for large-graph + far-zoom rendering safety */
+.flow-lod-low .flow-lod-secondary {
+  opacity: 0.9;
+}
+
+.flow-lod-low .flow-lod-shadow {
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.flow-lod-interaction .flow-lod-shadow {
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.flow-lod-interaction .react-flow__node,
+.flow-lod-interaction .react-flow__edge path,
+.flow-lod-interaction .react-flow__edge-text,
+.flow-lod-interaction .react-flow__edge-textbg {
+  transition: none !important;
+  animation: none !important;
+}
+
+.flow-lod-far .flow-lod-far-target {
+  display: none !important;
+}
+
+.flow-lod-far .flow-lod-secondary {
+  display: none !important;
+}
+
 .font-inter {
   font-family: 'Inter', sans-serif;
 }

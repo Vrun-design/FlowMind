@@ -2,6 +2,8 @@ import { useCallback, useRef } from 'react';
 import { Node, Edge, getRectOfNodes, useReactFlow } from 'reactflow';
 import { toPng, toJpeg } from 'html-to-image';
 import { useFlowStore } from '../store';
+import { orderGraphForSerialization } from '@/services/canonicalSerialization';
+import { createDiagramDocument, parseDiagramDocumentImport } from '@/services/diagramDocument';
 
 import { useToast } from '../components/ui/ToastContext';
 
@@ -9,7 +11,7 @@ export const useFlowExport = (
   recordHistory: () => void,
   reactFlowWrapper: React.RefObject<HTMLDivElement>
 ) => {
-  const { nodes, edges, setNodes, setEdges } = useFlowStore();
+  const { nodes, edges, setNodes, setEdges, viewSettings } = useFlowStore();
   const { fitView } = useReactFlow();
   const { addToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -77,13 +79,12 @@ export const useFlowExport = (
 
   // --- JSON Export ---
   const handleExportJSON = useCallback(() => {
-    const doc = {
-      version: '1.0',
-      name: 'FlowMind Diagram',
-      createdAt: new Date().toISOString(),
+    const { nodes: orderedNodes, edges: orderedEdges } = orderGraphForSerialization(
       nodes,
       edges,
-    };
+      viewSettings.exportSerializationMode
+    );
+    const doc = createDiagramDocument(orderedNodes, orderedEdges);
     const blob = new Blob([JSON.stringify(doc, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -91,7 +92,7 @@ export const useFlowExport = (
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
-  }, [nodes, edges]);
+  }, [nodes, edges, viewSettings.exportSerializationMode]);
 
   // --- JSON Import ---
   const handleImportJSON = useCallback(() => {
@@ -105,18 +106,17 @@ export const useFlowExport = (
       const reader = new FileReader();
       reader.onload = (ev) => {
         try {
-          const parsed = JSON.parse(ev.target?.result as string);
-          if (!parsed.nodes || !parsed.edges) {
-            addToast('Invalid flow file: missing nodes or edges.', 'error');
-            return;
-          }
+          const raw = JSON.parse(ev.target?.result as string);
+          const parsed = parseDiagramDocumentImport(raw);
           recordHistory();
           setNodes(parsed.nodes);
           setEdges(parsed.edges);
+          parsed.warnings.forEach((message) => addToast(message, 'warning'));
           addToast('Diagram loaded successfully!', 'success');
           setTimeout(() => fitView({ duration: 800, padding: 0.2 }), 100);
-        } catch {
-          addToast('Failed to parse JSON file. Please check the format.', 'error');
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Failed to parse JSON file. Please check the format.';
+          addToast(message, 'error');
         }
       };
       reader.readAsText(file);

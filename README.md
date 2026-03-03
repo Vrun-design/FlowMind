@@ -16,6 +16,7 @@ OpenFlowKit is a professional-grade canvas that combines the power of **React Fl
 
 ## 📋 Table of Contents
 - [Why OpenFlowKit?](#-why-openflowkit)
+- [What's New (March 2026)](#-whats-new-march-2026)
 - [Key Features](#-key-features)
 - [Flowpilot — AI Generation](#-flowpilot--ai-diagram-generation)
 - [Node Types](#-node-types)
@@ -39,6 +40,7 @@ OpenFlowKit is a professional-grade canvas that combines the power of **React Fl
 - **Privacy First**: Local-first architecture. Your data never leaves your device.
 - **BYOK AI**: Bring your own API key for 7 providers — Gemini, OpenAI, Claude, Groq, NVIDIA, Cerebras, Mistral, or any custom OpenAI-compatible endpoint.
 - **Fully Internationalized**: Complete i18n support with English and Turkish — language persists across navigation via localStorage.
+
 
 ---
 
@@ -378,6 +380,12 @@ npm run e2e
 # E2E in headed mode (local debugging)
 npm run e2e:headed
 
+# Benchmark artifact validation
+npm run bench:check
+
+# Bundle budget validation
+npm run bundle:check
+
 # Full CI-equivalent suite (tests + build + bundle budget)
 npm run test:ci
 ```
@@ -386,6 +394,7 @@ npm run test:ci
 
 - `npm run test:ci` for unit/integration/build/bundle budget.
 - `npm run e2e:ci` for Playwright smoke coverage (Chromium).
+- `npm run bench:check` for benchmark artifact schema/status validation.
 
 
 ## 🤝 Contributing
@@ -406,7 +415,7 @@ OpenFlowKit is now global and more powerful! A massive shout-out to our communit
 
 - **[Yunus Emre Alpuş](https://github.com/YunusEmreAlps)** for leading the internationalization (i18n) effort and providing the initial Turkish localization. His contributions paved the way for our expansion into Spanish, German, French, Japanese, and Chinese.
 - **[Naman Dhakad](https://github.com/namandhakad712)** for integrating **Mistral AI** as a Flowpilot provider, expanding our AI ecosystem and improving the developer experience across all providers.
-- **[marsender](https://github.com/marsender)** for reporting 3 bugs and helping us improve the user experience and stability of the app!
+- **[marsender](https://github.com/marsender)** for reporting key bugs and helping us improve the user experience and stability of the app!
 
 ---
 

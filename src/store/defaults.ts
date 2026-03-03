@@ -91,6 +91,9 @@ export const INITIAL_VIEW_SETTINGS: ViewSettings = {
     isShortcutsHelpOpen: false,
     defaultIconsEnabled: true,
     smartRoutingEnabled: true,
+    largeGraphSafetyMode: 'auto',
+    exportSerializationMode: 'deterministic',
+    historyModelV2Enabled: import.meta.env.VITE_HISTORY_MODEL_V2 !== '0',
     analyticsEnabled: true,
     language: 'en',
 };

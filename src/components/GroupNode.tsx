@@ -64,32 +64,32 @@ const GroupNode = ({ id, data, selected }: NodeProps<NodeData>) => {
                 >
                     <button className="p-0.5 rounded hover:bg-indigo-100 transition-colors">
                         {collapsed ? (
-                            <ChevronRight className="w-4 h-4 text-indigo-500" />
+                            <ChevronRight className="w-4 h-4 text-indigo-500 flow-lod-far-target" />
                         ) : (
-                            <ChevronDown className="w-4 h-4 text-indigo-500" />
+                            <ChevronDown className="w-4 h-4 text-indigo-500 flow-lod-far-target" />
                         )}
                     </button>
                     {collapsed ? (
-                        <FolderClosed className="w-4 h-4 text-indigo-500" />
+                        <FolderClosed className="w-4 h-4 text-indigo-500 flow-lod-far-target" />
                     ) : (
-                        <FolderOpen className="w-4 h-4 text-indigo-500" />
+                        <FolderOpen className="w-4 h-4 text-indigo-500 flow-lod-far-target" />
                     )}
                     <span className="font-bold text-sm text-indigo-700 tracking-tight">
                         {data.label || 'Group'}
                     </span>
                     {data.subLabel && (
-                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600">
+                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600 flow-lod-secondary">
                             {data.subLabel}
                         </span>
                     )}
-                    <span className="ml-auto text-[10px] font-medium text-indigo-400">
+                    <span className="ml-auto text-[10px] font-medium text-indigo-400 flow-lod-secondary">
                         {childCount} {childCount === 1 ? 'node' : 'nodes'}
                     </span>
                 </div>
 
                 {/* Collapsed summary */}
                 {collapsed && (
-                    <div className="px-4 py-1 text-xs text-slate-400" style={{ pointerEvents: 'auto' }}>
+                    <div className="px-4 py-1 text-xs text-slate-400 flow-lod-secondary" style={{ pointerEvents: 'auto' }}>
                         Click to expand
                     </div>
                 )}

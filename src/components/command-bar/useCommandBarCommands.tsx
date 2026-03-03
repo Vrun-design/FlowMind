@@ -7,7 +7,7 @@ import {
     Palette,
     Search,
     Settings,
-    Sparkles,
+    WandSparkles,
     Zap,
 } from 'lucide-react';
 import { useFlowStore } from '@/store';
@@ -29,7 +29,7 @@ export function useCommandBarCommands({
             {
                 id: 'ai-generate',
                 label: 'Ask Flowpilot to build flow...',
-                icon: <Sparkles className="w-4 h-4 text-[var(--brand-primary)]" />,
+                icon: <WandSparkles className="w-4 h-4 text-[var(--brand-primary)]" />,
                 type: 'navigation',
                 description: 'Generate flow from text',
                 view: 'ai',
@@ -63,14 +63,6 @@ export function useCommandBarCommands({
                 shortcut: '⌘F',
                 type: 'navigation',
                 view: 'search',
-            },
-            {
-                id: 'visuals',
-                label: 'Connection Styles...',
-                icon: <Activity className="w-4 h-4 text-pink-500" />,
-                type: 'navigation',
-                view: 'visuals',
-                description: 'Edge styles & theme',
             },
             {
                 id: 'wireframes',

@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
-import { X, Settings, Keyboard, Sparkles } from 'lucide-react';
+import { X, Settings, Keyboard } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { GeneralSettings } from './GeneralSettings';
 import { ShortcutsSettings } from './ShortcutsSettings';
-import { AISettings } from './AISettings';
-import { useFlowStore } from '../../store';
 import { SidebarItem } from '../ui/SidebarItem';
 
 interface SettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
-    initialTab?: 'general' | 'shortcuts' | 'ai';
+    initialTab?: 'general' | 'shortcuts';
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, initialTab = 'general' }) => {
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState<'general' | 'shortcuts' | 'ai'>(initialTab);
+    const [activeTab, setActiveTab] = useState<'general' | 'shortcuts'>(initialTab);
 
     // Update active tab if initialTab changes when opening
     React.useEffect(() => {
@@ -24,7 +22,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
             setActiveTab(initialTab);
         }
     }, [isOpen, initialTab]);
-    const { brandConfig } = useFlowStore();
 
     if (!isOpen) return null;
 
@@ -36,7 +33,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
             >
                 {/* Sidebar */}
                 <div className="w-full md:w-64 bg-slate-50/50 border-b md:border-b-0 md:border-r border-slate-200/60 p-2 md:p-4 flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-visible items-center md:items-stretch custom-scrollbar shrink-0">
-                    <h2 className="hidden md:block px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">{t('settingsModal.settings')}</h2>
+                    <h2 className="hidden md:block px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">
+                        {t('settingsModal.settings', 'Settings')}
+                    </h2>
 
                     <SidebarItem
                         icon={<Settings className="w-4 h-4" />}
@@ -44,16 +43,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
                         onClick={() => setActiveTab('general')}
                         className="whitespace-nowrap w-auto md:w-full px-4 md:px-3 py-2 md:py-2.5 flex-none"
                     >
-                        {t('settingsModal.general')}
-                    </SidebarItem>
-
-                    <SidebarItem
-                        icon={<Sparkles className="w-4 h-4" />}
-                        isActive={activeTab === 'ai'}
-                        onClick={() => setActiveTab('ai')}
-                        className="whitespace-nowrap w-auto md:w-full px-4 md:px-3 py-2 md:py-2.5 flex-none"
-                    >
-                        {t('settingsModal.flowpilotAI')}
+                        {t('settingsModal.general', 'General')}
                     </SidebarItem>
 
                     <SidebarItem
@@ -62,14 +52,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
                         onClick={() => setActiveTab('shortcuts')}
                         className="whitespace-nowrap w-auto md:w-full px-4 md:px-3 py-2 md:py-2.5 flex-none"
                     >
-                        {t('settingsModal.shortcuts')}
+                        {t('settingsModal.shortcuts', 'Shortcuts')}
                     </SidebarItem>
-
-                    <div className="hidden md:block mt-auto px-4 py-4 border-t border-slate-100">
-                        <div className="text-xs text-slate-400">
-                            {t('settingsModal.running', { appName: brandConfig.appName })}
-                        </div>
-                    </div>
                 </div>
 
                 {/* Content */}
@@ -77,9 +61,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
                     <div className="flex items-center justify-between p-4 border-b border-slate-100">
                         <h2 className="text-lg font-semibold text-slate-800">
                             {{
-                                general: t('settingsModal.generalSettings'),
-                                ai: t('settingsModal.flowpilotConfigurations'),
-                                shortcuts: t('settingsModal.keyboardShortcuts'),
+                                general: t('settingsModal.canvasSettings', 'Canvas Settings'),
+                                shortcuts: t('settingsModal.keyboardShortcuts', 'Keyboard Shortcuts'),
                             }[activeTab]}
                         </h2>
                         <button
@@ -93,7 +76,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
                     <div className="flex-1 overflow-y-auto custom-scrollbar">
                         <div className="p-6">
                             {activeTab === 'general' && <GeneralSettings />}
-                            {activeTab === 'ai' && <AISettings />}
                             {activeTab === 'shortcuts' && <ShortcutsSettings />}
                         </div>
                     </div>

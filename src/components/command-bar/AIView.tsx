@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { Sparkles, Loader2, ImagePlus, X, Send, Trash2 } from 'lucide-react';
+import { WandSparkles, Loader2, ImagePlus, X, Send, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
 import { ViewHeader } from './ViewHeader';
@@ -60,7 +60,7 @@ export function AIView({
         <div className="flex flex-col h-full bg-slate-50 relative">
             <ViewHeader
                 title={t('commandBar.ai.title')}
-                icon={<Sparkles className="w-4 h-4 text-[var(--brand-primary)]" />}
+                icon={<WandSparkles className="w-4 h-4 text-[var(--brand-primary)]" />}
                 onBack={handleBack}
             />
 
@@ -83,7 +83,7 @@ export function AIView({
                     {!hasHistory ? (
                         <div className="flex flex-col items-center justify-center h-full text-center space-y-4 p-8 opacity-50">
                             <div className="w-12 h-12 bg-[var(--brand-primary-100)] rounded-full flex items-center justify-center">
-                                <Sparkles className="w-6 h-6 text-[var(--brand-primary)]" />
+                                <WandSparkles className="w-6 h-6 text-[var(--brand-primary)]" />
                             </div>
                             <div className="space-y-1">
                                 <p className="font-medium text-slate-700">How can I help you build?</p>

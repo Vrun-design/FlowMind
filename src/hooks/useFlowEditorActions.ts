@@ -6,7 +6,8 @@ import type { LayoutAlgorithm } from '@/services/elkLayout';
 import { getElkLayout } from '@/services/elkLayout';
 import { toMermaid, toPlantUML } from '@/services/exportService';
 import { toFigmaSVG } from '@/services/figmaExportService';
-import { toOpenFlowDSL } from '@/services/openFlowDSLExporter';
+import { getOpenFlowDSLExportDiagnostics, toOpenFlowDSL } from '@/services/openFlowDSLExporter';
+import type { ExportSerializationMode } from '@/services/canonicalSerialization';
 import { buildInsertedTemplateData, copyTextToClipboard } from './flow-editor-actions/helpers';
 
 interface UseFlowEditorActionsParams {
@@ -18,6 +19,7 @@ interface UseFlowEditorActionsParams {
     fitView: (options?: { duration?: number; padding?: number }) => void;
     t: TFunction;
     addToast: (message: string, type?: 'success' | 'error' | 'info' | 'warning', duration?: number) => void;
+    exportSerializationMode: ExportSerializationMode;
 }
 
 interface UseFlowEditorActionsResult {
@@ -43,6 +45,7 @@ export function useFlowEditorActions({
     fitView,
     t,
     addToast,
+    exportSerializationMode,
 }: UseFlowEditorActionsParams): UseFlowEditorActionsResult {
     const [isLayouting, setIsLayouting] = useState(false);
 
@@ -96,14 +99,22 @@ export function useFlowEditorActions({
     }, [nodes, edges, t]);
 
     const handleExportOpenFlowDSL = useCallback(async (): Promise<void> => {
-        const text = toOpenFlowDSL(nodes, edges);
+        const exportDiagnostics = getOpenFlowDSLExportDiagnostics(nodes, edges);
+        const text = toOpenFlowDSL(nodes, edges, { mode: exportSerializationMode });
         const copied = await copyTextToClipboard(text);
         if (copied) {
             addToast(t('flowEditor.dslCopied'), 'success');
+            if (exportDiagnostics.length > 0) {
+                const warningMessage = t(
+                    'flowEditor.dslExportSkippedEdges',
+                    { count: exportDiagnostics.length, defaultValue: '{{count}} invalid edge(s) were skipped in DSL export.' }
+                );
+                addToast(warningMessage, 'warning');
+            }
         } else {
             addToast(t('flowEditor.dslCopyFailed'), 'error');
         }
-    }, [nodes, edges, addToast, t]);
+    }, [nodes, edges, addToast, t, exportSerializationMode]);
 
     const handleExportFigma = useCallback(async (): Promise<void> => {
         try {

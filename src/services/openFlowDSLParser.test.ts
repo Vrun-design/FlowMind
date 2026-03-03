@@ -67,5 +67,29 @@ describe('openFlowDSLParser', () => {
         const input = `flow: "Empty"`;
         const result = parseOpenFlowDSL(input);
         expect(result.error).toBeDefined();
+        expect(result.error).toContain('No nodes found');
+        expect(result.diagnostics?.[0].hint).toContain('[process] n1: Start');
+    });
+
+    it('returns actionable diagnostics for unrecognized syntax lines', () => {
+        const input = `
+            flow: "Bad"
+            this is not valid dsl
+        `;
+        const result = parseOpenFlowDSL(input);
+        expect(result.error).toContain('Line 3');
+        expect(result.error).toContain('Unrecognized syntax');
+        expect(result.diagnostics?.[0].snippet).toBe('this is not valid dsl');
+    });
+
+    it('returns actionable diagnostics for unexpected closing brace', () => {
+        const input = `
+            [process] n1: Start
+            }
+        `;
+        const result = parseOpenFlowDSL(input);
+        expect(result.error).toContain('Line 3');
+        expect(result.error).toContain('Unexpected');
+        expect(result.diagnostics?.[0].hint).toContain('block delimiters');
     });
 });

@@ -171,6 +171,7 @@ function CustomNode(props: NodeProps<NodeData>): React.ReactElement {
         className={`relative group flex flex-col justify-center h-full transition-all duration-200
           ${!isComplexShape ? style.bg : ''}
           ${!isComplexShape ? style.border : ''}
+          flow-lod-shadow
           ${selected ? 'ring-2 ring-indigo-500 ring-offset-4' : ''}
         `}
         style={containerStyle}
@@ -199,15 +200,15 @@ function CustomNode(props: NodeProps<NodeData>): React.ReactElement {
         >
 
           {/* Icon Area */}
-          <div className="flex items-center gap-1.5 shrink-0 mb-2">
+          <div className="flex items-center gap-1.5 shrink-0 mb-2 flow-lod-far-target">
             {data.customIconUrl && (
-              <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border border-black/5 shadow-sm overflow-hidden ${style.iconBg}`}>
+              <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border border-black/5 shadow-sm overflow-hidden flow-lod-shadow ${style.iconBg}`}>
                 <img src={data.customIconUrl} alt="icon" className="w-5 h-5 object-contain" />
               </div>
             )}
 
             {iconName && (
-              <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border border-black/5 shadow-sm ${style.iconBg}`}>
+              <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border border-black/5 shadow-sm flow-lod-shadow ${style.iconBg}`}>
                 <NamedIcon name={iconName} fallbackName="Settings" className={`w-4 h-4 ${style.iconColor}`} />
               </div>
             )}
@@ -228,7 +229,7 @@ function CustomNode(props: NodeProps<NodeData>): React.ReactElement {
             </div>
             {data.subLabel && (
               <div
-                className="text-[10px] text-slate-500 mt-1 leading-snug markdown-content break-words line-clamp-2"
+                className="text-[10px] text-slate-500 mt-1 leading-snug markdown-content break-words line-clamp-2 flow-lod-secondary"
                 style={{
                   fontWeight: 'normal',
                   fontStyle: 'normal',
@@ -243,7 +244,7 @@ function CustomNode(props: NodeProps<NodeData>): React.ReactElement {
 
           {/* Image */}
           {data.imageUrl && (
-            <div className="w-full mt-3 rounded-lg overflow-hidden border border-slate-200 bg-slate-50">
+            <div className="w-full mt-3 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 flow-lod-far-target">
               <img src={data.imageUrl} alt="attachment" className="w-full h-auto max-h-[200px] object-cover" />
             </div>
           )}

@@ -13,6 +13,7 @@ export function createTabActions(set: SetFlowState, get: GetFlowState): Pick<
         setActiveTabId: (id) => {
             const { tabs, nodes, edges } = get();
             const currentTabId = get().activeTabId;
+            if (id === currentTabId) return;
 
             const updatedTabs = tabs.map((tab) =>
                 tab.id === currentTabId

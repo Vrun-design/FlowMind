@@ -14,6 +14,7 @@ export function createViewActions(set: SetFlowState): Pick<
     | 'setGlobalEdgeOptions'
     | 'setDefaultIconsEnabled'
     | 'setSmartRoutingEnabled'
+    | 'setLargeGraphSafetyMode'
     | 'toggleAnalytics'
 > {
     return {
@@ -91,6 +92,10 @@ export function createViewActions(set: SetFlowState): Pick<
                 edges: newEdges,
             };
         }),
+
+        setLargeGraphSafetyMode: (mode) => set((state) => ({
+            viewSettings: { ...state.viewSettings, largeGraphSafetyMode: mode },
+        })),
 
         toggleAnalytics: (enabled) => set((state) => ({
             viewSettings: { ...state.viewSettings, analyticsEnabled: enabled },

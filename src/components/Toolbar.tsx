@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Layout,
-  Sparkles,
+  WandSparkles,
   Trash2,
   Workflow,
 } from 'lucide-react';
@@ -103,7 +103,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             size="icon"
             className={`h-9 w-9 transition-all group relative overflow-hidden ${isCommandBarOpen ? 'bg-[var(--brand-primary-50)] text-[var(--brand-primary)] ring-1 ring-[var(--brand-primary-200)]' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'}`}
           >
-            <Sparkles className={`w-4 h-4 transition-transform ${isCommandBarOpen ? 'scale-110' : 'group-hover:scale-110'}`} />
+            <WandSparkles className={`w-4 h-4 transition-transform ${isCommandBarOpen ? 'scale-110' : 'group-hover:scale-110'}`} />
           </Button>
         </Tooltip>
 

@@ -27,12 +27,6 @@ export function HomeSettingsView({
             <div className="flex-1 flex min-h-0 bg-[var(--brand-surface)]">
                 <div className="w-48 border-r border-slate-100 p-2 space-y-1 overflow-y-auto">
                     <SidebarItem
-                        isActive={activeSettingsTab === 'brand'}
-                        onClick={() => onSettingsTabChange('brand')}
-                    >
-                        {t('settings.brand', 'Brand Kit')}
-                    </SidebarItem>
-                    <SidebarItem
                         isActive={activeSettingsTab === 'general'}
                         onClick={() => onSettingsTabChange('general')}
                     >
@@ -43,6 +37,12 @@ export function HomeSettingsView({
                         onClick={() => onSettingsTabChange('ai')}
                     >
                         {t('settings.ai', 'Flowpilot AI')}
+                    </SidebarItem>
+                    <SidebarItem
+                        isActive={activeSettingsTab === 'brand'}
+                        onClick={() => onSettingsTabChange('brand')}
+                    >
+                        {t('settings.brand', 'Brand Kit')}
                     </SidebarItem>
                     <SidebarItem
                         isActive={activeSettingsTab === 'shortcuts'}

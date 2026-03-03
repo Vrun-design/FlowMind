@@ -54,6 +54,14 @@ export const SearchView = ({
                     className="w-full focus:border-[var(--brand-primary-400)]"
                     autoFocus
                 />
+                <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
+                    <span>
+                        {t('commandBar.search.showingCount', { count: filteredNodes.length })}
+                    </span>
+                    <span>
+                        {t('commandBar.search.totalCount', { count: nodes.length })}
+                    </span>
+                </div>
             </div>
 
             <div className="overflow-y-auto p-2 grid grid-cols-1 gap-1 max-h-[350px]">

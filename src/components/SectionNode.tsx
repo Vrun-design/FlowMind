@@ -40,9 +40,9 @@ function SectionNode({ data, selected }: NodeProps<NodeData>): React.ReactElemen
           style={{ borderBottom: `1px dashed ${theme.border}` }}
         >
           {iconName ? (
-            <NamedIcon name={iconName} fallbackName="Group" className="w-4 h-4" style={{ color: theme.title }} />
+            <NamedIcon name={iconName} fallbackName="Group" className="w-4 h-4 flow-lod-far-target" style={{ color: theme.title }} />
           ) : (
-            <Group className="w-4 h-4" style={{ color: theme.title }} />
+            <Group className="w-4 h-4 flow-lod-far-target" style={{ color: theme.title }} />
           )}
           <span
             className="font-bold text-sm tracking-tight"
@@ -51,7 +51,7 @@ function SectionNode({ data, selected }: NodeProps<NodeData>): React.ReactElemen
             {data.label || 'Section'}
           </span>
           {data.subLabel && (
-            <span className={`text-xs font-medium px-2 py-1 rounded-full ${theme.badge}`}>
+            <span className={`text-xs font-medium px-2 py-1 rounded-full flow-lod-secondary ${theme.badge}`}>
               {data.subLabel}
             </span>
           )}

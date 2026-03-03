@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Simplifier"
+  short_description: "Incremental behavior-preserving simplification with validation."
+  default_prompt: "Use $code-simplifier to simplify recently modified code one file at a time without behavior changes, validating after each step."

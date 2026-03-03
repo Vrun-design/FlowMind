@@ -13,7 +13,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import {
-    MousePointer2, Hand, Sparkles, Layout, Plus, Link, Trash2, Undo, Redo,
+    MousePointer2, Hand, WandSparkles, Layout, Plus, Link, Trash2, Undo, Redo,
     Activity, Terminal, Code2, Database, Box
 } from 'lucide-react';
 
@@ -52,7 +52,7 @@ const StartNode = ({ data }: NodeProps) => {
                         <span className="text-indigo-500">$</span>
                         <span>generate_next_node()</span>
                         <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Sparkles className="w-3 h-3" />
+                            <WandSparkles className="w-3 h-3" />
                         </div>
                     </button>
 
@@ -186,7 +186,7 @@ export const HeroCanvas = () => {
 
             {/* Bottom Toolbar (Visual Only) */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-200/60 p-1.5 flex items-center gap-1 z-20 pointer-events-auto">
-                {[MousePointer2, Hand, Sparkles, Layout, Plus, Link, Trash2, Undo, Redo].map((Icon, i) => (
+                {[MousePointer2, Hand, WandSparkles, Layout, Plus, Link, Trash2, Undo, Redo].map((Icon, i) => (
                     <button
                         key={i}
                         className={`p-2.5 rounded-lg transition-all active:scale-95 ${i === 4 ? 'bg-[#6366f1] text-white shadow-md hover:bg-[#4f46e5]' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-900'}`}
