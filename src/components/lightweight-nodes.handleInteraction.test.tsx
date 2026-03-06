@@ -47,7 +47,7 @@ vi.mock('@/lib/reactflowCompat', async (importOriginal) => {
 });
 
 describe('lightweight node handle interaction policy', () => {
-  it('keeps selected TextNode handles non-intercepting in visualQualityV2', () => {
+  it('keeps selected TextNode handles connectable in visualQualityV2', () => {
     render(
       <TextNode
         id="text-1"
@@ -66,7 +66,7 @@ describe('lightweight node handle interaction policy', () => {
 
     for (const handleId of ['target-top', 'target-left', 'source-right', 'source-bottom']) {
       const handle = screen.getByTestId(`handle-${handleId}`);
-      expect(handle.getAttribute('data-pointer')).toBe('none');
+      expect(handle.getAttribute('data-pointer')).toBe('all');
     }
   });
 
@@ -94,7 +94,7 @@ describe('lightweight node handle interaction policy', () => {
     }
   });
 
-  it('keeps selected MindmapNode handles non-intercepting in visualQualityV2', () => {
+  it('keeps selected MindmapNode handles connectable in visualQualityV2', () => {
     render(
       <MindmapNode
         id="mindmap-1"
@@ -111,7 +111,7 @@ describe('lightweight node handle interaction policy', () => {
 
     for (const handleId of ['left-target', 'right-source']) {
       const handle = screen.getByTestId(`handle-${handleId}`);
-      expect(handle.getAttribute('data-pointer')).toBe('none');
+      expect(handle.getAttribute('data-pointer')).toBe('all');
     }
   });
 

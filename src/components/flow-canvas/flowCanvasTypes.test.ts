@@ -15,7 +15,6 @@ describe('flowCanvasNodeTypes', () => {
         "end",
         "er_entity",
         "group",
-        "icon",
         "image",
         "journey",
         "mindmap",
@@ -25,10 +24,6 @@ describe('flowCanvasNodeTypes', () => {
         "start",
         "swimlane",
         "text",
-        "wireframe_button",
-        "wireframe_icon",
-        "wireframe_image",
-        "wireframe_input",
       ]
     `);
   });

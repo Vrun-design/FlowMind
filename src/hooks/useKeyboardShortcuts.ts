@@ -137,6 +137,20 @@ export function useKeyboardShortcuts({
         if (!selectedNodeId) return;
         e.preventDefault();
         requestNodeLabelEdit(selectedNodeId);
+        return;
+      }
+
+      const isPrintableCharacter = e.key.length === 1 && !isCmdOrCtrl && !e.altKey;
+      if (isPrintableCharacter) {
+        if (isEditable) return;
+        if (!ROLLOUT_FLAGS.canvasInteractionsV1) return;
+        if (!selectedNodeId) return;
+        e.preventDefault();
+        requestNodeLabelEdit(selectedNodeId, {
+          seedText: e.key,
+          replaceExisting: true,
+        });
+        return;
       }
 
       // Select All

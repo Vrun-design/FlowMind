@@ -1,20 +1,221 @@
 import React from 'react';
-import * as AllIcons from 'lucide-react';
+import {
+    Activity,
+    AlertTriangle,
+    Bell,
+    Box,
+    Cable,
+    Calendar,
+    Check,
+    CheckCircle,
+    Clock,
+    Cloud,
+    Code,
+    Container,
+    Cpu,
+    CreditCard,
+    Database,
+    DollarSign,
+    Edit,
+    File,
+    FileText,
+    Folder,
+    FunctionSquare,
+    GitBranch,
+    GitFork,
+    Globe,
+    Group,
+    HelpCircle,
+    Home,
+    ImageIcon,
+    Info,
+    Key,
+    KeyRound,
+    Layers,
+    LifeBuoy,
+    Link,
+    Lock,
+    LockKeyhole,
+    LogIn,
+    Mail,
+    MapPin,
+    MessageSquare,
+    Monitor,
+    Network,
+    Package,
+    Radar,
+    Route,
+    Rows3,
+    Save,
+    Search,
+    Server,
+    ServerCog,
+    Settings,
+    Share,
+    Shield,
+    ShieldCheck,
+    ShipWheel,
+    ShoppingCart,
+    SlidersHorizontal,
+    Smartphone,
+    Tablet,
+    Terminal,
+    Trash,
+    Truck,
+    Unlock,
+    Upload,
+    User,
+    Users,
+    Waypoints,
+    X,
+    Zap,
+} from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 
 const FALLBACK_ICON_NAME = 'Settings';
 
-export const ICON_MAP = Object.entries(AllIcons).reduce((acc, [key, component]) => {
-    if (key !== 'Icon' && key !== 'createLucideIcon' && key !== 'default' && /^[A-Z]/.test(key)) {
-        acc[key] = component as React.ElementType;
-    }
-    return acc;
-}, {} as Record<string, React.ElementType>);
+const ICON_COMPONENTS = {
+    Activity,
+    AlertTriangle,
+    Bell,
+    Box,
+    Cable,
+    Calendar,
+    Check,
+    CheckCircle,
+    Clock,
+    Cloud,
+    Code,
+    Container,
+    Cpu,
+    CreditCard,
+    Database,
+    DollarSign,
+    Edit,
+    File,
+    FileText,
+    Folder,
+    FunctionSquare,
+    GitBranch,
+    GitFork,
+    Globe,
+    Group,
+    HelpCircle,
+    Home,
+    ImageIcon,
+    Info,
+    Key,
+    KeyRound,
+    Layers,
+    LifeBuoy,
+    Link,
+    Lock,
+    LockKeyhole,
+    LogIn,
+    Mail,
+    MapPin,
+    MessageSquare,
+    Monitor,
+    Network,
+    Package,
+    Radar,
+    Route,
+    Rows3,
+    Save,
+    Search,
+    Server,
+    ServerCog,
+    Settings,
+    Share,
+    Shield,
+    ShieldCheck,
+    ShipWheel,
+    ShoppingCart,
+    SlidersHorizontal,
+    Smartphone,
+    Tablet,
+    Terminal,
+    Trash,
+    Truck,
+    Unlock,
+    Upload,
+    User,
+    Users,
+    Waypoints,
+    X,
+    Zap,
+} satisfies Record<string, React.ElementType>;
 
-export const ICON_NAMES: string[] = Object.keys(ICON_MAP);
+const ICON_ALIASES: Record<string, string> = {
+    image: 'ImageIcon',
+    imageicon: 'ImageIcon',
+    login: 'LogIn',
+    signin: 'LogIn',
+    signinicon: 'LogIn',
+};
+
+export const ICON_MAP = ICON_COMPONENTS;
+export const ICON_NAMES: string[] = Object.keys(ICON_COMPONENTS);
+
+export const ICON_PICKER_PRIORITY_NAMES: string[] = [
+    'Database',
+    'Server',
+    'User',
+    'Users',
+    'Globe',
+    'Cloud',
+    'Lock',
+    'Unlock',
+    'Shield',
+    'ShieldCheck',
+    'Key',
+    'Mail',
+    'MessageSquare',
+    'File',
+    'FileText',
+    'Folder',
+    'Code',
+    'Terminal',
+    'Settings',
+    'Cpu',
+    'Smartphone',
+    'Tablet',
+    'Monitor',
+    'CreditCard',
+    'DollarSign',
+    'ShoppingCart',
+    'Box',
+    'Package',
+    'Truck',
+    'MapPin',
+    'Search',
+    'Bell',
+    'Calendar',
+    'Clock',
+    'Check',
+    'CheckCircle',
+    'X',
+    'AlertTriangle',
+    'Info',
+    'HelpCircle',
+    'Home',
+    'Link',
+    'Share',
+    'Trash',
+    'Save',
+    'Edit',
+    'GitBranch',
+    'Layers',
+    'Waypoints',
+    'Network',
+];
+
+function normalizeIconLookupKey(iconName: string): string {
+    return iconName.replace(/[\s_-]/g, '').toLowerCase();
+}
 
 export function resolveIconName(iconName?: string, fallback: string = FALLBACK_ICON_NAME): string {
-    if (!iconName) {
+    if (!iconName || iconName === 'none') {
         return ICON_MAP[fallback] ? fallback : FALLBACK_ICON_NAME;
     }
 
@@ -22,8 +223,13 @@ export function resolveIconName(iconName?: string, fallback: string = FALLBACK_I
         return iconName;
     }
 
-    const lower = iconName.toLowerCase();
-    const matchedKey = ICON_NAMES.find((key) => key.toLowerCase() === lower);
+    const normalizedKey = normalizeIconLookupKey(iconName);
+    const aliasedName = ICON_ALIASES[normalizedKey];
+    if (aliasedName && ICON_MAP[aliasedName]) {
+        return aliasedName;
+    }
+
+    const matchedKey = ICON_NAMES.find((key) => normalizeIconLookupKey(key) === normalizedKey);
     if (matchedKey) {
         return matchedKey;
     }

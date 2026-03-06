@@ -18,21 +18,21 @@ const CommandItemRow = ({ item, isSelected, onClick }: { item: CommandItem, isSe
     <div
         onClick={onClick}
         className={`
-            group flex items-center gap-3 px-4 py-2.5 mx-2 rounded-[var(--radius-md)] cursor-pointer transition-all duration-200 border border-transparent
-            ${isSelected ? 'bg-[var(--brand-primary-50)] text-[var(--brand-primary-900)] border-[var(--brand-primary)] shadow-sm' : 'text-slate-600 hover:bg-[var(--brand-primary-50)] hover:border-[var(--brand-primary-100)] hover:text-[var(--brand-primary-700)]'}
+            group mx-2 flex items-center gap-3 rounded-[var(--radius-md)] border px-4 py-2.5 cursor-pointer transition-all duration-200
+            ${isSelected ? 'border-[var(--brand-primary-200)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-900)]' : 'border-transparent text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900'}
         `}
     >
         <div className={`
-            p-1.5 rounded-[var(--radius-sm)] transition-colors
-            ${isSelected ? 'bg-[var(--brand-primary-100)] text-[var(--brand-primary)]' : 'bg-slate-100 text-slate-500 group-hover:bg-white group-hover:shadow-sm'}
+            flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] border transition-colors
+            ${isSelected ? 'border-[var(--brand-primary-100)] bg-white text-[var(--brand-primary)]' : 'border-slate-200/70 bg-slate-50 text-slate-500 group-hover:border-slate-200 group-hover:bg-white'}
         `}>
             {item.icon}
         </div>
 
         <div className="flex-1 flex flex-col justify-center">
-            <span className="text-sm font-medium leading-none mb-0.5">{item.label}</span>
+            <span className="text-sm font-semibold leading-none mb-1">{item.label}</span>
             {item.description && (
-                <span className={`text-[11px] ${isSelected ? 'text-[var(--brand-primary-400)]' : 'text-slate-400'}`}>
+                <span className={`text-[11px] ${isSelected ? 'text-[var(--brand-primary-500)]' : 'text-slate-400'}`}>
                     {item.description}
                 </span>
             )}
@@ -106,8 +106,6 @@ export const RootView = ({
                             if (item.type === 'action') onClose();
                         }
                     }
-                } else if (searchQuery) {
-                    setView('ai');
                 }
             }
         };
@@ -127,7 +125,7 @@ export const RootView = ({
                         // Prevent global shortcuts interfering with typing
                         e.stopPropagation();
                     }}
-                    placeholder="Type a command or ask Flowpilot..."
+                    placeholder="Search actions, FlowPilot, code, or canvas tools..."
                     className="flex-1 bg-transparent border-none outline-none text-slate-700 placeholder:text-slate-400 text-base focus:ring-0"
                     autoFocus
                 />
@@ -144,7 +142,7 @@ export const RootView = ({
 
             <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent py-2">
                 <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    {searchQuery ? 'Results' : 'Suggestions'}
+                    {searchQuery ? 'Results' : 'Quick Actions'}
                 </div>
                 {filteredCommands.map((item, idx) => (
                     <CommandItemRow
@@ -161,11 +159,8 @@ export const RootView = ({
                     />
                 ))}
                 {filteredCommands.length === 0 && searchQuery && (
-                    <div
-                        className="px-4 py-3 text-sm text-slate-500 text-center cursor-pointer hover:bg-slate-50"
-                        onClick={() => setView('ai')}
-                    >
-                        Press <kbd className="font-sans px-1 py-0.5 bg-slate-100 border border-slate-200 rounded text-xs">Enter</kbd> to ask Flowpilot about &quot;{searchQuery}&quot;
+                    <div className="px-4 py-3 text-center text-sm text-slate-500">
+                        No matching commands for &quot;{searchQuery}&quot;
                     </div>
                 )}
             </div>

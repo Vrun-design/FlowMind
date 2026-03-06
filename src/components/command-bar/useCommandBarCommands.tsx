@@ -1,17 +1,14 @@
 import { useMemo } from 'react';
 import {
-    Activity,
     ArrowRight,
     Code2,
-    CloudCog,
+    Compass,
     FileCode,
-    Layers,
-    PanelsTopLeft,
     Palette,
     Search,
     Settings,
     WandSparkles,
-    Zap,
+    Workflow,
 } from 'lucide-react';
 import { useFlowStore } from '@/store';
 import type { CommandItem, CommandBarProps } from './types';
@@ -20,44 +17,52 @@ interface UseCommandBarCommandsParams {
     settings?: CommandBarProps['settings'];
     onUndo?: CommandBarProps['onUndo'];
     onRedo?: CommandBarProps['onRedo'];
+    onOpenStudioAI?: CommandBarProps['onOpenStudioAI'];
+    onOpenStudioFlowMind?: CommandBarProps['onOpenStudioFlowMind'];
+    onOpenStudioMermaid?: CommandBarProps['onOpenStudioMermaid'];
 }
 
 export function useCommandBarCommands({
     settings,
     onUndo,
     onRedo,
+    onOpenStudioAI,
+    onOpenStudioFlowMind,
+    onOpenStudioMermaid,
 }: UseCommandBarCommandsParams): CommandItem[] {
     return useMemo(() => {
         return [
             {
-                id: 'ai-generate',
-                label: 'Ask Flowpilot to build flow...',
+                id: 'studio-ai',
+                label: 'Open FlowPilot',
                 icon: <WandSparkles className="w-4 h-4 text-[var(--brand-primary)]" />,
-                type: 'navigation',
-                description: 'Generate flow from text',
-                view: 'ai',
+                type: 'action',
+                description: 'Open AI editing in the right rail',
+                action: onOpenStudioAI,
             },
             {
-                id: 'templates',
-                label: 'Templates',
-                icon: <Zap className="w-4 h-4 text-blue-500" />,
-                type: 'navigation',
-                description: 'Browse pre-built flows',
-                view: 'templates',
-            },
-            {
-                id: 'mermaid',
-                label: 'Paste Mermaid Code',
-                icon: <Code2 className="w-4 h-4 text-pink-500" />,
-                type: 'navigation',
-                view: 'mermaid',
-            },
-            {
-                id: 'flowmind',
-                label: `Paste ${useFlowStore.getState().brandConfig.appName} DSL`,
+                id: 'studio-flowmind',
+                label: 'Edit Flow DSL',
                 icon: <FileCode className="w-4 h-4 text-emerald-500" />,
+                type: 'action',
+                description: `Open ${useFlowStore.getState().brandConfig.appName} DSL in Studio`,
+                action: onOpenStudioFlowMind,
+            },
+            {
+                id: 'studio-mermaid',
+                label: 'Edit Mermaid Code',
+                icon: <Code2 className="w-4 h-4 text-pink-500" />,
+                type: 'action',
+                description: 'Open Mermaid editing in Studio',
+                action: onOpenStudioMermaid,
+            },
+            {
+                id: 'wireframes',
+                label: 'Add to Canvas',
+                icon: <Compass className="w-4 h-4 text-violet-500" />,
                 type: 'navigation',
-                view: 'flowmind',
+                view: 'wireframes',
+                description: 'Browser screens, mobile screens, and canvas primitives',
             },
             {
                 id: 'search-nodes',
@@ -66,38 +71,23 @@ export function useCommandBarCommands({
                 shortcut: '⌘F',
                 type: 'navigation',
                 view: 'search',
+                description: 'Find nodes already on the canvas',
             },
             {
-                id: 'layers',
-                label: 'Layers',
-                icon: <Layers className="w-4 h-4 text-indigo-500" />,
+                id: 'layout',
+                label: 'Auto Layout',
+                icon: <Workflow className="w-4 h-4 text-sky-500" />,
                 type: 'navigation',
-                view: 'layers',
-                description: 'Hide, lock, select, move',
+                view: 'layout',
+                description: 'Arrange the current flow automatically',
             },
             {
-                id: 'pages',
-                label: 'Pages',
-                icon: <PanelsTopLeft className="w-4 h-4 text-cyan-500" />,
+                id: 'templates',
+                label: 'Start from Template',
+                icon: <Compass className="w-4 h-4 text-blue-500" />,
                 type: 'navigation',
-                view: 'pages',
-                description: 'Duplicate and move selections',
-            },
-            {
-                id: 'libraries',
-                label: 'Domain Libraries',
-                icon: <CloudCog className="w-4 h-4 text-emerald-500" />,
-                type: 'navigation',
-                view: 'libraries',
-                description: 'AWS, Azure, GCP, Kubernetes, network, security',
-            },
-            {
-                id: 'wireframes',
-                label: 'Wireframe Elements...',
-                icon: <Activity className="w-4 h-4 text-purple-500" />,
-                type: 'navigation',
-                view: 'wireframes',
-                description: 'Browser, Mobile, UI Controls',
+                description: 'Browse pre-built flows and starter layouts',
+                view: 'templates',
             },
             ...(settings
                 ? [
@@ -119,16 +109,6 @@ export function useCommandBarCommands({
                         value: settings.snapToGrid,
                         action: settings.onToggleSnap,
                         description: settings.snapToGrid ? 'On' : 'Off',
-                        hidden: true,
-                    },
-                    {
-                        id: 'toggle-minimap',
-                        label: 'Show MiniMap',
-                        icon: <Settings className="w-4 h-4 text-slate-500" />,
-                        type: 'toggle' as const,
-                        value: settings.showMiniMap,
-                        action: settings.onToggleMiniMap,
-                        description: settings.showMiniMap ? 'On' : 'Off',
                         hidden: true,
                     },
                 ]
@@ -165,12 +145,12 @@ export function useCommandBarCommands({
             },
             {
                 id: 'design-systems',
-                label: 'Design Systems...',
+                label: 'Design Systems',
                 icon: <Palette className="w-4 h-4 text-[var(--brand-primary)]" />,
                 type: 'navigation',
                 view: 'design-system',
                 description: 'Manage themes & styles',
             },
         ];
-    }, [settings, onUndo, onRedo]);
+    }, [onOpenStudioAI, onOpenStudioFlowMind, onOpenStudioMermaid, settings, onUndo, onRedo]);
 }

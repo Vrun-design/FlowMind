@@ -9,8 +9,9 @@ import { getNodeColorPalette, NODE_EXPORT_COLORS } from '../theme';
 import { useDesignSystem } from '../hooks/useDesignSystem';
 import { useInlineNodeTextEdit } from '@/hooks/useInlineNodeTextEdit';
 import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
-import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from './handleInteraction';
 import { getTransformDiagnosticsAttrs } from './transformDiagnostics';
+import { InlineTextEditSurface } from './InlineTextEditSurface';
+import { NodeChrome } from './NodeChrome';
 import { NodeTransformControls } from './NodeTransformControls';
 
 type NodeShape = NonNullable<NodeData['shape']>;
@@ -57,7 +58,6 @@ function ShiftKeyResizeWatcher({ onShiftChange }: { onShiftChange: (held: boolea
     return () => {
       window.removeEventListener('keydown', down);
       window.removeEventListener('keyup', up);
-      onShiftChange(false); // reset on unmount
     };
   }, [onShiftChange]);
   return null;
@@ -164,13 +164,7 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
   const contentPadding = isCompactNode ? '0.5rem' : designSystem.components.node.padding;
   const labelEdit = useInlineNodeTextEdit(id, 'label', data.label || '');
   const subLabelEdit = useInlineNodeTextEdit(id, 'subLabel', data.subLabel || '');
-  const handlePointerEvents = getHandlePointerEvents(visualQualityV2Enabled, Boolean(selected));
-  const handleVisibilityClass = visualQualityV2Enabled
-    ? getV2HandleVisibilityClass(Boolean(selected))
-    : selected
-      ? 'opacity-100'
-      : 'opacity-0 group-hover:opacity-100 [.is-connecting_&]:opacity-100';
-  const connectionHandleClass = `!w-2.5 !h-2.5 !bg-white !border-2 !border-[var(--brand-primary)] transition-all duration-150 hover:scale-110 ${handleVisibilityClass}`;
+  const connectionHandleClass = '!w-2.5 !h-2.5 !bg-white !border-2 !border-[var(--brand-primary)] transition-all duration-150 hover:scale-110';
 
   // Calculate Border Radius from Design System if shape is 'rounded' (default)
   function getBorderRadius(): string | number {
@@ -216,8 +210,15 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
         keepAspectRatio={shiftHeld || needsSquareAspect}
       />
 
-      {/* Main Node Container */}
-      <div
+      <NodeChrome
+        selected={Boolean(selected)}
+        minWidth={minWidth}
+        minHeight={effectiveMinHeight}
+        keepAspectRatio={shiftHeld || needsSquareAspect}
+        handleClassName={connectionHandleClass}
+      >
+        {/* Main Node Container */}
+        <div
         className={`relative group flex flex-col justify-center h-full transition-all duration-200
           ${!isComplexShape ? style.bg : ''}
           ${!isComplexShape ? style.border : ''}
@@ -276,7 +277,14 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
 
           {/* Text Content */}
           <div className={`flex flex-col min-w-0 max-w-full w-full overflow-hidden ${fontFamilyClass}`} style={{ textAlign: data.align || 'center', ...fontFamilyStyle }}>
-            <div
+            <InlineTextEditSurface
+              isEditing={labelEdit.isEditing}
+              draft={labelEdit.draft}
+              displayValue={<MemoizedMarkdown content={data.label || 'Node'} />}
+              onBeginEdit={labelEdit.beginEdit}
+              onDraftChange={labelEdit.setDraft}
+              onCommit={labelEdit.commit}
+              onKeyDown={labelEdit.handleKeyDown}
               className={`leading-tight block break-words markdown-content [&_p]:m-0 [&_p]:leading-tight ${fontSizeClass}`}
               style={{
                 ...fontSizeStyle,
@@ -292,27 +300,18 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
                   : {}),
               }}
               title={data.label || 'Node'}
-              onClick={(event) => {
-                event.stopPropagation();
-                labelEdit.beginEdit();
-              }}
-            >
-              {labelEdit.isEditing ? (
-                <input
-                  autoFocus
-                  value={labelEdit.draft}
-                  onChange={(event) => labelEdit.setDraft(event.target.value)}
-                  onBlur={labelEdit.commit}
-                  onKeyDown={labelEdit.handleKeyDown}
-                  onMouseDown={(event) => event.stopPropagation()}
-                  className="w-full rounded border border-[var(--brand-primary)] bg-white/90 px-1 py-0.5 text-center outline-none"
-                />
-              ) : (
-                <MemoizedMarkdown content={data.label || 'Node'} />
-              )}
-            </div>
+              inputClassName="text-center"
+              isSelected={Boolean(selected)}
+            />
             {hasSubLabel && (
-              <div
+              <InlineTextEditSurface
+                isEditing={subLabelEdit.isEditing}
+                draft={subLabelEdit.draft}
+                displayValue={<MemoizedMarkdown content={data.subLabel} />}
+                onBeginEdit={subLabelEdit.beginEdit}
+                onDraftChange={subLabelEdit.setDraft}
+                onCommit={subLabelEdit.commit}
+                onKeyDown={subLabelEdit.handleKeyDown}
                 className="text-[10px] text-slate-500 mt-1 leading-snug markdown-content [&_p]:m-0 [&_p]:leading-snug break-words flow-lod-secondary"
                 style={{
                   fontWeight: 'normal',
@@ -327,25 +326,9 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
                     }
                     : {}),
                 }}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  subLabelEdit.beginEdit();
-                }}
-              >
-                {subLabelEdit.isEditing ? (
-                  <input
-                    autoFocus
-                    value={subLabelEdit.draft}
-                    onChange={(event) => subLabelEdit.setDraft(event.target.value)}
-                    onBlur={subLabelEdit.commit}
-                    onKeyDown={subLabelEdit.handleKeyDown}
-                    onMouseDown={(event) => event.stopPropagation()}
-                    className="w-full rounded border border-[var(--brand-primary)] bg-white/90 px-1 py-0.5 text-center outline-none"
-                  />
-                ) : (
-                  <MemoizedMarkdown content={data.subLabel} />
-                )}
-              </div>
+                inputClassName="text-center"
+                isSelected={Boolean(selected)}
+              />
             )}
           </div>
 
@@ -356,48 +339,8 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
             </div>
           )}
         </div>
-      </div>
-
-      {/* Handles */}
-      <Handle
-        type="source"
-        position={Position.Top}
-        id="top"
-        isConnectableStart={true}
-        isConnectableEnd={true}
-        className={connectionHandleClass}
-        style={getConnectorHandleStyle('top', Boolean(selected), handlePointerEvents)}
-      />
-
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="bottom"
-        isConnectableStart={true}
-        isConnectableEnd={true}
-        className={connectionHandleClass}
-        style={getConnectorHandleStyle('bottom', Boolean(selected), handlePointerEvents)}
-      />
-
-      <Handle
-        type="source"
-        position={Position.Left}
-        id="left"
-        isConnectableStart={true}
-        isConnectableEnd={true}
-        className={connectionHandleClass}
-        style={getConnectorHandleStyle('left', Boolean(selected), handlePointerEvents)}
-      />
-
-      <Handle
-        type="source"
-        position={Position.Right}
-        id="right"
-        isConnectableStart={true}
-        isConnectableEnd={true}
-        className={connectionHandleClass}
-        style={getConnectorHandleStyle('right', Boolean(selected), handlePointerEvents)}
-      />
+        </div>
+      </NodeChrome>
     </>
   );
 };

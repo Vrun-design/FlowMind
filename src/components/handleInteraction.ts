@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 
 export function getHandlePointerEvents(visualQualityV2Enabled: boolean, selected: boolean): 'none' | 'all' {
-  return selected && visualQualityV2Enabled ? 'none' : 'all';
+  return 'all';
 }
 
 export function getV2HandleVisibilityClass(

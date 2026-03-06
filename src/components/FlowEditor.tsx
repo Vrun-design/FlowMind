@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useReactFlow } from '@/lib/reactflowCompat';
@@ -25,9 +25,11 @@ import { FlowEditorPanels } from './FlowEditorPanels';
 import { FlowEditorLayoutOverlay } from './FlowEditorLayoutOverlay';
 import { FlowEditorEmptyState } from './FlowEditorEmptyState';
 import { CollaborationPresenceOverlay } from './flow-editor/CollaborationPresenceOverlay';
+import { shouldExitStudioOnSelection } from './flow-editor/shouldExitStudioOnSelection';
 import { useStoragePressureGuard } from '@/hooks/useStoragePressureGuard';
 import { useAnimatedEdgePerformanceWarning } from '@/hooks/useAnimatedEdgePerformanceWarning';
 import { useFlowEditorCollaboration } from '@/hooks/useFlowEditorCollaboration';
+import type { StudioCodeMode, StudioTab } from '@/hooks/useFlowEditorUIState';
 
 interface FlowEditorProps {
     onGoHome: () => void;
@@ -43,12 +45,12 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
     const {
         nodes, edges, setNodes, setEdges,
         tabs, activeTabId, addTab, closeTab, updateTab,
-        viewSettings, toggleGrid, toggleSnap, toggleMiniMap,
+        viewSettings, toggleGrid, toggleSnap,
         selectedNodeId, setSelectedNodeId, selectedEdgeId, setSelectedEdgeId,
         setShortcutsHelpOpen
     } = useFlowStore();
 
-    const { showGrid, snapToGrid, showMiniMap } = viewSettings;
+    const { showGrid, snapToGrid } = viewSettings;
 
     const {
         snapshots,
@@ -63,18 +65,27 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
         isHistoryOpen,
         isCommandBarOpen,
         commandBarView,
+        editorMode,
+        studioTab,
+        studioCodeMode,
         isSelectMode,
-        isDesignSystemPanelOpen,
         openHistory,
         closeHistory,
         openCommandBar,
         closeCommandBar,
-        openDesignSystemPanel,
+        setCanvasMode,
+        setStudioMode,
+        setStudioTab,
+        setStudioCodeMode,
         enableSelectMode,
         enablePanMode,
     } = useFlowEditorUIState();
 
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
+    const studioSelectionSnapshotRef = useRef({
+        selectedNodeId: null as string | null,
+        selectedEdgeId: null as string | null,
+    });
     const { fitView, screenToFlowPosition } = useReactFlow();
 
     // --- History ---
@@ -209,6 +220,76 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
     const selectedNode = useMemo(() => nodes.find((n) => n.id === selectedNodeId) || null, [nodes, selectedNodeId]);
     const selectedNodes = useMemo(() => nodes.filter((node) => node.selected), [nodes]);
     const selectedEdge = useMemo(() => edges.find((e) => e.id === selectedEdgeId) || null, [edges, selectedEdgeId]);
+    const captureStudioSelectionSnapshot = useCallback(() => {
+        studioSelectionSnapshotRef.current = {
+            selectedNodeId,
+            selectedEdgeId,
+        };
+    }, [selectedEdgeId, selectedNodeId]);
+    const openStudioPanel = useCallback((
+        tab: StudioTab,
+        options?: {
+            codeMode?: StudioCodeMode;
+            closeLauncher?: boolean;
+        }
+    ) => {
+        captureStudioSelectionSnapshot();
+        setStudioTab(tab);
+        if (options?.codeMode) {
+            setStudioCodeMode(options.codeMode);
+        }
+        setStudioMode();
+        if (options?.closeLauncher) {
+            closeCommandBar();
+        }
+    }, [captureStudioSelectionSnapshot, closeCommandBar, setStudioCodeMode, setStudioMode, setStudioTab]);
+
+    const openStudioAI = useCallback(() => {
+        openStudioPanel('ai', { closeLauncher: true });
+    }, [openStudioPanel]);
+
+    const openStudioCode = useCallback((codeMode: StudioCodeMode) => {
+        openStudioPanel('code', { codeMode, closeLauncher: true });
+    }, [openStudioPanel]);
+
+    const toggleStudioPanel = useCallback(() => {
+        if (editorMode === 'studio') {
+            setSelectedNodeId(null);
+            setSelectedEdgeId(null);
+            setCanvasMode();
+            return;
+        }
+
+        openStudioAI();
+    }, [editorMode, openStudioAI, setCanvasMode, setSelectedEdgeId, setSelectedNodeId]);
+
+    const closeStudioPanel = useCallback(() => {
+        setSelectedNodeId(null);
+        setSelectedEdgeId(null);
+        setCanvasMode();
+    }, [setCanvasMode, setSelectedEdgeId, setSelectedNodeId]);
+
+    const handleCanvasEntityIntent = useCallback(() => {
+        if (editorMode !== 'studio') {
+            return;
+        }
+
+        setCanvasMode();
+    }, [editorMode, setCanvasMode]);
+
+    useEffect(() => {
+        if (!shouldExitStudioOnSelection({
+            editorMode,
+            studioSelectionSnapshot: studioSelectionSnapshotRef.current,
+            selectedNodeId,
+            selectedEdgeId,
+        })) {
+            return;
+        }
+
+        setCanvasMode();
+    }, [editorMode, selectedEdgeId, selectedNodeId, setCanvasMode]);
+
     return (
         <div className="w-full h-screen bg-[var(--brand-background)] flex flex-col relative" ref={reactFlowWrapper}>
             {/* Header */}
@@ -232,12 +313,81 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
                 collaboration={collaborationTopNavState}
             />
 
-            <ErrorBoundary className="h-full">
-                <FlowCanvas
-                    recordHistory={recordHistory}
-                    isSelectMode={isSelectMode}
+            <div className="flex min-h-0 flex-1 min-w-0 pt-16">
+                <div className="relative min-w-0 flex-1">
+                    <ErrorBoundary className="h-full">
+                        <FlowCanvas
+                            recordHistory={recordHistory}
+                            isSelectMode={isSelectMode}
+                            onCanvasEntityIntent={handleCanvasEntityIntent}
+                        />
+                    </ErrorBoundary>
+                </div>
+                <FlowEditorPanels
+                    commandBar={{
+                        isOpen: isCommandBarOpen,
+                        onClose: closeCommandBar,
+                        nodes,
+                        edges,
+                        onUndo: undo,
+                        onRedo: redo,
+                        onLayout,
+                        onSelectTemplate: handleInsertTemplate,
+                        onOpenStudioAI: openStudioAI,
+                        onOpenStudioFlowMind: () => openStudioCode('flowmind'),
+                        onOpenStudioMermaid: () => openStudioCode('mermaid'),
+                        initialView: commandBarView,
+                        showGrid,
+                        onToggleGrid: toggleGrid,
+                        snapToGrid,
+                        onToggleSnap: toggleSnap,
+                    }}
+                    snapshots={{
+                        isOpen: isHistoryOpen,
+                        onClose: closeHistory,
+                        snapshots,
+                        manualSnapshots,
+                        autoSnapshots,
+                        onSaveSnapshot: (name) => saveSnapshot(name, nodes, edges),
+                        onRestoreSnapshot: handleRestoreSnapshot,
+                        onDeleteSnapshot: deleteSnapshot,
+                    }}
+                    properties={{
+                        selectedNode,
+                        selectedNodes,
+                        selectedEdge,
+                        onChangeNode: updateNodeData,
+                        onBulkChangeNodes: applyBulkNodeData,
+                        onChangeNodeType: updateNodeType,
+                        onChangeEdge: updateEdge,
+                        onDeleteNode: deleteNode,
+                        onDuplicateNode: duplicateNode,
+                        onDeleteEdge: deleteEdge,
+                        onUpdateZIndex: updateNodeZIndex,
+                        onAddMindmapChild: handleAddMindmapChild,
+                        onAddArchitectureService: handleAddArchitectureService,
+                        onCreateArchitectureBoundary: handleCreateArchitectureBoundary,
+                        onClose: () => {
+                            setSelectedNodeId(null);
+                            setSelectedEdgeId(null);
+                        },
+                    }}
+                    studio={{
+                        onClose: closeStudioPanel,
+                        onApply: handleCommandBarApply,
+                        onAIGenerate: handleAIRequest,
+                        isGenerating,
+                        chatMessages,
+                        onClearChat: clearChat,
+                        activeTab: studioTab,
+                        onTabChange: setStudioTab,
+                        codeMode: studioCodeMode,
+                        onCodeModeChange: setStudioCodeMode,
+                    }}
+                    isHistoryOpen={isHistoryOpen}
+                    editorMode={editorMode}
                 />
-            </ErrorBoundary>
+            </div>
             {collaborationV1Enabled && <CollaborationPresenceOverlay remotePresence={remotePresence} />}
 
             {/* Layout loading overlay */}
@@ -247,12 +397,9 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
             {currentStepIndex === -1 && (
                 <Toolbar
                     onCommandBar={() => openCommandBar('root')}
-                    onDesignSystemPanel={() => {
-                        openDesignSystemPanel();
-                    }}
-                    isDesignSystemPanelOpen={isDesignSystemPanelOpen}
+                    onToggleStudio={toggleStudioPanel}
+                    isStudioOpen={editorMode === 'studio'}
                     onClear={handleClear}
-
                     onAddNode={handleAddNode}
                     onAddAnnotation={handleAddAnnotation}
                     onAddSection={handleAddSection}
@@ -262,7 +409,6 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
                     onUndo={undo}
                     onRedo={redo}
                     onLayout={() => openCommandBar('layout')}
-                    onTemplates={() => openCommandBar('templates')}
                     canUndo={canUndo}
                     canRedo={canRedo}
                     isSelectMode={isSelectMode}
@@ -286,56 +432,6 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
                 />
             )}
 
-            <FlowEditorPanels
-                isCommandBarOpen={isCommandBarOpen}
-                onCloseCommandBar={closeCommandBar}
-                nodes={nodes}
-                edges={edges}
-                onCommandBarApply={handleCommandBarApply}
-                onAIGenerate={handleAIRequest}
-                isGenerating={isGenerating}
-                chatMessages={chatMessages}
-                onClearChat={clearChat}
-                onUndo={undo}
-                onRedo={redo}
-                onFitView={() => fitView({ duration: 800 })}
-                onLayout={onLayout}
-                onSelectTemplate={handleInsertTemplate}
-                commandBarView={commandBarView}
-                showGrid={showGrid}
-                onToggleGrid={toggleGrid}
-                snapToGrid={snapToGrid}
-                onToggleSnap={toggleSnap}
-                showMiniMap={showMiniMap}
-                onToggleMiniMap={toggleMiniMap}
-                isHistoryOpen={isHistoryOpen}
-                onCloseHistory={closeHistory}
-                snapshots={snapshots}
-                manualSnapshots={manualSnapshots}
-                autoSnapshots={autoSnapshots}
-                onSaveSnapshot={(name) => saveSnapshot(name, nodes, edges)}
-                onRestoreSnapshot={handleRestoreSnapshot}
-                onDeleteSnapshot={deleteSnapshot}
-                selectedNode={selectedNode}
-                selectedNodes={selectedNodes}
-                selectedEdge={selectedEdge}
-                onChangeNode={updateNodeData}
-                onBulkChangeNodes={applyBulkNodeData}
-                onChangeNodeType={updateNodeType}
-                onChangeEdge={updateEdge}
-                onDeleteNode={deleteNode}
-                onDuplicateNode={duplicateNode}
-                onDeleteEdge={deleteEdge}
-                onUpdateZIndex={updateNodeZIndex}
-                onAddMindmapChild={handleAddMindmapChild}
-                onAddArchitectureService={handleAddArchitectureService}
-                onCreateArchitectureBoundary={handleCreateArchitectureBoundary}
-                onCloseProperties={() => {
-                    setSelectedNodeId(null);
-                    setSelectedEdgeId(null);
-                }}
-            />
-
             {/* Empty State */}
             {nodes.length === 0 && (
                 <FlowEditorEmptyState
@@ -344,7 +440,7 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
                     generateLabel={t('flowEditor.emptyState.generateWithFlowpilot')}
                     templatesLabel={t('flowEditor.emptyState.browseTemplates')}
                     addNodeLabel={t('flowEditor.emptyState.addBlankNode')}
-                    onGenerate={() => openCommandBar('ai')}
+                    onGenerate={() => openStudioPanel('ai')}
                     onTemplates={() => openCommandBar('templates')}
                     onAddNode={() => handleAddNode()}
                 />

@@ -62,4 +62,18 @@ describe('useKeyboardShortcuts', () => {
     expect(requestListener).toHaveBeenCalledTimes(1);
     window.removeEventListener('flowmind:node-label-edit-request', requestListener as EventListener);
   });
+
+  it('starts node label editing from the first typed printable character', () => {
+    renderShortcuts();
+    const requestListener = vi.fn();
+    window.addEventListener('flowmind:node-label-edit-request', requestListener as EventListener);
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' }));
+
+    expect(requestListener).toHaveBeenCalledTimes(1);
+    const [event] = requestListener.mock.calls[0] as [CustomEvent<{ seedText?: string; replaceExisting?: boolean }>];
+    expect(event.detail.seedText).toBe('a');
+    expect(event.detail.replaceExisting).toBe(true);
+    window.removeEventListener('flowmind:node-label-edit-request', requestListener as EventListener);
+  });
 });

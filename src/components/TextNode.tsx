@@ -1,14 +1,13 @@
 import React, { memo } from 'react';
-import { Handle, Position } from '@/lib/reactflowCompat';
+import { Position } from '@/lib/reactflowCompat';
 import type { LegacyNodeProps } from '@/lib/reactflowCompat';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import type { NodeData } from '@/lib/types';
 import { useInlineNodeTextEdit } from '@/hooks/useInlineNodeTextEdit';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
-import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from './handleInteraction';
-import { NodeTransformControls } from './NodeTransformControls';
+import { InlineTextEditSurface } from './InlineTextEditSurface';
+import { NodeChrome } from './NodeChrome';
 
 const TEXT_COLORS: Record<string, { text: string, border: string }> = {
     slate: { text: 'text-slate-700', border: 'border-slate-300' },
@@ -54,13 +53,6 @@ function getBaseFontSizePx(fontSize: string): number {
 
 function TextNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
     const { id, data, selected } = props;
-    const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
-    const handlePointerEvents = getHandlePointerEvents(visualQualityV2Enabled, Boolean(selected));
-    const handleVisibilityClass = visualQualityV2Enabled
-        ? getV2HandleVisibilityClass(Boolean(selected), { includeConnectingState: false })
-        : selected
-            ? 'opacity-100'
-            : 'opacity-0 group-hover:opacity-100 [.is-connecting_&]:opacity-100';
     const color = data.color || 'slate';
     const colorSet = TEXT_COLORS[color] || TEXT_COLORS.slate;
     const textColor = colorSet.text;
@@ -93,20 +85,25 @@ function TextNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
         mono: 'font-mono',
     };
     const fontFamilyClass = fontFamilyMap[data.fontFamily || 'inter'];
-    const labelEdit = useInlineNodeTextEdit(id, 'label', data.label || '');
+    const labelEdit = useInlineNodeTextEdit(id, 'label', data.label || '', {
+        multiline: true,
+        allowTabCreateSibling: true,
+    });
 
     return (
-        <>
-            <NodeTransformControls
-                isVisible={Boolean(selected)}
-                minWidth={50}
-                minHeight={30}
-            />
-
-            {/* Invisible Handles for connections */}
-            <Handle type="source" id="target-top" position={Position.Top} isConnectableStart isConnectableEnd className={`!w-3 !h-3 !border-2 !border-white !bg-[var(--brand-primary)] ${handleVisibilityClass}`} style={getConnectorHandleStyle('top', Boolean(selected), handlePointerEvents)} />
-            <Handle type="source" id="target-left" position={Position.Left} isConnectableStart isConnectableEnd className={`!w-3 !h-3 !border-2 !border-white !bg-[var(--brand-primary)] ${handleVisibilityClass}`} style={getConnectorHandleStyle('left', Boolean(selected), handlePointerEvents)} />
-
+        <NodeChrome
+            selected={Boolean(selected)}
+            minWidth={50}
+            minHeight={30}
+            handleClassName="!w-3 !h-3 !border-2 !border-white !bg-[var(--brand-primary)]"
+            handleVisibilityOptions={{ includeConnectingState: false }}
+            handles={[
+                { id: 'target-top', position: Position.Top, side: 'top' },
+                { id: 'source-right', position: Position.Right, side: 'right' },
+                { id: 'source-bottom', position: Position.Bottom, side: 'bottom' },
+                { id: 'target-left', position: Position.Left, side: 'left' },
+            ]}
+        >
             <div
                 className={`
           w-full h-full box-border flex items-center justify-center p-2 rounded-lg transition-all duration-200 border-2
@@ -122,36 +119,27 @@ function TextNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
                     ...fontSizeStyle
                 }}
             >
-                <div
-                    className={`prose prose-sm max-w-full w-full text-center leading-snug font-medium break-words ${textColor} ${fontSizeClass} ${fontFamilyClass}`}
-                    style={{ fontSize: `${effectiveFontSizePx}px` }}
-                    onClick={(event) => {
-                        event.stopPropagation();
-                        labelEdit.beginEdit();
-                    }}
-                >
-                    {labelEdit.isEditing ? (
-                        <input
-                            autoFocus
-                            value={labelEdit.draft}
-                            onChange={(event) => labelEdit.setDraft(event.target.value)}
-                            onBlur={labelEdit.commit}
-                            onKeyDown={labelEdit.handleKeyDown}
-                            onMouseDown={(event) => event.stopPropagation()}
-                            className="w-full rounded border border-[var(--brand-primary)] bg-white/90 px-1 py-0.5 text-center outline-none"
-                            style={{ fontSize: `${effectiveFontSizePx}px` }}
-                        />
-                    ) : (
+                <InlineTextEditSurface
+                    isEditing={labelEdit.isEditing}
+                    draft={labelEdit.draft}
+                    displayValue={(
                         <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
                             {data.label || 'Text'}
                         </ReactMarkdown>
                     )}
-                </div>
+                    onBeginEdit={labelEdit.beginEdit}
+                    onDraftChange={labelEdit.setDraft}
+                    onCommit={labelEdit.commit}
+                    onKeyDown={labelEdit.handleKeyDown}
+                    className={`prose prose-sm max-w-full w-full text-center leading-snug font-medium break-words ${textColor} ${fontSizeClass} ${fontFamilyClass}`}
+                    style={{ fontSize: `${effectiveFontSizePx}px` }}
+                    inputClassName="text-center"
+                    inputStyle={{ fontSize: `${effectiveFontSizePx}px` }}
+                    inputMode="multiline"
+                    isSelected={Boolean(selected)}
+                />
             </div>
-
-            <Handle type="source" id="source-right" position={Position.Right} isConnectableStart isConnectableEnd className={`!w-3 !h-3 !border-2 !border-white !bg-[var(--brand-primary)] ${handleVisibilityClass}`} style={getConnectorHandleStyle('right', Boolean(selected), handlePointerEvents)} />
-            <Handle type="source" id="source-bottom" position={Position.Bottom} isConnectableStart isConnectableEnd className={`!w-3 !h-3 !border-2 !border-white !bg-[var(--brand-primary)] ${handleVisibilityClass}`} style={getConnectorHandleStyle('bottom', Boolean(selected), handlePointerEvents)} />
-        </>
+        </NodeChrome>
     );
 }
 

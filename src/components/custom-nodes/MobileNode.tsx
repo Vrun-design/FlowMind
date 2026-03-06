@@ -1,12 +1,10 @@
 import React, { memo } from 'react';
-import { Handle, Position } from '@/lib/reactflowCompat';
 import type { LegacyNodeProps } from '@/lib/reactflowCompat';
 import { useTranslation } from 'react-i18next';
 import { NodeData } from '@/lib/types';
 import { User, Lock, Mail, ChevronLeft, Menu, Bell, Search } from 'lucide-react';
 import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
-import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from '@/components/handleInteraction';
-import { NodeTransformControls } from '@/components/NodeTransformControls';
+import { NodeChrome } from '@/components/NodeChrome';
 import { getNodeColorPalette } from '../../theme';
 
 function MobileNode({ data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
@@ -14,12 +12,6 @@ function MobileNode({ data, selected }: LegacyNodeProps<NodeData>): React.ReactE
     const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
     const nodeColorPalette = getNodeColorPalette(visualQualityV2Enabled);
     const style = nodeColorPalette[data.color || 'slate'] || nodeColorPalette.slate;
-    const handlePointerEvents = getHandlePointerEvents(visualQualityV2Enabled, Boolean(selected));
-    const handleVisibilityClass = visualQualityV2Enabled
-        ? getV2HandleVisibilityClass(Boolean(selected), { includeConnectingState: false })
-        : selected
-            ? 'opacity-100'
-            : 'opacity-0 group-hover:opacity-100';
 
     // Render content based on variant
     const renderContent = () => {
@@ -199,13 +191,19 @@ function MobileNode({ data, selected }: LegacyNodeProps<NodeData>): React.ReactE
     };
 
     return (
-        <div className="group relative w-full h-full">
-            <NodeTransformControls
-                isVisible={Boolean(selected)}
-                minWidth={300}
-                minHeight={600}
-            />
-
+        <NodeChrome
+            selected={Boolean(selected)}
+            minWidth={300}
+            minHeight={600}
+            handleClassName={`${style.handle} !w-3 !h-3 !border-2 !border-white transition-all duration-150 hover:scale-125`}
+            handleVisibilityOptions={{ includeConnectingState: false }}
+            handleStyleExtras={{
+                top: { zIndex: 100 },
+                right: { zIndex: 100 },
+                bottom: { zIndex: 100 },
+                left: { zIndex: 100 },
+            }}
+        >
             <div
                 className={`
                     relative flex flex-col w-full h-full 
@@ -245,45 +243,7 @@ function MobileNode({ data, selected }: LegacyNodeProps<NodeData>): React.ReactE
                     <div className="w-28 h-1 bg-slate-200 rounded-full" />
                 </div>
             </div>
-
-            {/* Connection Handles - Mirrored from CustomNode */}
-            <Handle
-                type="source"
-                position={Position.Top}
-                id="top"
-                isConnectableStart={true}
-                isConnectableEnd={true}
-                className={`!w-3 !h-3 !border-2 !border-white ${style.handle} transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-                style={getConnectorHandleStyle('top', Boolean(selected), handlePointerEvents, { zIndex: 100 })}
-            />
-            <Handle
-                type="source"
-                position={Position.Bottom}
-                id="bottom"
-                isConnectableStart={true}
-                isConnectableEnd={true}
-                className={`!w-3 !h-3 !border-2 !border-white ${style.handle} transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-                style={getConnectorHandleStyle('bottom', Boolean(selected), handlePointerEvents, { zIndex: 100 })}
-            />
-            <Handle
-                type="source"
-                position={Position.Left}
-                id="left"
-                isConnectableStart={true}
-                isConnectableEnd={true}
-                className={`!w-3 !h-3 !border-2 !border-white ${style.handle} transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-                style={getConnectorHandleStyle('left', Boolean(selected), handlePointerEvents, { zIndex: 100 })}
-            />
-            <Handle
-                type="source"
-                position={Position.Right}
-                id="right"
-                isConnectableStart={true}
-                isConnectableEnd={true}
-                className={`!w-3 !h-3 !border-2 !border-white ${style.handle} transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-                style={getConnectorHandleStyle('right', Boolean(selected), handlePointerEvents, { zIndex: 100 })}
-            />
-        </div>
+        </NodeChrome>
     );
 }
 

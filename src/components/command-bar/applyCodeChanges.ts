@@ -56,7 +56,7 @@ export async function applyCodeChanges({
   setLiveStatus,
   isLiveRequestStale,
   options,
-}: ApplyCodeChangesParams): Promise<void> {
+}: ApplyCodeChangesParams): Promise<boolean> {
   const importStart = performance.now();
   const res = mode === 'mermaid'
     ? parseMermaidByType(code, { architectureStrictMode })
@@ -64,7 +64,7 @@ export async function applyCodeChanges({
 
   if (res.error) {
     if (isLiveRequestStale(options.liveRequestId, options.source)) {
-      return;
+      return false;
     }
     const parserDiagnostics = 'diagnostics' in res
       ? normalizeParseDiagnostics(res.diagnostics)
@@ -102,7 +102,7 @@ export async function applyCodeChanges({
     if (options.source === 'live') {
       setLiveStatus('error');
     }
-    return;
+    return false;
   }
 
   if (res.nodes.length > 0) {
@@ -113,7 +113,7 @@ export async function applyCodeChanges({
     }
     try {
       if (isLiveRequestStale(options.liveRequestId, options.source)) {
-        return;
+        return false;
       }
       if (mode === 'mermaid') {
         const parserDiagnostics = 'diagnostics' in res
@@ -139,7 +139,7 @@ export async function applyCodeChanges({
         spacing: 'normal',
       });
       if (isLiveRequestStale(options.liveRequestId, options.source)) {
-        return;
+        return false;
       }
 
       const smartEdges = assignSmartHandles(layoutedNodes, res.edges);
@@ -166,7 +166,7 @@ export async function applyCodeChanges({
     } catch (err) {
       console.error('Layout failed, applying raw positions:', err);
       if (isLiveRequestStale(options.liveRequestId, options.source)) {
-        return;
+        return false;
       }
       onApply(res.nodes, res.edges);
       setError(null);
@@ -194,7 +194,7 @@ export async function applyCodeChanges({
     }
   } else {
     if (isLiveRequestStale(options.liveRequestId, options.source)) {
-      return;
+      return false;
     }
     if (mode === 'mermaid') {
       const parserDiagnostics = 'diagnostics' in res
@@ -236,4 +236,6 @@ export async function applyCodeChanges({
   if (options.closeOnSuccess) {
     onClose();
   }
+
+  return true;
 }

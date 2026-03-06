@@ -54,11 +54,8 @@ Your job:
 | \`[system]\` | Backend service, API, database |
 | \`[browser]\` | Web page / frontend screen |
 | \`[mobile]\` | Mobile screen |
-| \`[button]\` | UI button |
-| \`[input]\` | Text field |
 | \`[note]\` | Callout / annotation |
 | \`[section]\` | Group label |
-| \`[icon]\` | Standalone Lucide icon (label IS the icon name) |
 
 ---
 

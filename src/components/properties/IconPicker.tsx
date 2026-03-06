@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Ban, Upload } from 'lucide-react';
-import { ICON_NAMES, NamedIcon } from '../IconMap';
+import { ICON_NAMES, ICON_PICKER_PRIORITY_NAMES, NamedIcon } from '../IconMap';
 
 interface IconPickerProps {
     selectedIcon?: string;
@@ -19,26 +19,13 @@ export const IconPicker: React.FC<IconPickerProps> = ({
 
     const filteredIcons = useMemo(() => {
         const term = iconSearch.toLowerCase();
-        const allKeys = ICON_NAMES;
-
-        // Priority icons for flowcharts
-        const priorityIcons = [
-            'Database', 'Server', 'User', 'Users', 'Globe', 'Cloud', 'Lock', 'Unlock',
-            'Shield', 'Key', 'Mail', 'MessageSquare', 'File', 'FileText', 'Folder',
-            'Code', 'Terminal', 'Settings', 'Cpu', 'Smartphone', 'Tablet', 'Monitor',
-            'CreditCard', 'DollarSign', 'ShoppingCart', 'Box', 'Truck', 'MapPin',
-            'Search', 'Bell', 'Calendar', 'Clock', 'Check', 'X', 'AlertTriangle',
-            'Info', 'HelpCircle', 'Home', 'Link', 'Share', 'Trash', 'Save', 'Edit'
-        ];
 
         if (!term) {
-            // Show priority icons first, then others
-            const others = allKeys.filter(k => !priorityIcons.includes(k)).slice(0, 100);
-            return [...priorityIcons.filter(k => allKeys.includes(k)), ...others];
+            const others = ICON_NAMES.filter((name) => !ICON_PICKER_PRIORITY_NAMES.includes(name)).slice(0, 48);
+            return [...ICON_PICKER_PRIORITY_NAMES.filter((name) => ICON_NAMES.includes(name)), ...others];
         }
 
-        return allKeys.filter(k => k.toLowerCase().includes(term)).slice(0, 50);
-
+        return ICON_NAMES.filter((name) => name.toLowerCase().includes(term)).slice(0, 50);
     }, [iconSearch]);
 
     return (

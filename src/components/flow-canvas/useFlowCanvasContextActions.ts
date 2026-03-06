@@ -18,7 +18,7 @@ interface UseFlowCanvasContextActionsParams {
     nodes: Node[];
 }
 
-interface UseFlowCanvasContextActionsResult {
+export interface UseFlowCanvasContextActionsResult {
     selectedCount: number;
     onPaste: () => void;
     onDuplicate: () => void;

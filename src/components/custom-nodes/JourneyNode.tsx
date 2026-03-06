@@ -1,11 +1,8 @@
 import React, { memo, useCallback, useState } from 'react';
-import { Handle, Position } from '@/lib/reactflowCompat';
 import type { LegacyNodeProps } from '@/lib/reactflowCompat';
 import type { NodeData } from '@/lib/types';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { useFlowStore } from '@/store';
-import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from '@/components/handleInteraction';
-import { NodeTransformControls } from '@/components/NodeTransformControls';
+import { NodeChrome } from '@/components/NodeChrome';
 
 function getScoreTone(score: number | undefined): string {
   if (typeof score !== 'number') return 'bg-slate-100 text-slate-600';
@@ -76,13 +73,6 @@ function useInlineJourneyEdit(
 }
 
 function JourneyNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
-  const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
-  const handlePointerEvents = getHandlePointerEvents(visualQualityV2Enabled, Boolean(selected));
-  const handleVisibilityClass = visualQualityV2Enabled
-    ? getV2HandleVisibilityClass(Boolean(selected))
-    : selected
-      ? 'opacity-100'
-      : 'opacity-0 group-hover:opacity-100 [.is-connecting_&]:opacity-100';
   const titleEdit = useInlineJourneyEdit(id, data.label || '', (nextValue) => ({
     label: nextValue,
     journeyTask: nextValue,
@@ -98,13 +88,12 @@ function JourneyNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
   const score = data.journeyScore;
 
   return (
-    <>
-      <NodeTransformControls
-        isVisible={Boolean(selected)}
-        minWidth={220}
-        minHeight={120}
-      />
-
+    <NodeChrome
+      selected={Boolean(selected)}
+      minWidth={220}
+      minHeight={120}
+      handleClassName="!w-3 !h-3 !bg-violet-400 !border-2 !border-white transition-all duration-150 hover:scale-125"
+    >
       <div
         className={`group min-w-[220px] max-w-[280px] rounded-xl border border-violet-200 bg-white px-3 py-3 shadow-sm transition-all ${
           selected ? 'ring-2 ring-violet-500 ring-offset-2' : ''
@@ -181,48 +170,7 @@ function JourneyNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
           )}
         </div>
       </div>
-
-      <Handle
-        type="source"
-        position={Position.Top}
-        id="top"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !bg-violet-400 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('top', Boolean(selected), handlePointerEvents)}
-      />
-
-      <Handle
-        type="source"
-        position={Position.Right}
-        id="right"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !bg-violet-400 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('right', Boolean(selected), handlePointerEvents)}
-      />
-
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="bottom"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !bg-violet-400 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('bottom', Boolean(selected), handlePointerEvents)}
-      />
-
-      <Handle
-        type="source"
-        position={Position.Left}
-        id="left"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !bg-violet-400 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('left', Boolean(selected), handlePointerEvents)}
-      />
-
-    </>
+    </NodeChrome>
   );
 }
 

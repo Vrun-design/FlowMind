@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFlowStore } from '../../store';
 import { Switch } from '../ui/Switch';
-import { Grid, Magnet, Map, Network, Zap } from 'lucide-react';
+import { Grid, Magnet, Network, Zap } from 'lucide-react';
 import type { GlobalEdgeOptions } from '@/lib/types';
 
 export const GeneralSettings = () => {
@@ -12,7 +12,6 @@ export const GeneralSettings = () => {
         globalEdgeOptions,
         toggleGrid,
         toggleSnap,
-        toggleMiniMap,
         setGlobalEdgeOptions,
         setDefaultIconsEnabled,
         setSmartRoutingEnabled,
@@ -41,13 +40,6 @@ export const GeneralSettings = () => {
                         description={t('settingsModal.canvas.snapToGridDesc')}
                         checked={viewSettings.snapToGrid}
                         onChange={toggleSnap}
-                    />
-                    <SettingRow
-                        icon={<Map className="w-4 h-4" />}
-                        label={t('settingsModal.canvas.miniMap')}
-                        description={t('settingsModal.canvas.miniMapDesc')}
-                        checked={viewSettings.showMiniMap}
-                        onChange={toggleMiniMap}
                     />
                 </div>
             </div>

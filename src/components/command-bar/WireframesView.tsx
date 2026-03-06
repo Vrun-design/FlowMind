@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { Monitor, Smartphone, Type, MousePointer2, Image as ImageIcon, Box } from 'lucide-react';
+import { Monitor, Smartphone } from 'lucide-react';
 import { useFlowStore } from '../../store';
 import type { FlowNode } from '@/lib/types';
 
@@ -8,13 +8,7 @@ interface WireframesViewProps {
     handleBack: () => void;
 }
 
-type WireframeNodeType =
-    | 'browser'
-    | 'mobile'
-    | 'wireframe_button'
-    | 'wireframe_input'
-    | 'wireframe_image'
-    | 'wireframe_icon';
+type WireframeNodeType = 'browser' | 'mobile';
 
 interface WireframeItem {
     id: string;
@@ -26,10 +20,6 @@ interface WireframeItem {
 const WIREFRAME_ITEMS: WireframeItem[] = [
     { id: 'browser', label: 'Browser Window', icon: <Monitor size={20} />, type: 'browser' },
     { id: 'mobile', label: 'Mobile Device', icon: <Smartphone size={20} />, type: 'mobile' },
-    { id: 'button', label: 'Button', icon: <MousePointer2 size={20} />, type: 'wireframe_button' },
-    { id: 'input', label: 'Input Field', icon: <Type size={20} />, type: 'wireframe_input' },
-    { id: 'image', label: 'Image Holder', icon: <ImageIcon size={20} />, type: 'wireframe_image' },
-    { id: 'icon', label: 'Icon', icon: <Box size={20} />, type: 'wireframe_icon' },
 ];
 
 function getWireframeLabel(type: WireframeNodeType): string {
@@ -38,14 +28,6 @@ function getWireframeLabel(type: WireframeNodeType): string {
             return 'New Window';
         case 'mobile':
             return 'Mobile App';
-        case 'wireframe_button':
-            return 'Button';
-        case 'wireframe_input':
-            return 'Input';
-        case 'wireframe_image':
-            return 'Image';
-        case 'wireframe_icon':
-            return 'Box';
     }
 }
 
@@ -83,7 +65,7 @@ export function WireframesView({ onClose, handleBack }: WireframesViewProps): Re
                 <button onClick={handleBack} className="p-1 hover:bg-slate-100 rounded text-slate-400 active:scale-95 transition-all">
                     <span className="text-xs">←</span>
                 </button>
-                <div className="text-sm font-medium text-slate-800">Wireframe Elements</div>
+                <div className="text-sm font-medium text-slate-800">Wireframe Screens</div>
             </div>
 
             <div className="p-4 grid grid-cols-2 gap-3 overflow-y-auto flex-1 custom-scrollbar">

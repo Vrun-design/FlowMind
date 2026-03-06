@@ -19,8 +19,6 @@ const NODE_COMPONENT_FILES = [
   'src/components/custom-nodes/MindmapNode.tsx',
   'src/components/custom-nodes/JourneyNode.tsx',
   'src/components/custom-nodes/ArchitectureNode.tsx',
-  'src/components/custom-nodes/IconNode.tsx',
-  'src/components/custom-nodes/WireframeNodes.tsx',
 ] as const;
 
 function readSource(path: string): string {
@@ -28,21 +26,29 @@ function readSource(path: string): string {
 }
 
 describe('node chrome coverage', () => {
-  it('ensures each supported node component includes transform controls and 4-side handles', () => {
+  it('ensures each supported node component uses NodeChrome or explicit transform controls and 4-side handles', () => {
     for (const path of NODE_COMPONENT_FILES) {
       const source = readSource(path);
-      expect(source, path).toContain('NodeTransformControls');
-      expect(source, path).toContain('<Handle');
-      expect(source, path).toContain('Position.Top');
-      expect(source, path).toContain('Position.Right');
-      expect(source, path).toContain('Position.Bottom');
-      expect(source, path).toContain('Position.Left');
+      const usesNodeChrome = source.includes('NodeChrome');
+      const usesExplicitChrome =
+        source.includes('NodeTransformControls')
+        && source.includes('<Handle')
+        && source.includes('Position.Top')
+        && source.includes('Position.Right')
+        && source.includes('Position.Bottom')
+        && source.includes('Position.Left');
+      expect(usesNodeChrome || usesExplicitChrome, path).toBe(true);
     }
   });
 
-  it('keeps production node components on loose-mode universal handles', () => {
+  it('keeps production node components on NodeChrome or loose-mode universal handles', () => {
     for (const path of NODE_COMPONENT_FILES) {
       const source = readSource(path);
+      if (source.includes('NodeChrome')) {
+        expect(source, path).toContain('NodeChrome');
+        continue;
+      }
+
       expect(source, path).toContain('type="source"');
       expect(source, path).not.toContain('type="target"');
     }

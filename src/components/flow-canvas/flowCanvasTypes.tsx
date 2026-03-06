@@ -8,19 +8,12 @@ import SectionNode from '@/components/SectionNode';
 import SwimlaneNode from '@/components/SwimlaneNode';
 import TextNode from '@/components/TextNode';
 import BrowserNode from '@/components/custom-nodes/BrowserNode';
-import IconNode from '@/components/custom-nodes/IconNode';
 import MobileNode from '@/components/custom-nodes/MobileNode';
 import ClassNode from '@/components/custom-nodes/ClassNode';
 import EntityNode from '@/components/custom-nodes/EntityNode';
 import MindmapNode from '@/components/custom-nodes/MindmapNode';
 import JourneyNode from '@/components/custom-nodes/JourneyNode';
 import ArchitectureNode from '@/components/custom-nodes/ArchitectureNode';
-import {
-    WireframeButtonNode,
-    WireframeIconNode,
-    WireframeImageNode,
-    WireframeInputNode,
-} from '@/components/custom-nodes/WireframeNodes';
 
 export const flowCanvasNodeTypes: NodeTypes = {
     start: CustomNode,
@@ -41,11 +34,6 @@ export const flowCanvasNodeTypes: NodeTypes = {
     image: ImageNode,
     browser: BrowserNode,
     mobile: MobileNode,
-    wireframe_button: WireframeButtonNode,
-    wireframe_input: WireframeInputNode,
-    wireframe_image: WireframeImageNode,
-    wireframe_icon: WireframeIconNode,
-    icon: IconNode,
 };
 
 export const flowCanvasEdgeTypes: EdgeTypes = {

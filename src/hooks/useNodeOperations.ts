@@ -15,6 +15,7 @@ import {
 } from './node-operations/utils';
 import { getDragStopReconcileDelayMs } from './node-operations/dragStopReconcilePolicy';
 import { useNodeOperationAdders } from './node-operations/useNodeOperationAdders';
+import { requestNodeLabelEdit } from './nodeLabelEditRequest';
 
 export const useNodeOperations = (recordHistory: () => void) => {
     const { t } = useTranslation();
@@ -449,6 +450,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
 
     const onNodeDoubleClick = useCallback((_event: React.MouseEvent, node: FlowNode) => {
         setSelectedNodeId(node.id);
+        requestNodeLabelEdit(node.id);
     }, [setSelectedNodeId]);
 
 

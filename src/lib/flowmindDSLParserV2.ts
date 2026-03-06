@@ -41,10 +41,6 @@ const NODE_TYPE_MAP: Record<string, string> = {
     section: 'section',
     browser: 'browser',
     mobile: 'mobile',
-    button: 'wireframe_button',
-    input: 'wireframe_input',
-    icon: 'icon',
-    placeholder: 'wireframe_image',
     container: 'container', // New generic container
 };
 

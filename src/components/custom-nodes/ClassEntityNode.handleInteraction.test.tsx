@@ -41,10 +41,10 @@ vi.mock('@/lib/reactflowCompat', async (importOriginal) => {
   };
 });
 
-function assertSelectedHandlesAreSafe(): void {
+function assertSelectedHandlesAreConnectable(): void {
   for (const handleId of ['top', 'bottom', 'left', 'right']) {
     const handle = screen.getByTestId(`handle-${handleId}`);
-    expect(handle.getAttribute('data-pointer')).toBe('none');
+    expect(handle.getAttribute('data-pointer')).toBe('all');
   }
 }
 
@@ -57,7 +57,7 @@ function assertUnselectedHandlesAreDiscoverable(): void {
 }
 
 describe('Class/Entity handle interaction policy', () => {
-  it('keeps selected ClassNode handles non-intercepting in visualQualityV2', () => {
+  it('keeps selected ClassNode handles connectable in visualQualityV2', () => {
     render(
       <ClassNode
         id="class-1"
@@ -72,7 +72,7 @@ describe('Class/Entity handle interaction policy', () => {
       />
     );
 
-    assertSelectedHandlesAreSafe();
+    assertSelectedHandlesAreConnectable();
   });
 
   it('keeps unselected ClassNode handles discoverable', () => {
@@ -93,7 +93,7 @@ describe('Class/Entity handle interaction policy', () => {
     assertUnselectedHandlesAreDiscoverable();
   });
 
-  it('keeps selected EntityNode handles non-intercepting in visualQualityV2', () => {
+  it('keeps selected EntityNode handles connectable in visualQualityV2', () => {
     render(
       <EntityNode
         id="entity-1"
@@ -108,7 +108,7 @@ describe('Class/Entity handle interaction policy', () => {
       />
     );
 
-    assertSelectedHandlesAreSafe();
+    assertSelectedHandlesAreConnectable();
   });
 
   it('keeps unselected EntityNode handles discoverable', () => {

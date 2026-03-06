@@ -88,7 +88,6 @@ export const DEFAULT_BRAND_KIT: BrandKit = {
 export const INITIAL_VIEW_SETTINGS: ViewSettings = {
     showGrid: true,
     snapToGrid: true,
-    showMiniMap: true,
     isShortcutsHelpOpen: false,
     defaultIconsEnabled: true,
     smartRoutingEnabled: true,

@@ -3,7 +3,6 @@ import {
     AppWindow,
     Group,
     Image as ImageIcon,
-    Plus,
     Square,
     StickyNote,
     Type,
@@ -11,6 +10,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
 import { Tooltip } from '../Tooltip';
+import { getToolbarIconButtonClass } from './toolbarButtonStyles';
 
 interface ToolbarAddMenuProps {
     isInteractive: boolean;
@@ -41,6 +41,7 @@ export function ToolbarAddMenu({
 }: ToolbarAddMenuProps): React.ReactElement {
     const { t } = useTranslation();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const toggleIconClass = `w-4 h-4 transition-transform ${showAddMenu ? 'scale-110 text-[var(--brand-primary)]' : 'group-hover:scale-110'}`;
 
     function addNodeAtCenter(handler: (position: { x: number; y: number }) => void): void {
         handler(getCenter());
@@ -73,15 +74,15 @@ export function ToolbarAddMenu({
                 onChange={handleImageUpload}
             />
 
-            <Tooltip text={t('toolbar.addItem')}>
+            <Tooltip text={t('toolbar.addToCanvas')}>
                 <Button
                     onClick={onToggleMenu}
                     disabled={!isInteractive}
                     data-testid="toolbar-add-toggle"
-                    variant="primary"
+                    variant="ghost"
                     size="icon"
-                    className={`h-10 w-10 shadow-lg shadow-[var(--brand-primary)]/20 transition-all hover:scale-105 active:scale-95 ${showAddMenu ? 'rotate-45 bg-slate-800 hover:bg-slate-900' : 'bg-[var(--brand-primary)] hover:brightness-110'}`}
-                    icon={<Plus className="w-5 h-5 text-white" />}
+                    className={getToolbarIconButtonClass({ active: showAddMenu })}
+                    icon={<Square className={toggleIconClass} />}
                 />
             </Tooltip>
 

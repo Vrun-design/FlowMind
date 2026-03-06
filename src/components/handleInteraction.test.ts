@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from './handleInteraction';
 
 describe('handle interaction policy', () => {
-  it('disables pointer events only when selected in v2', () => {
-    expect(getHandlePointerEvents(true, true)).toBe('none');
+  it('keeps pointer events enabled so selected nodes remain connectable', () => {
+    expect(getHandlePointerEvents(true, true)).toBe('all');
     expect(getHandlePointerEvents(true, false)).toBe('all');
     expect(getHandlePointerEvents(false, true)).toBe('all');
   });
@@ -22,12 +22,12 @@ describe('handle interaction policy', () => {
   });
 
   it('keeps connector anchors pinned to node edges even when selected', () => {
-    const selectedTop = getConnectorHandleStyle('top', true, 'none');
+    const selectedTop = getConnectorHandleStyle('top', true, 'all');
     const unselectedTop = getConnectorHandleStyle('top', false, 'all');
     expect(selectedTop.top).toBe(0);
     expect(unselectedTop.top).toBe(0);
 
-    const selectedRight = getConnectorHandleStyle('right', true, 'none');
+    const selectedRight = getConnectorHandleStyle('right', true, 'all');
     const unselectedRight = getConnectorHandleStyle('right', false, 'all');
     expect(selectedRight.left).toBe('100%');
     expect(unselectedRight.left).toBe('100%');

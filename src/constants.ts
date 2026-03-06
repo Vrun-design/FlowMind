@@ -54,20 +54,6 @@ export const EDGE_CONDITION_LABELS = {
 export const NODE_WIDTH = 250;
 export const NODE_HEIGHT = 150;
 
-// --- Node Colors for MiniMap ---
-export const MINIMAP_NODE_COLORS: Record<string, string> = {
-  start: '#10b981', // emerald-500
-  process: '#3b82f6', // blue-500
-  decision: '#f59e0b', // amber-500
-  end: '#ef4444', // red-500
-  custom: '#6366f1', // indigo-500
-  journey: '#a855f7', // purple-500
-  architecture: '#475569', // slate-600
-  annotation: '#e2e8f0', // slate-200
-  section: 'rgba(241, 245, 249, 0.5)', // slate-100/50
-  text: 'transparent'
-};
-
 // --- Initial Data ---
 export const INITIAL_NODES: FlowNode[] = [];
 

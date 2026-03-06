@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Layout,
+  Plus,
   WandSparkles,
   Trash2,
   Workflow,
@@ -11,6 +11,7 @@ import { Tooltip } from './Tooltip';
 import { ToolbarAddMenu } from './toolbar/ToolbarAddMenu';
 import { ToolbarHistoryControls } from './toolbar/ToolbarHistoryControls';
 import { ToolbarModeControls } from './toolbar/ToolbarModeControls';
+import { getToolbarIconButtonClass, TOOLBAR_DIVIDER_CLASS } from './toolbar/toolbarButtonStyles';
 
 interface ToolbarProps {
   onUndo: () => void;
@@ -22,17 +23,15 @@ interface ToolbarProps {
   onTogglePanMode: () => void;
   onCommandBar: () => void;
   isCommandBarOpen: boolean;
-  onDesignSystemPanel: () => void;
-  isDesignSystemPanelOpen: boolean;
+  onToggleStudio: () => void;
+  isStudioOpen: boolean;
   onAddNode: (position: { x: number, y: number }) => void;
   onAddAnnotation: (position: { x: number, y: number }) => void;
   onAddSection: (position: { x: number, y: number }) => void;
   onAddText: (position: { x: number, y: number }) => void;
   onAddImage: (imageUrl: string, position: { x: number, y: number }) => void;
   onAddWireframes: () => void;
-  onTemplates: () => void;
   onLayout: () => void;
-
   onClear: () => void;
   getCenter: () => { x: number, y: number };
 }
@@ -47,23 +46,22 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onTogglePanMode,
   onCommandBar,
   isCommandBarOpen,
-  onDesignSystemPanel,
-  isDesignSystemPanelOpen,
+  onToggleStudio,
+  isStudioOpen,
   onAddNode,
   onAddAnnotation,
   onAddSection,
   onAddText,
   onAddImage,
   onAddWireframes,
-  onTemplates,
   onLayout,
-
   onClear,
   getCenter
 }) => {
   const { t } = useTranslation();
   const [showAddMenu, setShowAddMenu] = useState(false);
   const addMenuRef = useRef<HTMLDivElement>(null);
+  const flowPilotIconClass = `w-4 h-4 transition-transform ${isStudioOpen ? 'scale-110 text-[var(--brand-primary)]' : 'group-hover:scale-110'}`;
 
   // Close add menu when clicking outside
   useEffect(() => {
@@ -75,6 +73,12 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (isCommandBarOpen || isStudioOpen) {
+      setShowAddMenu(false);
+    }
+  }, [isCommandBarOpen, isStudioOpen]);
 
   // Interaction guard: If command bar is open, disable all toolbar interactions
   const isInteractive = !isCommandBarOpen;
@@ -91,31 +95,20 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         onTogglePanMode={onTogglePanMode}
       />
 
-      <div className="w-px h-6 bg-slate-200/50 mx-2" />
+      <div className={`mx-2 ${TOOLBAR_DIVIDER_CLASS}`} />
 
       {/* Group 2: Actions */}
       <div className="flex items-center gap-1">
-        <Tooltip text={t('toolbar.flowpilot')}>
+        <Tooltip text={t('toolbar.flowpilotAI', 'Open FlowPilot')}>
           <Button
-            onClick={onCommandBar}
+            onClick={onToggleStudio}
             disabled={!isInteractive}
             variant="ghost"
             size="icon"
-            className={`h-9 w-9 transition-all group relative overflow-hidden ${isCommandBarOpen ? 'bg-[var(--brand-primary-50)] text-[var(--brand-primary)] ring-1 ring-[var(--brand-primary-200)]' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'}`}
+            className={`${getToolbarIconButtonClass({ active: isStudioOpen })} group relative overflow-hidden`}
           >
-            <WandSparkles className={`w-4 h-4 transition-transform ${isCommandBarOpen ? 'scale-110' : 'group-hover:scale-110'}`} />
+            <WandSparkles className={flowPilotIconClass} />
           </Button>
-        </Tooltip>
-
-        <Tooltip text={t('toolbar.templates')}>
-          <Button
-            onClick={onTemplates}
-            disabled={!isInteractive}
-            variant="ghost"
-            size="icon"
-            className="rounded-[var(--radius-sm)] h-9 w-9 text-slate-500 hover:text-slate-900"
-            icon={<Layout className="w-4 h-4" />}
-          />
         </Tooltip>
 
         <div ref={addMenuRef}>
@@ -134,14 +127,25 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           />
         </div>
 
+        <Tooltip text={t('toolbar.commandBar', 'Open command bar')}>
+          <Button
+            onClick={onCommandBar}
+            disabled={!isInteractive}
+            variant="primary"
+            size="icon"
+            className={`group h-10 w-10 rounded-[var(--radius-md)] shadow-lg shadow-[var(--brand-primary)]/20 transition-all hover:scale-105 active:scale-95 ${isCommandBarOpen ? 'bg-slate-800 hover:bg-slate-900' : 'bg-[var(--brand-primary)] hover:brightness-110'}`}
+            icon={<Plus className={`w-5 h-5 text-white transition-transform duration-200 ${isCommandBarOpen ? 'rotate-45' : 'group-hover:rotate-90'}`} />}
+          />
+        </Tooltip>
+
         <Tooltip text={t('toolbar.autoLayout')}>
           <Button
             onClick={() => onLayout()}
             disabled={!isInteractive}
             variant="ghost"
             size="icon"
-            className="rounded-[var(--radius-sm)] h-9 w-9 text-slate-500 hover:text-amber-600 hover:bg-amber-50"
-            icon={<Workflow className="w-4 h-4" />}
+            className={getToolbarIconButtonClass()}
+            icon={<Workflow className="w-4 h-4 transition-transform group-hover:scale-110" />}
           />
         </Tooltip>
 
@@ -151,13 +155,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             disabled={!isInteractive}
             variant="ghost"
             size="icon"
-            className="rounded-[var(--radius-sm)] h-9 w-9 text-slate-400 hover:text-red-600 hover:bg-red-50"
-            icon={<Trash2 className="w-4 h-4" />}
+            className={getToolbarIconButtonClass()}
+            icon={<Trash2 className="w-4 h-4 transition-transform group-hover:scale-110" />}
           />
         </Tooltip>
       </div>
 
-      <div className="w-px h-6 bg-slate-200/50 mx-2" />
+      <div className={`mx-2 ${TOOLBAR_DIVIDER_CLASS}`} />
 
       {/* Group 3: History */}
       <ToolbarHistoryControls
@@ -167,7 +171,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         onUndo={onUndo}
         onRedo={onRedo}
       />
-
     </div>
   );
 };

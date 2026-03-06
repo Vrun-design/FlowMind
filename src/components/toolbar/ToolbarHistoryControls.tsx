@@ -3,6 +3,7 @@ import { Redo2, Undo2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
 import { Tooltip } from '../Tooltip';
+import { getToolbarIconButtonClass } from './toolbarButtonStyles';
 
 interface ToolbarHistoryControlsProps {
     isInteractive: boolean;
@@ -29,8 +30,8 @@ export function ToolbarHistoryControls({
                     disabled={!canUndo || !isInteractive}
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9"
-                    icon={<Undo2 className="w-4 h-4" />}
+                    className={getToolbarIconButtonClass()}
+                    icon={<Undo2 className="w-4 h-4 transition-transform group-hover:scale-110" />}
                 />
             </Tooltip>
             <Tooltip text={t('toolbar.redo')}>
@@ -39,8 +40,8 @@ export function ToolbarHistoryControls({
                     disabled={!canRedo || !isInteractive}
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9"
-                    icon={<Redo2 className="w-4 h-4" />}
+                    className={getToolbarIconButtonClass()}
+                    icon={<Redo2 className="w-4 h-4 transition-transform group-hover:scale-110" />}
                 />
             </Tooltip>
         </div>

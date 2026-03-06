@@ -50,7 +50,7 @@ describe('CustomNode handle interaction policy', () => {
     });
   });
 
-  it('disables handle pointer events while selected in visualQualityV2', () => {
+  it('keeps selected handles interactive in visualQualityV2', () => {
     render(
       <CustomNode
         id="n1"
@@ -69,7 +69,7 @@ describe('CustomNode handle interaction policy', () => {
 
     for (const handleId of ['top', 'bottom', 'left', 'right']) {
       const handle = screen.getByTestId(`handle-${handleId}`);
-      expect(handle.getAttribute('data-pointer')).toBe('none');
+      expect(handle.getAttribute('data-pointer')).toBe('all');
     }
   });
 

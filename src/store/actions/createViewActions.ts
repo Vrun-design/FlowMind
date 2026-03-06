@@ -8,7 +8,6 @@ export function createViewActions(set: SetFlowState): Pick<
     FlowState,
     | 'toggleGrid'
     | 'toggleSnap'
-    | 'toggleMiniMap'
     | 'setShortcutsHelpOpen'
     | 'setViewSettings'
     | 'setGlobalEdgeOptions'
@@ -27,10 +26,6 @@ export function createViewActions(set: SetFlowState): Pick<
 
         toggleSnap: () => set((state) => ({
             viewSettings: { ...state.viewSettings, snapToGrid: !state.viewSettings.snapToGrid },
-        })),
-
-        toggleMiniMap: () => set((state) => ({
-            viewSettings: { ...state.viewSettings, showMiniMap: !state.viewSettings.showMiniMap },
         })),
 
         setShortcutsHelpOpen: (open) => set((state) => ({

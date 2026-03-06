@@ -6,6 +6,7 @@ import { useInlineNodeTextEdit } from '@/hooks/useInlineNodeTextEdit';
 import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { useFlowStore } from '@/store';
 import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from '@/components/handleInteraction';
+import { InlineTextEditSurface } from '@/components/InlineTextEditSurface';
 import { getTransformDiagnosticsAttrs } from '@/components/transformDiagnostics';
 import { NodeTransformControls } from '@/components/NodeTransformControls';
 
@@ -100,50 +101,32 @@ function ClassNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Rea
       >
         <div className="border-b border-slate-300 px-3 py-2 text-center">
           {data.classStereotype && (
-            <div
+            <InlineTextEditSurface
+              isEditing={stereotypeEdit.isEditing}
+              draft={stereotypeEdit.draft}
+              displayValue={`<<${data.classStereotype}>>`}
+              onBeginEdit={stereotypeEdit.beginEdit}
+              onDraftChange={stereotypeEdit.setDraft}
+              onCommit={stereotypeEdit.commit}
+              onKeyDown={stereotypeEdit.handleKeyDown}
               className="text-[10px] text-slate-500 leading-tight"
-              onClick={(event) => {
-                event.stopPropagation();
-                stereotypeEdit.beginEdit();
-              }}
-            >
-              {stereotypeEdit.isEditing ? (
-                <input
-                  autoFocus
-                  value={stereotypeEdit.draft}
-                  onChange={(event) => stereotypeEdit.setDraft(event.target.value)}
-                  onBlur={stereotypeEdit.commit}
-                  onKeyDown={stereotypeEdit.handleKeyDown}
-                  onMouseDown={(event) => event.stopPropagation()}
-                  className="w-full rounded border border-slate-300 bg-white/90 px-1 py-0.5 text-center outline-none"
-                />
-              ) : (
-                `<<${data.classStereotype}>>`
-              )}
-            </div>
+              inputClassName="text-center"
+              isSelected={Boolean(selected)}
+            />
           )}
-          <div
+          <InlineTextEditSurface
+            isEditing={labelEdit.isEditing}
+            draft={labelEdit.draft}
+            displayValue={data.label || 'Class'}
+            onBeginEdit={labelEdit.beginEdit}
+            onDraftChange={labelEdit.setDraft}
+            onCommit={labelEdit.commit}
+            onKeyDown={labelEdit.handleKeyDown}
             className={`${visualQualityV2Enabled ? 'text-[13px]' : 'text-sm'} font-semibold text-slate-800 break-words`}
             title={data.label || 'Class'}
-            onClick={(event) => {
-              event.stopPropagation();
-              labelEdit.beginEdit();
-            }}
-          >
-            {labelEdit.isEditing ? (
-              <input
-                autoFocus
-                value={labelEdit.draft}
-                onChange={(event) => labelEdit.setDraft(event.target.value)}
-                onBlur={labelEdit.commit}
-                onKeyDown={labelEdit.handleKeyDown}
-                onMouseDown={(event) => event.stopPropagation()}
-                className="w-full rounded border border-slate-300 bg-white/90 px-1 py-0.5 text-center outline-none"
-              />
-            ) : (
-              data.label || 'Class'
-            )}
-          </div>
+            inputClassName="text-center"
+            isSelected={Boolean(selected)}
+          />
         </div>
 
         <div className="border-b border-slate-300 px-3 py-2">

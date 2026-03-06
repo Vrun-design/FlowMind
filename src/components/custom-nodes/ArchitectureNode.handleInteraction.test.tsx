@@ -47,7 +47,7 @@ describe('ArchitectureNode handle interaction policy', () => {
     });
   });
 
-  it('disables handle pointer events while selected in visualQualityV2', () => {
+  it('keeps selected handles interactive in visualQualityV2', () => {
     render(
       <ArchitectureNode
         id="arch-1"
@@ -64,7 +64,7 @@ describe('ArchitectureNode handle interaction policy', () => {
 
     for (const handleId of ['top', 'left', 'right', 'bottom']) {
       const handle = screen.getByTestId(`handle-${handleId}`);
-      expect(handle.getAttribute('data-pointer')).toBe('none');
+      expect(handle.getAttribute('data-pointer')).toBe('all');
     }
   });
 

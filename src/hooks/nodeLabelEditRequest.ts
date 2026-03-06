@@ -4,22 +4,39 @@ const NODE_LABEL_EDIT_REQUEST_EVENT = 'flowmind:node-label-edit-request';
 
 interface NodeLabelEditRequestDetail {
   nodeId: string;
+  seedText?: string;
+  replaceExisting?: boolean;
 }
 
-export function requestNodeLabelEdit(nodeId: string): void {
+type RequestNodeLabelEditOptions = {
+  seedText?: string;
+  replaceExisting?: boolean;
+};
+
+export function requestNodeLabelEdit(nodeId: string, options?: RequestNodeLabelEditOptions): void {
   window.dispatchEvent(
     new CustomEvent<NodeLabelEditRequestDetail>(NODE_LABEL_EDIT_REQUEST_EVENT, {
-      detail: { nodeId },
+      detail: {
+        nodeId,
+        seedText: options?.seedText,
+        replaceExisting: options?.replaceExisting,
+      },
     })
   );
 }
 
-export function useNodeLabelEditRequest(nodeId: string, onRequest: () => void): void {
+export function useNodeLabelEditRequest(
+  nodeId: string,
+  onRequest: (detail?: RequestNodeLabelEditOptions) => void
+): void {
   useEffect(() => {
     const handleRequest = (event: Event): void => {
       const customEvent = event as CustomEvent<NodeLabelEditRequestDetail>;
       if (customEvent.detail?.nodeId === nodeId) {
-        onRequest();
+        onRequest({
+          seedText: customEvent.detail.seedText,
+          replaceExisting: customEvent.detail.replaceExisting,
+        });
       }
     };
 

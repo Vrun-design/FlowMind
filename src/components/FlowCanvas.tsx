@@ -1,14 +1,9 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactFlow, {
     Background,
     Controls,
-    MiniMap,
-    BackgroundVariant,
-    SelectionMode,
-    MarkerType,
     useReactFlow,
-    ConnectionMode,
     useViewport,
     toFlowNode,
 } from '@/lib/reactflowCompat';
@@ -18,28 +13,20 @@ import { useFlowOperations } from '../hooks/useFlowOperations';
 import { useModifierKeys } from '../hooks/useModifierKeys';
 import { useEdgeInteractions } from '../hooks/useEdgeInteractions';
 import CustomConnectionLine from './CustomConnectionLine';
-import { ConnectMenu } from './ConnectMenu';
-import { ContextMenu } from './ContextMenu';
 import { NavigationControls } from './NavigationControls';
-import { MINIMAP_NODE_COLORS } from '../constants';
-import { flowCanvasEdgeTypes, flowCanvasNodeTypes, isDuplicateConnection } from './flow-canvas/flowCanvasTypes';
-import { useFlowCanvasMenus } from './flow-canvas/useFlowCanvasMenus';
+import { FlowCanvasOverlays } from './flow-canvas/FlowCanvasOverlays';
+import { flowCanvasEdgeTypes, flowCanvasNodeTypes } from './flow-canvas/flowCanvasTypes';
+import { useFlowCanvasMenusAndActions } from './flow-canvas/useFlowCanvasMenusAndActions';
 import { useFlowCanvasDragDrop } from './flow-canvas/useFlowCanvasDragDrop';
 import { useFlowCanvasConnectionState } from './flow-canvas/useFlowCanvasConnectionState';
-import { useFlowCanvasContextActions } from './flow-canvas/useFlowCanvasContextActions';
-import { useFlowCanvasQuickActions } from './flow-canvas/useFlowCanvasQuickActions';
-import { FlowCanvasQuickActions } from './flow-canvas/FlowCanvasQuickActions';
 import { useFlowCanvasPaste } from './flow-canvas/useFlowCanvasPaste';
-import { FlowCanvasAlignmentGuidesOverlay } from './flow-canvas/FlowCanvasAlignmentGuidesOverlay';
-import { useFlowCanvasAlignmentGuides } from './flow-canvas/useFlowCanvasAlignmentGuides';
-import { useFlowCanvasNodeDragHandlers } from './flow-canvas/useFlowCanvasNodeDragHandlers';
 import { useFlowCanvasInteractionLod } from './flow-canvas/useFlowCanvasInteractionLod';
+import { useFlowCanvasViewState } from './flow-canvas/useFlowCanvasViewState';
+import { useFlowCanvasReactFlowConfig } from './flow-canvas/useFlowCanvasReactFlowConfig';
+import { useFlowCanvasSelectionTools } from './flow-canvas/useFlowCanvasSelectionTools';
 import {
-    getSafetyAdjustedEdges,
     isFarZoomReductionActiveForProfile,
-    isLargeGraphSafetyActive,
     isLowDetailModeActiveForProfile,
-    shouldEnableViewportCulling,
 } from './flow-canvas/largeGraphSafetyMode';
 import { useToast } from './ui/ToastContext';
 import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
@@ -48,11 +35,13 @@ import { isPaneTarget } from '@/hooks/edgeConnectInteractions';
 interface FlowCanvasProps {
     recordHistory: () => void;
     isSelectMode: boolean;
+    onCanvasEntityIntent?: () => void;
 }
 
 export const FlowCanvas: React.FC<FlowCanvasProps> = ({
     recordHistory,
-    isSelectMode
+    isSelectMode,
+    onCanvasEntityIntent,
 }) => {
     const { t } = useTranslation();
     const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
@@ -65,44 +54,27 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         updateTab,
         setNodes,
         setEdges,
-        selectedNodeId,
         setSelectedNodeId,
         setSelectedEdgeId,
         setMermaidDiagnostics,
         clearMermaidDiagnostics,
-        viewSettings: { showGrid, snapToGrid, showMiniMap, largeGraphSafetyMode, largeGraphSafetyProfile, architectureStrictMode },
+        viewSettings: { showGrid, snapToGrid, largeGraphSafetyMode, largeGraphSafetyProfile, architectureStrictMode },
     } = useFlowStore();
     const { addToast } = useToast();
-    const safetyModeActive = isLargeGraphSafetyActive(nodes.length, edges.length, largeGraphSafetyMode, largeGraphSafetyProfile);
-    const viewportCullingEnabled = shouldEnableViewportCulling(safetyModeActive);
-    const effectiveShowGrid = showGrid && !safetyModeActive;
-    const effectiveShowMiniMap = showMiniMap;
-    const layerById = useMemo(
-        () => new Map(layers.map((layer) => [layer.id, layer])),
-        [layers]
-    );
-    const layerAdjustedNodes = useMemo(() => nodes.map((node) => {
-        const layerId = node.data?.layerId ?? 'default';
-        const layer = layerById.get(layerId);
-        const isVisible = layer?.visible ?? true;
-        const isLocked = layer?.locked ?? false;
-        const isStoreSelected = selectedNodeId === node.id;
-        return {
-            ...node,
-            hidden: !isVisible,
-            selected: isVisible ? Boolean(node.selected || isStoreSelected) : false,
-            draggable: !isLocked,
-        };
-    }), [nodes, layerById, selectedNodeId]);
-    const visibleNodeIds = useMemo(
-        () => new Set(layerAdjustedNodes.filter((node) => !node.hidden).map((node) => node.id)),
-        [layerAdjustedNodes]
-    );
-    const visibleEdges = useMemo(
-        () => edges.filter((edge) => visibleNodeIds.has(edge.source) && visibleNodeIds.has(edge.target)),
-        [edges, visibleNodeIds]
-    );
-    const effectiveEdges = useMemo(() => getSafetyAdjustedEdges(visibleEdges, safetyModeActive), [visibleEdges, safetyModeActive]);
+    const {
+        safetyModeActive,
+        viewportCullingEnabled,
+        effectiveShowGrid,
+        layerAdjustedNodes,
+        effectiveEdges,
+    } = useFlowCanvasViewState({
+        nodes,
+        edges,
+        layers,
+        showGrid,
+        largeGraphSafetyMode,
+        largeGraphSafetyProfile,
+    });
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
     const { screenToFlowPosition, fitView } = useReactFlow();
@@ -111,18 +83,6 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         setSelectedNodeId(null);
         setSelectedEdgeId(null);
     }, [setSelectedEdgeId, setSelectedNodeId]);
-    const {
-        connectMenu,
-        setConnectMenu,
-        contextMenu,
-        onNodeContextMenu,
-        onPaneContextMenu,
-        onEdgeContextMenu,
-        onPaneClick,
-        onCloseContextMenu,
-    } = useFlowCanvasMenus({
-        onPaneSelectionClear: clearPaneSelection,
-    });
 
     // --- Operations ---
     const {
@@ -143,6 +103,30 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         recordHistory,
         (position, sourceId, sourceHandle) => setConnectMenu({ position, sourceId, sourceHandle })
     );
+    const {
+        connectMenu,
+        setConnectMenu,
+        contextMenu,
+        onNodeContextMenu,
+        onPaneContextMenu,
+        onEdgeContextMenu,
+        onPaneClick,
+        onCloseContextMenu,
+        contextActions,
+    } = useFlowCanvasMenusAndActions({
+        onPaneSelectionClear: clearPaneSelection,
+        screenToFlowPosition,
+        copySelection,
+        pasteSelection,
+        duplicateNode,
+        deleteNode,
+        deleteEdge,
+        updateNodeZIndex,
+        handleAlignNodes,
+        handleDistributeNodes,
+        handleGroupNodes,
+        nodes,
+    });
 
     const { onDragOver, onDrop } = useFlowCanvasDragDrop({
         screenToFlowPosition,
@@ -164,6 +148,12 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         largeGraphSafetyProfile,
     });
     const farZoomReductionActive = isFarZoomReductionActiveForProfile(safetyModeActive, zoom, largeGraphSafetyProfile);
+    const reactFlowConfig = useFlowCanvasReactFlowConfig({
+        visualQualityV2Enabled,
+        isEffectiveSelectMode,
+        viewportCullingEnabled,
+        effectiveEdges,
+    });
     const { isConnecting, onConnectStartWrapper, onConnectEndWrapper } = useFlowCanvasConnectionState({
         onConnectStart: (event, params) => {
             onConnectStart(event as Parameters<typeof onConnectStart>[0], params as Parameters<typeof onConnectStart>[1]);
@@ -171,21 +161,6 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         onConnectEnd: (event) => {
             onConnectEnd(event as Parameters<typeof onConnectEnd>[0]);
         },
-    });
-    const contextActions = useFlowCanvasContextActions({
-        contextMenu,
-        onCloseContextMenu,
-        screenToFlowPosition,
-        copySelection,
-        pasteSelection,
-        duplicateNode,
-        deleteNode,
-        deleteEdge,
-        updateNodeZIndex,
-        handleAlignNodes,
-        handleDistributeNodes,
-        handleGroupNodes,
-        nodes,
     });
     const getCanvasCenterFlowPosition = (): { x: number; y: number } => {
         if (!reactFlowWrapper.current) {
@@ -210,7 +185,11 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         onQuickToolbarDuplicate,
         onQuickToolbarAddConnected,
         onQuickToolbarColorChange,
-    } = useFlowCanvasQuickActions({
+        alignmentGuides,
+        handleNodeDragStart,
+        handleNodeDrag,
+        handleNodeDragStop,
+    } = useFlowCanvasSelectionTools({
         layerAdjustedNodes,
         zoom,
         viewportX,
@@ -222,28 +201,13 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         duplicateNode,
         handleAddAndConnect,
         updateNodeData,
-    });
-    const {
-        alignmentGuides,
-        updateAlignmentGuidesForNode,
-        clearAlignmentGuides,
-    } = useFlowCanvasAlignmentGuides({
-        enabled: canvasInteractionsV1Enabled,
-        layerAdjustedNodes,
-    });
-    const {
-        handleNodeDragStart,
-        handleNodeDrag,
-        handleNodeDragStop,
-    } = useFlowCanvasNodeDragHandlers({
+        alignmentGuidesEnabled: canvasInteractionsV1Enabled,
         toTypedFlowNode: (node) => toTypedFlowNode(node as Parameters<typeof toFlowNode>[0]),
         onNodeDragStart: (event, node) => onNodeDragStart(event as Parameters<typeof onNodeDragStart>[0], node),
         onNodeDrag: (event, node, draggedNodes) => onNodeDrag(event as Parameters<typeof onNodeDrag>[0], node, draggedNodes),
         onNodeDragStop: (event, node) => onNodeDragStop(event as Parameters<typeof onNodeDragStop>[0], node),
         startInteractionLowDetail,
         endInteractionLowDetail,
-        updateAlignmentGuidesForNode,
-        clearAlignmentGuides,
     });
 
     const onCanvasDoubleClickCapture = (event: React.MouseEvent<HTMLDivElement>): void => {
@@ -298,6 +262,8 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
                 onMoveStart={startInteractionLowDetail}
                 onMoveEnd={endInteractionLowDetail}
                 onNodeDoubleClick={onNodeDoubleClick}
+                onNodeClick={onCanvasEntityIntent}
+                onEdgeClick={onCanvasEntityIntent}
                 onNodeContextMenu={onNodeContextMenu}
                 onPaneContextMenu={onPaneContextMenu}
                 onEdgeContextMenu={onEdgeContextMenu}
@@ -310,51 +276,35 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
                 nodeTypes={flowCanvasNodeTypes}
                 edgeTypes={flowCanvasEdgeTypes}
                 fitView
-                className={`bg-[var(--brand-background)] ${isEffectiveSelectMode ? 'flow-canvas-select-mode' : 'flow-canvas-pan-mode'}`}
+                className={reactFlowConfig.className}
                 minZoom={0.1}
-                onlyRenderVisibleElements={viewportCullingEnabled}
-                connectionMode={ConnectionMode.Loose}
-                isValidConnection={(connection) => {
-                    return !isDuplicateConnection(connection, effectiveEdges);
-                }}
-                selectionOnDrag={isEffectiveSelectMode}
-                panOnDrag={!isEffectiveSelectMode}
-                selectionMode={isEffectiveSelectMode ? SelectionMode.Partial : undefined}
-                multiSelectionKeyCode="Alt"
-                defaultEdgeOptions={{
-                    style: visualQualityV2Enabled ? { stroke: '#64748b', strokeWidth: 1.5 } : { stroke: '#94a3b8', strokeWidth: 2 },
-                    animated: false,
-                    markerEnd: { type: MarkerType.ArrowClosed, color: visualQualityV2Enabled ? '#64748b' : '#94a3b8' },
-                }}
+                onlyRenderVisibleElements={reactFlowConfig.onlyRenderVisibleElements}
+                connectionMode={reactFlowConfig.connectionMode}
+                isValidConnection={reactFlowConfig.isValidConnection}
+                selectionOnDrag={reactFlowConfig.selectionOnDrag}
+                panOnDrag={reactFlowConfig.panOnDrag}
+                selectionMode={reactFlowConfig.selectionMode}
+                multiSelectionKeyCode={reactFlowConfig.multiSelectionKeyCode}
+                defaultEdgeOptions={reactFlowConfig.defaultEdgeOptions}
                 connectionLineComponent={CustomConnectionLine}
                 snapToGrid={snapToGrid}
             >
                 {effectiveShowGrid && (
                     <Background
-                        variant={BackgroundVariant.Dots}
-                        gap={visualQualityV2Enabled ? 24 : 20}
-                        size={1}
-                        color={visualQualityV2Enabled ? 'rgba(148,163,184,0.35)' : '#cbd5e1'}
+                        variant={reactFlowConfig.background.variant}
+                        gap={reactFlowConfig.background.gap}
+                        size={reactFlowConfig.background.size}
+                        color={reactFlowConfig.background.color}
                     />
                 )}
                 <NavigationControls />
-                {effectiveShowMiniMap && (
-                    <MiniMap
-                        nodeColor={(n) => MINIMAP_NODE_COLORS[n.type ?? ''] ?? '#64748b'}
-                        maskColor="rgba(241, 245, 249, 0.7)"
-                        className="border border-slate-200 shadow-lg rounded-lg overflow-hidden"
-                    />
-                )}
             </ReactFlow>
-            <FlowCanvasAlignmentGuidesOverlay
-                enabled={canvasInteractionsV1Enabled}
+            <FlowCanvasOverlays
+                canvasInteractionsEnabled={canvasInteractionsV1Enabled}
                 alignmentGuides={alignmentGuides}
                 zoom={zoom}
                 viewportX={viewportX}
                 viewportY={viewportY}
-            />
-            <FlowCanvasQuickActions
-                enabled={canvasInteractionsV1Enabled}
                 quickToolbarAnchor={quickToolbarAnchor}
                 selectedVisibleNodes={selectedVisibleNodes}
                 quickToolbarColorValue={quickToolbarColorValue}
@@ -366,38 +316,15 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
                 quickAddOverlay={quickAddOverlay}
                 isQuickAddHovering={isQuickAddHovering}
                 setIsQuickAddHovering={setIsQuickAddHovering}
+                connectMenu={connectMenu}
+                setConnectMenu={setConnectMenu}
+                screenToFlowPosition={screenToFlowPosition}
+                handleAddAndConnect={handleAddAndConnect}
+                contextMenu={contextMenu}
+                onCloseContextMenu={onCloseContextMenu}
+                copySelection={copySelection}
+                contextActions={contextActions}
             />
-
-            {connectMenu && (
-                <ConnectMenu
-                    position={connectMenu.position}
-                    onClose={() => setConnectMenu(null)}
-                    onSelect={(type, shape) => {
-                        if (connectMenu) {
-                            const flowPos = screenToFlowPosition(connectMenu.position);
-                            handleAddAndConnect(type, flowPos, connectMenu.sourceId, connectMenu.sourceHandle, shape as NodeData['shape']);
-                        }
-                    }}
-                />
-            )}
-            {
-                contextMenu.isOpen && (
-                    <ContextMenu
-                        {...contextMenu}
-                        onClose={onCloseContextMenu}
-                        onCopy={copySelection}
-                        onPaste={contextActions.onPaste}
-                        onDuplicate={contextActions.onDuplicate}
-                        onDelete={contextActions.onDelete}
-                        onSendToBack={contextActions.onSendToBack}
-                        canPaste={true}
-                        selectedCount={contextActions.selectedCount}
-                        onAlignNodes={contextActions.onAlignNodes}
-                        onDistributeNodes={contextActions.onDistributeNodes}
-                        onGroupSelected={contextActions.onGroupSelected}
-                    />
-                )
-            }
         </div>
     );
 };

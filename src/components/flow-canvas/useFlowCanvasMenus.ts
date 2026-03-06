@@ -3,21 +3,23 @@ import type { MouseEvent } from 'react';
 import type { Edge, Node } from '@/lib/reactflowCompat';
 import type { ContextMenuProps } from '@/components/ContextMenu';
 
-interface ConnectMenuState {
+export interface ConnectMenuState {
     position: { x: number; y: number };
     sourceId: string;
     sourceHandle: string | null;
 }
+
+export type ContextMenuState = ContextMenuProps & { isOpen: boolean };
 
 interface UseFlowCanvasMenusParams {
     initialContextType?: ContextMenuProps['type'];
     onPaneSelectionClear?: () => void;
 }
 
-interface UseFlowCanvasMenusResult {
+export interface UseFlowCanvasMenusResult {
     connectMenu: ConnectMenuState | null;
     setConnectMenu: (value: ConnectMenuState | null) => void;
-    contextMenu: ContextMenuProps & { isOpen: boolean };
+    contextMenu: ContextMenuState;
     onNodeContextMenu: (event: MouseEvent, node: Node) => void;
     onPaneContextMenu: (event: MouseEvent) => void;
     onEdgeContextMenu: (event: MouseEvent, edge: Edge) => void;
@@ -30,7 +32,7 @@ export function useFlowCanvasMenus({
     onPaneSelectionClear,
 }: UseFlowCanvasMenusParams = {}): UseFlowCanvasMenusResult {
     const [connectMenu, setConnectMenu] = useState<ConnectMenuState | null>(null);
-    const [contextMenu, setContextMenu] = useState<ContextMenuProps & { isOpen: boolean }>({
+    const [contextMenu, setContextMenu] = useState<ContextMenuState>({
         id: null,
         type: initialContextType,
         position: { x: 0, y: 0 },

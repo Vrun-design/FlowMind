@@ -3,19 +3,23 @@ import { trackEvent } from '@/lib/analytics';
 
 export type CommandBarView =
     | 'root'
-    | 'ai'
-    | 'mermaid'
-    | 'flowmind'
     | 'templates'
     | 'search'
     | 'layout'
     | 'design-system'
     | 'wireframes';
 
+export type FlowEditorMode = 'canvas' | 'studio';
+export type StudioTab = 'ai' | 'code';
+export type StudioCodeMode = 'flowmind' | 'mermaid';
+
 interface UseFlowEditorUIStateResult {
     isHistoryOpen: boolean;
     isCommandBarOpen: boolean;
     commandBarView: CommandBarView;
+    editorMode: FlowEditorMode;
+    studioTab: StudioTab;
+    studioCodeMode: StudioCodeMode;
     isSelectMode: boolean;
     isDesignSystemPanelOpen: boolean;
     openHistory: () => void;
@@ -23,6 +27,10 @@ interface UseFlowEditorUIStateResult {
     openCommandBar: (view?: CommandBarView) => void;
     closeCommandBar: () => void;
     openDesignSystemPanel: () => void;
+    setCanvasMode: () => void;
+    setStudioMode: () => void;
+    setStudioTab: (tab: StudioTab) => void;
+    setStudioCodeMode: (mode: StudioCodeMode) => void;
     enableSelectMode: () => void;
     enablePanMode: () => void;
 }
@@ -31,6 +39,9 @@ export function useFlowEditorUIState(): UseFlowEditorUIStateResult {
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [isCommandBarOpen, setIsCommandBarOpen] = useState(false);
     const [commandBarView, setCommandBarView] = useState<CommandBarView>('root');
+    const [editorMode, setEditorMode] = useState<FlowEditorMode>('canvas');
+    const [studioTab, setStudioTab] = useState<StudioTab>('ai');
+    const [studioCodeMode, setStudioCodeMode] = useState<StudioCodeMode>('flowmind');
     const [isSelectMode, setIsSelectMode] = useState(true);
 
     function openHistory(): void {
@@ -56,6 +67,14 @@ export function useFlowEditorUIState(): UseFlowEditorUIStateResult {
         setIsCommandBarOpen(true);
     }
 
+    function setCanvasMode(): void {
+        setEditorMode('canvas');
+    }
+
+    function setStudioMode(): void {
+        setEditorMode('studio');
+    }
+
     function enableSelectMode(): void {
         setIsSelectMode(true);
     }
@@ -68,6 +87,9 @@ export function useFlowEditorUIState(): UseFlowEditorUIStateResult {
         isHistoryOpen,
         isCommandBarOpen,
         commandBarView,
+        editorMode,
+        studioTab,
+        studioCodeMode,
         isSelectMode,
         isDesignSystemPanelOpen: isCommandBarOpen && commandBarView === 'design-system',
         openHistory,
@@ -75,6 +97,10 @@ export function useFlowEditorUIState(): UseFlowEditorUIStateResult {
         openCommandBar,
         closeCommandBar,
         openDesignSystemPanel,
+        setCanvasMode,
+        setStudioMode,
+        setStudioTab,
+        setStudioCodeMode,
         enableSelectMode,
         enablePanMode,
     };

@@ -14,11 +14,9 @@ const HANDLE_POLICY_FILES = [
   'src/components/custom-nodes/BrowserNode.tsx',
   'src/components/custom-nodes/ClassNode.tsx',
   'src/components/custom-nodes/EntityNode.tsx',
-  'src/components/custom-nodes/IconNode.tsx',
   'src/components/custom-nodes/JourneyNode.tsx',
   'src/components/custom-nodes/MindmapNode.tsx',
   'src/components/custom-nodes/MobileNode.tsx',
-  'src/components/custom-nodes/WireframeNodes.tsx',
 ] as const;
 
 function readSource(path: string): string {
@@ -26,11 +24,12 @@ function readSource(path: string): string {
 }
 
 describe('handle interaction usage guardrails', () => {
-  it('keeps all node renderers on shared handle interaction helpers', () => {
+  it('keeps all node renderers on shared handle interaction helpers or NodeChrome wrapper', () => {
     for (const path of HANDLE_POLICY_FILES) {
       const source = readSource(path);
-      expect(source, path).toContain('getHandlePointerEvents');
-      expect(source, path).toContain('getV2HandleVisibilityClass');
+      const usesSharedHelpers = source.includes('getHandlePointerEvents') && source.includes('getV2HandleVisibilityClass');
+      const usesNodeChrome = source.includes('NodeChrome');
+      expect(usesSharedHelpers || usesNodeChrome, path).toBe(true);
     }
   });
 

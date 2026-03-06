@@ -32,15 +32,9 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
     const isImage = selectedNode.type === 'image';
     const isSection = selectedNode.type === 'section';
     const isWireframeApp = selectedNode.type === 'browser' || selectedNode.type === 'mobile';
-    const isWireframeIcon = selectedNode.type === 'wireframe_icon';
-    const isWireframeImage = selectedNode.type === 'wireframe_image';
-    const isWireframeButton = selectedNode.type === 'wireframe_button';
-    const isWireframeInput = selectedNode.type === 'wireframe_input';
-    const isWireframeMisc = isWireframeIcon || isWireframeImage || isWireframeButton || isWireframeInput;
 
     function getDefaultSection(): string {
         if (isWireframeApp) return 'variant';
-        if (isWireframeIcon) return 'icon';
         if (isSection) return 'content';
         if (isText || isAnnotation) return 'content';
         return 'appearance';
@@ -103,7 +97,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
             )}
 
             {/* Appearance Section */}
-            {!isWireframeApp && !isWireframeMisc && !isAnnotation && !isText && !isImage && !isSection && (
+            {!isWireframeApp && !isAnnotation && !isText && !isImage && !isSection && (
                 <CollapsibleSection
                     title="Appearance"
                     icon={<Box className="w-3.5 h-3.5" />}
@@ -128,28 +122,26 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
             )}
 
             {/* Content Section: Refined Design */}
-            {!isWireframeIcon && (
-                <NodeContentSection
-                    selectedNode={selectedNode}
-                    onChange={onChange}
-                    isOpen={activeSection === 'content'}
-                    onToggle={() => toggleSection('content')}
-                    isText={isText}
-                    isImage={isImage}
-                    isWireframeApp={isWireframeApp}
-                    isWireframeMisc={isWireframeMisc}
-                    onBold={() => handleStyleAction('bold')}
-                    onItalic={() => handleStyleAction('italic')}
-                    labelInputRef={labelInputRef}
-                    descInputRef={descInputRef}
-                    onLabelFocus={() => setActiveField('label')}
-                    onLabelBlur={() => setTimeout(() => setActiveField(null), 200)}
-                    onDescFocus={() => setActiveField('subLabel')}
-                    onDescBlur={() => setTimeout(() => setActiveField(null), 200)}
-                    onLabelKeyDown={labelEditor.handleKeyDown}
-                    onDescKeyDown={descEditor.handleKeyDown}
-                />
-            )}
+            <NodeContentSection
+                selectedNode={selectedNode}
+                onChange={onChange}
+                isOpen={activeSection === 'content'}
+                onToggle={() => toggleSection('content')}
+                isText={isText}
+                isImage={isImage}
+                isWireframeApp={isWireframeApp}
+                isWireframeMisc={false}
+                onBold={() => handleStyleAction('bold')}
+                onItalic={() => handleStyleAction('italic')}
+                labelInputRef={labelInputRef}
+                descInputRef={descInputRef}
+                onLabelFocus={() => setActiveField('label')}
+                onLabelBlur={() => setTimeout(() => setActiveField(null), 200)}
+                onDescFocus={() => setActiveField('subLabel')}
+                onDescBlur={() => setTimeout(() => setActiveField(null), 200)}
+                onLabelKeyDown={labelEditor.handleKeyDown}
+                onDescKeyDown={descEditor.handleKeyDown}
+            />
 
             {/* Text Styling for Text Node */}
             {isText && (
@@ -161,7 +153,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                 />
             )}
 
-            {!isImage && !isWireframeApp && !isWireframeImage && !isWireframeButton && !isWireframeInput && (
+            {!isImage && !isWireframeApp && (
                 <CollapsibleSection
                     title="Color Theme"
                     icon={<Palette className="w-3.5 h-3.5" />}
@@ -175,7 +167,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                 </CollapsibleSection>
             )}
 
-            {!isAnnotation && !isText && !isImage && !isWireframeApp && !isWireframeImage && !isWireframeButton && !isWireframeInput && (
+            {!isAnnotation && !isText && !isImage && !isWireframeApp && (
                 <CollapsibleSection
                     title="Icon Theme"
                     icon={<Star className="w-3.5 h-3.5" />}
@@ -191,7 +183,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                 </CollapsibleSection>
             )}
 
-            {!isText && !isWireframeApp && !isWireframeIcon && !isWireframeButton && !isWireframeInput && !isWireframeImage && (
+            {!isText && !isWireframeApp && (
                 <CollapsibleSection
                     title="Custom Image"
                     icon={<ImageStart className="w-3.5 h-3.5" />}

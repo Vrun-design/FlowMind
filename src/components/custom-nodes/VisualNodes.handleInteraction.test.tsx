@@ -49,10 +49,10 @@ vi.mock('@/lib/reactflowCompat', async (importOriginal) => {
   };
 });
 
-function assertSelectedSafeHandles(): void {
+function assertSelectedConnectableHandles(): void {
   for (const handleId of ['top', 'bottom', 'left', 'right']) {
     const handle = screen.getByTestId(`handle-${handleId}`);
-    expect(handle.getAttribute('data-pointer')).toBe('none');
+    expect(handle.getAttribute('data-pointer')).toBe('all');
   }
 }
 
@@ -65,7 +65,7 @@ function assertUnselectedDiscoverableHandles(): void {
 }
 
 describe('visual-heavy node handle interaction policy', () => {
-  it('keeps selected BrowserNode handles non-intercepting in visualQualityV2', () => {
+  it('keeps selected BrowserNode handles connectable in visualQualityV2', () => {
     render(
       <BrowserNode
         id="browser-1"
@@ -82,7 +82,7 @@ describe('visual-heavy node handle interaction policy', () => {
       />
     );
 
-    assertSelectedSafeHandles();
+    assertSelectedConnectableHandles();
   });
 
   it('keeps unselected BrowserNode handles discoverable', () => {
@@ -105,7 +105,7 @@ describe('visual-heavy node handle interaction policy', () => {
     assertUnselectedDiscoverableHandles();
   });
 
-  it('keeps selected MobileNode handles non-intercepting in visualQualityV2', () => {
+  it('keeps selected MobileNode handles connectable in visualQualityV2', () => {
     render(
       <MobileNode
         id="mobile-1"
@@ -122,7 +122,7 @@ describe('visual-heavy node handle interaction policy', () => {
       />
     );
 
-    assertSelectedSafeHandles();
+    assertSelectedConnectableHandles();
   });
 
   it('keeps unselected MobileNode handles discoverable', () => {
@@ -145,7 +145,7 @@ describe('visual-heavy node handle interaction policy', () => {
     assertUnselectedDiscoverableHandles();
   });
 
-  it('keeps selected JourneyNode handles non-intercepting in visualQualityV2', () => {
+  it('keeps selected JourneyNode handles connectable in visualQualityV2', () => {
     render(
       <JourneyNode
         id="journey-1"
@@ -160,7 +160,7 @@ describe('visual-heavy node handle interaction policy', () => {
       />
     );
 
-    assertSelectedSafeHandles();
+    assertSelectedConnectableHandles();
   });
 
   it('keeps unselected JourneyNode handles discoverable', () => {

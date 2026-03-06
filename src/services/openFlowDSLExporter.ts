@@ -12,10 +12,6 @@ const TYPE_TO_DSL: Record<string, string> = {
     section: 'section',
     browser: 'browser',
     mobile: 'mobile',
-    wireframe_button: 'button',
-    wireframe_input: 'input',
-    icon: 'icon',
-    wireframe_image: 'placeholder',
     container: 'container',
 };
 

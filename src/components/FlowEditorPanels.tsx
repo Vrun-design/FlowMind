@@ -2,168 +2,173 @@ import React from 'react';
 import { CommandBar } from './CommandBar';
 import { ErrorBoundary } from './ErrorBoundary';
 import { PropertiesPanel } from './PropertiesPanel';
+import { RightRail } from './RightRail';
 import { SnapshotsPanel } from './SnapshotsPanel';
-import type { FlowSnapshot } from '@/lib/types';
-import type { CommandBarView } from '@/hooks/useFlowEditorUIState';
+import { StudioPanel } from './StudioPanel';
+import type { FlowEdge, FlowNode, FlowSnapshot } from '@/lib/types';
+import type { ChatMessage } from '@/services/aiService';
+import type { CommandBarView, FlowEditorMode, StudioCodeMode, StudioTab } from '@/hooks/useFlowEditorUIState';
 import type { LayoutAlgorithm } from '@/services/elkLayout';
 import type { FlowTemplate } from '@/services/templates';
+import type { EdgeData, NodeData } from '@/lib/types';
 
-interface FlowEditorPanelsProps {
-    isCommandBarOpen: boolean;
-    onCloseCommandBar: () => void;
-    nodes: React.ComponentProps<typeof CommandBar>['nodes'];
-    edges: React.ComponentProps<typeof CommandBar>['edges'];
-    onCommandBarApply: React.ComponentProps<typeof CommandBar>['onApply'];
-    onAIGenerate: React.ComponentProps<typeof CommandBar>['onAIGenerate'];
-    isGenerating: boolean;
-    chatMessages: NonNullable<React.ComponentProps<typeof CommandBar>['chatMessages']>;
-    onClearChat: () => void;
+interface CommandBarPanelProps {
+    isOpen: boolean;
+    onClose: () => void;
+    nodes: FlowNode[];
+    edges: FlowEdge[];
     onUndo: () => void;
     onRedo: () => void;
-    onFitView: () => void;
     onLayout: (
         direction?: 'TB' | 'LR' | 'RL' | 'BT',
         algorithm?: LayoutAlgorithm,
         spacing?: 'compact' | 'normal' | 'loose'
     ) => Promise<void>;
     onSelectTemplate: (template: FlowTemplate) => void;
-    commandBarView: CommandBarView;
+    onOpenStudioAI: () => void;
+    onOpenStudioFlowMind: () => void;
+    onOpenStudioMermaid: () => void;
+    initialView: CommandBarView;
     showGrid: boolean;
     onToggleGrid: () => void;
     snapToGrid: boolean;
     onToggleSnap: () => void;
-    showMiniMap: boolean;
-    onToggleMiniMap: () => void;
-    isHistoryOpen: boolean;
-    onCloseHistory: () => void;
+}
+
+interface SnapshotsPanelProps {
+    isOpen: boolean;
+    onClose: () => void;
     snapshots: FlowSnapshot[];
     manualSnapshots: FlowSnapshot[];
     autoSnapshots: FlowSnapshot[];
     onSaveSnapshot: (name: string) => void;
     onRestoreSnapshot: (snapshot: FlowSnapshot) => void;
     onDeleteSnapshot: (id: string) => void;
-    selectedNode: React.ComponentProps<typeof PropertiesPanel>['selectedNode'];
-    selectedNodes: React.ComponentProps<typeof PropertiesPanel>['selectedNodes'];
-    selectedEdge: React.ComponentProps<typeof PropertiesPanel>['selectedEdge'];
-    onChangeNode: React.ComponentProps<typeof PropertiesPanel>['onChangeNode'];
+}
+
+interface PropertiesRailProps {
+    selectedNode: FlowNode | null;
+    selectedNodes: FlowNode[];
+    selectedEdge: FlowEdge | null;
+    onChangeNode: (id: string, data: Partial<NodeData>) => void;
     onBulkChangeNodes: React.ComponentProps<typeof PropertiesPanel>['onBulkChangeNodes'];
-    onChangeNodeType: React.ComponentProps<typeof PropertiesPanel>['onChangeNodeType'];
-    onChangeEdge: React.ComponentProps<typeof PropertiesPanel>['onChangeEdge'];
-    onDeleteNode: React.ComponentProps<typeof PropertiesPanel>['onDeleteNode'];
-    onDuplicateNode: React.ComponentProps<typeof PropertiesPanel>['onDuplicateNode'];
-    onDeleteEdge: React.ComponentProps<typeof PropertiesPanel>['onDeleteEdge'];
-    onUpdateZIndex: React.ComponentProps<typeof PropertiesPanel>['onUpdateZIndex'];
+    onChangeNodeType: (id: string, type: string) => void;
+    onChangeEdge: (id: string, data: Partial<EdgeData>) => void;
+    onDeleteNode: (id: string) => void;
+    onDuplicateNode: (id: string) => void;
+    onDeleteEdge: (id: string) => void;
+    onUpdateZIndex: (id: string, action: 'front' | 'back') => void;
     onAddMindmapChild: React.ComponentProps<typeof PropertiesPanel>['onAddMindmapChild'];
     onAddArchitectureService: React.ComponentProps<typeof PropertiesPanel>['onAddArchitectureService'];
     onCreateArchitectureBoundary: React.ComponentProps<typeof PropertiesPanel>['onCreateArchitectureBoundary'];
-    onCloseProperties: () => void;
+    onClose: () => void;
+}
+
+interface StudioRailProps {
+    onClose: () => void;
+    onApply: (nodes: FlowNode[], edges: FlowEdge[]) => void;
+    onAIGenerate: (prompt: string, imageBase64?: string) => Promise<void>;
+    isGenerating: boolean;
+    chatMessages: ChatMessage[];
+    onClearChat: () => void;
+    activeTab: StudioTab;
+    onTabChange: (tab: StudioTab) => void;
+    codeMode: StudioCodeMode;
+    onCodeModeChange: (mode: StudioCodeMode) => void;
+}
+
+interface FlowEditorPanelsProps {
+    commandBar: CommandBarPanelProps;
+    snapshots: SnapshotsPanelProps;
+    properties: PropertiesRailProps;
+    studio: StudioRailProps;
+    isHistoryOpen: boolean;
+    editorMode: FlowEditorMode;
 }
 
 export function FlowEditorPanels({
-    isCommandBarOpen,
-    onCloseCommandBar,
-    nodes,
-    edges,
-    onCommandBarApply,
-    onAIGenerate,
-    isGenerating,
-    chatMessages,
-    onClearChat,
-    onUndo,
-    onRedo,
-    onFitView,
-    onLayout,
-    onSelectTemplate,
-    commandBarView,
-    showGrid,
-    onToggleGrid,
-    snapToGrid,
-    onToggleSnap,
-    showMiniMap,
-    onToggleMiniMap,
-    isHistoryOpen,
-    onCloseHistory,
+    commandBar,
     snapshots,
-    manualSnapshots,
-    autoSnapshots,
-    onSaveSnapshot,
-    onRestoreSnapshot,
-    onDeleteSnapshot,
-    selectedNode,
-    selectedNodes,
-    selectedEdge,
-    onChangeNode,
-    onBulkChangeNodes,
-    onChangeNodeType,
-    onChangeEdge,
-    onDeleteNode,
-    onDuplicateNode,
-    onDeleteEdge,
-    onUpdateZIndex,
-    onAddMindmapChild,
-    onAddArchitectureService,
-    onCreateArchitectureBoundary,
-    onCloseProperties,
+    properties,
+    studio,
+    isHistoryOpen,
+    editorMode,
 }: FlowEditorPanelsProps): React.ReactElement {
+    const showPropertiesRail = editorMode === 'canvas' && Boolean(properties.selectedNode || properties.selectedEdge);
+    const showStudioRail = editorMode === 'studio';
+    const railContent = showStudioRail ? (
+        <StudioPanel
+            onClose={studio.onClose}
+            nodes={commandBar.nodes}
+            edges={commandBar.edges}
+            onApply={studio.onApply}
+            onAIGenerate={studio.onAIGenerate}
+            isGenerating={studio.isGenerating}
+            chatMessages={studio.chatMessages}
+            onClearChat={studio.onClearChat}
+            activeTab={studio.activeTab}
+            onTabChange={studio.onTabChange}
+            codeMode={studio.codeMode}
+            onCodeModeChange={studio.onCodeModeChange}
+        />
+    ) : showPropertiesRail ? (
+        <PropertiesPanel
+            selectedNodes={properties.selectedNodes}
+            selectedNode={properties.selectedNode}
+            selectedEdge={properties.selectedEdge}
+            onChangeNode={properties.onChangeNode}
+            onBulkChangeNodes={properties.onBulkChangeNodes}
+            onChangeNodeType={properties.onChangeNodeType}
+            onChangeEdge={properties.onChangeEdge}
+            onDeleteNode={properties.onDeleteNode}
+            onDuplicateNode={properties.onDuplicateNode}
+            onDeleteEdge={properties.onDeleteEdge}
+            onUpdateZIndex={properties.onUpdateZIndex}
+            onAddMindmapChild={properties.onAddMindmapChild}
+            onAddArchitectureService={properties.onAddArchitectureService}
+            onCreateArchitectureBoundary={properties.onCreateArchitectureBoundary}
+            onClose={properties.onClose}
+        />
+    ) : null;
+
     return (
         <>
             <ErrorBoundary className="h-auto">
                 <CommandBar
-                    isOpen={isCommandBarOpen}
-                    onClose={onCloseCommandBar}
-                    nodes={nodes}
-                    edges={edges}
-                    onApply={onCommandBarApply}
-                    onAIGenerate={onAIGenerate}
-                    isGenerating={isGenerating}
-                    chatMessages={chatMessages}
-                    onClearChat={onClearChat}
-                    onUndo={onUndo}
-                    onRedo={onRedo}
-                    onFitView={onFitView}
-                    onLayout={onLayout}
-                    onSelectTemplate={onSelectTemplate}
-                    initialView={commandBarView}
+                    isOpen={commandBar.isOpen}
+                    onClose={commandBar.onClose}
+                    nodes={commandBar.nodes}
+                    edges={commandBar.edges}
+                    onUndo={commandBar.onUndo}
+                    onRedo={commandBar.onRedo}
+                    onLayout={commandBar.onLayout}
+                    onSelectTemplate={commandBar.onSelectTemplate}
+                    onOpenStudioAI={commandBar.onOpenStudioAI}
+                    onOpenStudioFlowMind={commandBar.onOpenStudioFlowMind}
+                    onOpenStudioMermaid={commandBar.onOpenStudioMermaid}
+                    initialView={commandBar.initialView}
                     settings={{
-                        showGrid,
-                        onToggleGrid,
-                        snapToGrid,
-                        onToggleSnap,
-                        showMiniMap,
-                        onToggleMiniMap,
+                        showGrid: commandBar.showGrid,
+                        onToggleGrid: commandBar.onToggleGrid,
+                        snapToGrid: commandBar.snapToGrid,
+                        onToggleSnap: commandBar.onToggleSnap,
                     }}
                 />
             </ErrorBoundary>
 
             <SnapshotsPanel
                 isOpen={isHistoryOpen}
-                onClose={onCloseHistory}
-                snapshots={snapshots}
-                manualSnapshots={manualSnapshots}
-                autoSnapshots={autoSnapshots}
-                onSaveSnapshot={onSaveSnapshot}
-                onRestoreSnapshot={onRestoreSnapshot}
-                onDeleteSnapshot={onDeleteSnapshot}
+                onClose={snapshots.onClose}
+                snapshots={snapshots.snapshots}
+                manualSnapshots={snapshots.manualSnapshots}
+                autoSnapshots={snapshots.autoSnapshots}
+                onSaveSnapshot={snapshots.onSaveSnapshot}
+                onRestoreSnapshot={snapshots.onRestoreSnapshot}
+                onDeleteSnapshot={snapshots.onDeleteSnapshot}
             />
 
             <ErrorBoundary className="h-full">
-                <PropertiesPanel
-                    selectedNodes={selectedNodes}
-                    selectedNode={selectedNode}
-                    selectedEdge={selectedEdge}
-                    onChangeNode={onChangeNode}
-                    onBulkChangeNodes={onBulkChangeNodes}
-                    onChangeNodeType={onChangeNodeType}
-                    onChangeEdge={onChangeEdge}
-                    onDeleteNode={onDeleteNode}
-                    onDuplicateNode={onDuplicateNode}
-                    onDeleteEdge={onDeleteEdge}
-                    onUpdateZIndex={onUpdateZIndex}
-                    onAddMindmapChild={onAddMindmapChild}
-                    onAddArchitectureService={onAddArchitectureService}
-                    onCreateArchitectureBoundary={onCreateArchitectureBoundary}
-                    onClose={onCloseProperties}
-                />
+                {railContent ? <RightRail>{railContent}</RightRail> : null}
             </ErrorBoundary>
         </>
     );

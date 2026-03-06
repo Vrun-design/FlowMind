@@ -12,7 +12,6 @@ import type { ExportSerializationMode } from '@/services/canonicalSerialization'
 export interface ViewSettings {
     showGrid: boolean;
     snapToGrid: boolean;
-    showMiniMap: boolean;
     isShortcutsHelpOpen: boolean;
     defaultIconsEnabled: boolean;
     smartRoutingEnabled: boolean;
@@ -137,7 +136,6 @@ export interface FlowState {
     duplicateDesignSystem: (id: string) => void;
     toggleGrid: () => void;
     toggleSnap: () => void;
-    toggleMiniMap: () => void;
     setShortcutsHelpOpen: (open: boolean) => void;
     setViewSettings: (settings: Partial<ViewSettings>) => void;
     setGlobalEdgeOptions: (options: Partial<GlobalEdgeOptions>) => void;

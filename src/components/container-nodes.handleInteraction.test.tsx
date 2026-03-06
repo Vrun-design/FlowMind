@@ -47,10 +47,10 @@ vi.mock('@/lib/reactflowCompat', async (importOriginal) => {
   };
 });
 
-function assertSelectedSafeHandles(ids: string[]): void {
+function assertSelectedConnectableHandles(ids: string[]): void {
   for (const handleId of ids) {
     const handle = screen.getByTestId(`handle-${handleId}`);
-    expect(handle.getAttribute('data-pointer')).toBe('none');
+    expect(handle.getAttribute('data-pointer')).toBe('all');
   }
 }
 
@@ -63,7 +63,7 @@ function assertUnselectedDiscoverableHandles(ids: string[]): void {
 }
 
 describe('container-like node handle interaction policy', () => {
-  it('keeps selected ImageNode handles non-intercepting in visualQualityV2', () => {
+  it('keeps selected ImageNode handles connectable in visualQualityV2', () => {
     render(
       <ImageNode
         id="image-1"
@@ -80,7 +80,7 @@ describe('container-like node handle interaction policy', () => {
       />
     );
 
-    assertSelectedSafeHandles(['top', 'bottom', 'left', 'right']);
+    assertSelectedConnectableHandles(['top', 'bottom', 'left', 'right']);
   });
 
   it('keeps unselected ImageNode handles discoverable', () => {
@@ -103,7 +103,7 @@ describe('container-like node handle interaction policy', () => {
     assertUnselectedDiscoverableHandles(['top', 'bottom', 'left', 'right']);
   });
 
-  it('keeps selected GroupNode handles non-intercepting in visualQualityV2', () => {
+  it('keeps selected GroupNode handles connectable in visualQualityV2', () => {
     render(
       <GroupNode
         id="group-1"
@@ -118,7 +118,7 @@ describe('container-like node handle interaction policy', () => {
       />
     );
 
-    assertSelectedSafeHandles(['top-target', 'bottom-source', 'left-target', 'right-source']);
+    assertSelectedConnectableHandles(['top-target', 'bottom-source', 'left-target', 'right-source']);
   });
 
   it('keeps unselected GroupNode handles discoverable', () => {
@@ -139,7 +139,7 @@ describe('container-like node handle interaction policy', () => {
     assertUnselectedDiscoverableHandles(['top-target', 'bottom-source', 'left-target', 'right-source']);
   });
 
-  it('keeps selected SwimlaneNode handles non-intercepting in visualQualityV2', () => {
+  it('keeps selected SwimlaneNode handles connectable in visualQualityV2', () => {
     render(
       <SwimlaneNode
         id="swimlane-1"
@@ -154,7 +154,7 @@ describe('container-like node handle interaction policy', () => {
       />
     );
 
-    assertSelectedSafeHandles(['top-target', 'bottom-source', 'left-target', 'right-source']);
+    assertSelectedConnectableHandles(['top-target', 'bottom-source', 'left-target', 'right-source']);
   });
 
   it('keeps unselected SwimlaneNode handles discoverable', () => {
