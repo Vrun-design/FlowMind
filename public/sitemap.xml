@@ -36,22 +36,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://openflowkit.com/docs/en/codebase-audit-2026-03</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://openflowkit.com/docs/en/command-center</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://openflowkit.com/docs/en/exporting</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://openflowkit.com/docs/en/fix-log</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -72,11 +62,6 @@
   </url>
   <url>
     <loc>https://openflowkit.com/docs/en/mermaid-vs-openflow</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://openflowkit.com/docs/en/next-level-roadmap-2026-03</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

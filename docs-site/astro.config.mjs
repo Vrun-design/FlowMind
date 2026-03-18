@@ -8,7 +8,7 @@ export default defineConfig({
       title: 'OpenFlowKit Docs',
       description: 'Documentation for OpenFlowKit — the local-first, AI-powered diagramming tool.',
       logo: {
-        src: './src/assets/logo.svg',
+        src: './src/assets/Logo_openflowkit.svg',
         alt: 'OpenFlowKit',
       },
       social: [
@@ -24,12 +24,6 @@ export default defineConfig({
         tr: { label: 'Türkçe', lang: 'tr' },
       },
       sidebar: [
-        {
-          label: 'AI Assistant',
-          items: [
-            { label: 'Ask Flowpilot', slug: 'ask-flowpilot' },
-          ],
-        },
         {
           label: 'Getting Started',
           items: [
@@ -79,4 +73,7 @@ export default defineConfig({
       customCss: ['./src/styles/custom.css'],
     }),
   ],
+  redirects: {
+    '/': '/introduction',
+  },
 });
