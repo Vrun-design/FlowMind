@@ -28,11 +28,6 @@ const HomePage = lazy(async () => {
   return { default: module.HomePage };
 });
 
-const LandingPage = lazy(async () => {
-  const module = await import('./components/LandingPage');
-  return { default: module.LandingPage };
-});
-
 const DocsLayout = lazy(async () => {
   const module = await import('./components/docs/DocsLayout');
   return { default: module.DocsLayout };
@@ -47,15 +42,6 @@ const LazyKeyboardShortcutsModal = lazy(async () => {
   const module = await import('./components/KeyboardShortcutsModal');
   return { default: module.KeyboardShortcutsModal };
 });
-
-function LandingPageRoute(): React.JSX.Element {
-  const navigate = useNavigate();
-  return (
-    <Suspense fallback={<RouteLoadingFallback />}>
-      <LandingPage onLaunch={() => navigate('/home', { replace: true })} />
-    </Suspense>
-  );
-}
 
 // Backwards-compatibility redirect: /docs/:slug → /docs/en/:slug
 function DocsSlugRedirect(): React.JSX.Element {
@@ -217,7 +203,7 @@ function App(): React.JSX.Element {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPageRoute />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<MobileGate><HomePageRoute /></MobileGate>} />
         <Route path="/settings" element={<MobileGate><HomePageRoute /></MobileGate>} />
         <Route path="/canvas" element={<MobileGate><FlowCanvasRoute /></MobileGate>} />
