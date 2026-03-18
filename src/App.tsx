@@ -8,8 +8,6 @@ import { OpenFlowLogo } from './components/icons/OpenFlowLogo';
 
 import { useFlowStore } from './store';
 import { useActiveTabId, useTabActions } from '@/store/tabHooks';
-import { useBrandTheme } from './hooks/useBrandTheme';
-
 import { initAnalytics } from './lib/analytics';
 import { FlowSnapshot } from './lib/types';
 import { useShortcutHelpOpen } from '@/store/viewHooks';
@@ -191,7 +189,6 @@ function MobileGate({ children }: { children: React.ReactNode }): React.JSX.Elem
 function App(): React.JSX.Element {
   const { setShortcutsHelpOpen } = useFlowStore();
   const isShortcutsHelpOpen = useShortcutHelpOpen();
-  useBrandTheme();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

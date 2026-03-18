@@ -2,7 +2,7 @@ import React from 'react';
 import type { ComponentType } from 'react';
 import { Figma, FileCode, FileJson, Film, GitBranch, Image, Wand2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useBrandConfig } from '@/store/brandHooks';
+import { APP_NAME } from '@/lib/brand';
 import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 
 interface ExportMenuPanelProps {
@@ -22,8 +22,6 @@ type MenuIconComponentProps = {
 
 export function ExportMenuPanel({ onSelect }: ExportMenuPanelProps): React.ReactElement {
     const { t } = useTranslation();
-    const brandConfig = useBrandConfig();
-
     const exportOptions: ExportOption[] = [
         { key: 'png', label: t('export.png', 'Export PNG'), hint: t('export.hintTransparent4K', 'Transparent (4K)'), Icon: Image },
         { key: 'jpeg', label: t('export.jpeg', 'Export JPG'), hint: t('export.hintWhiteBg4K', 'White Background (4K)'), Icon: Image },
@@ -34,7 +32,7 @@ export function ExportMenuPanel({ onSelect }: ExportMenuPanelProps): React.React
             ]
             : []),
         { key: 'json', label: t('export.jsonLabel', 'JSON File'), hint: t('export.hintDownload', 'Download'), Icon: FileJson },
-        { key: 'openflow', label: t('export.openflowdslLabel', { appName: brandConfig.appName, defaultValue: `${brandConfig.appName} DSL` }), hint: t('export.hintClipboard', 'Copy to clipboard'), Icon: Wand2 },
+        { key: 'openflow', label: t('export.openflowdslLabel', { appName: APP_NAME, defaultValue: `${APP_NAME} DSL` }), hint: t('export.hintClipboard', 'Copy to clipboard'), Icon: Wand2 },
         { key: 'mermaid', label: t('export.mermaid', 'Mermaid'), hint: t('export.hintClipboard', 'Copy to clipboard'), Icon: GitBranch },
         { key: 'plantuml', label: t('export.plantuml', 'PlantUML'), hint: t('export.hintClipboard', 'Copy to clipboard'), Icon: FileCode },
         { key: 'figma', label: t('export.figmaEditable', 'Figma Editable'), hint: t('export.hintClipboard', 'Copy to clipboard'), Icon: Figma },

@@ -38,7 +38,6 @@ describe('store persistence helpers', () => {
         expect(state.tabs).toHaveLength(1);
         expect(state.layers[0]?.id).toBe('default');
         expect(state.designSystems[0]?.id).toBe('default');
-        expect(state.activeBrandKitId).toBe('default');
     });
 
     it('partializes store state while stripping transient canvas fields from tabs', () => {

@@ -2,7 +2,6 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { StudioCodePanel } from './StudioCodePanel';
 import { useFlowStore } from '@/store';
-import { DEFAULT_BRAND_CONFIG } from '@/store';
 
 const applyCodeChangesMock = vi.fn();
 const parseOpenFlowDSLMock = vi.fn();
@@ -61,7 +60,6 @@ describe('StudioCodePanel', () => {
     toMermaidMock.mockReset();
 
     useFlowStore.setState({
-      brandConfig: DEFAULT_BRAND_CONFIG,
       activeTabId: 'tab-1',
       viewSettings: {
         ...useFlowStore.getState().viewSettings,

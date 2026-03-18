@@ -5,14 +5,13 @@ import remarkGfm from 'remark-gfm';
 import { AlertCircle, Loader2, Plus, Send, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useFlowStore } from '../../store';
-import { useBrandConfig } from '@/store/brandHooks';
+import { APP_NAME, FAVICON_URL } from '@/lib/brand';
 import { OpenFlowLogo } from '../icons/OpenFlowLogo';
 import { MarkdownComponents } from './MarkdownComponents';
 import { useDocsChatbotState } from './chatbot/useDocsChatbotState';
 
 export const DocsChatbot: React.FC = () => {
     const { t } = useTranslation();
-    const brandConfig = useBrandConfig();
     const aiSettings = useFlowStore((state) => state.aiSettings);
     const {
         messages,
@@ -45,8 +44,8 @@ export const DocsChatbot: React.FC = () => {
     ];
 
     const renderLogo = (className: string) => {
-        return brandConfig.faviconUrl ? (
-            <img src={brandConfig.faviconUrl} alt={brandConfig.appName} className={`object-contain ${className}`} />
+        return FAVICON_URL ? (
+            <img src={FAVICON_URL} alt={APP_NAME} className={`object-contain ${className}`} />
         ) : (
             <OpenFlowLogo className={className} />
         );
@@ -75,7 +74,7 @@ export const DocsChatbot: React.FC = () => {
                 </h1>
 
                 <p className="text-lg text-slate-500 mb-10 text-center max-w-2xl px-4">
-                    {t('chatbot.tagline')} {brandConfig.appName}.
+                    {t('chatbot.tagline')} {APP_NAME}.
                 </p>
 
                 <div className="relative flex items-end gap-2 w-full max-w-2xl bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-200/50 p-1.5 focus-within:shadow-[0_8px_30px_rgb(0,0,0,0.08)] focus-within:ring-2 focus-within:ring-[var(--brand-primary)]/30 mb-10 transition-all">
@@ -85,7 +84,7 @@ export const DocsChatbot: React.FC = () => {
                         onChange={(event) => setInput(event.target.value)}
                         onKeyDown={handleKeyDown}
                         aria-label={t('chatbot.messagePlaceholder')}
-                        placeholder={`${t('chatbot.messagePlaceholder')} ${brandConfig.appName} ${t('chatbot.aiSuffix')}`}
+                        placeholder={`${t('chatbot.messagePlaceholder')} ${APP_NAME} ${t('chatbot.aiSuffix')}`}
                         className="w-full min-h-[52px] max-h-[200px] border-0 px-4 py-3.5 text-[15px] focus:ring-0 resize-none placeholder:text-slate-400 custom-scrollbar block bg-transparent leading-relaxed"
                         rows={1}
                     />
@@ -130,7 +129,7 @@ export const DocsChatbot: React.FC = () => {
                         {renderLogo('w-full h-full drop-shadow-sm')}
                     </div>
                     <div>
-                        <h2 className="text-sm font-semibold text-slate-900 tracking-tight">{brandConfig.appName} {t('chatbot.docsTitle')}</h2>
+                        <h2 className="text-sm font-semibold text-slate-900 tracking-tight">{APP_NAME} {t('chatbot.docsTitle')}</h2>
                         <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">{t('chatbot.aiAssistant')}</p>
                     </div>
                 </div>
@@ -154,9 +153,9 @@ export const DocsChatbot: React.FC = () => {
                         {renderLogo('w-full h-full object-contain drop-shadow-sm')}
                     </div>
                     <div className="flex flex-col gap-1 items-start min-w-0">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">{brandConfig.appName} {t('chatbot.aiName')}</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">{APP_NAME} {t('chatbot.aiName')}</span>
                         <div className="px-5 py-4 rounded-2xl text-sm shadow-sm bg-white border border-slate-100 rounded-tl-sm text-slate-700">
-                            <p>{t('chatbot.welcomeMessage', { appName: brandConfig.appName })}</p>
+                            <p>{t('chatbot.welcomeMessage', { appName: APP_NAME })}</p>
                         </div>
                     </div>
                 </div>
@@ -170,7 +169,7 @@ export const DocsChatbot: React.FC = () => {
                             </div>
                             <div className={`flex flex-col gap-1 min-w-0 ${isUser ? 'items-end' : 'items-start'}`}>
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">
-                                    {isUser ? t('chatbot.you') : `${brandConfig.appName} ${t('chatbot.aiName')}`}
+                                    {isUser ? t('chatbot.you') : `${APP_NAME} ${t('chatbot.aiName')}`}
                                 </span>
                                 <div className={`px-4 py-3 rounded-2xl text-sm shadow-sm ${isUser ? 'bg-[var(--brand-primary)] text-white rounded-tr-sm' : 'bg-white border border-slate-100 rounded-tl-sm text-slate-700'}`}>
                                     {isUser ? (
@@ -198,7 +197,7 @@ export const DocsChatbot: React.FC = () => {
                             {renderLogo('w-full h-full object-contain drop-shadow-sm')}
                         </div>
                         <div className="flex flex-col gap-1 items-start">
-                            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-1">{brandConfig.appName} {t('chatbot.aiName')}</span>
+                            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-1">{APP_NAME} {t('chatbot.aiName')}</span>
                             <div className="px-5 py-4 rounded-2xl bg-white border border-slate-100 rounded-tl-sm text-slate-700 shadow-sm flex items-center gap-2">
                                 <Loader2 className="w-4 h-4 animate-spin text-[var(--brand-primary)]" />
                                 <span className="text-sm text-slate-500">{t('chatbot.searchingDocs')}</span>
@@ -224,7 +223,7 @@ export const DocsChatbot: React.FC = () => {
                         onChange={(event) => setInput(event.target.value)}
                         onKeyDown={handleKeyDown}
                         aria-label={t('chatbot.messagePlaceholder')}
-                        placeholder={`${t('chatbot.messagePlaceholder')} ${brandConfig.appName} ${t('chatbot.aiSuffix')}`}
+                        placeholder={`${t('chatbot.messagePlaceholder')} ${APP_NAME} ${t('chatbot.aiSuffix')}`}
                         className="w-full max-h-32 min-h-[44px] bg-transparent border-0 px-4 py-3 text-[15px] focus:ring-0 resize-none custom-scrollbar leading-relaxed"
                         rows={1}
                         disabled={isLoading}

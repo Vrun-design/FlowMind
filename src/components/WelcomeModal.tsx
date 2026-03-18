@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Layout, Shield } from 'lucide-react';
 import { OpenFlowLogo } from './icons/OpenFlowLogo';
-import { useBrandButtonStyle } from '@/store/brandHooks';
+import { IS_BEVELED } from '@/lib/brand';
 import { useViewSettings, useVisualSettingsActions } from '@/store/viewHooks';
 import { useTranslation } from 'react-i18next';
 import { writeLocalStorageString } from '@/services/storage/uiLocalStorage';
@@ -9,8 +9,7 @@ import { shouldShowWelcomeModal, WELCOME_SEEN_STORAGE_KEY } from './home/welcome
 
 export function WelcomeModal(): React.JSX.Element | null {
     const { t } = useTranslation();
-    const buttonStyle = useBrandButtonStyle();
-    const isBeveled = buttonStyle === 'beveled';
+    const isBeveled = IS_BEVELED;
     const [isOpen, setIsOpen] = useState(() => shouldShowWelcomeModal());
     const { analyticsEnabled } = useViewSettings();
     const { toggleAnalytics } = useVisualSettingsActions();

@@ -2,13 +2,11 @@ import React from 'react';
 import { Outlet, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { DocsSidebar } from './DocsSidebar';
-import { useBrandTheme } from '../../hooks/useBrandTheme';
 import { Menu, X } from 'lucide-react';
 import { LanguageSelector } from '../LanguageSelector';
 import { useDocsLayoutState } from './useDocsLayoutState';
 
 export const DocsLayout: React.FC = () => {
-    useBrandTheme();
     const navigate = useNavigate();
     const location = useLocation();
     const { t, i18n } = useTranslation();

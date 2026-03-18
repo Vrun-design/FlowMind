@@ -1,5 +1,5 @@
 import React from 'react';
-import { useBrandButtonStyle } from '@/store/brandHooks';
+import { IS_BEVELED } from '@/lib/brand';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -18,11 +18,9 @@ export function Button({
   className = '',
   ...props
 }: ButtonProps): React.ReactElement {
-  const buttonStyle = useBrandButtonStyle();
-
   const baseStyles = "inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]";
 
-  const isBeveled = buttonStyle === 'beveled';
+  const isBeveled = IS_BEVELED;
 
   // Note: We use specific shadow stacks here to create the bevel effect. 
   // Avoid adding extra 'shadow-lg' classes on the component usage, as it will override these.

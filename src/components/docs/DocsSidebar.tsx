@@ -5,7 +5,7 @@ import { docsNavigation } from './docsData';
 import { Book, ArrowLeft } from 'lucide-react';
 import { LanguageSelector } from '../LanguageSelector';
 import { SidebarItem } from '../ui/SidebarItem';
-import { useBrandConfig } from '@/store/brandHooks';
+import { APP_NAME } from '@/lib/brand';
 
 interface DocsSidebarProps {
     className?: string;
@@ -14,7 +14,6 @@ interface DocsSidebarProps {
 
 export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClose }) => {
     const { t, i18n } = useTranslation();
-    const brandConfig = useBrandConfig();
     const { lang } = useParams();
     const currentLang = lang || i18n.language || 'en';
 
@@ -52,7 +51,7 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClos
                                     to={`/docs/${currentLang}/${item.slug}`}
                                     onClick={onClose}
                                 >
-                                    {item.title.replace(/FlowMind|OpenFlowKit/g, brandConfig.appName)}
+                                    {item.title.replace(/FlowMind|OpenFlowKit/g, APP_NAME)}
                                 </SidebarItem>
                             ))}
                         </div>
@@ -66,7 +65,7 @@ export const DocsSidebar: React.FC<DocsSidebarProps> = ({ className = '', onClos
                 </div>
                 <div className="border-t border-slate-100 pt-3">
                     <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
-                        {brandConfig.appName} Docs v1.0
+                        {APP_NAME} Docs v1.0
                     </div>
                 </div>
             </div>

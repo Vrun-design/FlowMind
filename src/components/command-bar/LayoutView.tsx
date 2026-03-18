@@ -5,7 +5,7 @@ import { Button } from '../ui/Button';
 import { ViewHeader } from './ViewHeader';
 import type { LayoutAlgorithm } from '../../services/elkLayout';
 import { trackEvent } from '../../lib/analytics';
-import { useBrandButtonStyle } from '@/store/brandHooks';
+import { IS_BEVELED } from '@/lib/brand';
 
 interface LayoutViewProps {
     onLayout?: (direction?: 'TB' | 'LR' | 'RL' | 'BT', algorithm?: LayoutAlgorithm, spacing?: 'compact' | 'normal' | 'loose') => void;
@@ -81,7 +81,7 @@ interface AlgorithmCardProps {
 }
 
 function AlgorithmCard({ label, desc, icon, selected, onClick }: AlgorithmCardProps): ReactElement {
-    const isBeveled = useBrandButtonStyle() === 'beveled';
+    const isBeveled = IS_BEVELED;
 
     return (
         <div

@@ -51,38 +51,6 @@ export interface AISettings {
     customHeaders?: CustomHeaderConfig[];
 }
 
-export interface BrandConfig {
-    appName: string;
-    logoUrl: string | null;
-    faviconUrl: string | null;
-    logoStyle: 'icon' | 'text' | 'both' | 'wide';
-    colors: {
-        primary: string;
-        secondary: string;
-        background: string;
-        surface: string;
-        text: string;
-    };
-    typography: {
-        fontFamily: string;
-    };
-    shape: {
-        radius: number;
-        borderWidth: number;
-    };
-    ui: {
-        glassmorphism: boolean;
-        buttonStyle: 'beveled' | 'flat';
-        showBeta: boolean;
-    };
-}
-
-export interface BrandKit extends BrandConfig {
-    id: string;
-    name: string;
-    isDefault: boolean;
-}
-
 export interface Layer {
     id: string;
     name: string;
@@ -152,19 +120,6 @@ export interface FlowState {
     deleteDesignSystem: (id: string) => void;
     duplicateDesignSystem: (id: string) => void;
     setGlobalEdgeOptions: (options: Partial<GlobalEdgeOptions>) => void;
-
-    // -------------------------------------------------------------------------
-    // SLICE: Brand — app name, colors, logo, kits
-    // -------------------------------------------------------------------------
-    brandConfig: BrandConfig;
-    brandKits: BrandKit[];
-    activeBrandKitId: string;
-    setBrandConfig: (config: Partial<BrandConfig>) => void;
-    resetBrandConfig: () => void;
-    addBrandKit: (name: string, base?: BrandConfig) => void;
-    updateBrandKitName: (id: string, name: string) => void;
-    deleteBrandKit: (id: string) => void;
-    setActiveBrandKitId: (id: string) => void;
 
     // -------------------------------------------------------------------------
     // SLICE: View — UI preferences, routing, safety mode, grid

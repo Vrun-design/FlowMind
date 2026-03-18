@@ -21,24 +21,7 @@ vi.mock('./LanguageSelector', () => ({
 describe('HomePage integration flows', () => {
     beforeEach(() => {
         localStorage.clear();
-        useFlowStore.setState({
-            brandConfig: {
-                appName: 'OpenFlowKit',
-                logoUrl: null,
-                faviconUrl: '/favicon.svg',
-                logoStyle: 'both',
-                colors: {
-                    primary: '#E95420',
-                    secondary: '#64748b',
-                    background: '#f8fafc',
-                    surface: '#ffffff',
-                    text: '#0f172a',
-                },
-                typography: { fontFamily: 'Inter' },
-                shape: { radius: 8, borderWidth: 1 },
-                ui: { glassmorphism: true, buttonStyle: 'beveled', showBeta: true },
-            },
-        });
+        useFlowStore.setState({});
     });
 
     async function renderHomePage(props?: Partial<React.ComponentProps<typeof HomePage>>): Promise<void> {

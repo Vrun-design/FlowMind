@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { useFlowStore } from '@/store';
+import { APP_NAME } from '@/lib/brand';
 import type { CommandItem, CommandBarProps } from './types';
 import { AssetsIcon } from '../icons/AssetsIcon';
 
@@ -49,7 +50,7 @@ export function useCommandBarCommands({
                 label: 'Edit Flow DSL',
                 icon: <FileCode className="w-4 h-4 text-emerald-500" />,
                 type: 'action',
-                description: `Open ${useFlowStore.getState().brandConfig.appName} DSL in Studio`,
+                description: `Open ${APP_NAME} DSL in Studio`,
                 action: onOpenStudioFlowMind,
             },
             {

@@ -1,5 +1,5 @@
 import { useState, type ReactElement, type ReactNode } from 'react';
-import { useBrandButtonStyle } from '@/store/brandHooks';
+import { IS_BEVELED } from '@/lib/brand';
 import { useDesignSystemActions, useDesignSystemById } from '@/store/designSystemHooks';
 import { ArrowLeft, Palette, Type, Box, Activity } from 'lucide-react';
 import { Button } from '../ui/Button';
@@ -94,7 +94,7 @@ interface TabButtonProps {
 }
 
 const TabButton = ({ active, onClick, icon, label }: TabButtonProps) => {
-    const isBeveled = useBrandButtonStyle() === 'beveled';
+    const isBeveled = IS_BEVELED;
     return (
         <button
             onClick={onClick}

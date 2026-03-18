@@ -1,15 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AISettings } from '../SettingsModal/AISettings';
-import { BrandSettings } from '../SettingsModal/BrandSettings';
 import { GeneralSettings } from '../SettingsModal/GeneralSettings';
 import { PrivacySettings } from '../SettingsModal/PrivacySettings';
 import { ShortcutsSettings } from '../SettingsModal/ShortcutsSettings';
 import { SidebarItem } from '../ui/SidebarItem';
 
 interface HomeSettingsViewProps {
-    activeSettingsTab: 'brand' | 'general' | 'shortcuts' | 'privacy' | 'ai';
-    onSettingsTabChange: (tab: 'brand' | 'general' | 'shortcuts' | 'privacy' | 'ai') => void;
+    activeSettingsTab: 'general' | 'shortcuts' | 'privacy' | 'ai';
+    onSettingsTabChange: (tab: 'general' | 'shortcuts' | 'privacy' | 'ai') => void;
 }
 
 export function HomeSettingsView({
@@ -39,12 +38,6 @@ export function HomeSettingsView({
                         {t('settings.ai', 'Flowpilot AI')}
                     </SidebarItem>
                     <SidebarItem
-                        isActive={activeSettingsTab === 'brand'}
-                        onClick={() => onSettingsTabChange('brand')}
-                    >
-                        {t('settings.brand', 'Brand Kit')}
-                    </SidebarItem>
-                    <SidebarItem
                         isActive={activeSettingsTab === 'shortcuts'}
                         onClick={() => onSettingsTabChange('shortcuts')}
                     >
@@ -60,7 +53,6 @@ export function HomeSettingsView({
 
                 <div className="flex-1 overflow-y-auto p-8">
                     <div className="max-w-2xl">
-                        {activeSettingsTab === 'brand' && <BrandSettings />}
                         {activeSettingsTab === 'general' && <GeneralSettings />}
                         {activeSettingsTab === 'ai' && <AISettings />}
                         {activeSettingsTab === 'shortcuts' && <ShortcutsSettings />}

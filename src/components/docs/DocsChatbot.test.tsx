@@ -28,13 +28,6 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-vi.mock('@/store/brandHooks', () => ({
-  useBrandConfig: () => ({
-    appName: 'OpenFlowKit',
-    faviconUrl: '',
-  }),
-}));
-
 vi.mock('../../store', () => ({
   useFlowStore: (selector: (state: { aiSettings: object }) => unknown) =>
     selector({ aiSettings: {} }),

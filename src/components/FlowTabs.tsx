@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import { FlowTab } from '@/lib/types';
-import { useBrandButtonStyle } from '@/store/brandHooks';
+import { IS_BEVELED } from '@/lib/brand';
 import { useTranslation } from 'react-i18next';
 
 interface FlowTabsProps {
@@ -22,8 +22,7 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
   onRenameTab,
 }) => {
   const { t } = useTranslation();
-  const buttonStyle = useBrandButtonStyle();
-  const isBeveled = buttonStyle === 'beveled';
+  const isBeveled = IS_BEVELED;
   const [editingTabId, setEditingTabId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
 

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
 import { DesignSystemEditor } from './DesignSystemEditor';
 import { createId } from '@/lib/id';
-import { useBrandButtonStyle } from '@/store/brandHooks';
+import { IS_BEVELED } from '@/lib/brand';
 import { useDesignSystemActions, useDesignSystemsCatalog } from '@/store/designSystemHooks';
 
 interface DesignSystemViewProps {
@@ -17,7 +17,7 @@ export const DesignSystemView: React.FC<DesignSystemViewProps> = ({ onClose, han
     const { designSystems, activeDesignSystemId } = useDesignSystemsCatalog();
     const { setActiveDesignSystem, addDesignSystem, duplicateDesignSystem, deleteDesignSystem } = useDesignSystemActions();
 
-    const isBeveled = useBrandButtonStyle() === 'beveled';
+    const isBeveled = IS_BEVELED;
     const [editingSystemId, setEditingSystemId] = useState<string | null>(null);
 
     const activeSystem = designSystems.find(ds => ds.id === activeDesignSystemId);

@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { ChatMessage } from '@/services/aiService';
-import { useBrandConfig } from '@/store/brandHooks';
+import { IS_BEVELED } from '@/lib/brand';
 import { useAIViewState } from './command-bar/useAIViewState';
 
 interface FlowPilotExample {
@@ -48,8 +48,7 @@ export function StudioAIPanel({
     onClearChat,
 }: StudioAIPanelProps): ReactElement {
     const { t } = useTranslation();
-    const brandConfig = useBrandConfig();
-    const isBeveled = brandConfig.ui.buttonStyle === 'beveled';
+    const isBeveled = IS_BEVELED;
     const {
         prompt,
         setPrompt,

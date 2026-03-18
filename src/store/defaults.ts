@@ -1,11 +1,11 @@
 import type { DesignSystem, GlobalEdgeOptions } from '@/lib/types';
 import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
-import type { AISettings, BrandConfig, BrandKit, Layer, ViewSettings } from './types';
+import type { AISettings, Layer, ViewSettings } from './types';
 
 export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
     id: 'default',
     name: 'OpenFlowKit Default',
-    description: 'The classic FlowMind look and feel.',
+    description: 'The default OpenFlowKit design system.',
     colors: {
         primary: '#6366f1',
         secondary: '#64748b',
@@ -50,39 +50,6 @@ export const DEFAULT_AI_SETTINGS: AISettings = {
     model: undefined,
     customBaseUrl: undefined,
     customHeaders: [],
-};
-
-export const DEFAULT_BRAND_CONFIG: BrandConfig = {
-    appName: 'OpenFlowKit',
-    logoUrl: null,
-    faviconUrl: '/favicon.svg',
-    logoStyle: 'both',
-    colors: {
-        primary: '#E95420',
-        secondary: '#64748b',
-        background: '#f8fafc',
-        surface: '#ffffff',
-        text: '#0f172a',
-    },
-    typography: {
-        fontFamily: 'Inter',
-    },
-    shape: {
-        radius: 8,
-        borderWidth: 1,
-    },
-    ui: {
-        glassmorphism: true,
-        buttonStyle: 'beveled',
-        showBeta: true,
-    },
-};
-
-export const DEFAULT_BRAND_KIT: BrandKit = {
-    ...DEFAULT_BRAND_CONFIG,
-    id: 'default',
-    name: 'Default Identity',
-    isDefault: true,
 };
 
 export const INITIAL_VIEW_SETTINGS: ViewSettings = {

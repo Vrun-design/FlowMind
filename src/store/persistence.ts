@@ -5,8 +5,6 @@ import type { FlowTab } from '@/lib/types';
 import { isDiagramType } from '@/lib/types';
 import {
     DEFAULT_AI_SETTINGS,
-    DEFAULT_BRAND_CONFIG,
-    DEFAULT_BRAND_KIT,
     DEFAULT_DESIGN_SYSTEM,
     INITIAL_GLOBAL_EDGE_OPTIONS,
     INITIAL_LAYERS,
@@ -23,9 +21,6 @@ export type PersistedFlowStateSlice = Pick<
     | 'viewSettings'
     | 'globalEdgeOptions'
     | 'aiSettings'
-    | 'brandConfig'
-    | 'brandKits'
-    | 'activeBrandKitId'
     | 'layers'
     | 'activeLayerId'
 >;
@@ -181,9 +176,6 @@ export function partializePersistedFlowState(state: FlowState): PersistedFlowSta
         viewSettings: state.viewSettings,
         globalEdgeOptions: state.globalEdgeOptions,
         aiSettings: state.aiSettings,
-        brandConfig: state.brandConfig,
-        brandKits: state.brandKits,
-        activeBrandKitId: state.activeBrandKitId,
         layers: state.layers,
         activeLayerId: state.activeLayerId,
     };
@@ -200,9 +192,6 @@ export function createInitialFlowState(): Pick<
     | 'viewSettings'
     | 'globalEdgeOptions'
     | 'aiSettings'
-    | 'brandConfig'
-    | 'brandKits'
-    | 'activeBrandKitId'
     | 'layers'
     | 'activeLayerId'
     | 'selectedNodeId'
@@ -220,9 +209,6 @@ export function createInitialFlowState(): Pick<
         viewSettings: INITIAL_VIEW_SETTINGS,
         globalEdgeOptions: INITIAL_GLOBAL_EDGE_OPTIONS,
         aiSettings: DEFAULT_AI_SETTINGS,
-        brandConfig: DEFAULT_BRAND_CONFIG,
-        brandKits: [DEFAULT_BRAND_KIT],
-        activeBrandKitId: 'default',
         layers: INITIAL_LAYERS,
         activeLayerId: 'default',
         selectedNodeId: null,

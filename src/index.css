@@ -177,23 +177,23 @@ html {
 
 :root {
   /* Brand Colors - Default: Indigo */
-  --brand-primary: #6366f1;
+  --brand-primary: #e95420;
   --brand-secondary: #64748b;
   --brand-surface: #ffffff;
   --brand-background: #f8fafc;
   --brand-text: #0f172a;
 
   /* Brand Palette */
-  --brand-primary-50: #eef2ff;
-  --brand-primary-100: #e0e7ff;
-  --brand-primary-200: #c7d2fe;
-  --brand-primary-300: #a5b4fc;
-  --brand-primary-400: #818cf8;
-  --brand-primary-500: #6366f1;
-  --brand-primary-600: #4f46e5;
-  --brand-primary-700: #4338ca;
-  --brand-primary-800: #3730a3;
-  --brand-primary-900: #312e81;
+  --brand-primary-50: #fef4f0;
+  --brand-primary-100: #fde4d8;
+  --brand-primary-200: #fbc9b1;
+  --brand-primary-300: #f7a07a;
+  --brand-primary-400: #f07043;
+  --brand-primary-500: #e95420;
+  --brand-primary-600: #d14a1b;
+  --brand-primary-700: #b03f16;
+  --brand-primary-800: #8f3411;
+  --brand-primary-900: #6e290d;
 
   /* Dimensions */
   --brand-radius: 12px;

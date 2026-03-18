@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { createAIAndSelectionActions } from './store/actions/createAIAndSelectionActions';
-import { createBrandActions } from './store/actions/createBrandActions';
 import { createCanvasActions } from './store/actions/createCanvasActions';
 import { createDesignSystemActions } from './store/actions/createDesignSystemActions';
 import { createHistoryActions } from './store/actions/createHistoryActions';
@@ -10,8 +9,6 @@ import { createTabActions } from './store/actions/createTabActions';
 import { createViewActions } from './store/actions/createViewActions';
 import {
     DEFAULT_AI_SETTINGS,
-    DEFAULT_BRAND_CONFIG,
-    DEFAULT_BRAND_KIT,
     DEFAULT_DESIGN_SYSTEM,
 } from './store/defaults';
 import type { FlowState } from './store/types';
@@ -24,15 +21,11 @@ import {
 
 export {
     DEFAULT_AI_SETTINGS,
-    DEFAULT_BRAND_CONFIG,
-    DEFAULT_BRAND_KIT,
     DEFAULT_DESIGN_SYSTEM,
 };
 export type {
     AIProvider,
     AISettings,
-    BrandConfig,
-    BrandKit,
     CustomHeaderConfig,
     FlowState as FlowStoreState,
     ViewSettings,
@@ -49,7 +42,6 @@ export const useFlowStore = create<FlowState>()(
             ...createViewActions(set),
             ...createLayerActions(set, get),
             ...createAIAndSelectionActions(set),
-            ...createBrandActions(set),
         }),
         {
             name: 'openflowkit-storage',

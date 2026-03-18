@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import type { MouseEvent } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { useBrandConfig } from '@/store/brandHooks';
+import { APP_NAME } from '@/lib/brand';
 import { useDocsContent } from './useDocsContent';
 import {
     applyDocsMetaTags,
@@ -24,13 +24,12 @@ interface UseDocsPageModelResult {
 export function useDocsPageModel(): UseDocsPageModelResult {
     const { slug, lang } = useParams();
     const location = useLocation();
-    const brandConfig = useBrandConfig();
     const { content: rawContent, loading, error } = useDocsContent(slug, lang || 'en');
 
     const content = useMemo(() => {
         if (!rawContent) return null;
-        return processContent(rawContent, brandConfig.appName);
-    }, [brandConfig.appName, rawContent]);
+        return processContent(rawContent, APP_NAME);
+    }, [rawContent]);
 
     const toc = useMemo(() => {
         if (!content) return [];

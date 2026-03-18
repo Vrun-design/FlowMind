@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { Activity, Grid, Network, Zap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useFlowStore } from '../../store';
-import { useBrandButtonStyle } from '@/store/brandHooks';
+import { IS_BEVELED } from '@/lib/brand';
 import { useViewSettings, useVisualSettingsActions } from '@/store/viewHooks';
 import { ViewHeader } from './ViewHeader';
 import type { GlobalEdgeOptions } from '@/lib/types';
@@ -32,7 +32,7 @@ export function VisualsView({ onBack }: VisualsViewProps): ReactElement {
         setSmartRoutingEnabled,
         setLargeGraphSafetyMode,
     } = useVisualSettingsActions();
-    const isBeveled = useBrandButtonStyle() === 'beveled';
+    const isBeveled = IS_BEVELED;
     const edgeStyleOptions: Array<{
         type: GlobalEdgeOptions['type'];
         label: string;

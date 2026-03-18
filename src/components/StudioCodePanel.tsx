@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Textarea';
 import { useFlowStore } from '@/store';
-import { useBrandConfig } from '@/store/brandHooks';
+import { APP_NAME, IS_BEVELED } from '@/lib/brand';
 import { useMermaidDiagnosticsActions } from '@/store/selectionHooks';
 import { useToast } from './ui/ToastContext';
 import type { FlowEdge, FlowNode } from '@/lib/types';
@@ -46,11 +46,10 @@ export function StudioCodePanel({
     const { t } = useTranslation();
     const { activeTabId, updateTab, viewSettings } = useFlowStore();
     const { setMermaidDiagnostics, clearMermaidDiagnostics } = useMermaidDiagnosticsActions();
-    const brandConfig = useBrandConfig();
     const { addToast } = useToast();
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const modeOptions: CodeModeOption[] = [
-        { id: 'openflow', label: `${brandConfig.appName} DSL` },
+        { id: 'openflow', label: `${APP_NAME} DSL` },
         { id: 'mermaid', label: 'Mermaid' },
     ];
     const {
@@ -118,7 +117,7 @@ export function StudioCodePanel({
                         className="h-full w-full resize-none !rounded-none !border-0 bg-transparent px-4 py-4 text-sm font-mono leading-relaxed text-[var(--brand-text)] placeholder-[var(--brand-secondary-light)] outline-none shadow-none custom-scrollbar focus-visible:!ring-0"
                         placeholder={mode === 'mermaid'
                             ? t('commandBar.code.mermaidPlaceholder')
-                            : t('commandBar.code.dslPlaceholder', { appName: brandConfig.appName })}
+                            : t('commandBar.code.dslPlaceholder', { appName: APP_NAME })}
                     />
                 </div>
 
@@ -187,7 +186,7 @@ export function StudioCodePanel({
                             onClick={() => void handleApply()}
                             disabled={isApplying || draftPreview.state !== 'ready' || !hasDraftChanges}
                             variant="primary"
-                            className={`h-8 flex-1 justify-center border-transparent bg-[var(--brand-primary)] px-3 py-1.5 text-xs text-white hover:bg-[var(--brand-primary-600)] transition-all active:scale-95 ${brandConfig.ui.buttonStyle === 'beveled' ? 'btn-beveled' : ''}`}
+                            className={`h-8 flex-1 justify-center border-transparent bg-[var(--brand-primary)] px-3 py-1.5 text-xs text-white hover:bg-[var(--brand-primary-600)] transition-all active:scale-95 ${IS_BEVELED ? 'btn-beveled' : ''}`}
                             isLoading={isApplying}
                             icon={!isApplying && <Play className="w-3.5 h-3.5" />}
                         >
