@@ -45,6 +45,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
             <Tooltip text={t('export.exportDiagram', 'Export Diagram')} side="bottom">
                 <Button
                     onClick={toggleMenu}
+                    data-testid="topnav-export"
                     className="h-9 px-4 text-sm"
                 >
                     <Download className="w-4 h-4 mr-2" />

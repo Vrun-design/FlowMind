@@ -142,6 +142,7 @@ export function TopNavActions({
                                 variant="icon"
                                 size="icon"
                                 onClick={() => setIsShareModalOpen(true)}
+                                data-testid="topnav-share"
                                 className={`h-8 w-8 ml-1 rounded-[var(--radius-md)] border text-slate-600 transition-all ${isBeveled
                                     ? 'btn-beveled-secondary'
                                     : 'bg-white border-slate-200 hover:border-slate-300 shadow-sm hover:shadow'

@@ -70,6 +70,7 @@ export function ShareModal({
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="share-modal-title"
+                data-testid="share-panel"
                 className="w-full max-w-md overflow-hidden border border-slate-200/70 bg-white shadow-2xl animate-in zoom-in-95 duration-200"
                 style={{ borderRadius: brandRadius }}
                 onClick={(event) => event.stopPropagation()}

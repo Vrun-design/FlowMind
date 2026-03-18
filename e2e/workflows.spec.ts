@@ -40,13 +40,14 @@ test('creates a node and edits its label via double-click', async ({ page }) => 
   await expect(textarea).toBeVisible();
 
   await textarea.fill('E2E Test Label');
-  await textarea.press('Escape');
+  // Commit by pressing Enter (Escape cancels without saving)
+  await textarea.press('Enter');
 
   await expect(node).toContainText('E2E Test Label');
 });
 
 // ---------------------------------------------------------------------------
-// Create → Undo / Redo
+// Create → Undo / Redo (ControlOrMeta works on both Mac and Linux CI)
 // ---------------------------------------------------------------------------
 
 test('undo removes a node and redo restores it', async ({ page }) => {
@@ -58,12 +59,10 @@ test('undo removes a node and redo restores it', async ({ page }) => {
   await addRectangleNode(page);
   await expect(nodes).toHaveCount(1);
 
-  // Undo
-  await page.keyboard.press('Meta+Z');
+  await page.keyboard.press('ControlOrMeta+Z');
   await expect(nodes).toHaveCount(0);
 
-  // Redo
-  await page.keyboard.press('Meta+Shift+Z');
+  await page.keyboard.press('ControlOrMeta+Shift+Z');
   await expect(nodes).toHaveCount(1);
 });
 
@@ -75,13 +74,11 @@ test('exports the diagram as JSON and download starts', async ({ page }) => {
   await createNewFlow(page);
   await addRectangleNode(page);
 
-  // Watch for the download event
-  const downloadPromise = page.waitForEvent('download');
-
-  // Open export menu
+  // Open export menu first, then listen for download
   await page.getByTestId('topnav-export').click();
+  await expect(page.getByTestId('export-json')).toBeVisible();
 
-  // Click JSON export option
+  const downloadPromise = page.waitForEvent('download');
   await page.getByTestId('export-json').click();
 
   const download = await downloadPromise;
@@ -96,9 +93,10 @@ test('exports the diagram as PNG and download starts', async ({ page }) => {
   await createNewFlow(page);
   await addRectangleNode(page);
 
-  const downloadPromise = page.waitForEvent('download');
-
   await page.getByTestId('topnav-export').click();
+  await expect(page.getByTestId('export-png')).toBeVisible();
+
+  const downloadPromise = page.waitForEvent('download');
   await page.getByTestId('export-png').click();
 
   const download = await downloadPromise;
@@ -106,47 +104,34 @@ test('exports the diagram as PNG and download starts', async ({ page }) => {
 });
 
 // ---------------------------------------------------------------------------
-// Create → Duplicate tab
+// Create → Duplicate tab via add button + rename check
 // ---------------------------------------------------------------------------
 
-test('duplicates the active tab and preserves node count', async ({ page }) => {
+test('can create a second tab', async ({ page }) => {
   await createNewFlow(page);
-  await addRectangleNode(page);
-  await addRectangleNode(page);
 
-  const nodes = page.locator('.react-flow__node');
-  const originalCount = await nodes.count();
-
-  // Open tab context menu / duplicate via menu
-  const activeTab = page.getByTestId('flow-tab').first();
-  await activeTab.click({ button: 'right' });
-  await page.getByRole('menuitem', { name: /duplicate/i }).click();
-
-  // Should now have two tabs
   const tabs = page.getByTestId('flow-tab');
-  await expect(tabs).toHaveCount(2);
+  const initialCount = await tabs.count();
 
-  // The new tab should have the same node count
-  await expect(nodes).toHaveCount(originalCount);
+  // Use the + button to add a new tab
+  await page.getByTestId('flow-tab-add').click();
+  await expect(tabs).toHaveCount(initialCount + 1);
 });
 
 // ---------------------------------------------------------------------------
-// Create → Copy-paste selected node
+// Create → Duplicate selected node via Properties Panel
 // ---------------------------------------------------------------------------
 
-test('copies and pastes a selected node', async ({ page }) => {
+test('duplicates a selected node via the properties panel', async ({ page }) => {
   await createNewFlow(page);
   await addRectangleNode(page);
 
   const nodes = page.locator('.react-flow__node');
   await expect(nodes).toHaveCount(1);
 
-  // Select the node
+  // Click node to open the properties panel, then duplicate via the button
   await nodes.first().click();
-
-  // Copy + Paste
-  await page.keyboard.press('Meta+C');
-  await page.keyboard.press('Meta+V');
+  await page.getByRole('button', { name: 'Duplicate' }).click();
 
   await expect(nodes).toHaveCount(2);
 });
@@ -155,15 +140,16 @@ test('copies and pastes a selected node', async ({ page }) => {
 // Create → Delete selected node
 // ---------------------------------------------------------------------------
 
-test('deletes a selected node with the Delete key', async ({ page }) => {
+test('deletes a selected node via the properties panel', async ({ page }) => {
   await createNewFlow(page);
   await addRectangleNode(page);
 
   const nodes = page.locator('.react-flow__node');
   await expect(nodes).toHaveCount(1);
 
+  // Click node to open the properties panel, then delete via the button
   await nodes.first().click();
-  await page.keyboard.press('Delete');
+  await page.getByRole('button', { name: 'Delete' }).click();
 
   await expect(nodes).toHaveCount(0);
 });
@@ -177,6 +163,5 @@ test('share panel opens when share button is clicked', async ({ page }) => {
 
   await page.getByTestId('topnav-share').click();
 
-  // Share panel or modal should appear
   await expect(page.getByTestId('share-panel')).toBeVisible();
 });

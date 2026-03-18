@@ -47,6 +47,7 @@ export function ExportMenuPanel({ onSelect }: ExportMenuPanelProps): React.React
                 <button
                     key={key}
                     onClick={() => onSelect(key)}
+                    data-testid={`export-${key}`}
                     title={`${label} - ${hint}`}
                     className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] rounded-[var(--radius-sm)] transition-colors w-full text-left"
                 >
