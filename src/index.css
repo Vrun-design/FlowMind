@@ -196,8 +196,8 @@ html {
   --brand-primary-900: #6e290d;
 
   /* Dimensions */
-  --brand-radius: 12px;
-  --radius-sm: max(2px, calc(var(--brand-radius) - 4px));
+  --brand-radius: 8px;
+  --radius-sm: max(2px, calc(var(--brand-radius) - 3px));
   --radius-md: var(--brand-radius);
   --radius-lg: calc(var(--brand-radius) + 4px);
   --brand-border-width: 1px;

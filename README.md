@@ -1,168 +1,200 @@
+<div align="center">
+
+<img src="public/brand-icon.svg" width="72" alt="OpenFlowKit" />
+
 # OpenFlowKit
 
-OpenFlowKit is a local-first diagram editor for developers and technical teams. It combines a fast React Flow canvas, structured exports, reusable templates, and production cloud icon libraries so teams can sketch workflows, architecture, system maps, and planning diagrams without leaving the browser.
+**Local-first AI diagramming. No account. No cloud. No limits.**
 
-## What the product does
+[![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-637%20passing-brightgreen.svg)](#development)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev/)
 
-- Build flowcharts, architecture diagrams, mind maps, journeys, and lightweight wireframes.
-- Start from 20 curated templates covering product, operations, cloud architecture, planning, and ideation.
-- Insert AWS, Azure, and CNCF SVG assets directly onto the canvas as icon-first nodes.
-- Use Lucide-based icon assets for general-purpose technical diagrams.
-- Export to SVG, PNG, JPG, Figma paste, Mermaid, PlantUML, OpenFlow DSL, and JSON.
-- Keep work local by default with browser autosave and optional collaboration links.
+[**Open the App →**](https://app.openflowkit.com) · [**Docs**](https://docs.openflowkit.com) · [**Report a Bug**](https://github.com/Vrun-design/openflowkit/issues)
 
-## Product principles
+</div>
 
-- Local-first by default. Diagram data stays in the browser unless you explicitly export it or join a live collaboration room.
-- Fast editing over heavy chrome. Asset nodes stay lightweight and provider icons are lazy-loaded.
-- Structured outputs matter. The editor is designed around round-trippable data and standards-friendly exports.
-- Progressive enhancement. Experimental collaboration and large icon packs stay behind guarded runtime behavior instead of bloating the initial experience.
+---
 
-## Feature overview
+## What is OpenFlowKit?
 
-### Diagram building
+OpenFlowKit is an open-source diagramming tool that runs entirely in your browser. Describe what you need in plain English and the AI builds it for you — flowcharts, architecture diagrams, sequence diagrams, mind maps, and more. Everything stays on your device.
 
-- Core shapes: rounded rectangles, rectangles, capsules, circles, diamonds, hexagons, cylinders, parallelograms, and more.
-- Node types: process, decision, start/end, annotations, text, sections, image nodes, browser/mobile wireframes, architecture/icon nodes.
-- Editing tools: inline text editing, alignment/distribution, duplication, grouping, history, snapshots, and keyboard shortcuts.
-- Styling: brand-aware tokens, design-system controls, color themes, icons, and typography controls.
+- **No signup.** Open the app and start diagramming.
+- **No cloud storage.** Your diagrams live in browser local storage, not on our servers.
+- **No API fees.** Bring your own Gemini or OpenAI key — we're just the UI.
+- **No paywalls.** Every feature is free, forever.
 
-### Asset system
+---
 
-- `General`: notes, text, sections, journeys, mind maps, architecture blocks, wireframes, and uploads.
-- `Icons`: Lucide-backed icon asset catalog.
-- `AWS`: imported SVG icon pack with provider categories and lazy preview loading.
-- `Azure`: imported Microsoft architecture SVG pack with the same icon-first insertion model.
-- `CNCF`: imported cloud-native artwork SVG pack.
-- `GCP`: ingestion is intentionally gated until redistribution is explicitly cleared in this repo.
+## Features
+
+### AI Generation
+Describe a diagram in plain English and OpenFlowKit builds it. The AI understands your intent and produces structured, editable output — not a static image.
+
+### OpenFlow DSL
+Write diagrams as code with the OpenFlow DSL — a human-readable, git-friendly format designed for round-tripping. Edit in the canvas, export as code, commit it, open it again later.
+
+### Smart Layout
+One-click auto-arrange with ELK-powered layout. Choose between hierarchical, layered, force-directed, and radial layouts for complex graphs.
+
+### Playback & History
+Step through every edit with visual playback. Export your diagram's edit history as an animated GIF or PNG sequence — great for communicating your thinking.
+
+### Rich Node & Shape Library
+- Core shapes: rectangles, rounded rects, capsules, circles, diamonds, hexagons, cylinders, parallelograms
+- Specialised nodes: process, decision, start/end, annotation, text, section, image, browser/mobile wireframe, architecture icon
+- AWS, Azure, and CNCF SVG icon packs built-in
+- Lucide icon catalog for general-purpose diagrams
 
 ### Templates
-
-The starter library ships with 20 templates across:
-
+20 curated starter templates across:
 - Generic workflows and operational runbooks
-- AWS architecture starters
-- Azure architecture starters
-- CNCF and Kubernetes-style platform diagrams
+- AWS & Azure architecture patterns
+- CNCF / Kubernetes platform diagrams
 - Mind maps and planning boards
 - User journey and wireframe starters
 
-Templates are defined in [starterTemplates.ts](/Users/varun/Desktop/Dev_projects/flowmind-ai/src/services/templateLibrary/starterTemplates.ts) and exposed through [templates.ts](/Users/varun/Desktop/Dev_projects/flowmind-ai/src/services/templates.ts).
+### Export Everywhere
+SVG · PNG · JPG · Mermaid · OpenFlow DSL · JSON · Figma paste
 
 ### Collaboration
+Browser-based live collaboration rooms — no backend required, no data stored server-side.
 
-- Live collaboration is available through browser-based room links.
-- Links now stay lightweight by default and no longer package extra room secrets when the standard local-first room key is sufficient.
-- Collaboration should still be treated as a convenience layer, not durable backend storage.
-
-### Privacy and analytics
-
-- Analytics are off by default.
-- The welcome modal is off by default.
-- The UI explicitly communicates that local autosave stays on-device.
-- Exports remain the recommended path for durable handoff and backup.
+---
 
 ## Stack
 
-- React 19
-- TypeScript 5
-- Vite 6
-- React Flow / XYFlow
-- Zustand
-- Tailwind CSS 4
-- Framer Motion
-- Vitest + Testing Library
+| Layer | Technology |
+|---|---|
+| UI | React 19, TypeScript 5, Tailwind CSS 4 |
+| Canvas | React Flow / XYFlow 12 |
+| Layout | ELK.js |
+| State | Zustand 5 |
+| Animation | Framer Motion |
+| Build | Vite 6 |
+| Tests | Vitest 4, Testing Library |
+| Docs | Astro + Starlight |
+| Hosting | Cloudflare Pages |
 
-## Project layout
+---
 
-```text
-src/
-  components/
-    command-bar/        Command palette views such as Assets and Templates
-    custom-nodes/       Specialized node renderers
-    flow-canvas/        Canvas orchestration and overlays
-    home/               Dashboard, settings, and onboarding surfaces
-    properties/         Node, edge, and canvas side panels
-    top-nav/            Brand, export, share, and collaboration actions
-  config/               Rollout flags and runtime defaults
-  hooks/                Canvas/editor hooks and interaction logic
-  lib/                  Shared types and utilities
-  services/
-    collaboration/      Room links, transport bootstrap, sync helpers
-    shapeLibrary/       Provider icon catalog loading and previews
-    templateLibrary/    Starter template registry and helpers
-  store/                Zustand store, defaults, and actions
-assets/
-  third-party-icons/    Imported provider SVG packs and source metadata
-scripts/
-  shape-pack/           Intake and validation tooling for icon packs
-```
+## Getting Started
 
-## Development
-
-### Requirements
-
+### Prerequisites
 - Node.js 18+
-- npm
+- npm 9+
 
-### Install
+### Install & run
 
 ```bash
+git clone https://github.com/Vrun-design/openflowkit.git
+cd openflowkit
 npm install
-```
-
-### Run locally
-
-```bash
-npm run dev
+npm run dev        # app at http://localhost:5173
 ```
 
 ### Build
 
 ```bash
-npm run build
-npm run bundle:check
+npm run build          # production build
+npm run bundle:check   # verify bundle size budgets
 ```
 
 ### Test
 
 ```bash
-npm run test -- --run
+npm test -- --run      # full suite (637 tests)
 ```
 
-Useful focused suites:
+Focused suites:
 
 ```bash
-npm run test:s0
-npm run test:s10-state
-npm run test:s10-canvas
-npm run test:s4-handle-safety
+npm run test:s0               # store + canvas core
+npm run test:s10-state        # state management
+npm run test:s10-canvas       # canvas interactions
+npm run test:s4-handle-safety # edge handle safety
 ```
 
-## Asset ingestion notes
+---
 
-- AWS, Azure, and CNCF SVG assets are processed into local provider packs under `assets/third-party-icons`.
-- Runtime previews are lazy-resolved with `import.meta.glob` so large icon sets do not inflate the main editor entry bundle.
-- Provider pack intake and validation scripts live in `scripts/shape-pack`.
-- GCP remains blocked until redistribution status changes in [SOURCE.md](/Users/varun/Desktop/Dev_projects/flowmind-ai/assets/third-party-icons/google-cloud/SOURCE.md).
+## Project Structure
 
-## Key files
+```
+src/
+  components/
+    command-bar/     Command palette — Assets, Templates, Design, Code views
+    flow-canvas/     Canvas orchestration, overlays, interaction handlers
+    home/            Dashboard, settings surfaces
+    properties/      Node, edge, and canvas side panels
+    top-nav/         Nav bar — export, share, collaboration actions
+  config/            Rollout flags
+  hooks/             Editor hooks and interaction logic
+  lib/               Shared types, DSL parser, utilities
+  services/
+    collaboration/   Room links and WebRTC/WebSocket sync
+    shapeLibrary/    Provider icon catalog and lazy loading
+    templateLibrary/ Starter template registry
+    playback/        Playback model and step generation
+  store/             Zustand store, slices, persistence
 
-- [AssetsView.tsx](/Users/varun/Desktop/Dev_projects/flowmind-ai/src/components/command-bar/AssetsView.tsx)
-- [TemplatesView.tsx](/Users/varun/Desktop/Dev_projects/flowmind-ai/src/components/command-bar/TemplatesView.tsx)
-- [providerCatalog.ts](/Users/varun/Desktop/Dev_projects/flowmind-ai/src/services/shapeLibrary/providerCatalog.ts)
-- [domainLibrary.ts](/Users/varun/Desktop/Dev_projects/flowmind-ai/src/services/domainLibrary.ts)
-- [ShareModal.tsx](/Users/varun/Desktop/Dev_projects/flowmind-ai/src/components/ShareModal.tsx)
-- [defaults.ts](/Users/varun/Desktop/Dev_projects/flowmind-ai/src/store/defaults.ts)
+docs-site/           Starlight documentation site
+web/                 Astro marketing landing page
+assets/
+  third-party-icons/ AWS, Azure, CNCF SVG icon packs
+scripts/
+  shape-pack/        Icon pack intake and validation tooling
+```
 
-## Production readiness checklist
+---
 
-- Type-check before shipping.
-- Run the full Vitest suite.
-- Run `npm run build` and `npm run bundle:check`.
-- Validate imported icon packs if asset sources changed.
-- Review any rollout-flag defaults before enabling experimental paths globally.
+## Architecture
 
-## License and source packs
+See [ARCHITECTURE.md](ARCHITECTURE.md) for a detailed breakdown of the store slice design, history V2 model, ELK layout integration, export pipeline, and rollout flag system.
 
-OpenFlowKit includes first-party code plus separately sourced third-party asset packs. Check the `SOURCE.md` or README files inside `assets/third-party-icons/*` before changing or redistributing provider icons.
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for dev setup, code guidelines, and the rollout flag pattern.
+
+Key things to know:
+- **Storage keys are sacred.** Never rename `openflowkit-storage`, `flowmind-clipboard`, or `flowmind_snapshots` — silent data loss for existing users.
+- **Rollout flags gate experimental features.** New features go behind a flag in `src/config/rolloutFlags.ts` before being enabled globally.
+- **TypeScript strict, ESLint clean.** `tsc --noEmit` and `eslint` must pass before merging.
+
+---
+
+## Deployment
+
+OpenFlowKit uses a monorepo with three independent Cloudflare Pages projects:
+
+| Project | Build command | Output |
+|---|---|---|
+| App | `npm run build` | `dist/` |
+| Docs | `npm run build --workspace=docs-site` | `docs-site/dist/` |
+| Landing | `npm run build --workspace=web` | `web/dist/` |
+
+See [docs/cloudflare-pages-setup.md](docs/cloudflare-pages-setup.md) for full setup instructions.
+
+---
+
+## Asset Licensing
+
+OpenFlowKit ships with third-party SVG icon packs. Each pack has its own license — check the `SOURCE.md` inside `assets/third-party-icons/<provider>/` before redistributing.
+
+- **AWS** — [assets/third-party-icons/aws/SOURCE.md](assets/third-party-icons/aws/SOURCE.md)
+- **Azure** — [assets/third-party-icons/azure/SOURCE.md](assets/third-party-icons/azure/SOURCE.md)
+- **CNCF** — [assets/third-party-icons/cncf/SOURCE.md](assets/third-party-icons/cncf/SOURCE.md)
+- **GCP** — redistribution not yet cleared; intake is gated
+
+OpenFlowKit's own source code is MIT licensed.
+
+---
+
+<div align="center">
+
+Made with ☕ · MIT License · [openflowkit.com](https://openflowkit.com)
+
+</div>

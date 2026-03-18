@@ -33,7 +33,7 @@ export const DEFAULT_DESIGN_SYSTEM: DesignSystem = {
     },
     components: {
         node: {
-            borderRadius: '1rem',
+            borderRadius: '8px',
             borderWidth: '1px',
             boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
             padding: '1rem',
