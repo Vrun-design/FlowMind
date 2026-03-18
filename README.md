@@ -1,17 +1,28 @@
 <div align="center">
 
-<img src="public/brand-icon.svg" width="72" alt="OpenFlowKit" />
+<img src="public/favicon.svg" width="80" alt="OpenFlowKit" />
 
-# OpenFlowKit
+<h1>OpenFlowKit</h1>
 
-**Local-first AI diagramming. No account. No cloud. No limits.**
+<p><strong>The open-source, local-first diagramming tool with AI generation built in.<br/>No account. No cloud. No limits. Free forever.</strong></p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-637%20passing-brightgreen.svg)](#development)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev/)
+<p>
+  <a href="https://github.com/Vrun-design/openflowkit/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-orange.svg" alt="MIT License" /></a>
+  <a href="#testing"><img src="https://img.shields.io/badge/tests-637%20passing-brightgreen.svg" alt="Tests" /></a>
+  <img src="https://img.shields.io/badge/TypeScript-strict-blue.svg" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/React-19-61dafb.svg" alt="React 19" />
+  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" />
+</p>
 
-[**Open the App →**](https://app.openflowkit.com) · [**Docs**](https://docs.openflowkit.com) · [**Report a Bug**](https://github.com/Vrun-design/openflowkit/issues)
+<p>
+  <a href="https://app.openflowkit.com"><strong>Open the App →</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://docs.openflowkit.com">Documentation</a>
+  &nbsp;·&nbsp;
+  <a href="https://openflowkit.com">Website</a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/Vrun-design/openflowkit/issues">Report a Bug</a>
+</p>
 
 </div>
 
@@ -19,64 +30,104 @@
 
 ## What is OpenFlowKit?
 
-OpenFlowKit is an open-source diagramming tool that runs entirely in your browser. Describe what you need in plain English and the AI builds it for you — flowcharts, architecture diagrams, sequence diagrams, mind maps, and more. Everything stays on your device.
+OpenFlowKit is a fully open-source diagramming tool that runs **entirely in your browser**. It combines a fast, professional canvas with AI generation so you can go from a plain-English description to a structured, editable diagram in seconds.
 
-- **No signup.** Open the app and start diagramming.
-- **No cloud storage.** Your diagrams live in browser local storage, not on our servers.
-- **No API fees.** Bring your own Gemini or OpenAI key — we're just the UI.
-- **No paywalls.** Every feature is free, forever.
+There's no account to create, no server storing your work, and no feature gated behind a paywall — ever. Your diagrams live in browser local storage and stay there unless you explicitly export or share them.
+
+```
+You: "Draw a microservices architecture with an API gateway, auth service,
+      product service, and Postgres database"
+
+OpenFlowKit: *builds it*
+```
+
+---
+
+## Why OpenFlowKit?
+
+| | OpenFlowKit | Lucidchart / Miro | draw.io |
+|---|---|---|---|
+| Open source | ✅ MIT | ❌ | ✅ |
+| AI generation | ✅ Built-in | 💰 Paid tier | ❌ |
+| Local-first | ✅ Zero cloud | ❌ Cloud only | ⚠️ Partial |
+| No account needed | ✅ | ❌ | ✅ |
+| Bring your own API key | ✅ | ❌ | ❌ |
+| OpenFlow DSL (code as diagram) | ✅ | ❌ | ❌ |
+| Playback & history export | ✅ | ❌ | ❌ |
+| Free forever | ✅ | ❌ Freemium | ✅ |
 
 ---
 
 ## Features
 
-### AI Generation
-Describe a diagram in plain English and OpenFlowKit builds it. The AI understands your intent and produces structured, editable output — not a static image.
+### 🤖 AI Generation
+Describe what you want in plain English. OpenFlowKit calls the AI with your own API key and builds a fully editable diagram. No middleman, no usage fees, no data sent to our servers.
 
-### OpenFlow DSL
-Write diagrams as code with the OpenFlow DSL — a human-readable, git-friendly format designed for round-tripping. Edit in the canvas, export as code, commit it, open it again later.
+Supports **Gemini** and **OpenAI-compatible** endpoints. Works with any locally-run model behind a compatible API.
 
-### Smart Layout
-One-click auto-arrange with ELK-powered layout. Choose between hierarchical, layered, force-directed, and radial layouts for complex graphs.
+### 📝 OpenFlow DSL
+Every diagram is round-trippable code. The OpenFlow DSL is a human-readable, git-friendly format — paste code in, get a diagram; export a diagram, get code. Ideal for version-controlled documentation.
 
-### Playback & History
-Step through every edit with visual playback. Export your diagram's edit history as an animated GIF or PNG sequence — great for communicating your thinking.
+```
+flow: "Payment Processing"
+direction: LR
 
-### Rich Node & Shape Library
-- Core shapes: rectangles, rounded rects, capsules, circles, diamonds, hexagons, cylinders, parallelograms
-- Specialised nodes: process, decision, start/end, annotation, text, section, image, browser/mobile wireframe, architecture icon
-- AWS, Azure, and CNCF SVG icon packs built-in
-- Lucide icon catalog for general-purpose diagrams
+node checkout [label: "Checkout"]
+node gateway [label: "Payment Gateway", shape: diamond]
+node success [label: "Success", shape: capsule]
+node failure [label: "Retry", shape: capsule]
 
-### Templates
-20 curated starter templates across:
-- Generic workflows and operational runbooks
-- AWS & Azure architecture patterns
-- CNCF / Kubernetes platform diagrams
-- Mind maps and planning boards
-- User journey and wireframe starters
+checkout -> gateway
+gateway -> success [label: "Approved"]
+gateway -> failure [label: "Declined"]
+```
 
-### Export Everywhere
-SVG · PNG · JPG · Mermaid · OpenFlow DSL · JSON · Figma paste
+### ⚡ Smart Layout
+One-click auto-arrange with **ELK.js** — the same layout engine used by Eclipse and VS Code's diagram extensions. Hierarchical, layered, force-directed, and radial modes for any graph shape.
 
-### Collaboration
-Browser-based live collaboration rooms — no backend required, no data stored server-side.
+### 🎬 Playback & History
+Every edit is recorded. Scrub through your diagram's full edit history visually. Export the playback as an **animated GIF** or PNG sequence — useful for walkthroughs, onboarding docs, and architecture reviews.
+
+### 🗂️ Templates
+20 curated starter templates so you're never staring at a blank canvas:
+
+| Category | Templates |
+|---|---|
+| Workflows | Generic flowchart, operational runbook, decision tree |
+| Cloud Architecture | AWS 3-tier, Azure landing zone, CNCF platform, Kubernetes cluster |
+| Planning | Mind map, user journey, affinity map, roadmap |
+| Wireframes | Mobile screen, browser app, component hierarchy |
+
+### 🎨 Shape & Icon Library
+- **Core shapes** — rectangles, rounded rects, capsules, circles, diamonds, hexagons, cylinders, parallelograms, and more
+- **Specialised nodes** — process, decision, start/end, annotation, text block, section, image, browser frame, mobile frame, architecture icon node
+- **AWS** — full SVG icon pack with provider categories
+- **Azure** — Microsoft architecture SVG pack
+- **CNCF** — cloud-native artwork pack
+- **Lucide** — 1,000+ general-purpose icons
+
+### 📤 Export Formats
+**SVG** · **PNG** · **JPG** · **Mermaid** · **OpenFlow DSL** · **JSON** · **Figma paste**
+
+### 🔗 Collaboration
+Browser-based peer-to-peer collaboration via WebRTC room links. No server, no accounts, no persistence — just share a link and work together live.
 
 ---
 
 ## Stack
 
-| Layer | Technology |
-|---|---|
-| UI | React 19, TypeScript 5, Tailwind CSS 4 |
-| Canvas | React Flow / XYFlow 12 |
-| Layout | ELK.js |
-| State | Zustand 5 |
-| Animation | Framer Motion |
-| Build | Vite 6 |
-| Tests | Vitest 4, Testing Library |
-| Docs | Astro + Starlight |
-| Hosting | Cloudflare Pages |
+| Layer | Technology | Why |
+|---|---|---|
+| UI framework | React 19 + TypeScript 5 | React Compiler for automatic memoisation |
+| Canvas | React Flow / XYFlow 12 | Best-in-class graph canvas |
+| Layout engine | ELK.js | Professional-grade auto-layout |
+| State | Zustand 5 | Lightweight, per-slice architecture |
+| Styling | Tailwind CSS 4 | Utility-first, zero runtime CSS |
+| Animation | Framer Motion | Canvas transitions and playback |
+| Build | Vite 6 | Fast HMR, optimised chunking |
+| Tests | Vitest 4 + Testing Library | 637 tests, fast parallelised runs |
+| Docs | Astro + Starlight | Static, multilingual (EN + TR) |
+| Hosting | Cloudflare Pages | Free tier, global CDN, 3 separate projects |
 
 ---
 
@@ -86,35 +137,58 @@ Browser-based live collaboration rooms — no backend required, no data stored s
 - Node.js 18+
 - npm 9+
 
-### Install & run
+### Install & run locally
 
 ```bash
 git clone https://github.com/Vrun-design/openflowkit.git
 cd openflowkit
 npm install
-npm run dev        # app at http://localhost:5173
+npm run dev        # → http://localhost:5173
 ```
 
-### Build
+To use AI generation, open **Settings → AI** in the app and add your Gemini or OpenAI API key. It's stored locally in your browser — never sent to us.
+
+### Build for production
 
 ```bash
-npm run build          # production build
+npm run build          # compile + bundle
 npm run bundle:check   # verify bundle size budgets
 ```
 
-### Test
+### Run the docs site locally
 
 ```bash
-npm test -- --run      # full suite (637 tests)
+npm run dev --workspace=docs-site    # → http://localhost:4321
 ```
 
-Focused suites:
+### Run the landing page locally
 
 ```bash
-npm run test:s0               # store + canvas core
-npm run test:s10-state        # state management
-npm run test:s10-canvas       # canvas interactions
-npm run test:s4-handle-safety # edge handle safety
+npm run dev --workspace=web          # → http://localhost:4320
+```
+
+---
+
+## Testing
+
+```bash
+npm test -- --run          # full suite
+```
+
+Focused suites for faster iteration:
+
+```bash
+npm run test:s0            # store, history, canvas core types
+npm run test:s10-state     # state management and persistence
+npm run test:s10-canvas    # canvas interaction logic
+npm run test:s4-handle-safety  # edge handle safety rules
+```
+
+TypeScript and lint:
+
+```bash
+npx tsc --noEmit           # type check
+npx eslint src             # lint
 ```
 
 ---
@@ -124,77 +198,90 @@ npm run test:s4-handle-safety # edge handle safety
 ```
 src/
   components/
-    command-bar/     Command palette — Assets, Templates, Design, Code views
-    flow-canvas/     Canvas orchestration, overlays, interaction handlers
-    home/            Dashboard, settings surfaces
-    properties/      Node, edge, and canvas side panels
-    top-nav/         Nav bar — export, share, collaboration actions
-  config/            Rollout flags
-  hooks/             Editor hooks and interaction logic
-  lib/               Shared types, DSL parser, utilities
+    command-bar/      Command palette — Assets, Templates, Design, Code, AI views
+    flow-canvas/      Canvas orchestration, node/edge renderers, overlays
+    home/             Dashboard, settings, welcome surfaces
+    properties/       Node, edge, and canvas side panels
+    top-nav/          Nav bar — export, share, history, collaboration
+  config/             Rollout flags (feature gating)
+  hooks/              Editor hooks — clipboard, history, playback, interaction
+  lib/                Shared types, OpenFlow DSL parser, utilities
   services/
-    collaboration/   Room links and WebRTC/WebSocket sync
-    shapeLibrary/    Provider icon catalog and lazy loading
-    templateLibrary/ Starter template registry
-    playback/        Playback model and step generation
-  store/             Zustand store, slices, persistence
+    collaboration/    WebRTC room links and sync transport
+    shapeLibrary/     Provider icon catalog, lazy SVG loading
+    templateLibrary/  Starter template registry
+    playback/         Playback model, step generation, GIF export
+  store/              Zustand store — slices, defaults, persistence
 
-docs-site/           Starlight documentation site
-web/                 Astro marketing landing page
+docs-site/            Astro + Starlight documentation (EN + TR)
+web/                  Astro marketing landing page
 assets/
-  third-party-icons/ AWS, Azure, CNCF SVG icon packs
+  third-party-icons/  AWS, Azure, CNCF SVG packs + source metadata
 scripts/
-  shape-pack/        Icon pack intake and validation tooling
+  shape-pack/         Icon pack intake and validation tooling
 ```
 
 ---
 
 ## Architecture
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for a detailed breakdown of the store slice design, history V2 model, ELK layout integration, export pipeline, and rollout flag system.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for deep-dives on:
+- Store slice design and per-slice hook pattern
+- History V2 (per-tab `past/future` arrays, no global snapshot)
+- ELK singleton and layout pipeline
+- Export pipeline and bundle chunking strategy
+- Rollout flag system for safe feature gating
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for dev setup, code guidelines, and the rollout flag pattern.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full setup instructions and code guidelines.
 
-Key things to know:
-- **Storage keys are sacred.** Never rename `openflowkit-storage`, `flowmind-clipboard`, or `flowmind_snapshots` — silent data loss for existing users.
-- **Rollout flags gate experimental features.** New features go behind a flag in `src/config/rolloutFlags.ts` before being enabled globally.
-- **TypeScript strict, ESLint clean.** `tsc --noEmit` and `eslint` must pass before merging.
+**The two rules that matter most:**
+
+1. **Never rename storage keys.** `openflowkit-storage`, `flowmind-clipboard`, `flowmind_snapshots` — changing these silently wipes existing user data.
+2. **New features go behind a rollout flag.** Add an entry to `src/config/rolloutFlags.ts` and gate the code path. Flip the default to `true` in a separate PR once validated.
+
+Before opening a PR: `tsc --noEmit` and `eslint` must be clean, and all 637 tests must pass.
 
 ---
 
 ## Deployment
 
-OpenFlowKit uses a monorepo with three independent Cloudflare Pages projects:
+Three independent Cloudflare Pages projects, one repo:
 
-| Project | Build command | Output |
-|---|---|---|
-| App | `npm run build` | `dist/` |
-| Docs | `npm run build --workspace=docs-site` | `docs-site/dist/` |
-| Landing | `npm run build --workspace=web` | `web/dist/` |
+| Project | URL | Build command | Output |
+|---|---|---|---|
+| App | `app.openflowkit.com` | `npm run build` | `dist/` |
+| Docs | `docs.openflowkit.com` | `npm run build --workspace=docs-site` | `docs-site/dist/` |
+| Landing | `openflowkit.com` | `npm run build --workspace=web` | `web/dist/` |
 
-See [docs/cloudflare-pages-setup.md](docs/cloudflare-pages-setup.md) for full setup instructions.
+Full setup guide: [docs/cloudflare-pages-setup.md](docs/cloudflare-pages-setup.md)
 
 ---
 
 ## Asset Licensing
 
-OpenFlowKit ships with third-party SVG icon packs. Each pack has its own license — check the `SOURCE.md` inside `assets/third-party-icons/<provider>/` before redistributing.
+OpenFlowKit ships with third-party SVG icon packs under their own licenses. Check `SOURCE.md` before redistributing.
 
-- **AWS** — [assets/third-party-icons/aws/SOURCE.md](assets/third-party-icons/aws/SOURCE.md)
-- **Azure** — [assets/third-party-icons/azure/SOURCE.md](assets/third-party-icons/azure/SOURCE.md)
-- **CNCF** — [assets/third-party-icons/cncf/SOURCE.md](assets/third-party-icons/cncf/SOURCE.md)
-- **GCP** — redistribution not yet cleared; intake is gated
+| Pack | License info |
+|---|---|
+| AWS | [assets/third-party-icons/aws/SOURCE.md](assets/third-party-icons/aws/SOURCE.md) |
+| Azure | [assets/third-party-icons/azure/SOURCE.md](assets/third-party-icons/azure/SOURCE.md) |
+| CNCF | [assets/third-party-icons/cncf/SOURCE.md](assets/third-party-icons/cncf/SOURCE.md) |
+| GCP | Redistribution not yet cleared — intake gated |
 
-OpenFlowKit's own source code is MIT licensed.
+OpenFlowKit's own source code is **MIT licensed**.
 
 ---
 
 <div align="center">
 
-Made with ☕ · MIT License · [openflowkit.com](https://openflowkit.com)
+**[openflowkit.com](https://openflowkit.com) · [app.openflowkit.com](https://app.openflowkit.com) · [docs.openflowkit.com](https://docs.openflowkit.com)**
+
+Made with ☕ · MIT License
+
+If OpenFlowKit is useful to you, a ⭐ on GitHub goes a long way.
 
 </div>
