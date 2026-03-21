@@ -22,6 +22,10 @@ interface ShortcutHandlers {
   onFitView?: () => void;
   onZoomIn?: () => void;
   onZoomOut?: () => void;
+  onCopy?: () => void;
+  onPaste?: () => void;
+  onClearSelection?: () => void;
+  onNudge?: (dx: number, dy: number) => void;
 }
 
 export function useKeyboardShortcuts({
@@ -44,6 +48,10 @@ export function useKeyboardShortcuts({
   onFitView,
   onZoomIn,
   onZoomOut,
+  onCopy,
+  onPaste,
+  onClearSelection,
+  onNudge,
 }: ShortcutHandlers): void {
   useEffect(() => {
     const isEditableActiveElement = (): boolean => {
@@ -197,6 +205,31 @@ export function useKeyboardShortcuts({
           selectAll();
         }
       }
+
+      // Copy (Cmd+C)
+      if (isCmdOrCtrl && key === 'c' && !isEditable) {
+        onCopy?.();
+        // Don't preventDefault — let browser clipboard also work
+      }
+
+      // Paste (Cmd+V)
+      if (isCmdOrCtrl && key === 'v' && !isEditable) {
+        onPaste?.();
+      }
+
+      // Escape — deselect / clear selection
+      if (e.key === 'Escape' && !isEditable) {
+        onClearSelection?.();
+      }
+
+      // Arrow key nudge (1px; Shift = 10px)
+      if (!isCmdOrCtrl && !isEditable) {
+        const nudgeDist = isShift ? 10 : 1;
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); onNudge?.(-nudgeDist, 0); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); onNudge?.(nudgeDist, 0); }
+        if (e.key === 'ArrowUp')    { e.preventDefault(); onNudge?.(0, -nudgeDist); }
+        if (e.key === 'ArrowDown')  { e.preventDefault(); onNudge?.(0, nudgeDist); }
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -204,5 +237,5 @@ export function useKeyboardShortcuts({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [selectedNodeId, selectedEdgeId, selectedNodeType, deleteNode, deleteEdge, undo, redo, duplicateNode, selectAll, onAddMindmapChildShortcut, onAddMindmapSiblingShortcut, onCommandBar, onSearch, onShortcutsHelp, onSelectMode, onPanMode, onFitView, onZoomIn, onZoomOut]);
+  }, [selectedNodeId, selectedEdgeId, selectedNodeType, deleteNode, deleteEdge, undo, redo, duplicateNode, selectAll, onAddMindmapChildShortcut, onAddMindmapSiblingShortcut, onCommandBar, onSearch, onShortcutsHelp, onSelectMode, onPanMode, onFitView, onZoomIn, onZoomOut, onCopy, onPaste, onClearSelection, onNudge]);
 }

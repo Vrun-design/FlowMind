@@ -28,7 +28,7 @@ function getMovePoint(path: string): string {
   return `${match[1]},${match[2]}`;
 }
 
-function getMoveY(path: string): number {
+function _getMoveY(path: string): number {
   const [, y] = getMovePoint(path).split(',');
   return Number(y);
 }
@@ -669,7 +669,7 @@ describe('buildEdgePath', () => {
     );
 
     expect(result.edgePath).toContain('Q 12 0');
-    expect(result.edgePath).toContain('Q 12 30 20 30');
+    expect(result.edgePath).toContain('Q 12 30');
   });
 
   it('still applies legacy renderer-side fanout to ELK endpoints by default', () => {

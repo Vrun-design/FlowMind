@@ -9,12 +9,16 @@ import {
   generateAIFlowResult,
 } from './ai-generation/requestLifecycle';
 import { buildCodeToArchitecturePrompt, type SupportedLanguage } from './ai-generation/codeToArchitecture';
+import { buildSqlToErdPrompt } from './ai-generation/sqlToErd';
+import { buildTerraformToCloudPrompt, type TerraformInputFormat } from './ai-generation/terraformToCloud';
+import { buildOpenApiToSequencePrompt } from './ai-generation/openApiToSequence';
 
 export function useAIGeneration(
   recordHistory: () => void,
   applyComposedGraph: (nodes: FlowNode[], edges: FlowEdge[]) => void
 ) {
   const { nodes, edges, aiSettings, globalEdgeOptions } = useFlowStore();
+  const selectedNodeIds = nodes.filter((n) => n.selected).map((n) => n.id);
   const {
     apiKey,
     model,
@@ -45,6 +49,7 @@ export function useAIGeneration(
         imageBase64,
         nodes,
         edges,
+        selectedNodeIds,
         aiSettings: {
           ...aiSettings,
           apiKey,
@@ -80,6 +85,7 @@ export function useAIGeneration(
     edges,
     globalEdgeOptions,
     nodes,
+    selectedNodeIds,
     recordHistory,
     applyComposedGraph,
   ]);
@@ -89,5 +95,17 @@ export function useAIGeneration(
     await handleAIRequest(prompt);
   }, [handleAIRequest]);
 
-  return { isGenerating, handleAIRequest, handleCodeAnalysis, chatMessages, clearChat };
+  const handleSqlAnalysis = useCallback(async (sql: string) => {
+    await handleAIRequest(buildSqlToErdPrompt(sql));
+  }, [handleAIRequest]);
+
+  const handleTerraformAnalysis = useCallback(async (input: string, format: TerraformInputFormat) => {
+    await handleAIRequest(buildTerraformToCloudPrompt(input, format));
+  }, [handleAIRequest]);
+
+  const handleOpenApiAnalysis = useCallback(async (spec: string) => {
+    await handleAIRequest(buildOpenApiToSequencePrompt(spec));
+  }, [handleAIRequest]);
+
+  return { isGenerating, handleAIRequest, handleCodeAnalysis, handleSqlAnalysis, handleTerraformAnalysis, handleOpenApiAnalysis, chatMessages, clearChat };
 }

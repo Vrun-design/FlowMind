@@ -14,6 +14,7 @@ describe('computeFlowCanvasReactFlowConfig', () => {
         expect(result.onlyRenderVisibleElements).toBe(true);
         expect(result.connectionMode).toBe(ConnectionMode.Loose);
         expect(result.selectionOnDrag).toBe(true);
+        expect(result.selectNodesOnDrag).toBe(false);
         expect(result.selectionKeyCode).toBe('Shift');
         expect(result.panOnDrag).toEqual([1, 2]);
         expect(result.panActivationKeyCode).toBe('Space');
@@ -35,7 +36,7 @@ describe('computeFlowCanvasReactFlowConfig', () => {
             variant: expect.anything(),
             gap: 24,
             size: 1.5,
-            color: 'rgba(148,163,184,0.5)',
+            color: 'rgba(148,163,184,0.35)',
         });
     });
 
@@ -49,6 +50,7 @@ describe('computeFlowCanvasReactFlowConfig', () => {
         expect(result.className).toContain('flow-canvas-pan-mode');
         expect(result.onlyRenderVisibleElements).toBe(false);
         expect(result.selectionOnDrag).toBe(false);
+        expect(result.selectNodesOnDrag).toBe(false);
         expect(result.selectionKeyCode).toBe('Shift');
         expect(result.panOnDrag).toEqual([0, 1, 2]);
         expect(result.panActivationKeyCode).toBe('Space');

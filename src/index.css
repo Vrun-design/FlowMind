@@ -220,15 +220,35 @@ body {
 .flow-handle-hitarea.react-flow__handle::after {
   content: '';
   position: absolute;
-  inset: -4px;
+  inset: -10px;
   border-radius: 9999px;
   pointer-events: none;
+}
+
+/* Handle base size — larger dots are easier to grab */
+.react-flow__handle {
+  width: 10px !important;
+  height: 10px !important;
+  border: 2px solid white !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+  transition: transform 0.1s, opacity 0.15s !important;
+}
+
+/* Pop the handle on hover so it's obviously clickable */
+.react-flow__handle:hover {
+  transform: translate(-50%, -50%) scale(1.35) !important;
 }
 
 /* Hide connection handles during active node drag to reduce visual noise. */
 .react-flow__node.dragging .react-flow__handle {
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+/* When connecting, make all other nodes' handles glow to invite connection */
+.is-connecting .react-flow__node:not(.selected) .react-flow__handle {
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1.2) !important;
 }
 
 /* ===== Node Resizer Bounding Box (Miro/Figma style) ===== */
@@ -474,6 +494,13 @@ body {
 .flow-edge-waypoint:active,
 .flow-edge-waypoint:active * {
   cursor: grabbing !important;
+}
+
+/* ===== Selection marquee — Figma style ===== */
+.react-flow__selection {
+  background: rgba(233, 84, 32, 0.06);
+  border: 1px solid var(--brand-primary, #e95420);
+  border-radius: 2px;
 }
 
 /* React Flow defaults to pointer in selection mode; keep arrow cursor for select mode panes. */

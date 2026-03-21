@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-export function getHandlePointerEvents(visualQualityV2Enabled: boolean, selected: boolean): 'none' | 'all' {
+export function getHandlePointerEvents(_visualQualityV2Enabled: boolean, _selected: boolean): 'none' | 'all' {
   return 'all';
 }
 
@@ -12,10 +12,10 @@ export function getV2HandleVisibilityClass(
   const includeScale = options.includeScale ?? true;
 
   // Keep anchors visible but secondary to resize controls while selected.
-  const selectedVisibility = includeScale ? 'opacity-65 scale-100' : 'opacity-65';
+  const selectedVisibility = includeScale ? 'opacity-80 scale-100' : 'opacity-80';
   const connectingClass = includeConnectingState ? ' [.is-connecting_&]:opacity-100' : '';
   const hitAreaClass = selected ? '' : ' flow-handle-hitarea';
-  return `${selected ? selectedVisibility : 'opacity-30'} group-hover:opacity-100${connectingClass}${hitAreaClass}`.trim();
+  return `${selected ? selectedVisibility : 'opacity-0'} group-hover:opacity-100${connectingClass}${hitAreaClass}`.trim();
 }
 
 export function getConnectorHandleStyle(

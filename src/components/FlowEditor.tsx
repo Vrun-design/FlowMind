@@ -150,7 +150,8 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
     const {
         updateNodeData, applyBulkNodeData, updateNodeType, updateNodeZIndex, updateEdge,
         deleteNode, deleteEdge, duplicateNode,
-        handleAddNode, handleAddShape, handleAddJourneyNode, handleAddMindmapNode, handleAddArchitectureNode, handleAddAnnotation, handleAddSection, handleAddTextNode, handleAddImage, handleAddWireframe, handleAddDomainLibraryItem, handleAddMindmapChild, handleAddMindmapSibling, handleAddArchitectureService, handleCreateArchitectureBoundary
+        handleAddNode, handleAddShape, handleAddJourneyNode, handleAddMindmapNode, handleAddArchitectureNode, handleAddAnnotation, handleAddSection, handleAddTextNode, handleAddImage, handleAddWireframe, handleAddDomainLibraryItem, handleAddMindmapChild, handleAddMindmapSibling, handleAddArchitectureService, handleCreateArchitectureBoundary,
+        copySelection, pasteSelection,
     } = useFlowOperations(recordHistory);
 
     const selectedNodeType = useMemo(
@@ -204,10 +205,23 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
         onFitView: () => fitView({ duration: 600, padding: 0.2 }),
         onZoomIn: () => zoomIn({ duration: 300 }),
         onZoomOut: () => zoomOut({ duration: 300 }),
+        onCopy: copySelection,
+        onPaste: pasteSelection,
+        onClearSelection: () => {
+            setSelectedNodeId(null);
+            setSelectedEdgeId(null);
+            setNodes((nds) => nds.map((n) => ({ ...n, selected: false })));
+            setEdges((eds) => eds.map((e) => ({ ...e, selected: false })));
+        },
+        onNudge: (dx, dy) => {
+            setNodes((nds) => nds.map((n) =>
+                n.selected ? { ...n, position: { x: n.position.x + dx, y: n.position.y + dy } } : n
+            ));
+        },
     });
 
     // --- AI ---
-    const { isGenerating, handleAIRequest, handleCodeAnalysis, chatMessages, clearChat } = useAIGeneration(
+    const { isGenerating, handleAIRequest, handleCodeAnalysis, handleSqlAnalysis, handleTerraformAnalysis, handleOpenApiAnalysis, chatMessages, clearChat } = useAIGeneration(
         recordHistory,
         handleCommandBarApply
     );
@@ -371,6 +385,7 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
         deleteSnapshot,
         selectedNode,
         selectedNodes,
+        selectedNodeCount: selectedNodes.length,
         selectedEdge,
         updateNodeData,
         applyBulkNodeData,
@@ -389,6 +404,9 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
         handleCommandBarApply,
         handleAIRequest,
         handleCodeAnalysis,
+        handleSqlAnalysis,
+        handleTerraformAnalysis,
+        handleOpenApiAnalysis,
         isGenerating,
         chatMessages,
         clearChat,
@@ -465,6 +483,9 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
         handleCommandBarApply,
         handleAIRequest,
         handleCodeAnalysis,
+        handleSqlAnalysis,
+        handleTerraformAnalysis,
+        handleOpenApiAnalysis,
         isGenerating,
         chatMessages,
         clearChat,

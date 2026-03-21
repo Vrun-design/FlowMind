@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { ConnectionLineComponentProps, getBezierPath, useNodes } from '@/lib/reactflowCompat';
-import { Settings } from 'lucide-react';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { NODE_WIDTH, NODE_HEIGHT } from '../constants';
 import type { FlowNode } from '@/lib/types';
+
+const SNAP_PADDING = 56;
 
 const CustomConnectionLine = ({
     fromX,
@@ -14,28 +14,20 @@ const CustomConnectionLine = ({
     toPosition,
 }: ConnectionLineComponentProps) => {
     const nodes = useNodes<FlowNode>();
-    const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
 
-    const isNearNode = useMemo(() => {
-        return nodes.some(node => {
-            const nX = node.position.x;
-            const nY = node.position.y;
-            const w = node.width || node.data?.width || NODE_WIDTH;
-            const h = node.height || node.data?.height || NODE_HEIGHT;
-
-            const hPoints = [
-                { x: nX + w / 2, y: nY }, // Top
-                { x: nX + w / 2, y: nY + h }, // Bottom
-                { x: nX, y: nY + h / 2 }, // Left
-                { x: nX + w, y: nY + h / 2 }, // Right
-            ];
-
-            return hPoints.some(hp => {
-                const dist = Math.sqrt((hp.x - toX) ** 2 + (hp.y - toY) ** 2);
-                return dist < 45; // Slightly larger for better feel
-            });
-        });
-    }, [nodes, toX, toY]);
+    let snapTarget: { nX: number; nY: number; w: number; h: number } | null = null;
+    for (const node of nodes) {
+        const nX = node.position.x;
+        const nY = node.position.y;
+        const w = node.width || node.data?.width || NODE_WIDTH;
+        const h = node.height || node.data?.height || NODE_HEIGHT;
+        const inside =
+            toX >= nX - SNAP_PADDING &&
+            toX <= nX + w + SNAP_PADDING &&
+            toY >= nY - SNAP_PADDING &&
+            toY <= nY + h + SNAP_PADDING;
+        if (inside) { snapTarget = { nX, nY, w, h }; break; }
+    }
 
     const [edgePath] = getBezierPath({
         sourceX: fromX,
@@ -50,45 +42,36 @@ const CustomConnectionLine = ({
         <g>
             <path
                 fill="none"
-                stroke="#6366f1"
-                strokeWidth={visualQualityV2Enabled ? 2.25 : 2}
-                strokeDasharray={visualQualityV2Enabled ? undefined : '5,5'}
-                className={visualQualityV2Enabled ? '' : 'animate-pulse'}
-                style={visualQualityV2Enabled ? { filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.15))' } : undefined}
+                stroke="var(--brand-primary, #6366f1)"
+                strokeWidth={2}
+                style={{ filter: 'drop-shadow(0 1px 3px rgba(99,102,241,0.25))' }}
                 d={edgePath}
             />
 
-            {/* Ghost Node Preview - Hide when near existing node */}
-            {!isNearNode && (
-                <foreignObject
-                    x={toX - NODE_WIDTH / 2}
-                    y={toY - NODE_HEIGHT / 2}
-                    width={NODE_WIDTH}
-                    height={NODE_HEIGHT}
-                    className="pointer-events-none"
-                >
-                    <div className="w-full h-full bg-indigo-50/20 backdrop-blur-[1px] border-2 border-indigo-200/40 border-dashed rounded-xl flex flex-col justify-center p-4 ring-2 ring-indigo-500/10 transition-all">
-                        <div className="flex items-center gap-3 opacity-40">
-                            <div className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-100/50 border border-indigo-200/50">
-                                <Settings className="w-5 h-5 text-indigo-400" />
-                            </div>
-                            <div className="flex flex-col gap-1.5 flex-1">
-                                <div className="h-3 w-2/3 bg-indigo-200/50 rounded-full" />
-                                <div className="h-2 w-1/2 bg-indigo-100/50 rounded-full" />
-                            </div>
-                        </div>
-                        <div className="mt-4 h-16 w-full bg-slate-50/20 rounded-lg border border-slate-200/20 border-dashed" />
-                    </div>
-                </foreignObject>
+            {/* Snap ring — lights up the target node on approach */}
+            {snapTarget && (
+                <rect
+                    x={snapTarget.nX - 3}
+                    y={snapTarget.nY - 3}
+                    width={snapTarget.w + 6}
+                    height={snapTarget.h + 6}
+                    rx={9}
+                    ry={9}
+                    fill="none"
+                    stroke="var(--brand-primary, #6366f1)"
+                    strokeWidth={2.5}
+                    opacity={0.65}
+                    pointerEvents="none"
+                />
             )}
 
+            {/* Endpoint dot — grows on snap */}
             <circle
                 cx={toX}
                 cy={toY}
-                fill="#fff"
-                r={visualQualityV2Enabled ? 5 : 4}
-                stroke="#6366f1"
-                strokeWidth={2}
+                r={snapTarget ? 6 : 4}
+                fill="var(--brand-primary, #6366f1)"
+                opacity={snapTarget ? 1 : 0.6}
             />
         </g>
     );

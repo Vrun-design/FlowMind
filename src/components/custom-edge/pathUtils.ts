@@ -501,10 +501,7 @@ function buildMindmapTopicBranchPath(
     };
 }
 
-/**
- * Builds an SVG path string from a polyline with rounded corners.
- * Uses quadratic Bézier curves at each interior bend point.
- */
+
 function buildRoundedPolylinePath(points: { x: number; y: number }[], cornerRadius: number): string {
     if (points.length === 0) return '';
     if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
@@ -704,7 +701,7 @@ export function buildEdgePath(
                 params.sourcePosition,
                 params.targetPosition
             );
-            const pathStr = buildRoundedPolylinePath(allPoints, 8);
+            const pathStr = buildRoundedPolylinePath(allPoints, 20);
             const { x: labelX, y: labelY } = getElkLabelPosition(adjustedSource.x, adjustedSource.y, points);
 
             return {
@@ -777,7 +774,7 @@ export function buildEdgePath(
             const pathPoints = [{ x: sourceX, y: sourceY }, ...manualWaypoints, { x: targetX, y: targetY }];
             const midpoint = getPathMidpoint(pathPoints);
             return withBundledLabelOffset(
-                buildRoundedPolylinePath(pathPoints, 8),
+                buildRoundedPolylinePath(pathPoints, 20),
                 midpoint.x,
                 midpoint.y,
                 params,
@@ -811,7 +808,7 @@ export function buildEdgePath(
                 params.sourcePosition,
                 params.targetPosition
             );
-            const pathStr = buildRoundedPolylinePath(allPoints, 8);
+            const pathStr = buildRoundedPolylinePath(allPoints, 20);
 
             const { x: labelX, y: labelY } = getElkLabelPosition(adjustedSource.x, adjustedSource.y, points);
             return withBundledLabelOffset(pathStr, labelX, labelY, params, labelBundleOffset);

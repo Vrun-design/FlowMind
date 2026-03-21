@@ -6,6 +6,7 @@ import type { FlowTemplate } from '@/services/templates';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
 import type { ChatMessage } from '@/services/aiService';
 import type { SupportedLanguage } from '@/hooks/ai-generation/codeToArchitecture';
+import type { TerraformInputFormat } from '@/hooks/ai-generation/terraformToCloud';
 
 interface BuildFlowEditorPanelsPropsParams {
     isCommandBarOpen: boolean;
@@ -47,6 +48,7 @@ interface BuildFlowEditorPanelsPropsParams {
     deleteSnapshot: (id: string) => void;
     selectedNode: FlowNode | null;
     selectedNodes: FlowNode[];
+    selectedNodeCount: number;
     selectedEdge: FlowEdge | null;
     updateNodeData: (id: string, data: Record<string, unknown>) => void;
     applyBulkNodeData: FlowEditorPanelsProps['properties']['onBulkChangeNodes'];
@@ -65,6 +67,9 @@ interface BuildFlowEditorPanelsPropsParams {
     handleCommandBarApply: (nodes: FlowNode[], edges: FlowEdge[]) => void;
     handleAIRequest: (prompt: string, imageBase64?: string) => Promise<void>;
     handleCodeAnalysis: (code: string, language: SupportedLanguage) => Promise<void>;
+    handleSqlAnalysis: (sql: string) => Promise<void>;
+    handleTerraformAnalysis: (input: string, format: TerraformInputFormat) => Promise<void>;
+    handleOpenApiAnalysis: (spec: string) => Promise<void>;
     isGenerating: boolean;
     chatMessages: ChatMessage[];
     clearChat: () => void;
@@ -113,6 +118,7 @@ export function buildFlowEditorPanelsProps({
     deleteSnapshot,
     selectedNode,
     selectedNodes,
+    selectedNodeCount,
     selectedEdge,
     updateNodeData,
     applyBulkNodeData,
@@ -131,6 +137,9 @@ export function buildFlowEditorPanelsProps({
     handleCommandBarApply,
     handleAIRequest,
     handleCodeAnalysis,
+    handleSqlAnalysis,
+    handleTerraformAnalysis,
+    handleOpenApiAnalysis,
     isGenerating,
     chatMessages,
     clearChat,
@@ -205,10 +214,14 @@ export function buildFlowEditorPanelsProps({
             onApply: handleCommandBarApply,
             onAIGenerate: handleAIRequest,
             onCodeAnalysis: handleCodeAnalysis,
+            onSqlAnalysis: handleSqlAnalysis,
+            onTerraformAnalysis: handleTerraformAnalysis,
+            onOpenApiAnalysis: handleOpenApiAnalysis,
             isGenerating,
             chatMessages,
             onClearChat: clearChat,
             selectedNode,
+            selectedNodeCount,
             onViewProperties: setCanvasMode,
             activeTab: studioTab,
             onTabChange: setStudioTab,

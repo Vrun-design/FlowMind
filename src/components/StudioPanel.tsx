@@ -4,6 +4,7 @@ import type { FlowEdge, FlowNode } from '@/lib/types';
 import type { ChatMessage } from '@/services/aiService';
 import type { StudioCodeMode, StudioTab } from '@/hooks/useFlowEditorUIState';
 import type { SupportedLanguage } from '@/hooks/ai-generation/codeToArchitecture';
+import type { TerraformInputFormat } from '@/hooks/ai-generation/terraformToCloud';
 import { SidebarBody, SidebarHeader, SidebarSegmentedTabs, SidebarShell } from './SidebarShell';
 
 const LazyStudioAIPanel = lazy(async () => {
@@ -23,6 +24,9 @@ interface StudioPanelProps {
     onApply: (nodes: FlowNode[], edges: FlowEdge[]) => void;
     onAIGenerate: (prompt: string, imageBase64?: string) => Promise<void>;
     onCodeAnalysis?: (code: string, language: SupportedLanguage) => Promise<void>;
+    onSqlAnalysis?: (sql: string) => Promise<void>;
+    onTerraformAnalysis?: (input: string, format: TerraformInputFormat) => Promise<void>;
+    onOpenApiAnalysis?: (spec: string) => Promise<void>;
     isGenerating: boolean;
     chatMessages: ChatMessage[];
     onClearChat: () => void;
@@ -31,6 +35,7 @@ interface StudioPanelProps {
     codeMode: StudioCodeMode;
     onCodeModeChange: (mode: StudioCodeMode) => void;
     selectedNode: FlowNode | null;
+    selectedNodeCount: number;
     onViewProperties: () => void;
     playback: {
         currentStepIndex: number;
@@ -54,6 +59,9 @@ export function StudioPanel({
     onApply,
     onAIGenerate,
     onCodeAnalysis,
+    onSqlAnalysis,
+    onTerraformAnalysis,
+    onOpenApiAnalysis,
     isGenerating,
     chatMessages,
     onClearChat,
@@ -62,6 +70,7 @@ export function StudioPanel({
     codeMode,
     onCodeModeChange,
     selectedNode,
+    selectedNodeCount,
     onViewProperties,
     playback: _playback,
 }: StudioPanelProps): React.ReactElement {
@@ -109,9 +118,13 @@ export function StudioPanel({
                         <LazyStudioAIPanel
                             onAIGenerate={onAIGenerate}
                             onCodeAnalysis={onCodeAnalysis}
+                            onSqlAnalysis={onSqlAnalysis}
+                            onTerraformAnalysis={onTerraformAnalysis}
+                            onOpenApiAnalysis={onOpenApiAnalysis}
                             isGenerating={isGenerating}
                             chatMessages={chatMessages}
                             onClearChat={onClearChat}
+                            selectedNodeCount={selectedNodeCount}
                         />
                     </Suspense>
                 ) : activeTab === 'code' ? (

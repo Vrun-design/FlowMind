@@ -128,19 +128,19 @@ const ROLLOUT_FLAG_DEFINITIONS: Record<RolloutFlagKey, RolloutFlagDefinition> = 
     importAdaptersV1: {
         key: 'importAdaptersV1',
         envVar: 'VITE_IMPORT_ADAPTERS_V1',
-        defaultEnabled: false,
+        defaultEnabled: true,
         description: 'External import adapter framework',
     },
     terraformImportV1: {
         key: 'terraformImportV1',
         envVar: 'VITE_TERRAFORM_IMPORT_V1',
-        defaultEnabled: false,
+        defaultEnabled: true,
         description: 'Terraform graph and plan import pipeline',
     },
     openApiImportV1: {
         key: 'openApiImportV1',
         envVar: 'VITE_OPENAPI_IMPORT_V1',
-        defaultEnabled: false,
+        defaultEnabled: true,
         description: 'OpenAPI-driven topology import pipeline',
     },
     liveBindingsV1: {

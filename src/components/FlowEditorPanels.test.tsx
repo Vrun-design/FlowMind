@@ -91,6 +91,7 @@ const baseProps = {
     codeMode: 'openflow' as const,
     onCodeModeChange: vi.fn(),
     selectedNode: null,
+    selectedNodeCount: 0,
     onViewProperties: vi.fn(),
     playback: {
       currentStepIndex: -1,

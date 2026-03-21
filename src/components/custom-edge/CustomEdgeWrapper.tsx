@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BaseEdge, EdgeLabelRenderer, useReactFlow } from '@/lib/reactflowCompat';
 import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { MarkerType } from '@/lib/reactflowCompat';
@@ -46,10 +46,10 @@ function toLabelTransform(x: number, y: number): string {
 export function CustomEdgeWrapper({
     id,
     path,
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
+    sourceX: _sourceX,
+    sourceY: _sourceY,
+    targetX: _targetX,
+    targetY: _targetY,
     labelX,
     labelY,
     markerEnd,
@@ -66,10 +66,31 @@ export function CustomEdgeWrapper({
     const pathRef = useRef<SVGPathElement>(null);
     const labelRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
+    const [isEditingLabel, setIsEditingLabel] = useState(false);
+    const [labelDraft, setLabelDraft] = useState('');
     const designSystem = useDesignSystem();
     const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
     const relationSemanticsV1Enabled = ROLLOUT_FLAGS.relationSemanticsV1;
     const canvasInteractionsV1Enabled = ROLLOUT_FLAGS.canvasInteractionsV1;
+
+    const beginLabelEdit = useCallback(() => {
+        const current = typeof label === 'string' ? label : (typeof data?.label === 'string' ? data.label : '');
+        setLabelDraft(current);
+        setIsEditingLabel(true);
+    }, [label, data]);
+
+    const commitLabelEdit = useCallback(() => {
+        setEdges((edges) => edges.map((e) =>
+            e.id !== id ? e : { ...e, data: { ...e.data, label: labelDraft } }
+        ));
+        setIsEditingLabel(false);
+    }, [id, labelDraft, setEdges]);
+
+    const cancelLabelEdit = useCallback(() => {
+        setIsEditingLabel(false);
+    }, []);
+
+    const displayPath = path;
 
     const relationVisualSpec = resolveRelationVisualSpec(
         relationSemanticsV1Enabled,
@@ -276,10 +297,10 @@ export function CustomEdgeWrapper({
                     ))}
                 </defs>
             </svg>
-            <BaseEdge path={path} markerEnd={resolvedMarkerEnd} markerStart={resolvedMarkerStart} style={resolvedStyle} />
+            <BaseEdge path={displayPath} markerEnd={resolvedMarkerEnd} markerStart={resolvedMarkerStart} style={resolvedStyle} />
             {animatedPresentation.shouldRenderOverlay && (
                 <path
-                    d={path}
+                    d={displayPath}
                     fill="none"
                     strokeLinecap="round"
                     style={animatedPresentation.overlayStyle}
@@ -289,7 +310,7 @@ export function CustomEdgeWrapper({
                 />
             )}
             <path
-                d={path}
+                d={displayPath}
                 fill="none"
                 stroke="rgba(15,23,42,0.001)"
                 strokeWidth={20}
@@ -300,7 +321,7 @@ export function CustomEdgeWrapper({
             >
                 {canvasInteractionsV1Enabled && <title>Select edge</title>}
             </path>
-            <path ref={pathRef} d={path} style={{ display: 'none' }} fill="none" stroke="none" aria-hidden="true" />
+            <path ref={pathRef} d={displayPath} style={{ display: 'none' }} fill="none" stroke="none" aria-hidden="true" />
 
             {renderedLabel && (
                 <EdgeLabelRenderer>
@@ -316,16 +337,32 @@ export function CustomEdgeWrapper({
                         onPointerLeave={() => setIsHovered(false)}
                         className={`flow-edge-label nodrag nopan ${selected || isHovered ? 'flow-lod-preserve' : ''}`}
                     >
-                        <div
-                            onPointerDown={onLabelPointerDown}
-                            className={
-                                visualQualityV2Enabled
-                                    ? 'bg-white/95 px-2.5 py-0.5 rounded-full border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.08)] text-[11px] font-medium text-slate-500 hover:border-indigo-300 hover:text-slate-700 hover:shadow-md active:ring-2 active:ring-indigo-400 select-none flow-lod-secondary flow-lod-shadow transition-all'
-                                    : 'bg-white px-2 py-1 rounded border border-slate-200 shadow-sm text-xs font-medium text-slate-600 hover:ring-2 hover:ring-indigo-500/20 active:ring-indigo-500 select-none flow-lod-secondary flow-lod-shadow'
-                            }
-                        >
-                            {renderedLabel}
-                        </div>
+                        {isEditingLabel ? (
+                            <input
+                                autoFocus
+                                value={labelDraft}
+                                onChange={(e) => setLabelDraft(e.target.value)}
+                                onBlur={commitLabelEdit}
+                                onKeyDown={(e) => {
+                                    e.stopPropagation();
+                                    if (e.key === 'Enter') { e.preventDefault(); commitLabelEdit(); }
+                                    if (e.key === 'Escape') { e.preventDefault(); cancelLabelEdit(); }
+                                }}
+                                className="bg-white border border-indigo-400 rounded-full px-2.5 py-0.5 text-[11px] font-medium text-slate-700 shadow-sm outline-none ring-2 ring-indigo-300/50 min-w-[60px]"
+                            />
+                        ) : (
+                            <div
+                                onPointerDown={onLabelPointerDown}
+                                onDoubleClick={(e) => { e.stopPropagation(); beginLabelEdit(); }}
+                                className={
+                                    visualQualityV2Enabled
+                                        ? 'bg-white/95 px-2.5 py-0.5 rounded-full border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.08)] text-[11px] font-medium text-slate-500 hover:border-indigo-300 hover:text-slate-700 hover:shadow-md active:ring-2 active:ring-indigo-400 select-none flow-lod-secondary flow-lod-shadow transition-all'
+                                        : 'bg-white px-2 py-1 rounded border border-slate-200 shadow-sm text-xs font-medium text-slate-600 hover:ring-2 hover:ring-indigo-500/20 active:ring-indigo-500 select-none flow-lod-secondary flow-lod-shadow'
+                                }
+                            >
+                                {renderedLabel}
+                            </div>
+                        )}
                     </div>
                 </EdgeLabelRenderer>
             )}

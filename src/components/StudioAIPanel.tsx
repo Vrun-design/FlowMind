@@ -1,7 +1,7 @@
 import { useRef, useState, type ReactElement } from 'react';
 import {
     ArrowUp, Code2, Database, Server, Cloud, Network,
-    Loader2, Paperclip, Trash2, WandSparkles, X, FileCode,
+    Loader2, Paperclip, Trash2, WandSparkles, X, FileCode, Crosshair, Import,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
@@ -13,6 +13,7 @@ import {
     FILE_EXTENSION_TO_LANGUAGE,
     type SupportedLanguage,
 } from '@/hooks/ai-generation/codeToArchitecture';
+import { TERRAFORM_FORMAT_LABELS, type TerraformInputFormat } from '@/hooks/ai-generation/terraformToCloud';
 
 interface FlowPilotExample {
     label: string;
@@ -40,17 +41,35 @@ function getExampleIconColor(index: number): string {
     return EXAMPLE_ICON_COLORS[index % EXAMPLE_ICON_COLORS.length];
 }
 
+type ImportType = 'sql' | 'terraform' | 'openapi';
+
+const IMPORT_TYPE_LABELS: Record<ImportType, string> = {
+    sql: 'SQL DDL → ERD',
+    terraform: 'Terraform / K8s → Cloud',
+    openapi: 'OpenAPI → Sequence',
+};
+
+const IMPORT_TYPE_PLACEHOLDERS: Record<ImportType, string> = {
+    sql: 'Paste CREATE TABLE statements here...',
+    terraform: 'Paste Terraform HCL, Kubernetes YAML, or Docker Compose here...',
+    openapi: 'Paste your OpenAPI / Swagger YAML or JSON here...',
+};
+
 interface StudioAIPanelProps {
     onAIGenerate: (prompt: string, imageBase64?: string) => Promise<void>;
     isGenerating: boolean;
     chatMessages: ChatMessage[];
     onClearChat: () => void;
     onCodeAnalysis?: (code: string, language: SupportedLanguage) => Promise<void>;
+    onSqlAnalysis?: (sql: string) => Promise<void>;
+    onTerraformAnalysis?: (input: string, format: TerraformInputFormat) => Promise<void>;
+    onOpenApiAnalysis?: (spec: string) => Promise<void>;
+    selectedNodeCount?: number;
 }
 
-type AIMode = 'chat' | 'code';
+type AIMode = 'chat' | 'code' | 'import';
 
-const AI_MODES: AIMode[] = ['chat', 'code'];
+const AI_MODES: AIMode[] = ['chat', 'code', 'import'];
 
 export function StudioAIPanel({
     onAIGenerate,
@@ -58,6 +77,10 @@ export function StudioAIPanel({
     chatMessages,
     onClearChat,
     onCodeAnalysis,
+    onSqlAnalysis,
+    onTerraformAnalysis,
+    onOpenApiAnalysis,
+    selectedNodeCount = 0,
 }: StudioAIPanelProps): ReactElement {
     const { t } = useTranslation();
     const isBeveled = IS_BEVELED;
@@ -66,6 +89,10 @@ export function StudioAIPanel({
     const [codeInput, setCodeInput] = useState('');
     const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>('typescript');
     const showCodeTab = ROLLOUT_FLAGS.codeToArchitectureV1 && Boolean(onCodeAnalysis);
+    const showImportTab = ROLLOUT_FLAGS.importAdaptersV1 && (Boolean(onSqlAnalysis) || Boolean(onTerraformAnalysis) || Boolean(onOpenApiAnalysis));
+    const [importType, setImportType] = useState<ImportType>('sql');
+    const [importInput, setImportInput] = useState('');
+    const [terraformFormat, setTerraformFormat] = useState<TerraformInputFormat>('terraform');
 
     const {
         prompt,
@@ -104,11 +131,26 @@ export function StudioAIPanel({
         await onCodeAnalysis(codeInput, selectedLanguage);
     };
 
+    const handleImport = async () => {
+        if (!importInput.trim()) return;
+        if (importType === 'sql' && onSqlAnalysis) {
+            await onSqlAnalysis(importInput);
+        } else if (importType === 'terraform' && onTerraformAnalysis) {
+            await onTerraformAnalysis(importInput, terraformFormat);
+        } else if (importType === 'openapi' && onOpenApiAnalysis) {
+            await onOpenApiAnalysis(importInput);
+        }
+    };
+
     return (
         <div className="flex h-full min-h-0 flex-col overflow-hidden">
-            {showCodeTab && (
+            {(showCodeTab || showImportTab) && (
                 <div className="flex gap-1 border-b border-slate-100 px-1 pb-0 pt-1 shrink-0">
-                    {AI_MODES.map((mode) => (
+                    {AI_MODES.filter((mode) => {
+                        if (mode === 'code') return showCodeTab;
+                        if (mode === 'import') return showImportTab;
+                        return true;
+                    }).map((mode) => (
                         <button
                             key={mode}
                             onClick={() => setAiMode(mode)}
@@ -118,14 +160,73 @@ export function StudioAIPanel({
                                     : 'border-transparent text-slate-500 hover:text-slate-700'
                             }`}
                         >
-                            {mode === 'chat' ? <WandSparkles className="h-3.5 w-3.5" /> : <Code2 className="h-3.5 w-3.5" />}
-                            {mode === 'chat' ? 'FlowPilot' : 'From Code'}
+                            {mode === 'chat' && <WandSparkles className="h-3.5 w-3.5" />}
+                            {mode === 'code' && <Code2 className="h-3.5 w-3.5" />}
+                            {mode === 'import' && <Import className="h-3.5 w-3.5" />}
+                            {mode === 'chat' ? 'FlowPilot' : mode === 'code' ? 'From Code' : 'Import'}
                         </button>
                     ))}
                 </div>
             )}
 
-            {aiMode === 'code' && showCodeTab ? (
+            {aiMode === 'import' && showImportTab ? (
+                <div className="flex h-full min-h-0 flex-col gap-3 overflow-y-auto p-3 custom-scrollbar">
+                    <div className="rounded-[var(--radius-md)] border border-slate-200 bg-[var(--brand-primary-50)] p-3">
+                        <p className="text-xs font-medium text-[var(--brand-primary)]">Import from structured data</p>
+                        <p className="mt-0.5 text-[11px] text-slate-500">Paste SQL, Terraform, or OpenAPI specs — FlowPilot will generate a diagram automatically.</p>
+                    </div>
+
+                    <div className="flex gap-1.5 flex-wrap">
+                        {(Object.entries(IMPORT_TYPE_LABELS) as [ImportType, string][]).map(([key, label]) => (
+                            <button
+                                key={key}
+                                onClick={() => { setImportType(key); setImportInput(''); }}
+                                className={`rounded-full border px-3 py-1 text-[11px] font-medium transition-colors ${
+                                    importType === key
+                                        ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)] text-[var(--brand-primary)]'
+                                        : 'border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700'
+                                }`}
+                            >
+                                {label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {importType === 'terraform' && (
+                        <div className="flex items-center gap-2">
+                            <label className="text-xs font-medium text-slate-600 shrink-0">Format</label>
+                            <select
+                                value={terraformFormat}
+                                onChange={(e) => setTerraformFormat(e.target.value as TerraformInputFormat)}
+                                className="flex-1 rounded-[var(--radius-sm)] border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 outline-none focus:border-[var(--brand-primary)] focus:ring-1 focus:ring-[var(--brand-primary-100)]"
+                            >
+                                {(Object.entries(TERRAFORM_FORMAT_LABELS) as [TerraformInputFormat, string][]).map(([key, label]) => (
+                                    <option key={key} value={key}>{label}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    <textarea
+                        value={importInput}
+                        onChange={(e) => setImportInput(e.target.value)}
+                        placeholder={IMPORT_TYPE_PLACEHOLDERS[importType]}
+                        className="min-h-[240px] flex-1 resize-none rounded-[var(--radius-md)] border border-slate-200 bg-white px-3 py-3 font-mono text-xs text-slate-700 outline-none placeholder-slate-300 focus:border-[var(--brand-primary)] focus:ring-1 focus:ring-[var(--brand-primary-100)] custom-scrollbar"
+                    />
+
+                    <button
+                        onClick={() => void handleImport()}
+                        disabled={!importInput.trim() || isGenerating}
+                        className={`flex h-9 w-full items-center justify-center gap-2 rounded-[var(--brand-radius)] bg-[var(--brand-primary)] text-sm font-medium text-white transition-all hover:bg-[var(--brand-primary-600)] disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98] ${isBeveled ? 'btn-beveled' : ''}`}
+                    >
+                        {isGenerating ? (
+                            <><Loader2 className="h-4 w-4 animate-spin" /> Generating...</>
+                        ) : (
+                            <><WandSparkles className="h-4 w-4" /> Generate Diagram</>
+                        )}
+                    </button>
+                </div>
+            ) : aiMode === 'code' && showCodeTab ? (
                 <div className="flex h-full min-h-0 flex-col gap-3 overflow-y-auto p-3 custom-scrollbar">
                     <div className="rounded-[var(--radius-md)] border border-slate-200 bg-[var(--brand-primary-50)] p-3">
                         <p className="text-xs font-medium text-[var(--brand-primary)]">Paste source code below</p>
@@ -240,6 +341,14 @@ export function StudioAIPanel({
                     </div>
 
                     <div className="border-t border-slate-100 px-1 pt-3">
+                        {selectedNodeCount > 0 && (
+                            <div className="mb-2 flex items-center gap-1.5 rounded-md bg-[var(--brand-primary-50)] px-2.5 py-1.5">
+                                <Crosshair className="h-3 w-3 shrink-0 text-[var(--brand-primary)]" />
+                                <span className="text-[11px] font-medium text-[var(--brand-primary)]">
+                                    Editing {selectedNodeCount} selected {selectedNodeCount === 1 ? 'node' : 'nodes'}
+                                </span>
+                            </div>
+                        )}
                         {selectedImage && (
                             <div className="group relative mb-3 h-16 w-16 overflow-hidden rounded-[var(--radius-md)] border border-slate-200 bg-slate-100 shadow-sm">
                                 <img src={selectedImage} alt="Upload preview" className="h-full w-full object-cover" />

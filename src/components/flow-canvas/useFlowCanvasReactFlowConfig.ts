@@ -33,6 +33,7 @@ export interface FlowCanvasReactFlowConfig {
     onlyRenderVisibleElements: boolean;
     connectionMode: ConnectionMode;
     selectionOnDrag: boolean;
+    selectNodesOnDrag: boolean;
     selectionKeyCode: KeyCode | null;
     panOnDrag: boolean | number[];
     panActivationKeyCode: KeyCode | null;
@@ -64,6 +65,7 @@ export function computeFlowCanvasReactFlowConfig({
         onlyRenderVisibleElements: viewportCullingEnabled,
         connectionMode: ConnectionMode.Loose,
         selectionOnDrag: isEffectiveSelectMode,
+        selectNodesOnDrag: false,
         selectionKeyCode: 'Shift',
         panOnDrag: isEffectiveSelectMode ? [1, 2] : [0, 1, 2],
         panActivationKeyCode: 'Space',
@@ -90,7 +92,7 @@ export function computeFlowCanvasReactFlowConfig({
             variant: BackgroundVariant.Dots,
             gap: visualQualityV2Enabled ? 24 : 20,
             size: visualQualityV2Enabled ? 1.5 : 1.25,
-            color: visualQualityV2Enabled ? 'rgba(148,163,184,0.5)' : '#94a3b8',
+            color: visualQualityV2Enabled ? 'rgba(148,163,184,0.35)' : '#94a3b8',
         },
     };
 }
@@ -111,7 +113,9 @@ export function useFlowCanvasReactFlowConfig({
     );
 
     const isValidConnection = useCallback(
-        (connection: Connection) => !isDuplicateConnection(connection, effectiveEdges),
+        (connection: Connection) =>
+            connection.source !== connection.target &&
+            !isDuplicateConnection(connection, effectiveEdges),
         [effectiveEdges]
     );
 

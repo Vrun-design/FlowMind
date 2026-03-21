@@ -30,7 +30,7 @@ export function useInlineNodeTextEdit(
   cancel: () => void;
   handleKeyDown: (event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 } {
-  const { setNodes } = useFlowStore();
+  const { setNodes, recordHistoryV2 } = useFlowStore();
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraftState] = useState(initialValue ?? '');
   const multiline = options.multiline ?? false;
@@ -52,6 +52,7 @@ export function useInlineNodeTextEdit(
 
   const commit = useCallback(() => {
     const nextValue = draft.trim();
+    recordHistoryV2();
     setNodes((nodes) =>
       nodes.map((node) =>
         node.id === nodeId
@@ -66,7 +67,7 @@ export function useInlineNodeTextEdit(
       )
     );
     setIsEditing(false);
-  }, [draft, field, nodeId, setNodes]);
+  }, [draft, field, nodeId, setNodes, recordHistoryV2]);
 
   const cancel = useCallback(() => {
     setDraftState(initialValue ?? '');

@@ -99,8 +99,12 @@ export interface StudioRailProps {
     onApply: (nodes: FlowNode[], edges: FlowEdge[]) => void;
     onAIGenerate: (prompt: string, imageBase64?: string) => Promise<void>;
     onCodeAnalysis?: (code: string, language: import('@/hooks/ai-generation/codeToArchitecture').SupportedLanguage) => Promise<void>;
+    onSqlAnalysis?: (sql: string) => Promise<void>;
+    onTerraformAnalysis?: (input: string, format: import('@/hooks/ai-generation/terraformToCloud').TerraformInputFormat) => Promise<void>;
+    onOpenApiAnalysis?: (spec: string) => Promise<void>;
     isGenerating: boolean;
     selectedNode: FlowNode | null;
+    selectedNodeCount: number;
     onViewProperties: () => void;
     chatMessages: ChatMessage[];
     onClearChat: () => void;
@@ -151,8 +155,12 @@ export function FlowEditorPanels({
                 onApply={studio.onApply}
                 onAIGenerate={studio.onAIGenerate}
                 onCodeAnalysis={studio.onCodeAnalysis}
+                onSqlAnalysis={studio.onSqlAnalysis}
+                onTerraformAnalysis={studio.onTerraformAnalysis}
+                onOpenApiAnalysis={studio.onOpenApiAnalysis}
                 isGenerating={studio.isGenerating}
                 selectedNode={studio.selectedNode}
+                selectedNodeCount={studio.selectedNodeCount}
                 onViewProperties={studio.onViewProperties}
                 chatMessages={studio.chatMessages}
                 onClearChat={studio.onClearChat}
