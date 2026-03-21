@@ -40,6 +40,11 @@ const LazyKeyboardShortcutsModal = lazy(async () => {
   return { default: module.KeyboardShortcutsModal };
 });
 
+const LazyDiagramViewer = lazy(async () => {
+  const module = await import('./components/DiagramViewer');
+  return { default: module.DiagramViewer };
+});
+
 // Backwards-compatibility redirect: /docs/:slug → /docs/en/:slug
 function DocsSlugRedirect(): React.JSX.Element {
   const { slug } = useParams<{ slug: string }>();
@@ -172,7 +177,6 @@ function MobileGate({ children }: { children: React.ReactNode }): React.JSX.Elem
 function App(): React.JSX.Element {
   const { setShortcutsHelpOpen } = useFlowStore();
   const isShortcutsHelpOpen = useShortcutHelpOpen();
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger if user is typing in an input
@@ -201,6 +205,14 @@ function App(): React.JSX.Element {
     <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route
+          path="/view"
+          element={(
+            <Suspense fallback={<RouteLoadingFallback />}>
+              <LazyDiagramViewer />
+            </Suspense>
+          )}
+        />
         <Route path="/home" element={<MobileGate><HomePageRoute /></MobileGate>} />
         <Route path="/settings" element={<MobileGate><HomePageRoute /></MobileGate>} />
         <Route path="/canvas" element={<MobileGate><FlowCanvasRoute /></MobileGate>} />
