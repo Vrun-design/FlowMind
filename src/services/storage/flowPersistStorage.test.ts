@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { createFlowPersistStorage } from './flowPersistStorage';
 import { ensureFlowPersistenceSchema } from './indexedDbSchema';
 
@@ -8,7 +7,6 @@ vi.mock('./indexedDbSchema', () => ({
 }));
 
 describe('flowPersistStorage', () => {
-  const originalFlag = ROLLOUT_FLAGS.indexedDbStorageV1;
   const originalIndexedDb = globalThis.indexedDB;
   const originalLocalStorage = globalThis.localStorage;
 
@@ -18,7 +16,6 @@ describe('flowPersistStorage', () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    ROLLOUT_FLAGS.indexedDbStorageV1 = originalFlag;
     vi.mocked(ensureFlowPersistenceSchema).mockClear();
     if (typeof originalIndexedDb === 'undefined') {
       // `delete` is required to restore the undefined global.
@@ -29,9 +26,8 @@ describe('flowPersistStorage', () => {
     globalThis.localStorage = originalLocalStorage;
   });
 
-  it('uses localStorage storage path when indexedDbStorageV1 is disabled', () => {
-    ROLLOUT_FLAGS.indexedDbStorageV1 = false;
-    globalThis.indexedDB = {} as IDBFactory;
+  it('uses localStorage storage path when IndexedDB is unavailable', () => {
+    delete (globalThis as { indexedDB?: IDBFactory }).indexedDB;
 
     const storage = createFlowPersistStorage();
 
@@ -40,8 +36,7 @@ describe('flowPersistStorage', () => {
     expect(ensureFlowPersistenceSchema).not.toHaveBeenCalled();
   });
 
-  it('attempts IndexedDB schema init when indexedDbStorageV1 is enabled', () => {
-    ROLLOUT_FLAGS.indexedDbStorageV1 = true;
+  it('attempts IndexedDB schema init when IndexedDB is available', () => {
     globalThis.indexedDB = {} as IDBFactory;
 
     createFlowPersistStorage();
@@ -50,7 +45,6 @@ describe('flowPersistStorage', () => {
   });
 
   it('does not attempt schema init when IndexedDB is unavailable', () => {
-    ROLLOUT_FLAGS.indexedDbStorageV1 = true;
     delete (globalThis as { indexedDB?: IDBFactory }).indexedDB;
 
     createFlowPersistStorage();
@@ -59,7 +53,7 @@ describe('flowPersistStorage', () => {
   });
 
   it('debounces rapid writes before hitting the underlying storage', async () => {
-    ROLLOUT_FLAGS.indexedDbStorageV1 = false;
+    delete (globalThis as { indexedDB?: IDBFactory }).indexedDB;
     const setItem = vi.fn();
     globalThis.localStorage = {
       getItem: vi.fn(() => null),
@@ -84,7 +78,7 @@ describe('flowPersistStorage', () => {
   });
 
   it('flushes a pending write before reading the same key', async () => {
-    ROLLOUT_FLAGS.indexedDbStorageV1 = false;
+    delete (globalThis as { indexedDB?: IDBFactory }).indexedDB;
     const setItem = vi.fn();
     const getItem = vi.fn(() => '{"state":{"activeTabId":"tab-2"},"version":1}');
     globalThis.localStorage = {

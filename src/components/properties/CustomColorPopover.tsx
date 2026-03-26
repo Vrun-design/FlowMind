@@ -83,7 +83,7 @@ export function CustomColorPopover({
     return createPortal(
         <div
             ref={popupRef}
-            className="fixed z-[100] overflow-y-auto rounded-[calc(var(--brand-radius)+2px)] border border-slate-200 bg-white p-3 shadow-[0_18px_48px_rgba(15,23,42,0.16)]"
+            className="fixed z-[100] overflow-y-auto rounded-[var(--radius-lg)] border border-slate-200 bg-white p-3 shadow-[0_18px_48px_rgba(15,23,42,0.16)]"
             style={{
                 top: position.top,
                 left: position.left,

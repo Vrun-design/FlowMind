@@ -16,6 +16,7 @@ import {
     InspectorSectionDivider,
     InspectorSummaryCard,
 } from './InspectorPrimitives';
+import { createPropertyInputKeyDownHandler } from './propertyInputBehavior';
 
 interface BulkNodePropertiesProps {
     selectedNodes: Node<NodeData>[];
@@ -71,6 +72,7 @@ export function BulkNodeProperties({ selectedNodes, onApply }: BulkNodePropertie
     const [labelPrefix, setLabelPrefix] = useState('');
     const [labelSuffix, setLabelSuffix] = useState('');
     const [activeSection, setActiveSection] = useState('shape');
+    const handleInputKeyDown = createPropertyInputKeyDownHandler({ blurOnEnter: true });
 
     const changeSummary = useMemo(
         () => buildChangeSummary(shape, color, colorMode, customColor, icon, customIconUrl, labelPrefix, labelSuffix),
@@ -159,6 +161,7 @@ export function BulkNodeProperties({ selectedNodes, onApply }: BulkNodePropertie
                         <input
                             value={labelPrefix}
                             onChange={(event) => setLabelPrefix(event.target.value)}
+                            onKeyDown={handleInputKeyDown}
                             placeholder={t('properties.prefixOptional', 'Prefix (optional)')}
                             className={INSPECTOR_INPUT_CLASSNAME}
                         />
@@ -167,6 +170,7 @@ export function BulkNodeProperties({ selectedNodes, onApply }: BulkNodePropertie
                         <input
                             value={labelSuffix}
                             onChange={(event) => setLabelSuffix(event.target.value)}
+                            onKeyDown={handleInputKeyDown}
                             placeholder={t('properties.suffixOptional', 'Suffix (optional)')}
                             className={INSPECTOR_INPUT_CLASSNAME}
                         />

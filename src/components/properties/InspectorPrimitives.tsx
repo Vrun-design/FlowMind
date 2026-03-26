@@ -62,5 +62,6 @@ export function InspectorField({
 }
 
 export const INSPECTOR_INPUT_CLASSNAME = 'w-full rounded-[var(--brand-radius)] border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]';
-export const INSPECTOR_INPUT_COMPACT_CLASSNAME = 'w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm';
-export const INSPECTOR_BUTTON_CLASSNAME = 'rounded-md border border-slate-300 bg-white px-2 py-1.5 text-xs font-medium text-slate-700 hover:border-slate-400';
+export const INSPECTOR_INPUT_COMPACT_CLASSNAME = 'w-full rounded-[var(--radius-sm)] border border-slate-300 bg-white px-2 py-1.5 text-sm disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400';
+export const INSPECTOR_BUTTON_CLASSNAME = 'rounded-[var(--radius-sm)] border border-slate-300 bg-white px-2 py-1.5 text-xs font-medium text-slate-700 hover:border-slate-400 disabled:cursor-not-allowed disabled:opacity-50';
+export const INSPECTOR_BUTTON_ACCENT_CLASSNAME = 'rounded-[var(--radius-sm)] border border-[var(--brand-primary-200)] bg-[var(--brand-primary-50)] px-2 py-1.5 text-xs font-medium text-[var(--brand-primary-700)] hover:border-[var(--brand-primary-300)] disabled:cursor-not-allowed disabled:opacity-50';

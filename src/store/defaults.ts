@@ -1,5 +1,4 @@
 import type { DesignSystem, GlobalEdgeOptions } from '@/lib/types';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { sanitizeAISettings } from './aiSettings';
 import type { AISettings, Layer, ViewSettings } from './types';
 
@@ -49,6 +48,7 @@ export const DEFAULT_AI_SETTINGS: AISettings = sanitizeAISettings(
     { provider: 'gemini' },
     {
         provider: 'gemini',
+        storageMode: 'local',
         apiKey: undefined,
         model: undefined,
         customBaseUrl: undefined,
@@ -75,8 +75,8 @@ export const INITIAL_VIEW_SETTINGS: ViewSettings = {
 
 export const INITIAL_GLOBAL_EDGE_OPTIONS: GlobalEdgeOptions = {
     type: 'smoothstep',
-    animated: !ROLLOUT_FLAGS.visualQualityV2,
-    strokeWidth: ROLLOUT_FLAGS.visualQualityV2 ? 1.5 : 2,
+    animated: false,
+    strokeWidth: 1.5,
 };
 
 export const INITIAL_LAYERS: Layer[] = [

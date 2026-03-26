@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useFlowStore } from '@/store';
 import type { NodeData } from '@/lib/types';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { createConnectedSibling } from './node-operations/createConnectedSibling';
 import { useNodeLabelEditRequest } from './nodeLabelEditRequest';
 
@@ -95,9 +94,7 @@ export function useInlineNodeTextEdit(
       if (event.key === 'Tab' && !event.shiftKey && allowTabCreateSibling) {
         event.preventDefault();
         commit();
-        if (ROLLOUT_FLAGS.canvasInteractionsV1) {
-          createConnectedSibling(nodeId);
-        }
+        createConnectedSibling(nodeId);
       }
     },
     [allowTabCreateSibling, cancel, commit, multiline, nodeId]

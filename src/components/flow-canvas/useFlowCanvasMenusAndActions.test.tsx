@@ -15,6 +15,7 @@ describe('useFlowCanvasMenusAndActions', () => {
                 deleteNode: vi.fn(),
                 deleteEdge: vi.fn(),
                 updateNodeZIndex: vi.fn(),
+                updateNodeType: vi.fn(),
                 handleAlignNodes: vi.fn(),
                 handleDistributeNodes: vi.fn(),
                 handleGroupNodes: vi.fn(),

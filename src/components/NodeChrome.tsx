@@ -1,9 +1,9 @@
 import React from 'react';
 import { Handle, Position } from '@/lib/reactflowCompat';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from './handleInteraction';
 import { NodeTransformControls } from './NodeTransformControls';
 import { useActiveNodeSelection } from './useActiveNodeSelection';
+import { NodeQuickCreateButtons } from './NodeQuickCreateButtons';
 
 type HandleSide = 'top' | 'right' | 'bottom' | 'left';
 
@@ -14,6 +14,7 @@ type HandleConfig = {
 };
 
 type NodeChromeProps = {
+  nodeId?: string;
   selected: boolean;
   minWidth: number;
   minHeight: number;
@@ -36,6 +37,7 @@ const DEFAULT_HANDLES: HandleConfig[] = [
 ];
 
 export function NodeChrome({
+  nodeId,
   selected,
   minWidth,
   minHeight,
@@ -46,7 +48,7 @@ export function NodeChrome({
   handles = DEFAULT_HANDLES,
   children,
 }: NodeChromeProps): React.ReactElement {
-  const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
+  const visualQualityV2Enabled = true;
   const isActiveSelected = useActiveNodeSelection(selected);
   const handlePointerEvents = getHandlePointerEvents(visualQualityV2Enabled, isActiveSelected);
   const handleVisibilityClass = visualQualityV2Enabled
@@ -63,6 +65,7 @@ export function NodeChrome({
         minHeight={minHeight}
         keepAspectRatio={keepAspectRatio}
       />
+      {nodeId ? <NodeQuickCreateButtons nodeId={nodeId} visible={selected} /> : null}
       {children}
       {handles.map(({ id, position, side }) => (
         <Handle

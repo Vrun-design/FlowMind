@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect, useRef } from 'react';
 import { AlignJustify } from 'lucide-react';
 
 const LazyTopNavMenuPanel = lazy(async () => {
@@ -27,12 +27,43 @@ export function TopNavMenu({
     onHistory,
     onImportJSON,
 }: TopNavMenuProps): React.ReactElement {
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!isOpen) {
+            return;
+        }
+
+        function handlePointerDownOutside(event: PointerEvent): void {
+            const target = event.target as Node;
+            if (menuRef.current?.contains(target)) {
+                return;
+            }
+            onClose();
+        }
+
+        function handleEscape(event: KeyboardEvent): void {
+            if (event.key === 'Escape') {
+                onClose();
+            }
+        }
+
+        document.addEventListener('pointerdown', handlePointerDownOutside, true);
+        document.addEventListener('keydown', handleEscape);
+
+        return () => {
+            document.removeEventListener('pointerdown', handlePointerDownOutside, true);
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, [isOpen, onClose]);
+
     return (
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
             <button
                 onClick={onToggle}
                 data-testid="topnav-menu-toggle"
-                className={`flex items-center gap-2 px-3 py-2 rounded-[var(--radius-md)] border transition-all text-sm font-medium
+                aria-label="Open main menu"
+                className={`flex min-h-10 items-center gap-2 rounded-[var(--radius-md)] border px-3 py-2 text-sm font-medium transition-all sm:min-h-9
                     ${isOpen
                         ? 'bg-[var(--brand-primary-50)] border-[var(--brand-primary-200)] text-[var(--brand-primary)] shadow-inner'
                         : `bg-white border-slate-200 text-slate-600 hover:border-slate-300 ${isBeveled ? 'btn-beveled' : 'shadow-sm hover:shadow'}`}

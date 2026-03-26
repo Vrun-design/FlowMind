@@ -13,7 +13,9 @@ const LazyExportMenuPanel = lazy(async () => {
 interface ExportMenuProps {
     onExportPNG: (format: 'png' | 'jpeg') => void;
     onExportSVG: () => void;
+    onExportPDF: () => void;
     onExportAnimated: (format: 'video' | 'gif') => void;
+    onExportReveal: (format: 'reveal-video' | 'reveal-gif') => void;
     onExportJSON: () => void;
     onExportMermaid: () => void;
     onExportPlantUML: () => void;
@@ -25,7 +27,9 @@ interface ExportMenuProps {
 export const ExportMenu: React.FC<ExportMenuProps> = ({
     onExportPNG,
     onExportSVG,
+    onExportPDF,
     onExportAnimated,
+    onExportReveal,
     onExportJSON,
     onExportMermaid,
     onExportPlantUML,
@@ -34,10 +38,13 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
     onShare,
 }) => {
     const { t } = useTranslation();
+    const exportLabel = t('export.title', 'Export');
     const { isOpen, menuRef, toggleMenu, handleSelect } = useExportMenu({
         onExportPNG,
         onExportSVG,
+        onExportPDF,
         onExportAnimated,
+        onExportReveal,
         onExportJSON,
         onExportMermaid,
         onExportPlantUML,
@@ -52,10 +59,12 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
                 <Button
                     onClick={toggleMenu}
                     data-testid="topnav-export"
-                    className="h-9 px-4 text-sm"
+                    size="sm"
+                    aria-label={exportLabel}
+                    className="h-10 w-10 px-0 sm:h-9 sm:w-auto sm:px-3"
                 >
-                    <Download className="w-4 h-4 mr-2" />
-                    {t('export.title', 'Export')}
+                    <Download className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">{exportLabel}</span>
                 </Button>
             </Tooltip>
 

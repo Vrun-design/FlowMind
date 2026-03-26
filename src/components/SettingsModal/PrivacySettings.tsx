@@ -9,7 +9,7 @@ export const PrivacySettings = () => {
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Mission Statement */}
             <div className="space-y-4">
-                <div className="p-4 bg-[var(--brand-primary)]/5 border border-[var(--brand-primary)]/10 rounded-2xl">
+                <div className="rounded-[var(--radius-xl)] border border-[var(--brand-primary)]/10 bg-[var(--brand-primary)]/5 p-4">
                     <h3 className="flex items-center gap-2 font-bold text-[var(--brand-primary)] mb-3 text-sm uppercase tracking-wider">
                         <Shield className="w-4 h-4" />
                         {t('settingsModal.privacy.manifesto')}
@@ -36,7 +36,7 @@ export const PrivacySettings = () => {
                         href="https://forms.gle/hhS4FErGANEZm6oz8"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex flex-col items-center justify-center p-6 bg-white border border-slate-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary)]/5 rounded-xl transition-all group cursor-pointer text-center"
+                        className="group flex flex-col items-center justify-center rounded-[var(--radius-lg)] border border-slate-200 bg-white p-6 text-center transition-all hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary)]/5"
                     >
                         <div className="w-10 h-10 bg-slate-100 group-hover:bg-white rounded-full flex items-center justify-center mb-3 text-slate-500 group-hover:text-[var(--brand-primary)] transition-colors">
                             <MessageSquare className="w-5 h-5" />
@@ -51,7 +51,7 @@ export const PrivacySettings = () => {
 };
 
 const Feature = ({ icon, text }: { icon: React.ReactNode, text: string }) => (
-    <div className="flex items-center gap-2 text-xs font-medium text-slate-600 bg-white/50 p-2 rounded-lg border border-[var(--brand-primary)]/5">
+    <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--brand-primary)]/5 bg-white/50 p-2 text-xs font-medium text-slate-600">
         <div className="text-[var(--brand-primary)]">{icon}</div>
         {text}
     </div>

@@ -7,6 +7,7 @@ import { useCanvasActions, useCanvasState } from '@/store/canvasHooks';
 import { useActiveTabId, useTabActions } from '@/store/tabHooks';
 import { useViewSettings } from '@/store/viewHooks';
 import { buildAnimatedExportPlan, getAnimatedExportFileExtension, selectSupportedVideoMimeType, type AnimatedExportKind } from '@/services/animatedExport';
+import { buildRevealFrames } from '@/services/export/revealSequencer';
 import { orderGraphForSerialization } from '@/services/canonicalSerialization';
 import { createDiagramDocument, parseDiagramDocumentImport } from '@/services/diagramDocument';
 import { composeDiagramForDisplay } from '@/services/composeDiagramForDisplay';
@@ -21,6 +22,7 @@ import {
 import { useToast } from '../components/ui/ToastContext';
 import { resolveFlowExportViewport } from './flowExportViewport';
 import { createImportReportOutcome, notifyOperationOutcome } from '@/services/operationFeedback';
+import { createPdfFromJpeg } from '@/services/export/pdfDocument';
 
 const logger = createLogger({ scope: 'useFlowExport' });
 
@@ -177,6 +179,39 @@ export const useFlowExport = (
     }, 300);
   }, [nodes, reactFlowWrapper, addToast]);
 
+  const handlePdfExport = useCallback(() => {
+    const { viewport: flowViewport, message } = resolveFlowExportViewport(reactFlowWrapper.current);
+    if (!flowViewport) {
+      addToast(message ?? 'The canvas viewport could not be found.', 'error');
+      return;
+    }
+
+    reactFlowWrapper.current.classList.add('exporting');
+
+    setTimeout(() => {
+      const { width, height, options } = createExportOptions(nodes, 'jpeg');
+
+      toJpeg(flowViewport, options)
+        .then((jpegDataUrl) => {
+          const pdfBlob = createPdfFromJpeg({
+            jpegDataUrl,
+            width,
+            height,
+            title: 'OpenFlowKit Diagram',
+          });
+          createDownload(pdfBlob, 'openflowkit-diagram.pdf');
+          addToast('Diagram exported as PDF!', 'success');
+        })
+        .catch((err) => {
+          logger.error('PDF export failed.', { error: err });
+          addToast('Failed to export PDF. Please try again.', 'error');
+        })
+        .finally(() => {
+          reactFlowWrapper.current?.classList.remove('exporting');
+        });
+    }, 300);
+  }, [nodes, reactFlowWrapper, addToast]);
+
   const handleAnimatedExport = useCallback(async (kind: AnimatedExportKind) => {
     const { viewport: flowViewport, message } = resolveFlowExportViewport(reactFlowWrapper.current);
     if (!flowViewport) {
@@ -314,6 +349,124 @@ export const useFlowExport = (
     }
   }, [activeTab, addToast, animatedPlayback, nodes, reactFlowWrapper]);
 
+  // --- Cinematic Reveal Export ---
+  const handleRevealExport = useCallback(async (kind: 'reveal-video' | 'reveal-gif') => {
+    const { viewport: flowViewport, message } = resolveFlowExportViewport(reactFlowWrapper.current);
+    if (!flowViewport) {
+      addToast(message ?? 'Canvas viewport not found.', 'error');
+      return;
+    }
+    if (nodes.length === 0) {
+      addToast('Add nodes before exporting a reveal animation.', 'error');
+      return;
+    }
+
+    const frames = buildRevealFrames(nodes, edges);
+    if (frames.length === 0) {
+      addToast('Could not build reveal sequence.', 'error');
+      return;
+    }
+
+    const isGif = kind === 'reveal-gif';
+    const { width, height } = createExportOptions(nodes, 'png');
+
+    reactFlowWrapper.current!.classList.add('exporting');
+    addToast(isGif ? 'Preparing reveal GIF…' : 'Preparing reveal video…', 'info');
+
+    // Save original hidden states to restore afterward
+    const originalNodes = nodes.map((n) => ({ id: n.id, hidden: n.hidden }));
+    const originalEdges = edges.map((e) => ({ id: e.id, hidden: e.hidden }));
+
+    try {
+      const frameOptions = createExportOptions(nodes, 'png', { maxDimension: 1440, pixelRatio: 1.5 }).options;
+      const capturedFrames: Array<{ dataUrl: string; delayMs: number }> = [];
+
+      for (const frame of frames) {
+        setNodes((prev) =>
+          prev.map((n) => ({ ...n, hidden: !frame.visibleNodeIds.has(n.id) }))
+        );
+        setEdges((prev) =>
+          prev.map((e) => ({ ...e, hidden: !frame.visibleEdgeIds.has(e.id) }))
+        );
+        await wait(160);
+        const dataUrl = await toPng(flowViewport, frameOptions);
+        capturedFrames.push({ dataUrl, delayMs: frame.holdMs });
+      }
+
+      if (isGif) {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Canvas 2D context unavailable.');
+        const gifFrames = [];
+        for (const f of capturedFrames) {
+          const img = await loadImage(f.dataUrl);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          gifFrames.push({ imageData: ctx.getImageData(0, 0, canvas.width, canvas.height), delayMs: f.delayMs });
+        }
+        const blob = encodeGif(gifFrames);
+        createDownload(blob, 'openflowkit-reveal.gif');
+        addToast('Reveal GIF exported.', 'success');
+        return;
+      }
+
+      const mimeType = selectSupportedVideoMimeType(window.MediaRecorder);
+      if (!mimeType) throw new Error('This browser does not support video recording.');
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Canvas 2D context unavailable.');
+
+      const stream = canvas.captureStream(12);
+      const recorder = new MediaRecorder(stream, { mimeType });
+      const chunks: BlobPart[] = [];
+      recorder.ondataavailable = (event) => { if (event.data.size > 0) chunks.push(event.data); };
+      const stopped = new Promise<Blob>((resolve) => {
+        recorder.onstop = () => resolve(new Blob(chunks, { type: mimeType }));
+      });
+
+      recorder.start();
+      const frameDurationMs = Math.max(1, Math.round(1000 / 12));
+      for (const f of capturedFrames) {
+        const img = await loadImage(f.dataUrl);
+        const repeatCount = Math.max(1, Math.round(f.delayMs / frameDurationMs));
+        for (let i = 0; i < repeatCount; i++) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          await wait(frameDurationMs);
+        }
+      }
+      recorder.stop();
+      const blob = await stopped;
+      const ext = getAnimatedExportFileExtension(mimeType, 'video');
+      createDownload(blob, `openflowkit-reveal.${ext}`);
+      addToast(`Reveal ${ext.toUpperCase()} exported.`, 'success');
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Reveal export failed.';
+      logger.error('Reveal export failed.', { error, kind });
+      addToast(msg, 'error');
+    } finally {
+      // Restore original node/edge visibility
+      setNodes((prev) =>
+        prev.map((n) => {
+          const orig = originalNodes.find((o) => o.id === n.id);
+          return orig ? { ...n, hidden: orig.hidden } : n;
+        })
+      );
+      setEdges((prev) =>
+        prev.map((e) => {
+          const orig = originalEdges.find((o) => o.id === e.id);
+          return orig ? { ...e, hidden: orig.hidden } : e;
+        })
+      );
+      reactFlowWrapper.current?.classList.remove('exporting');
+    }
+  }, [nodes, edges, reactFlowWrapper, addToast, setNodes, setEdges]);
+
   // --- JSON Export ---
   const handleExportJSON = useCallback(() => {
     const { nodes: orderedNodes, edges: orderedEdges } = orderGraphForSerialization(
@@ -393,5 +546,15 @@ export const useFlowExport = (
     [recordHistory, setNodes, setEdges, fitView, addToast, activeTabId, updateTab]
   );
 
-  return { fileInputRef, handleExport, handleSvgExport, handleAnimatedExport, handleExportJSON, handleImportJSON, onFileImport };
+  return {
+    fileInputRef,
+    handleExport,
+    handleSvgExport,
+    handlePdfExport,
+    handleAnimatedExport,
+    handleRevealExport,
+    handleExportJSON,
+    handleImportJSON,
+    onFileImport,
+  };
 };

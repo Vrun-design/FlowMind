@@ -50,7 +50,7 @@ const LazyCollaborationPresenceOverlay = lazy(async () => {
 
 function TopNavFallback(): React.ReactElement {
     return (
-        <div className="absolute top-0 left-0 right-0 z-50 h-16 border-b border-white/20 bg-white/70 shadow-sm backdrop-blur-md" />
+        <div className="absolute top-0 left-0 right-0 z-50 h-14 border-b border-white/20 bg-white/70 shadow-sm backdrop-blur-md" />
     );
 }
 
@@ -64,7 +64,9 @@ export interface FlowEditorChromeProps {
         onRenameTab: (tabId: string, newName: string) => void;
         onExportPNG: (format?: 'png' | 'jpeg') => void;
         onExportSVG: () => void;
+        onExportPDF: () => void;
         onExportAnimated: (format: 'video' | 'gif') => void;
+        onExportReveal: (format: 'reveal-video' | 'reveal-gif') => void;
         onExportJSON: () => void;
         onExportMermaid: () => void;
         onExportPlantUML: () => void;
@@ -153,7 +155,9 @@ export function FlowEditorChrome({
                     onRenameTab={topNav.onRenameTab}
                     onExportPNG={topNav.onExportPNG}
                     onExportSVG={topNav.onExportSVG}
+                    onExportPDF={topNav.onExportPDF}
                     onExportAnimated={topNav.onExportAnimated}
+                    onExportReveal={topNav.onExportReveal}
                     onExportJSON={topNav.onExportJSON}
                     onExportMermaid={topNav.onExportMermaid}
                     onExportPlantUML={topNav.onExportPlantUML}

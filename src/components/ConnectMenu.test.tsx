@@ -78,7 +78,7 @@ describe('ConnectMenu', () => {
 
     fireEvent.click(screen.getByText('Topic'));
 
-    expect(onSelect).toHaveBeenCalledWith('mindmap', undefined);
+    expect(onSelect).toHaveBeenCalledWith('mindmap', undefined, undefined);
   });
 
   it('shows provider suggestions for asset nodes instead of generic shapes', async () => {
@@ -95,5 +95,44 @@ describe('ConnectMenu', () => {
 
     expect(await screen.findByRole('button', { name: /Analytics Glue/i })).toBeTruthy();
     expect(screen.queryByText('connectMenu.process')).toBeNull();
+  });
+
+  it('surfaces contextual class creation first for class connectors', () => {
+    const onSelect = vi.fn();
+    render(
+      <ConnectMenu
+        position={{ x: 100, y: 100 }}
+        sourceId="class-1"
+        sourceType="class"
+        onSelect={onSelect}
+        onSelectAsset={vi.fn()}
+        onClose={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByText('Class Node'));
+
+    expect(onSelect).toHaveBeenCalledWith('class', undefined, undefined);
+  });
+
+  it('passes yes-branch edge metadata for decision sources', () => {
+    const onSelect = vi.fn();
+    render(
+      <ConnectMenu
+        position={{ x: 100, y: 100 }}
+        sourceId="decision-1"
+        sourceType="decision"
+        onSelect={onSelect}
+        onSelectAsset={vi.fn()}
+        onClose={vi.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByText('Yes Branch'));
+
+    expect(onSelect).toHaveBeenCalledWith('process', undefined, {
+      label: 'Yes',
+      data: { condition: 'yes' },
+    });
   });
 });

@@ -8,6 +8,10 @@ import type { LayoutAlgorithm } from '@/services/elkLayout';
 import type { FlowTemplate } from '@/services/templates';
 import type { EdgeData, NodeData } from '@/lib/types';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
+import type { SupportedLanguage } from '@/hooks/ai-generation/codeToArchitecture';
+import type { TerraformInputFormat } from '@/hooks/ai-generation/terraformToCloud';
+import type { AIReadinessState } from '@/hooks/ai-generation/readiness';
+
 import type { PropertiesPanel as PropertiesPanelComponent } from './PropertiesPanel';
 
 const LazyCommandBar = lazy(async () => {
@@ -60,6 +64,10 @@ export interface CommandBarPanelProps {
     onAddBrowserWireframe: () => void;
     onAddMobileWireframe: () => void;
     onAddDomainLibraryItem?: (item: DomainLibraryItem) => void;
+    onCodeAnalysis?: (code: string, language: SupportedLanguage) => Promise<void>;
+    onSqlAnalysis?: (sql: string) => Promise<void>;
+    onTerraformAnalysis?: (input: string, format: TerraformInputFormat) => Promise<void>;
+    onOpenApiAnalysis?: (spec: string) => Promise<void>;
     showGrid: boolean;
     onToggleGrid: () => void;
     snapToGrid: boolean;
@@ -94,19 +102,28 @@ export interface PropertiesRailProps {
     onAddMindmapSibling: React.ComponentProps<typeof PropertiesPanelComponent>['onAddMindmapSibling'];
     onAddArchitectureService: React.ComponentProps<typeof PropertiesPanelComponent>['onAddArchitectureService'];
     onCreateArchitectureBoundary: React.ComponentProps<typeof PropertiesPanelComponent>['onCreateArchitectureBoundary'];
+    onApplyArchitectureTemplate: React.ComponentProps<typeof PropertiesPanelComponent>['onApplyArchitectureTemplate'];
+    onGenerateEntityFields: React.ComponentProps<typeof PropertiesPanelComponent>['onGenerateEntityFields'];
+    onSuggestArchitectureNode: React.ComponentProps<typeof PropertiesPanelComponent>['onSuggestArchitectureNode'];
+    onConvertEntitySelectionToClassDiagram: React.ComponentProps<typeof PropertiesPanelComponent>['onConvertEntitySelectionToClassDiagram'];
+    onOpenMermaidCodeEditor: React.ComponentProps<typeof PropertiesPanelComponent>['onOpenMermaidCodeEditor'];
     onClose: () => void;
 }
 
 export interface StudioRailProps {
     onClose: () => void;
     onApply: (nodes: FlowNode[], edges: FlowEdge[]) => void;
-    onAIGenerate: (prompt: string, imageBase64?: string) => Promise<void>;
-    onCodeAnalysis?: (code: string, language: import('@/hooks/ai-generation/codeToArchitecture').SupportedLanguage) => Promise<void>;
-    onSqlAnalysis?: (sql: string) => Promise<void>;
-    onTerraformAnalysis?: (input: string, format: import('@/hooks/ai-generation/terraformToCloud').TerraformInputFormat) => Promise<void>;
-    onOpenApiAnalysis?: (spec: string) => Promise<void>;
-    onApplyInfraDsl?: (dsl: string) => void;
+    onAIGenerate: (prompt: string, imageBase64?: string) => Promise<boolean>;
     isGenerating: boolean;
+    streamingText: string | null;
+    retryCount: number;
+    cancelGeneration: () => void;
+    pendingDiff: import('@/hooks/useAIGeneration').ImportDiff | null;
+    onConfirmDiff: () => void;
+    onDiscardDiff: () => void;
+    aiReadiness: AIReadinessState;
+    lastAIError: string | null;
+    onClearAIError: () => void;
     selectedNode: FlowNode | null;
     selectedNodeCount: number;
     onViewProperties: () => void;
@@ -150,7 +167,7 @@ export function FlowEditorPanels({
     isHistoryOpen,
     editorMode,
 }: FlowEditorPanelsProps): React.ReactElement {
-    const showPropertiesRail = editorMode === 'canvas' && Boolean(properties.selectedNode || properties.selectedEdge);
+    const showPropertiesRail = editorMode === 'canvas' && Boolean(properties.selectedNode || properties.selectedEdge || properties.selectedNodes.length > 1);
     const showStudioRail = editorMode === 'studio';
     const railContent = showStudioRail ? (
         <Suspense fallback={null}>
@@ -160,12 +177,16 @@ export function FlowEditorPanels({
                 edges={commandBar.edges}
                 onApply={studio.onApply}
                 onAIGenerate={studio.onAIGenerate}
-                onCodeAnalysis={studio.onCodeAnalysis}
-                onSqlAnalysis={studio.onSqlAnalysis}
-                onTerraformAnalysis={studio.onTerraformAnalysis}
-                onOpenApiAnalysis={studio.onOpenApiAnalysis}
-                onApplyInfraDsl={studio.onApplyInfraDsl}
                 isGenerating={studio.isGenerating}
+                streamingText={studio.streamingText}
+                retryCount={studio.retryCount}
+                cancelGeneration={studio.cancelGeneration}
+                pendingDiff={studio.pendingDiff}
+                onConfirmDiff={studio.onConfirmDiff}
+                onDiscardDiff={studio.onDiscardDiff}
+                aiReadiness={studio.aiReadiness}
+                lastAIError={studio.lastAIError}
+                onClearAIError={studio.onClearAIError}
                 selectedNode={studio.selectedNode}
                 selectedNodeCount={studio.selectedNodeCount}
                 onViewProperties={studio.onViewProperties}
@@ -198,6 +219,11 @@ export function FlowEditorPanels({
                 onAddMindmapSibling={properties.onAddMindmapSibling}
                 onAddArchitectureService={properties.onAddArchitectureService}
                 onCreateArchitectureBoundary={properties.onCreateArchitectureBoundary}
+                onApplyArchitectureTemplate={properties.onApplyArchitectureTemplate}
+                onGenerateEntityFields={properties.onGenerateEntityFields}
+                onSuggestArchitectureNode={properties.onSuggestArchitectureNode}
+                onConvertEntitySelectionToClassDiagram={properties.onConvertEntitySelectionToClassDiagram}
+                onOpenMermaidCodeEditor={properties.onOpenMermaidCodeEditor}
                 onClose={properties.onClose}
             />
         </Suspense>
@@ -234,6 +260,10 @@ export function FlowEditorPanels({
                             onAddBrowserWireframe={commandBar.onAddBrowserWireframe}
                             onAddMobileWireframe={commandBar.onAddMobileWireframe}
                             onAddDomainLibraryItem={commandBar.onAddDomainLibraryItem}
+                            onCodeAnalysis={commandBar.onCodeAnalysis}
+                            onSqlAnalysis={commandBar.onSqlAnalysis}
+                            onTerraformAnalysis={commandBar.onTerraformAnalysis}
+                            onOpenApiAnalysis={commandBar.onOpenApiAnalysis}
                             settings={{
                                 showGrid: commandBar.showGrid,
                                 onToggleGrid: commandBar.onToggleGrid,

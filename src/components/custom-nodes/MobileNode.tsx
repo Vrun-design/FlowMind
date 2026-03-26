@@ -2,196 +2,19 @@ import React, { memo } from 'react';
 import type { LegacyNodeProps } from '@/lib/reactflowCompat';
 import { useTranslation } from 'react-i18next';
 import { NodeData } from '@/lib/types';
-import { ChevronLeft } from 'lucide-react';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { NodeChrome } from '@/components/NodeChrome';
+import { renderMobileVariantContent } from './mobileVariantRenderer';
 import { getNodeColorPalette } from '../../theme';
 
-function MobileNode({ data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
+function MobileNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
     const { t } = useTranslation();
-    const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
+    const visualQualityV2Enabled = true;
     const nodeColorPalette = getNodeColorPalette(visualQualityV2Enabled);
     const style = nodeColorPalette[data.color || 'slate'] || nodeColorPalette.slate;
 
-    // Render content based on variant
-    const renderContent = () => {
-        if (data.imageUrl) {
-            return (
-                <img
-                    src={data.imageUrl}
-                    alt={t('customNodes.mobileContent')}
-                    className="w-full h-full object-cover"
-                />
-            );
-        }
-
-        switch (data.variant) {
-            case 'login': // Clean Mobile Login
-                return (
-                    <div className="flex flex-col items-center justify-center h-full p-6 space-y-5 bg-white">
-                        <div className={`w-14 h-14 ${style.iconBg} rounded-2xl flex items-center justify-center mb-1`}>
-                            <div className={`w-8 h-8 rounded-full bg-white opacity-50`} />
-                        </div>
-                        <div className="w-full space-y-3">
-                            <div className="h-10 bg-slate-50 rounded-xl border border-slate-100 flex items-center px-4">
-                                <div className="w-16 h-2 bg-slate-200 rounded-sm" />
-                            </div>
-                            <div className="h-10 bg-slate-50 rounded-xl border border-slate-100 flex items-center px-4">
-                                <div className="w-12 h-2 bg-slate-200 rounded-sm" />
-                            </div>
-                        </div>
-                        <div className={`w-full h-10 ${style.bg} rounded-xl shadow-sm flex items-center justify-center`}>
-                            <div className="w-12 h-2 bg-white opacity-90 rounded-sm" />
-                        </div>
-                        <div className="flex gap-3 pt-2">
-                            <div className="w-10 h-10 rounded-full bg-slate-100" />
-                            <div className="w-10 h-10 rounded-full bg-slate-100" />
-                            <div className="w-10 h-10 rounded-full bg-slate-100" />
-                        </div>
-                    </div>
-                );
-
-            case 'social': // Social Feed Post
-                return (
-                    <div className="flex flex-col h-full bg-slate-50">
-                        {/* Header */}
-                        <div className="h-12 bg-white flex items-center px-4 border-b border-slate-100">
-                            <div className="w-24 h-4 bg-slate-800 rounded-sm" />
-                        </div>
-                        {/* Feed Item */}
-                        <div className="bg-white mt-2 pb-4">
-                            <div className="flex items-center gap-2 p-3">
-                                <div className="w-8 h-8 rounded-full bg-slate-200" />
-                                <div className="w-16 h-2.5 bg-slate-700 rounded-sm" />
-                            </div>
-                            <div className="aspect-square bg-slate-100 w-full flex items-center justify-center text-slate-300">
-                                <div className="w-12 h-12 rounded-lg border-2 border-slate-300 border-dashed" />
-                            </div>
-                            <div className="p-3 space-y-2">
-                                <div className="flex gap-3">
-                                    <div className="w-5 h-5 rounded-full bg-slate-200" />
-                                    <div className="w-5 h-5 rounded-full bg-slate-200" />
-                                    <div className="w-5 h-5 rounded-full bg-slate-200" />
-                                </div>
-                                <div className="w-2/3 h-2 bg-slate-200 rounded-sm mt-2" />
-                                <div className="w-1/3 h-2 bg-slate-100 rounded-sm" />
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case 'chat': // Messaging App
-                return (
-                    <div className="flex flex-col h-full bg-white">
-                        {/* Header */}
-                        <div className="h-12 border-b border-slate-100 flex items-center px-4 gap-3 bg-white z-10">
-                            <ChevronLeft className="w-5 h-5 text-slate-400" />
-                            <div className="w-8 h-8 rounded-full bg-slate-200" />
-                            <div className="w-20 h-2.5 bg-slate-800 rounded-sm" />
-                        </div>
-                        {/* Messages */}
-                        <div className="flex-1 p-4 space-y-4 bg-slate-50">
-                            <div className="flex gap-2">
-                                <div className="w-8 h-8 rounded-full bg-slate-200 shrink-0" />
-                                <div className="bg-white p-2.5 rounded-2xl rounded-tl-sm shadow-sm max-w-[70%] space-y-1.5">
-                                    <div className="w-32 h-2 bg-slate-200 rounded-sm" />
-                                    <div className="w-20 h-2 bg-slate-200 rounded-sm" />
-                                </div>
-                            </div>
-                            <div className="flex justify-end">
-                                <div className={`${style.bg} p-2.5 rounded-2xl rounded-tr-sm shadow-sm max-w-[70%]`}>
-                                    <div className="w-24 h-2 bg-white opacity-90 rounded-sm" />
-                                </div>
-                            </div>
-                            <div className="flex gap-2">
-                                <div className="w-8 h-8 rounded-full bg-slate-200 shrink-0" />
-                                <div className="bg-white p-2 rounded-2xl rounded-tl-sm shadow-sm max-w-[70%] flex items-center justify-center h-24 w-40">
-                                    <div className="w-8 h-8 rounded border-2 border-slate-100 border-dashed" />
-                                </div>
-                            </div>
-                        </div>
-                        {/* Input */}
-                        <div className="h-14 border-t border-slate-100 p-3 bg-white">
-                            <div className="h-full bg-slate-100 rounded-full px-4 flex items-center">
-                                <div className="w-32 h-2 bg-slate-300 rounded-sm" />
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case 'product': // Ecommerce Product
-                return (
-                    <div className="flex flex-col h-full bg-white">
-                        <div className="h-[45%] bg-slate-100 flex items-center justify-center relative">
-                            <div className="w-24 h-24 rounded-lg bg-white shadow-sm flex items-center justify-center">
-                                <div className="w-12 h-12 rounded border-2 border-slate-100 border-dashed" />
-                            </div>
-                            <div className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full shadow-sm flex items-center justify-center">
-                                <div className="w-4 h-4 bg-slate-200 rounded-full" />
-                            </div>
-                        </div>
-                        <div className="flex-1 p-5 flex flex-col">
-                            <div className="space-y-2 mb-4">
-                                <div className="w-full h-4 bg-slate-800 rounded-sm" />
-                                <div className="w-2/3 h-4 bg-slate-800 rounded-sm" />
-                            </div>
-                            <div className="w-16 h-4 bg-slate-200 rounded-sm mb-6" />
-                            <div className="space-y-3 mt-auto">
-                                <div className="w-full h-2 bg-slate-100 rounded-sm" />
-                                <div className="w-full h-2 bg-slate-100 rounded-sm" />
-                                <div className="w-2/3 h-2 bg-slate-100 rounded-sm" />
-                            </div>
-                        </div>
-                        {/* Bottom Bar */}
-                        <div className="h-20 border-t border-slate-100 p-4 flex items-center gap-4 bg-white">
-                            <div className="flex-1 space-y-1">
-                                <div className="w-10 h-2 bg-slate-400 rounded-sm" />
-                                <div className="w-16 h-3 bg-slate-800 rounded-sm" />
-                            </div>
-                            <div className={`w-32 h-12 ${style.bg} rounded-xl shadow-sm flex items-center justify-center`}>
-                                <div className="w-12 h-2 bg-white rounded-sm" />
-                            </div>
-                        </div>
-                    </div>
-                );
-
-            case 'list':
-            case 'profile':
-                // Keep minimal list view
-                return (
-                    <div className="flex flex-col h-full bg-white">
-                        <div className={`h-12 border-b border-slate-100 flex items-center px-4 justify-between`}>
-                            <div className="w-24 h-3 bg-slate-800 rounded-sm" />
-                            <div className={`w-6 h-6 rounded-full bg-slate-100`} />
-                        </div>
-                        <div className="flex-1 p-3 space-y-2">
-                            {[1, 2, 3, 4, 5, 6].map((i) => (
-                                <div key={i} className={`flex items-center gap-3 p-2 border border-slate-50 rounded-lg`}>
-                                    <div className="w-10 h-10 rounded-lg bg-slate-100 shrink-0" />
-                                    <div className="flex-1 space-y-1.5">
-                                        <div className="h-2.5 w-32 bg-slate-800 rounded-sm opacity-80" />
-                                        <div className="h-2 w-20 bg-slate-300 rounded-sm" />
-                                    </div>
-                                    <div className="w-4 h-4 rounded-full bg-slate-100" />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
-
-            default:
-                return (
-                    <div className={`flex-1 ${style.iconBg} bg-opacity-30 relative p-4 flex flex-col items-center justify-center`}>
-                        <div className="text-slate-200">
-                            <div className={`w-12 h-20 rounded border-2 ${style.border} border-dashed`} />
-                        </div>
-                    </div>
-                );
-        }
-    };
-
     return (
         <NodeChrome
+            nodeId={id}
             selected={Boolean(selected)}
             minWidth={300}
             minHeight={600}
@@ -221,7 +44,12 @@ function MobileNode({ data, selected }: LegacyNodeProps<NodeData>): React.ReactE
 
                 {/* Screen Content */}
                 <div className="flex-1 bg-white relative overflow-hidden flex flex-col">
-                    {renderContent()}
+                    {renderMobileVariantContent({
+                        imageUrl: data.imageUrl,
+                        variant: data.variant,
+                        style,
+                        imageAlt: t('customNodes.mobileContent'),
+                    })}
 
                     {/* Dynamic Label Overlay - Subtler */}
                     {data.label && !['list', 'profile'].includes(data.variant || '') && (

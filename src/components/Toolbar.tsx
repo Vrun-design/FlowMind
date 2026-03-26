@@ -68,7 +68,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   // Interaction guard: If command bar is open, disable all toolbar interactions
   const isInteractive = !isCommandBarOpen;
 
-  const containerClasses = `flex items-center p-1.5 bg-white/90 backdrop-blur-xl shadow-2xl rounded-[var(--radius-lg)] border border-white/20 ring-1 ring-black/5 transition-all duration-300 ${!isInteractive ? 'opacity-50 pointer-events-none grayscale' : ''}`;
+  const containerClasses = `flex items-center p-1.5 bg-white/90 backdrop-blur-xl shadow-[var(--shadow-md)] rounded-[var(--radius-lg)] border border-white/20 ring-1 ring-black/5 transition-all duration-300 ${!isInteractive ? 'opacity-50 pointer-events-none grayscale' : ''}`;
 
   return (
     <div className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-40 ${containerClasses}`}>
@@ -112,7 +112,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             disabled={!isInteractive}
             variant="primary"
             size="icon"
-            className={`group h-10 w-10 rounded-[var(--radius-md)] shadow-lg shadow-[var(--brand-primary)]/20 transition-all hover:scale-105 active:scale-95 ${isCommandBarOpen ? 'bg-slate-800 hover:bg-slate-900' : 'bg-[var(--brand-primary)] hover:brightness-110'}`}
+            className={`group rounded-[var(--radius-md)] shadow-[var(--shadow-sm)] transition-all hover:scale-105 active:scale-95 ${isCommandBarOpen ? 'bg-slate-800 hover:bg-slate-900' : 'bg-[var(--brand-primary)] hover:brightness-110'}`}
             icon={<Plus className={`w-5 h-5 text-white transition-transform duration-200 ${isCommandBarOpen ? 'rotate-45' : 'group-hover:rotate-90'}`} />}
           />
         </Tooltip>
@@ -128,7 +128,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           />
         </Tooltip>
 
-        <Tooltip text={t('toolbar.aiStudio', 'Open AI Studio')}>
+        <Tooltip text={t('toolbar.flowpilot', 'Flowpilot (Cmd+K)')}>
           <Button
             onClick={onToggleStudio}
             disabled={!isInteractive}

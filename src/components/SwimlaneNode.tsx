@@ -4,7 +4,6 @@ import type { LegacyNodeProps } from '@/lib/reactflowCompat';
 import { NodeData } from '@/lib/types';
 import { Rows3 } from 'lucide-react';
 import { NamedIcon } from './IconMap';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from './handleInteraction';
 import { NodeTransformControls } from './NodeTransformControls';
 import { useActiveNodeSelection } from './useActiveNodeSelection';
@@ -18,7 +17,7 @@ const LANE_COLORS = [
 ];
 
 const SwimlaneNode = ({ id, data, selected }: LegacyNodeProps<NodeData>) => {
-    const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
+    const visualQualityV2Enabled = true;
     const isActiveSelected = useActiveNodeSelection(Boolean(selected));
     const handlePointerEvents = getHandlePointerEvents(visualQualityV2Enabled, isActiveSelected);
     const handleVisibilityClass = visualQualityV2Enabled

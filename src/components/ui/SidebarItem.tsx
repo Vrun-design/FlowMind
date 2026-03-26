@@ -26,7 +26,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
     end = false,
     testId
 }) => {
-    const baseStyles = "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors w-full text-left group";
+    const baseStyles = "flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-sm)] text-sm transition-colors w-full text-left group";
     const activeStyles = "bg-[var(--brand-primary)]/10 text-[var(--brand-primary)] font-medium";
     const inactiveStyles = "text-slate-600 hover:bg-slate-50 hover:text-slate-900";
 

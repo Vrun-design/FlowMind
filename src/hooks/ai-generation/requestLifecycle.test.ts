@@ -30,7 +30,7 @@ vi.mock('./graphComposer', () => ({
   toFinalEdges: vi.fn(() => [{ id: 'edge-final', source: 'existing-a', target: 'existing-a' }]),
 }));
 
-const BASE_AI_SETTINGS = { provider: 'gemini' as const, apiKey: 'key', model: 'model' };
+const BASE_AI_SETTINGS = { provider: 'gemini' as const, storageMode: 'local' as const, apiKey: 'key', model: 'model' };
 const BASE_EDGE_OPTIONS = { type: 'smoothstep' as const, animated: false, strokeWidth: 2 };
 
 describe('requestLifecycle', () => {

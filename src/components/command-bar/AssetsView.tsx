@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     AppWindow,
     Boxes,
@@ -14,7 +14,8 @@ import {
     Type,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Input } from '../ui/Input';
+import { SearchField } from '../ui/SearchField';
+import { SegmentedTabs } from '../ui/SegmentedTabs';
 import { ViewHeader } from './ViewHeader';
 import { AssetsIcon } from '../icons/AssetsIcon';
 import { NamedIcon } from '../IconMap';
@@ -22,16 +23,21 @@ import { Tooltip } from '../Tooltip';
 import { Select } from '../ui/Select';
 import {
     DOMAIN_LIBRARY_ITEMS,
-    type DomainLibraryCategory,
     type DomainLibraryItem,
 } from '@/services/domainLibrary';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
-import {
-    getProviderCatalogCount,
-    loadProviderCatalog,
-    loadProviderShapePreview,
-} from '@/services/shapeLibrary/providerCatalog';
+import { getProviderCatalogCount, loadProviderShapePreview } from '@/services/shapeLibrary/providerCatalog';
 import { loadIconAssetCatalog } from '@/services/iconAssetCatalog';
+import {
+    type AssetTab,
+    CLOUD_TABS,
+    type GeneralAssetItem,
+    IMAGE_UPLOAD_INPUT_ID,
+    MAX_CLOUD_RESULTS,
+    PROVIDER_BACKED_TABS,
+    TAB_ORDER,
+    getTileClass,
+} from './assetsViewConstants';
+import { useCloudAssetCatalog } from './useCloudAssetCatalog';
 
 interface AssetsViewProps {
     onClose: () => void;
@@ -48,49 +54,6 @@ interface AssetsViewProps {
     onAddClassNode: () => void;
     onAddEntityNode: () => void;
     onAddDomainLibraryItem: (item: DomainLibraryItem) => void;
-}
-
-type AssetTab = 'general' | 'icons' | 'aws' | 'azure' | 'gcp' | 'cncf';
-
-interface GeneralAssetItem {
-    id: string;
-    label: string;
-    icon: React.ReactNode;
-    keywords: string[];
-    action: () => void;
-}
-
-interface CloudTabDefinition {
-    id: Extract<AssetTab, 'icons' | 'aws' | 'azure' | 'gcp' | 'cncf'>;
-    label: string;
-    category: DomainLibraryCategory;
-}
-
-const TAB_ORDER: AssetTab[] = ['general', 'icons', 'aws', 'azure', 'gcp', 'cncf'];
-
-const CLOUD_TABS: CloudTabDefinition[] = [
-    { id: 'icons', label: 'Icons', category: 'icons' },
-    { id: 'aws', label: 'AWS', category: 'aws' },
-    { id: 'azure', label: 'Azure', category: 'azure' },
-    { id: 'gcp', label: 'GCP', category: 'gcp' },
-    { id: 'cncf', label: 'CNCF', category: 'cncf' },
-];
-const IMAGE_UPLOAD_INPUT_ID = 'assets-image-upload-input';
-const MAX_CLOUD_RESULTS = 240;
-const PROVIDER_BACKED_TABS = new Set<AssetTab>(['aws', 'azure', 'gcp', 'cncf']);
-
-type CloudAssetState = 'idle' | 'loading' | 'ready' | 'error';
-
-function getTileClass(): string {
-    return 'group flex aspect-square flex-col items-center justify-center gap-3 rounded-[var(--radius-lg)] border border-slate-200 bg-white px-3 py-4 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--brand-primary-200)] hover:bg-[var(--brand-primary-50)] hover:shadow-md';
-}
-
-function getTabButtonClass(isActive: boolean): string {
-    return `h-9 rounded-[var(--radius-md)] border px-3 text-xs font-semibold transition-colors ${
-        isActive
-            ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white shadow-sm'
-            : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-800'
-    }`;
 }
 
 export function AssetsView({
@@ -112,31 +75,11 @@ export function AssetsView({
     const { t } = useTranslation();
     const [query, setQuery] = useState('');
     const [activeTab, setActiveTab] = useState<AssetTab>('general');
-    const [providerItems, setProviderItems] = useState<Partial<Record<CloudTabDefinition['id'], DomainLibraryItem[]>>>({});
-    const [providerLoadState, setProviderLoadState] = useState<Partial<Record<CloudTabDefinition['id'], CloudAssetState>>>({});
-    const [providerPreviewUrls, setProviderPreviewUrls] = useState<Record<string, string>>({});
-    const [categoryFilters, setCategoryFilters] = useState<Partial<Record<CloudTabDefinition['id'], string>>>({});
+    const [categoryFilters, setCategoryFilters] = useState<Partial<Record<(typeof CLOUD_TABS)[number]['id'], string>>>({});
     const [pendingSelectionState, setPendingSelectionState] = useState<{ scope: string; ids: string[] }>({ scope: '', ids: [] });
     const iconItems = useMemo(() => loadIconAssetCatalog(), []);
 
-    const loadProviderTab = useCallback((tabId: CloudTabDefinition['id']): void => {
-        if (!ROLLOUT_FLAGS.shapeLibraryV1 || tabId === 'icons') {
-            return;
-        }
-        if (providerLoadState[tabId] === 'loading' || providerLoadState[tabId] === 'ready') {
-            return;
-        }
-
-        setProviderLoadState((current) => ({ ...current, [tabId]: 'loading' }));
-        loadProviderCatalog(tabId)
-            .then((items) => {
-                setProviderItems((current) => ({ ...current, [tabId]: items }));
-                setProviderLoadState((current) => ({ ...current, [tabId]: 'ready' }));
-            })
-            .catch(() => {
-                setProviderLoadState((current) => ({ ...current, [tabId]: 'error' }));
-            });
-    }, [providerLoadState]);
+    const { providerItems, providerLoadState, providerPreviewUrls, setProviderPreviewUrls, insertProviderItem } = useCloudAssetCatalog(onAddDomainLibraryItem);
 
     function requestImageUpload(): void {
         document.getElementById(IMAGE_UPLOAD_INPUT_ID)?.click();
@@ -273,9 +216,6 @@ export function AssetsView({
 
     const normalizedQuery = query.trim().toLowerCase();
 
-    useEffect(() => {
-        CLOUD_TABS.forEach((tab) => loadProviderTab(tab.id));
-    }, [loadProviderTab]);
     const filteredGeneralItems = generalItems.filter((item) => (
         normalizedQuery.length === 0
         || item.label.toLowerCase().includes(normalizedQuery)
@@ -283,7 +223,7 @@ export function AssetsView({
     ));
 
     const filteredCloudItems = useMemo(() => {
-        return CLOUD_TABS.reduce<Record<CloudTabDefinition['id'], DomainLibraryItem[]>>((accumulator, tab) => {
+        return CLOUD_TABS.reduce<Record<(typeof CLOUD_TABS)[number]['id'], DomainLibraryItem[]>>((accumulator, tab) => {
             const availableItems = DOMAIN_LIBRARY_ITEMS
                 .filter((item) => item.category === tab.category && !PROVIDER_BACKED_TABS.has(tab.id))
                 .concat(providerItems[tab.id] || []);
@@ -310,15 +250,6 @@ export function AssetsView({
         });
     }, [categoryFilters, normalizedQuery, providerItems]);
 
-    const baseTabCounts: Record<AssetTab, number> = {
-        general: generalItems.length,
-        icons: iconItems.length,
-        aws: getProviderCatalogCount('aws'),
-        azure: getProviderCatalogCount('azure'),
-        gcp: getProviderCatalogCount('gcp'),
-        cncf: getProviderCatalogCount('cncf'),
-    };
-
     const filteredIconItems = useMemo(() => {
         const selectedCategory = categoryFilters.icons;
         return iconItems.filter((item) => {
@@ -333,16 +264,30 @@ export function AssetsView({
     }, [categoryFilters.icons, iconItems, normalizedQuery]);
 
     const hasActiveFilters = normalizedQuery.length > 0 || Object.values(categoryFilters).some((value) => Boolean(value && value !== 'all'));
-    const tabCounts: Record<AssetTab, number> = hasActiveFilters
-        ? {
-            general: filteredGeneralItems.length,
-            icons: filteredIconItems.length,
-            aws: filteredCloudItems.aws.length,
-            azure: filteredCloudItems.azure.length,
-            gcp: filteredCloudItems.gcp.length,
-            cncf: filteredCloudItems.cncf.length,
-        }
-        : baseTabCounts;
+    const tabCounts = useMemo<Record<AssetTab, number>>(() => (
+        hasActiveFilters
+            ? {
+                general: filteredGeneralItems.length,
+                icons: filteredIconItems.length,
+                aws: filteredCloudItems.aws.length,
+                azure: filteredCloudItems.azure.length,
+                gcp: filteredCloudItems.gcp.length,
+                cncf: filteredCloudItems.cncf.length,
+            }
+            : {
+                general: generalItems.length,
+                icons: iconItems.length,
+                aws: getProviderCatalogCount('aws'),
+                azure: getProviderCatalogCount('azure'),
+                gcp: getProviderCatalogCount('gcp'),
+                cncf: getProviderCatalogCount('cncf'),
+            }
+    ), [filteredCloudItems, filteredGeneralItems.length, filteredIconItems.length, generalItems.length, hasActiveFilters, iconItems.length]);
+    const tabItems = useMemo(() => TAB_ORDER.map((tab) => ({
+        id: tab,
+        label: tab.toUpperCase(),
+        count: tabCounts[tab],
+    })), [tabCounts]);
 
     const activeCloudTab = CLOUD_TABS.find((tab) => tab.id === activeTab);
     const activeTabItems = useMemo(() => (
@@ -369,25 +314,13 @@ export function AssetsView({
     const pendingSelectionIds = pendingSelectionState.scope === selectionScope ? pendingSelectionState.ids : [];
     const pendingSelectedItems = visibleCloudItems.filter((item) => pendingSelectionIds.includes(item.id));
 
-    async function insertProviderItem(item: DomainLibraryItem): Promise<void> {
-        const preview = item.archIconPackId && item.archIconShapeId
-            ? await loadProviderShapePreview(item.archIconPackId, item.archIconShapeId)
-            : null;
-        onAddDomainLibraryItem({
-            ...item,
-            ...(preview ? { previewUrl: preview.previewUrl } : {}),
-        });
-    }
-
     useEffect(() => {
-        if (!ROLLOUT_FLAGS.shapeLibraryV1 || !activeCloudTab || activeCloudTab.id === 'icons') {
+        if (!activeCloudTab || activeCloudTab.id === 'icons') {
             return;
         }
 
         const previewCandidates = visibleCloudItems.filter((item) => (
-            item.archIconPackId
-            && item.archIconShapeId
-            && !providerPreviewUrls[item.id]
+            item.archIconPackId && item.archIconShapeId && !providerPreviewUrls[item.id]
         ));
 
         if (previewCandidates.length === 0) {
@@ -395,35 +328,24 @@ export function AssetsView({
         }
 
         let cancelled = false;
-
         Promise.all(previewCandidates.map(async (item) => {
             const preview = await loadProviderShapePreview(item.archIconPackId as string, item.archIconShapeId as string);
             return preview ? [item.id, preview.previewUrl] as const : null;
         }))
             .then((entries) => {
-                if (cancelled) {
-                    return;
-                }
-                const loadedEntries = entries.filter((entry): entry is readonly [string, string] => entry !== null);
-                if (loadedEntries.length === 0) {
-                    return;
-                }
+                if (cancelled) return;
+                const loaded = entries.filter((e): e is readonly [string, string] => e !== null);
+                if (loaded.length === 0) return;
                 setProviderPreviewUrls((current) => {
                     const next = { ...current };
-                    loadedEntries.forEach(([itemId, previewUrl]) => {
-                        next[itemId] = previewUrl;
-                    });
+                    loaded.forEach(([id, url]) => { next[id] = url; });
                     return next;
                 });
             })
-            .catch(() => {
-                // Ignore per-tile preview failures and keep fallback icons.
-            });
+            .catch(() => { /* ignore per-tile preview failures */ });
 
-        return () => {
-            cancelled = true;
-        };
-    }, [activeCloudTab, providerPreviewUrls, visibleCloudItems]);
+        return () => { cancelled = true; };
+    }, [activeCloudTab, providerPreviewUrls, setProviderPreviewUrls, visibleCloudItems]);
 
     return (
         <div className="flex h-full flex-col bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.06),_transparent_45%)]">
@@ -438,37 +360,26 @@ export function AssetsView({
             <ViewHeader
                 title={t('toolbar.assets', 'Assets')}
                 icon={<AssetsIcon className="h-4 w-4 text-[var(--brand-primary)]" />}
+                description="Insert supporting building blocks and reusable visual elements."
                 onBack={handleBack}
+                onClose={onClose}
             />
 
             <div className="border-b border-slate-200/70 bg-white/85 px-4 py-3 backdrop-blur-sm">
-                <div className="relative">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                    <Input
-                        value={query}
-                        onChange={(event) => setQuery(event.target.value)}
-                        onKeyDown={(event) => event.stopPropagation()}
-                        placeholder="Search assets, icons, AWS services, Azure diagrams..."
-                        className="w-full pl-10 focus:border-[var(--brand-primary-400)]"
-                    />
-                </div>
+                <SearchField
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    onKeyDown={(event) => event.stopPropagation()}
+                    placeholder="Search assets, icons, AWS services, Azure diagrams..."
+                />
 
-                <div className="mt-3 overflow-x-auto pb-1 no-scrollbar">
-                    <div className="flex min-w-max flex-nowrap gap-1.5">
-                        {TAB_ORDER.map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`${getTabButtonClass(activeTab === tab)} shrink-0 whitespace-nowrap px-3`}
-                            >
-                                {tab.toUpperCase()}
-                                <span className={`ml-2 text-[10px] ${activeTab === tab ? 'text-white/75' : 'text-slate-400'}`}>
-                                    {tabCounts[tab]}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                <SegmentedTabs
+                    items={tabItems}
+                    value={activeTab}
+                    onChange={(value) => setActiveTab(value as AssetTab)}
+                    className="mt-3"
+                    listClassName="flex-nowrap"
+                />
             </div>
 
             <div className="flex-1 overflow-y-auto px-4 py-4 custom-scrollbar">
@@ -572,9 +483,9 @@ export function AssetsView({
                                                 onClose();
                                             }
                                         }}
-                                        className={`group flex aspect-square items-center justify-center rounded-[var(--radius-lg)] border bg-white p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--brand-primary-200)] hover:bg-[var(--brand-primary-50)] hover:shadow-md ${
+                                        className={`group flex aspect-square items-center justify-center rounded-[var(--radius-lg)] border bg-white p-3 transition-colors hover:border-[var(--brand-primary-200)] hover:bg-[var(--brand-primary-50)] ${
                                             pendingSelectionIds.includes(item.id)
-                                                ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)] shadow-md'
+                                                ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)]'
                                                 : 'border-slate-200'
                                         }`}
                                     >

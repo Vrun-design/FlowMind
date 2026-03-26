@@ -12,6 +12,7 @@ interface UseFlowCanvasContextActionsParams {
     deleteNode: (id: string) => void;
     deleteEdge: (id: string) => void;
     updateNodeZIndex: (id: string, action: 'front' | 'back') => void;
+    updateNodeType: (id: string, type: string) => void;
     handleAlignNodes: (direction: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => void;
     handleDistributeNodes: (direction: 'horizontal' | 'vertical') => void;
     handleGroupNodes: () => void;
@@ -24,6 +25,7 @@ export interface UseFlowCanvasContextActionsResult {
     onDuplicate: () => void;
     onDelete: () => void;
     onSendToBack: () => void;
+    onChangeNodeType: (type: string) => void;
     onAlignNodes: (direction: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => void;
     onDistributeNodes: (direction: 'horizontal' | 'vertical') => void;
     onGroupSelected: () => void;
@@ -38,6 +40,7 @@ export function useFlowCanvasContextActions({
     deleteNode,
     deleteEdge,
     updateNodeZIndex,
+    updateNodeType,
     handleAlignNodes,
     handleDistributeNodes,
     handleGroupNodes,
@@ -77,6 +80,13 @@ export function useFlowCanvasContextActions({
         onCloseContextMenu();
     }
 
+    function onChangeNodeType(type: string): void {
+        if (contextMenu.id) {
+            updateNodeType(contextMenu.id, type);
+        }
+        onCloseContextMenu();
+    }
+
     function onAlignNodesAndClose(direction: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom'): void {
         handleAlignNodes(direction);
         onCloseContextMenu();
@@ -98,6 +108,7 @@ export function useFlowCanvasContextActions({
         onDuplicate,
         onDelete,
         onSendToBack,
+        onChangeNodeType,
         onAlignNodes: onAlignNodesAndClose,
         onDistributeNodes: onDistributeNodesAndClose,
         onGroupSelected,

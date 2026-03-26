@@ -2,6 +2,7 @@ import React from 'react';
 import type { FlowEdge } from '@/lib/types';
 import { Input } from '@/components/ui/Input';
 import { Slider } from '@/components/ui/Slider';
+import { buildEdgeLabelUpdates, getEditableEdgeLabel, hasEditableEdgeLabel } from './edgeLabelModel';
 
 interface EdgeLabelSectionProps {
     selectedEdge: FlowEdge;
@@ -9,16 +10,18 @@ interface EdgeLabelSectionProps {
 }
 
 export function EdgeLabelSection({ selectedEdge, onChange }: EdgeLabelSectionProps): React.ReactElement {
+    const editableLabel = getEditableEdgeLabel(selectedEdge);
+
     return (
         <div className="space-y-3">
             <Input
                 label="Label"
-                value={(selectedEdge.label as string) || ''}
-                onChange={(event) => onChange(selectedEdge.id, { label: event.target.value })}
+                value={editableLabel}
+                onChange={(event) => onChange(selectedEdge.id, buildEdgeLabelUpdates(selectedEdge, event.target.value))}
                 placeholder="e.g., 'If yes', 'On success'"
             />
 
-            {selectedEdge.label && (
+            {hasEditableEdgeLabel(selectedEdge) && (
                 <div className="space-y-1 pt-2">
                     <Slider
                         label="Position"

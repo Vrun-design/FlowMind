@@ -77,13 +77,31 @@ const baseProps = {
     onAddMindmapSibling: vi.fn(),
     onAddArchitectureService: vi.fn(),
     onCreateArchitectureBoundary: vi.fn(),
+    onApplyArchitectureTemplate: vi.fn(),
+    onGenerateEntityFields: vi.fn(),
+    onSuggestArchitectureNode: vi.fn(),
+    onConvertEntitySelectionToClassDiagram: vi.fn(),
+    onOpenMermaidCodeEditor: vi.fn(),
     onClose: vi.fn(),
   },
   studio: {
     onClose: vi.fn(),
     onApply: vi.fn(),
-    onAIGenerate: vi.fn(),
+    onAIGenerate: vi.fn(async () => true),
     isGenerating: false,
+    streamingText: null,
+    retryCount: 0,
+    cancelGeneration: vi.fn(),
+    pendingDiff: null,
+    onConfirmDiff: vi.fn(),
+    onDiscardDiff: vi.fn(),
+    aiReadiness: {
+      canGenerate: true,
+      blockingIssue: null,
+      advisory: null,
+    },
+    lastAIError: null,
+    onClearAIError: vi.fn(),
     chatMessages: [],
     onClearChat: vi.fn(),
     activeTab: 'ai' as const,
@@ -136,5 +154,17 @@ describe('FlowEditorPanels', () => {
 
     expect(await screen.findByTestId('studio-panel')).not.toBeNull();
     expect(screen.queryByTestId('properties-panel')).toBeNull();
+  });
+
+  it('shows the properties panel for bulk selection even without a focused primary node', async () => {
+    render(
+      <FlowEditorPanels
+        {...baseProps}
+        editorMode="canvas"
+        properties={{ ...baseProps.properties, selectedNodes: [selectedNode as never, { ...selectedNode, id: 'node-2' } as never] }}
+      />
+    );
+
+    expect(await screen.findByTestId('properties-panel')).not.toBeNull();
   });
 });

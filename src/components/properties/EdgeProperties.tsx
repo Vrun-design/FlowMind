@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import type { Edge } from '@/lib/reactflowCompat';
+import type { FlowEdge } from '@/lib/types';
 import { useFlowStore } from '@/store';
-import { Activity, GitBranch, MessageSquareText, Network, Palette, Route, Trash2 } from 'lucide-react';
+import { Activity, GitBranch, MessageSquareText, Network, Palette, Route, Trash2, Waypoints } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useTranslation } from 'react-i18next';
 import { EdgeConditionSection } from './edge/EdgeConditionSection';
@@ -10,6 +11,7 @@ import { EdgeLabelSection } from './edge/EdgeLabelSection';
 import { EdgeRouteSection } from './edge/EdgeRouteSection';
 import { EdgeStyleSection } from './edge/EdgeStyleSection';
 import { ArchitectureEdgeSemanticsSection } from './edge/ArchitectureEdgeSemanticsSection';
+import { EdgeRelationSection } from './edge/EdgeRelationSection';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
 import { InspectorFooter, InspectorSectionDivider } from './InspectorPrimitives';
 
@@ -29,6 +31,7 @@ export const EdgeProperties: React.FC<EdgePropertiesProps> = ({
     const sourceNode = nodes.find((node) => node.id === selectedEdge.source);
     const targetNode = nodes.find((node) => node.id === selectedEdge.target);
     const isArchitectureEdge = sourceNode?.type === 'architecture' && targetNode?.type === 'architecture';
+    const isEntityRelationEdge = sourceNode?.type === 'er_entity' && targetNode?.type === 'er_entity';
     const defaultSection = isArchitectureEdge ? 'architecture' : 'route';
     const [panelState, setPanelState] = useState<{ edgeId: string; activeSection: string }>({
         edgeId: selectedEdge.id,
@@ -57,6 +60,17 @@ export const EdgeProperties: React.FC<EdgePropertiesProps> = ({
                     onToggle={() => toggleSection('architecture')}
                 >
                     <ArchitectureEdgeSemanticsSection selectedEdge={selectedEdge} onChange={onChange} />
+                </CollapsibleSection>
+            )}
+
+            {isEntityRelationEdge && (
+                <CollapsibleSection
+                    title="Relation"
+                    icon={<GitBranch className="w-3.5 h-3.5" />}
+                    isOpen={activeSection === 'relation'}
+                    onToggle={() => toggleSection('relation')}
+                >
+                    <EdgeRelationSection selectedEdge={selectedEdge as FlowEdge} onChange={onChange} />
                 </CollapsibleSection>
             )}
 
@@ -98,7 +112,7 @@ export const EdgeProperties: React.FC<EdgePropertiesProps> = ({
 
             <CollapsibleSection
                 title={t('connectionPanel.condition', 'Condition')}
-                icon={<GitBranch className="w-3.5 h-3.5" />}
+                icon={<Waypoints className="w-3.5 h-3.5" />}
                 isOpen={activeSection === 'condition'}
                 onToggle={() => toggleSection('condition')}
             >

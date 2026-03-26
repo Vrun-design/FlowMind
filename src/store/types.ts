@@ -37,6 +37,8 @@ export type AIProvider =
     | 'openrouter'
     | 'custom';
 
+export type AISettingsStorageMode = 'local' | 'session';
+
 export interface CustomHeaderConfig {
     key: string;
     value: string;
@@ -45,6 +47,7 @@ export interface CustomHeaderConfig {
 
 export interface AISettings {
     provider: AIProvider;
+    storageMode: AISettingsStorageMode;
     apiKey?: string;
     model?: string;
     customBaseUrl?: string;

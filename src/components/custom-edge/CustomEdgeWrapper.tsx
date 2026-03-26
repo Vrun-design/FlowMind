@@ -18,6 +18,7 @@ import {
 } from './classRelationSemantics';
 import { resolveStandardEdgeMarkers } from './standardEdgeMarkers';
 import { resolveAnimatedEdgePresentation } from './animatedEdgePresentation';
+import { buildEdgeLabelUpdates, getEditableEdgeLabel, hasEditableEdgeLabel } from '@/components/properties/edge/edgeLabelModel';
 
 interface CustomEdgeWrapperProps {
     id: string;
@@ -69,20 +70,25 @@ export function CustomEdgeWrapper({
     const [isEditingLabel, setIsEditingLabel] = useState(false);
     const [labelDraft, setLabelDraft] = useState('');
     const designSystem = useDesignSystem();
-    const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
+    const visualQualityV2Enabled = true;
     const relationSemanticsV1Enabled = ROLLOUT_FLAGS.relationSemanticsV1;
-    const canvasInteractionsV1Enabled = ROLLOUT_FLAGS.canvasInteractionsV1;
 
     const beginLabelEdit = useCallback(() => {
-        const current = typeof label === 'string' ? label : (typeof data?.label === 'string' ? data.label : '');
+        const current = getEditableEdgeLabel({
+            id,
+            source: '',
+            target: '',
+            data,
+            label,
+        } as FlowEdge);
         setLabelDraft(current);
         setIsEditingLabel(true);
-    }, [label, data]);
+    }, [data, id, label]);
 
     const commitLabelEdit = useCallback(() => {
-        setEdges((edges) => edges.map((e) =>
-            e.id !== id ? e : { ...e, data: { ...e.data, label: labelDraft } }
-        ));
+        setEdges((edges) => edges.map((e) => (
+            e.id !== id ? e : { ...e, ...buildEdgeLabelUpdates(e as FlowEdge, labelDraft) }
+        )));
         setIsEditingLabel(false);
     }, [id, labelDraft, setEdges]);
 
@@ -240,6 +246,20 @@ export function CustomEdgeWrapper({
     const sourceSide = typeof data?.archSourceSide === 'string' ? data.archSourceSide : '';
     const targetSide = typeof data?.archTargetSide === 'string' ? data.archTargetSide : '';
     const sideHint = sourceSide || targetSide ? `${sourceSide || '?'}${directionGlyph}${targetSide || '?'}` : '';
+    const edgeLabel = getEditableEdgeLabel({
+        id,
+        source: '',
+        target: '',
+        data,
+        label,
+    } as FlowEdge);
+    hasEditableEdgeLabel({
+        id,
+        source: '',
+        target: '',
+        data,
+        label,
+    } as FlowEdge);
     const renderedLabel = hasArchitectureMeta
         ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700 border border-blue-200">
@@ -248,7 +268,7 @@ export function CustomEdgeWrapper({
                 {data?.archPort && <span className="text-blue-500">:{data.archPort}</span>}
             </span>
         )
-        : label;
+        : edgeLabel;
 
     return (
         <>
@@ -317,13 +337,17 @@ export function CustomEdgeWrapper({
                 pointerEvents="stroke"
                 onPointerEnter={() => setIsHovered(true)}
                 onPointerLeave={() => setIsHovered(false)}
+                onDoubleClick={(event) => {
+                    event.stopPropagation();
+                    beginLabelEdit();
+                }}
                 aria-hidden="true"
             >
-                {canvasInteractionsV1Enabled && <title>Select edge</title>}
+                <title>Select edge</title>
             </path>
             <path ref={pathRef} d={displayPath} style={{ display: 'none' }} fill="none" stroke="none" aria-hidden="true" />
 
-            {renderedLabel && (
+            {(renderedLabel || (!hasArchitectureMeta && (selected || isHovered))) && (
                 <EdgeLabelRenderer>
                     <div
                         ref={labelRef}
@@ -350,7 +374,7 @@ export function CustomEdgeWrapper({
                                 }}
                                 className="bg-white border border-indigo-400 rounded-full px-2.5 py-0.5 text-[11px] font-medium text-slate-700 shadow-sm outline-none ring-2 ring-indigo-300/50 min-w-[60px]"
                             />
-                        ) : (
+                        ) : renderedLabel ? (
                             <div
                                 onPointerDown={onLabelPointerDown}
                                 onDoubleClick={(e) => { e.stopPropagation(); beginLabelEdit(); }}
@@ -362,6 +386,17 @@ export function CustomEdgeWrapper({
                             >
                                 {renderedLabel}
                             </div>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    beginLabelEdit();
+                                }}
+                                className="rounded-full border border-dashed border-slate-300 bg-white/95 px-2.5 py-0.5 text-[11px] font-medium text-slate-500 shadow-sm transition-colors hover:border-indigo-300 hover:text-slate-700"
+                            >
+                                Add label
+                            </button>
                         )}
                     </div>
                 </EdgeLabelRenderer>

@@ -1,5 +1,6 @@
 import { createDefaultEdge } from '@/constants';
 import { createId } from '@/lib/id';
+import { LEGACY_DSL_CODE_FENCE_ALIASES } from '@/lib/legacyBranding';
 import { createLogger } from '@/lib/logger';
 import { parseOpenFlowDSL } from '@/lib/openFlowDSLParser';
 import type { FlowEdge, FlowNode } from '@/lib/types';
@@ -12,7 +13,8 @@ export interface ParsedFlowResult {
 }
 
 export function parseDslOrThrow(dslText: string): ParsedFlowResult {
-  const cleanDsl = dslText.replace(/```(yaml|openflow|flowmind|)?/g, '').replace(/```/g, '').trim();
+  const codeFenceAliasPattern = ['yaml', 'openflow', ...LEGACY_DSL_CODE_FENCE_ALIASES].join('|');
+  const cleanDsl = dslText.replace(new RegExp(`\`\`\`(${codeFenceAliasPattern}|)?`, 'g'), '').replace(/```/g, '').trim();
   const parseResult = parseOpenFlowDSL(cleanDsl);
   if (parseResult.error) {
     throw new Error(parseResult.error);
@@ -44,11 +46,20 @@ export function buildIdMap(parsedNodes: FlowNode[], existingNodes: FlowNode[]): 
 }
 
 export function toFinalNodes(parsedNodes: FlowNode[], idMap: Map<string, string>): FlowNode[] {
-  return parsedNodes.map((node) => ({
-    ...node,
-    id: idMap.get(node.id) || node.id,
-    type: node.type || 'process',
-  }));
+  const seen = new Set<string>();
+  const result: FlowNode[] = [];
+
+  for (const node of parsedNodes) {
+    const finalId = idMap.get(node.id) ?? node.id;
+    if (seen.has(finalId)) {
+      logger.warn('Duplicate node ID after ID mapping — skipping.', { finalId });
+      continue;
+    }
+    seen.add(finalId);
+    result.push({ ...node, id: finalId, type: node.type || 'process' });
+  }
+
+  return result;
 }
 
 export function toFinalEdges(

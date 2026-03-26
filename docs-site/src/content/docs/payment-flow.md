@@ -42,7 +42,7 @@ You can begin from:
 
 - a blank flowchart canvas
 - a payment or SaaS-oriented template
-- an AI prompt in FlowPilot
+- an AI prompt in Flowpilot
 - OpenFlow DSL if the flow should be reviewed as text
 
 ## Example prompt
@@ -80,7 +80,7 @@ After drafting:
 
 - **Shareability**: Everyone from the PM to the backend engineer needs to see the same flow.
 - **Clarity**: Mapping out happy paths, failures, and webhook retries visually is much easier than reading through Stripe API documentation.
-- **Speed**: Use the [Command Center](/docs/en/command-center) and AI to generate the boilerplate flow in seconds.
+- **Speed**: Use the [Command Center](/command-center/) and AI to generate the boilerplate flow in seconds.
 
 ## Example: Stripe Checkout Flow
 
@@ -120,8 +120,8 @@ sequenceDiagram
 
 ## AI Prompt Example
 
-To generate a similar flow using [Ask Flowpilot](/docs/en/ask-flowpilot):
+To generate a similar flow using [Ask Flowpilot](/ask-flowpilot/):
 
 > `"Generate a flowchart showing a subscription payment flow using Braintree. Include the client requesting a client token, the server generating it, the user submitting a nonce, and the final server-side transaction creation. Show both success and failure branches."`
 
-Need to present this to your team? Try the [Playback History](/docs/en/playback-history) feature to walk through the payment sequence step-by-step.
+Need to present this to your team? Try the [Playback History](/playback-history/) feature to walk through the payment sequence step-by-step.

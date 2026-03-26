@@ -17,6 +17,7 @@ function SectionNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
 
   return (
     <NodeChrome
+      nodeId={id}
       selected={Boolean(selected)}
       minWidth={350}
       minHeight={250}
@@ -25,19 +26,28 @@ function SectionNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
     >
       <div
         className={`
-          group w-full h-full rounded-2xl border-2 border-dashed transition-all duration-200
+          group relative w-full h-full rounded-2xl transition-all duration-200 pointer-events-none
           ${selected ? 'z-10' : ''}
         `}
         style={{
-          backgroundColor: theme.bg,
-          borderColor: theme.border,
           minWidth: 350,
           minHeight: 250,
         }}
       >
+        <div
+          className="absolute inset-0 rounded-2xl border-2 border-dashed"
+          style={{
+            backgroundColor: theme.bg,
+            borderColor: theme.border,
+          }}
+        />
+        <div className="pointer-events-auto absolute inset-x-0 top-0 h-3 rounded-t-2xl" />
+        <div className="pointer-events-auto absolute inset-x-0 bottom-0 h-3 rounded-b-2xl" />
+        <div className="pointer-events-auto absolute inset-y-0 left-0 w-3 rounded-l-2xl" />
+        <div className="pointer-events-auto absolute inset-y-0 right-0 w-3 rounded-r-2xl" />
         {/* Title Bar */}
         <div
-          className="flex items-center gap-2 px-4 py-3 rounded-t-2xl cursor-grab active:cursor-grabbing"
+          className="pointer-events-auto relative flex items-center gap-2 rounded-t-2xl px-4 py-3 cursor-grab active:cursor-grabbing"
           style={{ borderBottom: `1px dashed ${theme.border}` }}
         >
           {iconName ? (

@@ -40,6 +40,7 @@ const NODE_ATTRIBUTE_KEYS = [
     'mindmapSide',
     'mindmapBranchStyle',
     'archProvider',
+    'archProviderLabel',
     'archResourceType',
     'archEnvironment',
     'archBoundaryId',
@@ -63,6 +64,7 @@ const EDGE_ATTRIBUTE_KEYS = [
     'classRelationLabel',
     'erRelation',
     'erRelationLabel',
+    'connectionType',
 ] as const;
 
 /**

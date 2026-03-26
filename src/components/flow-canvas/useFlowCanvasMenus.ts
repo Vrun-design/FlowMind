@@ -50,6 +50,7 @@ export function useFlowCanvasMenus({
         setContextMenu({
             id: node.id,
             type: 'node',
+            currentNodeType: node.type ?? null,
             position: { x: event.clientX, y: event.clientY },
             onClose: onCloseContextMenu,
             isOpen: true,

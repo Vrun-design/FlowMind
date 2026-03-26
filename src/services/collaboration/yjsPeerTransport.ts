@@ -1,4 +1,4 @@
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
+import { LEGACY_COLLABORATION_KEYS } from '@/lib/legacyBranding';
 import { isCollaborationOperationEnvelope } from './contracts';
 import { mapPresenceFromAwarenessState } from './session';
 import type { CollaborationOperationEnvelope, CollaborationPresenceState, CollaborationRoomConfig } from './types';
@@ -112,8 +112,8 @@ export function createYjsPeerCollaborationTransport(
   const createProvider = options.createProvider ?? createDefaultProvider;
   const createDoc = options.createDoc ?? (() => new Y.Doc());
   const createPersistence = options.createPersistence ?? (
-    ROLLOUT_FLAGS.collaborationIndexedDbV1 && typeof indexedDB !== 'undefined'
-      ? ((roomId: string, doc: Y.Doc) => new IndexeddbPersistence(`flowmind-collab:${roomId}`, doc))
+    typeof indexedDB !== 'undefined'
+      ? ((roomId: string, doc: Y.Doc) => new IndexeddbPersistence(`${LEGACY_COLLABORATION_KEYS.indexedDbPrefix}${roomId}`, doc))
       : null
   );
 
@@ -265,7 +265,11 @@ export function createYjsPeerCollaborationTransport(
           .then(() => {
             emitOperationArraySnapshot(config, onEvent);
           })
-          .catch(() => undefined)
+          .catch((err: unknown) => {
+            if (import.meta.env.DEV) {
+              console.warn('[yjsPeerTransport] IndexedDB persistence sync error (non-fatal):', err);
+            }
+          })
         : Promise.resolve();
 
       statusListener = (event) => {

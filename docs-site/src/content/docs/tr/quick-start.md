@@ -35,7 +35,7 @@ Komut Merkezi içindeki **Assets** görünümünü kullanarak not, metin, bölü
 
 ### Yapay zeka
 
-Sağ panelde Studio’yu açın ve **FlowPilot** sekmesine geçin. Örnek istem:
+Sağ panelde Studio’yu açın ve **Flowpilot** sekmesine geçin. Örnek istem:
 
 ```text
 Kayıt, e-posta doğrulama, ekip daveti,

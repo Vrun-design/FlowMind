@@ -2,21 +2,23 @@ import { useCallback } from 'react';
 import type { FlowEdge, FlowNode, FlowSnapshot } from '@/lib/types';
 import type { FlowEditorMode, StudioCodeMode, StudioTab } from '@/hooks/useFlowEditorUIState';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
-import type { SupportedLanguage } from '@/hooks/ai-generation/codeToArchitecture';
-import type { TerraformInputFormat } from '@/hooks/ai-generation/terraformToCloud';
-import type { ChatMessage } from '@/services/aiService';
-import type { FlowTemplate } from '@/services/templates';
 import type { LayoutAlgorithm } from '@/services/elkLayout';
 import type { Location, NavigateFunction } from 'react-router-dom';
 import type { TFunction } from 'i18next';
 import type { FlowEditorChromeProps } from './FlowEditorChrome';
-import type { FlowEditorPanelsProps } from '@/components/FlowEditorPanels';
+import type {
+    BuildFlowEditorPanelsPropsParams,
+    CommandBarPanelBuilderParams,
+    PropertiesRailBuilderParams,
+    SnapshotsPanelBuilderParams,
+    StudioRailBuilderParams,
+} from './panelProps';
 import { useFlowEditorShellController } from './useFlowEditorShellController';
 import { useFlowEditorStudioController } from './useFlowEditorStudioController';
 import { useFlowEditorPanelProps } from './useFlowEditorPanelProps';
 import { useFlowEditorChromeProps } from './flowEditorChromeProps';
 
-interface UseFlowEditorControllerParams {
+export interface UseFlowEditorShellParams {
     location: Location;
     navigate: NavigateFunction;
     fileInputRef: React.RefObject<HTMLInputElement | null>;
@@ -36,7 +38,13 @@ interface UseFlowEditorControllerParams {
         algorithm?: LayoutAlgorithm,
         spacing?: 'compact' | 'normal' | 'loose'
     ) => Promise<void>;
+}
+
+export interface UseFlowEditorStudioParams {
+    editorMode: FlowEditorMode;
     studioTab: StudioTab;
+    selectedNodeId: string | null;
+    selectedEdgeId: string | null;
     setStudioTab: (tab: StudioTab) => void;
     setStudioCodeMode: (mode: StudioCodeMode) => void;
     setStudioMode: () => void;
@@ -44,64 +52,92 @@ interface UseFlowEditorControllerParams {
     setCanvasMode: () => void;
     setSelectedNodeId: (id: string | null) => void;
     setSelectedEdgeId: (id: string | null) => void;
-    closeHistory: () => void;
-    commandBarView: 'root' | 'search' | 'assets' | 'templates' | 'layout' | 'design-system';
-    manualSnapshots: FlowSnapshot[];
-    autoSnapshots: FlowSnapshot[];
-    saveSnapshot: (name: string, nodes: FlowNode[], edges: FlowEdge[]) => void;
-    handleRestoreSnapshot: (snapshot: FlowSnapshot) => void;
-    deleteSnapshot: (id: string) => void;
-    setDiffBaseline: (snapshot: FlowSnapshot) => void;
-    undo: () => void;
-    redo: () => void;
-    handleInsertTemplate: (template: FlowTemplate) => void;
-    showGrid: boolean;
-    toggleGrid: () => void;
-    snapToGrid: boolean;
-    toggleSnap: () => void;
-    updateNodeData: (id: string, data: Record<string, unknown>) => void;
-    applyBulkNodeData: FlowEditorPanelsProps['properties']['onBulkChangeNodes'];
-    updateNodeType: (id: string, type: string) => void;
-    updateEdge: (id: string, data: Record<string, unknown>) => void;
-    deleteNode: (id: string) => void;
-    duplicateNode: (id: string) => void;
-    deleteEdge: (id: string) => void;
-    updateNodeZIndex: (id: string, action: 'front' | 'back') => void;
-    handleAddMindmapChild: (nodeId: string, side?: 'left' | 'right' | null) => void;
-    handleAddMindmapSibling: (nodeId: string) => void;
-    handleAddArchitectureService: (parentId: string) => void;
-    handleCreateArchitectureBoundary: FlowEditorPanelsProps['properties']['onCreateArchitectureBoundary'];
-    handleCommandBarApply: (nodes: FlowNode[], edges: FlowEdge[]) => void;
-    handleAIRequest: (prompt: string, imageBase64?: string) => Promise<void>;
-    handleCodeAnalysis: (code: string, language: SupportedLanguage) => Promise<void>;
-    handleSqlAnalysis: (sql: string) => Promise<void>;
-    handleTerraformAnalysis: (input: string, format: TerraformInputFormat) => Promise<void>;
-    handleOpenApiAnalysis: (spec: string) => Promise<void>;
-    handleApplyInfraDsl: (dsl: string) => void;
-    isGenerating: boolean;
-    chatMessages: ChatMessage[];
-    clearChat: () => void;
-    studioCodeMode: StudioCodeMode;
-    currentStepIndex: number;
-    totalSteps: number;
-    isPlaying: boolean;
-    startPlayback: () => void;
-    togglePlay: () => void;
-    stopPlayback: () => void;
-    jumpToStep: (stepIndex: number) => void;
-    nextStep: () => void;
-    prevStep: () => void;
-    playbackSpeed: number;
-    setPlaybackSpeed: (speed: number) => void;
+}
+
+type FlowEditorCommandBarConfig = Omit<
+    CommandBarPanelBuilderParams,
+    | 'isCommandBarOpen'
+    | 'closeCommandBar'
+    | 'nodes'
+    | 'edges'
+    | 'onLayout'
+    | 'openStudioAI'
+    | 'openStudioCode'
+    | 'openStudioPlayback'
+    | 'handleAddAnnotation'
+    | 'handleAddSection'
+    | 'handleAddTextNode'
+    | 'handleAddJourneyNode'
+    | 'handleAddMindmapNode'
+    | 'handleAddArchitectureNode'
+    | 'handleAddClassNode'
+    | 'handleAddEntityNode'
+    | 'handleAddImage'
+    | 'handleAddWireframe'
+    | 'handleAddDomainLibraryItem'
+>;
+
+type FlowEditorSnapshotsConfig = Omit<
+    SnapshotsPanelBuilderParams,
+    'isHistoryOpen' | 'snapshots' | 'nodes' | 'edges' | 'handleCompareSnapshot'
+> & {
+    setDiffBaseline: NonNullable<SnapshotsPanelBuilderParams['handleCompareSnapshot']>;
+};
+
+type FlowEditorPropertiesConfig = Omit<
+    PropertiesRailBuilderParams,
+    'selectedNode' | 'selectedNodes' | 'selectedEdge' | 'clearSelection'
+>;
+
+type FlowEditorStudioConfig = Omit<
+    StudioRailBuilderParams,
+    | 'closeStudioPanel'
+    | 'selectedNode'
+    | 'selectedNodeCount'
+    | 'setCanvasMode'
+    | 'studioTab'
+    | 'setStudioTab'
+    | 'setStudioCodeMode'
+    | 'playback'
+    | 'initialPrompt'
+    | 'onInitialPromptConsumed'
+> & {
+    playback: {
+        currentStepIndex: number;
+        totalSteps: number;
+        isPlaying: boolean;
+        startPlayback: () => void;
+        togglePlay: () => void;
+        stopPlayback: () => void;
+        jumpToStep: (stepIndex: number) => void;
+        nextStep: () => void;
+        prevStep: () => void;
+        playbackSpeed: number;
+        setPlaybackSpeed: (speed: number) => void;
+    };
     pendingAIPrompt?: string;
     clearPendingAIPrompt: () => void;
+};
+
+export interface UseFlowEditorPanelsParams {
+    commandBar: FlowEditorCommandBarConfig;
+    snapshots: FlowEditorSnapshotsConfig;
+    properties: FlowEditorPropertiesConfig;
+    studio: FlowEditorStudioConfig;
+    isHistoryOpen: BuildFlowEditorPanelsPropsParams['isHistoryOpen'];
+    editorMode: BuildFlowEditorPanelsPropsParams['editorMode'];
+}
+
+export interface UseFlowEditorChromeParams {
     handleSwitchTab: (tabId: string) => void;
     handleAddTab: () => void;
     handleCloseTab: (tabId: string) => void;
     handleRenameTab: (tabId: string, newName: string) => void;
     handleExport: (format?: 'png' | 'jpeg') => void;
     handleSvgExport: () => void;
+    handlePdfExport: () => void;
     handleAnimatedExport: (format: 'video' | 'gif') => void;
+    handleRevealExport: (format: 'reveal-video' | 'reveal-gif') => void;
     handleExportMermaid: () => void;
     handleExportPlantUML: () => void;
     handleExportOpenFlowDSL: () => void;
@@ -113,6 +149,8 @@ interface UseFlowEditorControllerParams {
     collaborationTopNavState?: FlowEditorChromeProps['topNav']['collaboration'];
     openCommandBar: (view: 'root' | 'search' | 'assets' | 'templates' | 'layout' | 'design-system') => void;
     handleAddShape: (shapeType: string, position?: { x: number; y: number }) => void;
+    undo: () => void;
+    redo: () => void;
     canUndo: boolean;
     canRedo: boolean;
     isSelectMode: boolean;
@@ -122,6 +160,13 @@ interface UseFlowEditorControllerParams {
     t: TFunction;
     handleAddNode: (position?: { x: number; y: number }) => void;
     setPendingAIPrompt: (prompt: string | undefined) => void;
+    startPlayback: () => void;
+    totalSteps: number;
+    isPlaying: boolean;
+    togglePlay: () => void;
+    nextStep: () => void;
+    prevStep: () => void;
+    stopPlayback: () => void;
     handleAddAnnotation: () => void;
     handleAddSection: () => void;
     handleAddTextNode: () => void;
@@ -135,119 +180,18 @@ interface UseFlowEditorControllerParams {
     handleAddDomainLibraryItem: (item: DomainLibraryItem) => void;
 }
 
+export interface UseFlowEditorControllerParams {
+    shell: UseFlowEditorShellParams;
+    studio: UseFlowEditorStudioParams;
+    panels: UseFlowEditorPanelsParams;
+    chrome: UseFlowEditorChromeParams;
+}
+
 export function useFlowEditorController({
-    location,
-    navigate,
-    fileInputRef,
-    tabs,
-    activeTabId,
-    snapshots,
-    nodes,
-    edges,
-    selectedNodeId,
-    selectedEdgeId,
-    isCommandBarOpen,
-    isHistoryOpen,
-    editorMode,
-    handleExportJSON,
-    onLayout,
-    studioTab,
-    setStudioTab,
-    setStudioCodeMode,
-    setStudioMode,
-    closeCommandBar,
-    setCanvasMode,
-    setSelectedNodeId,
-    setSelectedEdgeId,
-    closeHistory,
-    commandBarView,
-    manualSnapshots,
-    autoSnapshots,
-    saveSnapshot,
-    handleRestoreSnapshot,
-    deleteSnapshot,
-    setDiffBaseline,
-    undo,
-    redo,
-    handleInsertTemplate,
-    showGrid,
-    toggleGrid,
-    snapToGrid,
-    toggleSnap,
-    updateNodeData,
-    applyBulkNodeData,
-    updateNodeType,
-    updateEdge,
-    deleteNode,
-    duplicateNode,
-    deleteEdge,
-    updateNodeZIndex,
-    handleAddMindmapChild,
-    handleAddMindmapSibling,
-    handleAddArchitectureService,
-    handleCreateArchitectureBoundary,
-    handleCommandBarApply,
-    handleAIRequest,
-    handleCodeAnalysis,
-    handleSqlAnalysis,
-    handleTerraformAnalysis,
-    handleOpenApiAnalysis,
-    handleApplyInfraDsl,
-    isGenerating,
-    chatMessages,
-    clearChat,
-    studioCodeMode,
-    currentStepIndex,
-    totalSteps,
-    isPlaying,
-    startPlayback,
-    togglePlay,
-    stopPlayback,
-    jumpToStep,
-    nextStep,
-    prevStep,
-    playbackSpeed,
-    setPlaybackSpeed,
-    pendingAIPrompt,
-    clearPendingAIPrompt,
-    handleSwitchTab,
-    handleAddTab,
-    handleCloseTab,
-    handleRenameTab,
-    handleExport,
-    handleSvgExport,
-    handleAnimatedExport,
-    handleExportMermaid,
-    handleExportPlantUML,
-    handleExportOpenFlowDSL,
-    handleExportFigma,
-    handleShare,
-    handleImportJSON,
-    openHistory,
-    onGoHome,
-    collaborationTopNavState,
-    openCommandBar,
-    handleAddShape,
-    canUndo,
-    canRedo,
-    isSelectMode,
-    enableSelectMode,
-    enablePanMode,
-    getCenter,
-    t,
-    handleAddNode,
-    setPendingAIPrompt,
-    handleAddAnnotation,
-    handleAddSection,
-    handleAddTextNode,
-    handleAddJourneyNode,
-    handleAddMindmapNode,
-    handleAddArchitectureNode,
-    handleAddClassNode,
-    handleAddEntityNode,
-    handleAddImage,
-    handleAddWireframe,
-    handleAddDomainLibraryItem,
+    shell,
+    studio,
+    panels: panelParams,
+    chrome: chromeParams,
 }: UseFlowEditorControllerParams) {
     const {
         handleLayoutWithContext,
@@ -255,23 +199,7 @@ export function useFlowEditorController({
         selectedNodes,
         selectedEdge,
         shouldRenderPanels,
-    } = useFlowEditorShellController({
-        location,
-        navigate,
-        fileInputRef,
-        tabs,
-        activeTabId,
-        snapshots,
-        nodes,
-        edges,
-        selectedNodeId,
-        selectedEdgeId,
-        isCommandBarOpen,
-        isHistoryOpen,
-        editorMode,
-        handleExportJSON,
-        onLayout,
-    });
+    } = useFlowEditorShellController(shell);
 
     const {
         openStudioPanel,
@@ -281,155 +209,92 @@ export function useFlowEditorController({
         toggleStudioPanel,
         closeStudioPanel,
         handleCanvasEntityIntent,
-    } = useFlowEditorStudioController({
-        editorMode,
-        studioTab,
-        selectedNodeId,
-        selectedEdgeId,
-        setStudioTab,
-        setStudioCodeMode,
-        setStudioMode,
-        closeCommandBar,
-        setCanvasMode,
-        setSelectedNodeId,
-        setSelectedEdgeId,
-    });
+    } = useFlowEditorStudioController(studio);
 
     const clearSelection = useCallback(() => {
-        setSelectedNodeId(null);
-        setSelectedEdgeId(null);
-    }, [setSelectedEdgeId, setSelectedNodeId]);
+        studio.setSelectedNodeId(null);
+        studio.setSelectedEdgeId(null);
+    }, [studio]);
 
     const panels = useFlowEditorPanelProps({
-        isCommandBarOpen,
-        closeCommandBar,
-        commandBarView,
-        isHistoryOpen,
-        closeHistory,
-        editorMode,
-        nodes,
-        edges,
-        snapshots,
-        manualSnapshots,
-        autoSnapshots,
-        saveSnapshot,
-        handleRestoreSnapshot,
-        deleteSnapshot,
-        setDiffBaseline,
-        undo,
-        redo,
-        onLayout,
-        handleInsertTemplate,
-        openStudioAI,
-        openStudioCode,
-        openStudioPlayback,
-        handleAddAnnotation,
-        handleAddSection,
-        handleAddTextNode,
-        handleAddJourneyNode,
-        handleAddMindmapNode,
-        handleAddArchitectureNode,
-        handleAddClassNode,
-        handleAddEntityNode,
-        handleAddImage,
-        handleAddWireframe,
-        handleAddDomainLibraryItem,
-        showGrid,
-        toggleGrid,
-        snapToGrid,
-        toggleSnap,
-        selectedNode,
-        selectedNodes,
-        selectedEdge,
-        updateNodeData,
-        applyBulkNodeData,
-        updateNodeType,
-        updateEdge,
-        deleteNode,
-        duplicateNode,
-        deleteEdge,
-        updateNodeZIndex,
-        handleAddMindmapChild,
-        handleAddMindmapSibling,
-        handleAddArchitectureService,
-        handleCreateArchitectureBoundary,
-        clearSelection,
-        closeStudioPanel,
-        handleCommandBarApply,
-        handleAIRequest,
-        handleCodeAnalysis,
-        handleSqlAnalysis,
-        handleTerraformAnalysis,
-        handleOpenApiAnalysis,
-        handleApplyInfraDsl,
-        isGenerating,
-        chatMessages,
-        clearChat,
-        setCanvasMode,
-        studioTab,
-        setStudioTab,
-        studioCodeMode,
-        setStudioCodeMode,
-        currentStepIndex,
-        totalSteps,
-        isPlaying,
-        startPlayback,
-        togglePlay,
-        stopPlayback,
-        jumpToStep,
-        nextStep,
-        prevStep,
-        playbackSpeed,
-        setPlaybackSpeed,
-        pendingAIPrompt,
-        clearPendingAIPrompt,
+        commandBar: {
+            ...panelParams.commandBar,
+            isCommandBarOpen: shell.isCommandBarOpen,
+            closeCommandBar: studio.closeCommandBar,
+            nodes: shell.nodes,
+            edges: shell.edges,
+            onLayout: shell.onLayout,
+            openStudioAI,
+            openStudioCode,
+            openStudioPlayback,
+            handleAddAnnotation: chromeParams.handleAddAnnotation,
+            handleAddSection: chromeParams.handleAddSection,
+            handleAddTextNode: chromeParams.handleAddTextNode,
+            handleAddJourneyNode: chromeParams.handleAddJourneyNode,
+            handleAddMindmapNode: chromeParams.handleAddMindmapNode,
+            handleAddArchitectureNode: chromeParams.handleAddArchitectureNode,
+            handleAddClassNode: chromeParams.handleAddClassNode,
+            handleAddEntityNode: chromeParams.handleAddEntityNode,
+            handleAddImage: chromeParams.handleAddImage,
+            handleAddWireframe: chromeParams.handleAddWireframe,
+            handleAddDomainLibraryItem: chromeParams.handleAddDomainLibraryItem,
+        },
+        snapshots: {
+            ...panelParams.snapshots,
+            isHistoryOpen: shell.isHistoryOpen,
+            snapshots: shell.snapshots,
+            handleCompareSnapshot: panelParams.snapshots.setDiffBaseline,
+            nodes: shell.nodes,
+            edges: shell.edges,
+        },
+        properties: {
+            ...panelParams.properties,
+            selectedNode,
+            selectedNodes,
+            selectedEdge,
+            clearSelection,
+        },
+        studio: {
+            ...panelParams.studio,
+            closeStudioPanel,
+            selectedNode,
+            selectedNodeCount: selectedNodes.length,
+            setCanvasMode: studio.setCanvasMode,
+            studioTab: studio.studioTab,
+            setStudioTab: studio.setStudioTab,
+            setStudioCodeMode: studio.setStudioCodeMode,
+            playback: {
+                currentStepIndex: panelParams.studio.playback.currentStepIndex,
+                totalSteps: panelParams.studio.playback.totalSteps,
+                isPlaying: panelParams.studio.playback.isPlaying,
+                onStartPlayback: panelParams.studio.playback.startPlayback,
+                onPlayPause: panelParams.studio.playback.togglePlay,
+                onStop: panelParams.studio.playback.stopPlayback,
+                onScrubToStep: panelParams.studio.playback.jumpToStep,
+                onNext: panelParams.studio.playback.nextStep,
+                onPrev: panelParams.studio.playback.prevStep,
+                playbackSpeed: panelParams.studio.playback.playbackSpeed,
+                onPlaybackSpeedChange: panelParams.studio.playback.setPlaybackSpeed,
+            },
+            initialPrompt: panelParams.studio.pendingAIPrompt,
+            onInitialPromptConsumed: panelParams.studio.clearPendingAIPrompt,
+        },
+        isHistoryOpen: shell.isHistoryOpen,
+        editorMode: shell.editorMode,
     });
 
     const chrome = useFlowEditorChromeProps({
-        handleSwitchTab,
-        handleAddTab,
-        handleCloseTab,
-        handleRenameTab,
-        handleExport,
-        handleSvgExport,
-        handleAnimatedExport,
-        handleExportJSON,
-        handleExportMermaid,
-        handleExportPlantUML,
-        handleExportOpenFlowDSL,
-        handleExportFigma,
-        handleShare,
-        handleImportJSON,
-        openHistory,
-        onGoHome,
-        startPlayback,
-        collaborationTopNavState,
-        currentStepIndex,
-        openCommandBar,
+        ...chromeParams,
+        handleExportJSON: shell.handleExportJSON,
+        currentStepIndex: panelParams.studio.playback.currentStepIndex,
         toggleStudioPanel,
-        editorMode,
-        handleAddShape,
-        undo,
-        redo,
+        editorMode: shell.editorMode,
         handleLayoutWithContext,
-        canUndo,
-        canRedo,
-        isSelectMode,
-        enableSelectMode,
-        isCommandBarOpen,
-        enablePanMode,
-        getCenter,
-        nodes,
-        t,
         openStudioPanel,
-        handleAddNode,
-        setPendingAIPrompt,
-        totalSteps,
-        isPlaying,
-        togglePlay,
-        nextStep,
-        prevStep,
-        stopPlayback,
+        isCommandBarOpen: shell.isCommandBarOpen,
+        nodes: shell.nodes,
+        undo: panelParams.commandBar.undo,
+        redo: panelParams.commandBar.redo,
     });
 
     return {

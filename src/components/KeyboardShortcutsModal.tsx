@@ -40,8 +40,8 @@ export function KeyboardShortcutsModal(): React.JSX.Element | null {
                 aria-modal="true"
                 aria-labelledby="keyboard-shortcuts-title"
                 aria-describedby="keyboard-shortcuts-description"
-                className="bg-white shadow-2xl max-w-2xl w-full border border-slate-200/60 flex flex-col overflow-hidden animate-in zoom-in duration-200"
-                style={{ borderRadius: 'var(--brand-radius, 20px)' }}
+                className="max-w-2xl w-full overflow-hidden border border-slate-200/60 bg-white shadow-[var(--shadow-overlay)] flex flex-col animate-in zoom-in duration-200"
+                style={{ borderRadius: 'var(--radius-xl)' }}
             >
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-slate-100">
@@ -51,7 +51,7 @@ export function KeyboardShortcutsModal(): React.JSX.Element | null {
                             style={{
                                 background: 'var(--brand-primary-50, #eef2ff)',
                                 color: 'var(--brand-primary, #6366f1)',
-                                borderRadius: 'calc(var(--brand-radius, 24px) * 0.4)'
+                                borderRadius: 'var(--radius-md)'
                             }}
                         >
                             <Keyboard className="w-5 h-5" />

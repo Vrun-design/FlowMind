@@ -35,7 +35,7 @@ Open **Assets** from the Command Center to add notes, text, sections, wireframes
 
 ### AI
 
-Switch the right rail to Studio and open the **FlowPilot** tab. Enter a prompt such as:
+Switch the right rail to Studio and open the **Flowpilot** tab. Enter a prompt such as:
 
 ```text
 Create a SaaS onboarding workflow with signup, email verification,

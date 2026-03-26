@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
+import { LEGACY_EVENT_NAMES } from '@/lib/legacyBranding';
 import { useFlowStore } from '@/store';
 import { useNodeLabelEditRequestActions, usePendingNodeLabelEditRequest } from '@/store/selectionHooks';
 
-const NODE_LABEL_EDIT_REQUEST_EVENT = 'flowmind:node-label-edit-request';
+const NODE_LABEL_EDIT_REQUEST_EVENT = LEGACY_EVENT_NAMES.nodeLabelEditRequest;
 
 interface NodeLabelEditRequestDetail {
   nodeId: string;

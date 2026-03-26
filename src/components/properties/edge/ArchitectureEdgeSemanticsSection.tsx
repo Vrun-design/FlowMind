@@ -9,6 +9,10 @@ import {
   normalizeArchitectureEdgeDirection,
   normalizeArchitectureEdgeSide,
 } from './architectureSemantics';
+import {
+  INSPECTOR_INPUT_COMPACT_CLASSNAME,
+  InspectorField,
+} from '@/components/properties/InspectorPrimitives';
 
 interface ArchitectureEdgeSemanticsSectionProps {
   selectedEdge: FlowEdge;
@@ -109,56 +113,68 @@ export function ArchitectureEdgeSemanticsSection({
     });
   };
 
+  const sideOptions = (
+    <>
+      <option value="">Auto</option>
+      <option value="L">Left</option>
+      <option value="R">Right</option>
+      <option value="T">Top</option>
+      <option value="B">Bottom</option>
+    </>
+  );
+
   return (
-    <div className="space-y-2">
-      <div className="grid grid-cols-2 gap-2">
+    <div className="space-y-3">
+      <InspectorField label="Direction">
         <select
           value={currentDirection}
           onChange={(event) => updateDirection(event.target.value)}
-          className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-xs"
+          className={INSPECTOR_INPUT_COMPACT_CLASSNAME}
         >
           <option value="-->">Forward (--&gt;)</option>
           <option value="<--">Reverse (&lt;--)</option>
           <option value="<-->">Bidirectional (&lt;--&gt;)</option>
         </select>
-        <div className="grid grid-cols-2 gap-2">
+      </InspectorField>
+
+      <div className="grid grid-cols-2 gap-2">
+        <InspectorField label="Source Side">
           <select
             value={currentSourceSide || ''}
             onChange={(event) => updateSourceSide(event.target.value)}
-            className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-xs"
+            className={INSPECTOR_INPUT_COMPACT_CLASSNAME}
           >
-            <option value="">Src side</option>
-            <option value="L">L</option>
-            <option value="R">R</option>
-            <option value="T">T</option>
-            <option value="B">B</option>
+            {sideOptions}
           </select>
+        </InspectorField>
+        <InspectorField label="Target Side">
           <select
             value={currentTargetSide || ''}
             onChange={(event) => updateTargetSide(event.target.value)}
-            className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-xs"
+            className={INSPECTOR_INPUT_COMPACT_CLASSNAME}
           >
-            <option value="">Tgt side</option>
-            <option value="L">L</option>
-            <option value="R">R</option>
-            <option value="T">T</option>
-            <option value="B">B</option>
+            {sideOptions}
           </select>
-        </div>
+        </InspectorField>
       </div>
+
       <div className="grid grid-cols-2 gap-2">
-        <input
-          value={currentProtocol}
-          onChange={(event) => updateProtocol(event.target.value)}
-          placeholder="Protocol (HTTPS)"
-          className="rounded-md border border-slate-300 px-2 py-1.5 text-xs"
-        />
-        <input
-          value={currentPort}
-          onChange={(event) => updatePort(event.target.value)}
-          placeholder="Port (443)"
-          className="rounded-md border border-slate-300 px-2 py-1.5 text-xs"
-        />
+        <InspectorField label="Protocol">
+          <input
+            value={currentProtocol}
+            onChange={(event) => updateProtocol(event.target.value)}
+            placeholder="HTTPS"
+            className={INSPECTOR_INPUT_COMPACT_CLASSNAME}
+          />
+        </InspectorField>
+        <InspectorField label="Port">
+          <input
+            value={currentPort}
+            onChange={(event) => updatePort(event.target.value)}
+            placeholder="443"
+            className={INSPECTOR_INPUT_COMPACT_CLASSNAME}
+          />
+        </InspectorField>
       </div>
     </div>
   );

@@ -4,12 +4,15 @@ import type { FlowNode } from '@/lib/types';
 import { Search, Filter } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Input } from '../ui/Input';
+import { SearchField } from '../ui/SearchField';
+import { SegmentedTabs } from '../ui/SegmentedTabs';
+import { Select } from '../ui/Select';
 import { ViewHeader } from './ViewHeader';
 import { useFlowStore } from '../../store';
 import { useTabActions, useTabsState } from '@/store/tabHooks';
 import { EMPTY_QUERY, matchesNodeQuery, type QueryState } from './searchQuery';
 import { readLocalStorageJson, writeLocalStorageJson } from '@/services/storage/uiLocalStorage';
+import { EDITOR_FIELD_COMPACT_CLASS } from '../ui/editorFieldStyles';
 
 interface QueryPreset {
     id: string;
@@ -86,6 +89,14 @@ export const SearchView = ({
         () => Array.from(new Set(nodes.map((node) => node.data?.color).filter(Boolean))).sort(),
         [nodes]
     );
+    const scopeItems = useMemo(() => ([
+        { id: 'current', label: 'Current page' },
+        { id: 'all', label: 'All pages' },
+    ]), []);
+    const nodeTypeOptions = useMemo(() => [{ value: '', label: 'Any type' }, ...uniqueNodeTypes.map((item) => ({ value: item, label: item }))], [uniqueNodeTypes]);
+    const shapeOptions = useMemo(() => [{ value: '', label: 'Any shape' }, ...uniqueShapes.map((item) => ({ value: String(item), label: String(item) }))], [uniqueShapes]);
+    const colorOptions = useMemo(() => [{ value: '', label: 'Any color' }, ...uniqueColors.map((item) => ({ value: String(item), label: String(item) }))], [uniqueColors]);
+    const presetOptions = useMemo(() => [{ value: '', label: 'Load preset...' }, ...queryPresets.map((preset) => ({ value: preset.id, label: preset.name }))], [queryPresets]);
 
     const handleSelectNode = (node: FlowNode, tabId: string) => {
         if (tabId !== activeTabId) {
@@ -151,80 +162,69 @@ export const SearchView = ({
 
     return (
         <div className="flex flex-col h-full">
-            <ViewHeader title={t('commandBar.search.title')} icon={<Search className="w-4 h-4 text-[var(--brand-primary)]" />} onBack={handleBack} />
+            <ViewHeader
+                title={t('commandBar.search.title')}
+                icon={<Search className="w-4 h-4 text-[var(--brand-primary)]" />}
+                description="Find nodes quickly across the current page or the whole workspace."
+                onBack={handleBack}
+                onClose={onClose}
+            />
 
             <div className="px-4 py-2 border-b border-slate-100">
-                <Input
+                <SearchField
                     value={query.text}
                     onChange={e => setQuery((current) => ({ ...current, text: e.target.value }))}
                     onKeyDown={(e) => e.stopPropagation()}
                     placeholder={t('commandBar.search.placeholder')}
-                    className="w-full focus:border-[var(--brand-primary-400)]"
                     autoFocus
                 />
                 <div className="mt-3 rounded-[var(--radius-md)] border border-slate-200 bg-slate-50 p-3">
-                    <div className="mb-2 grid grid-cols-2 gap-2">
-                        <select
-                            value={scope}
-                            onChange={(event) => setScope(event.target.value as 'current' | 'all')}
-                            className="h-8 rounded-[var(--brand-radius)] border border-slate-300 bg-white px-2 text-xs"
-                        >
-                            <option value="current">Current page</option>
-                            <option value="all">All pages</option>
-                        </select>
-                    </div>
+                    <SegmentedTabs
+                        items={scopeItems}
+                        value={scope}
+                        onChange={(value) => setScope(value as 'current' | 'all')}
+                        size="sm"
+                    />
                     <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
                         <Filter className="h-3.5 w-3.5" />
                         Query Selection
                     </div>
                     <div className="grid grid-cols-2 gap-2">
-                        <select
+                        <Select
                             value={query.nodeType}
-                            onChange={(event) => setQuery((current) => ({ ...current, nodeType: event.target.value }))}
-                            className="h-9 rounded-[var(--brand-radius)] border border-slate-300 bg-white px-2 text-xs"
-                        >
-                            <option value="">Any type</option>
-                            {uniqueNodeTypes.map((item) => (
-                                <option key={item} value={item}>{item}</option>
-                            ))}
-                        </select>
-                        <select
+                            onChange={(value) => setQuery((current) => ({ ...current, nodeType: value }))}
+                            options={nodeTypeOptions}
+                            placeholder="Any type"
+                        />
+                        <Select
                             value={query.shape}
-                            onChange={(event) => setQuery((current) => ({ ...current, shape: event.target.value }))}
-                            className="h-9 rounded-[var(--brand-radius)] border border-slate-300 bg-white px-2 text-xs"
-                        >
-                            <option value="">Any shape</option>
-                            {uniqueShapes.map((item) => (
-                                <option key={String(item)} value={String(item)}>{String(item)}</option>
-                            ))}
-                        </select>
-                        <select
+                            onChange={(value) => setQuery((current) => ({ ...current, shape: value }))}
+                            options={shapeOptions}
+                            placeholder="Any shape"
+                        />
+                        <Select
                             value={query.color}
-                            onChange={(event) => setQuery((current) => ({ ...current, color: event.target.value }))}
-                            className="h-9 rounded-[var(--brand-radius)] border border-slate-300 bg-white px-2 text-xs"
-                        >
-                            <option value="">Any color</option>
-                            {uniqueColors.map((item) => (
-                                <option key={String(item)} value={String(item)}>{String(item)}</option>
-                            ))}
-                        </select>
+                            onChange={(value) => setQuery((current) => ({ ...current, color: value }))}
+                            options={colorOptions}
+                            placeholder="Any color"
+                        />
                         <input
                             value={query.labelContains}
                             onChange={(event) => setQuery((current) => ({ ...current, labelContains: event.target.value }))}
                             placeholder="Label contains..."
-                            className="h-9 rounded-[var(--brand-radius)] border border-slate-300 bg-white px-2 text-xs"
+                            className={`${EDITOR_FIELD_COMPACT_CLASS} px-3`}
                         />
                         <input
                             value={query.metadataKey}
                             onChange={(event) => setQuery((current) => ({ ...current, metadataKey: event.target.value }))}
                             placeholder="Metadata key"
-                            className="h-9 rounded-[var(--brand-radius)] border border-slate-300 bg-white px-2 text-xs"
+                            className={`${EDITOR_FIELD_COMPACT_CLASS} px-3`}
                         />
                         <input
                             value={query.metadataValue}
                             onChange={(event) => setQuery((current) => ({ ...current, metadataValue: event.target.value }))}
                             placeholder="Metadata value"
-                            className="h-9 rounded-[var(--brand-radius)] border border-slate-300 bg-white px-2 text-xs"
+                            className={`${EDITOR_FIELD_COMPACT_CLASS} px-3`}
                         />
                     </div>
                     <div className="mt-2 flex items-center gap-2">
@@ -246,7 +246,7 @@ export const SearchView = ({
                             value={presetName}
                             onChange={(event) => setPresetName(event.target.value)}
                             placeholder="Preset name"
-                            className="h-8 rounded-[var(--brand-radius)] border border-slate-300 bg-white px-2 text-xs"
+                            className={EDITOR_FIELD_COMPACT_CLASS}
                         />
                         <button
                             onClick={saveQueryPreset}
@@ -261,16 +261,13 @@ export const SearchView = ({
                             Delete
                         </button>
                     </div>
-                    <select
+                    <Select
                         value={selectedPresetId}
-                        onChange={(event) => loadPreset(event.target.value)}
-                        className="mt-2 h-8 w-full rounded-[var(--brand-radius)] border border-slate-300 bg-white px-2 text-xs"
-                    >
-                        <option value="">Load preset...</option>
-                        {queryPresets.map((preset) => (
-                            <option key={preset.id} value={preset.id}>{preset.name}</option>
-                        ))}
-                    </select>
+                        onChange={loadPreset}
+                        options={presetOptions}
+                        placeholder="Load preset..."
+                        className="mt-2"
+                    />
                 </div>
                 <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
                     <span>

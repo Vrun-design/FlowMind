@@ -3,6 +3,7 @@ import { Plus, X } from 'lucide-react';
 import { FlowTab } from '@/lib/types';
 import { IS_BEVELED } from '@/lib/brand';
 import { useTranslation } from 'react-i18next';
+import { getSegmentedTabButtonClass } from './ui/SegmentedTabs';
 
 interface FlowTabsProps {
   tabs: FlowTab[];
@@ -25,6 +26,8 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
   const isBeveled = IS_BEVELED;
   const [editingTabId, setEditingTabId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
+  const activeTabClassName = `${getSegmentedTabButtonClass(true, 'sm')} h-10 sm:h-9 border-[var(--brand-primary-200)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-700)]`;
+  const inactiveTabClassName = `${getSegmentedTabButtonClass(false, 'sm')} h-10 sm:h-9 border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-700`;
 
   const handleStartEdit = (tab: FlowTab) => {
     setEditingTabId(tab.id);
@@ -49,17 +52,17 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-center px-4 pointer-events-auto">
-      <div className="flex items-center gap-1 overflow-x-auto no-scrollbar max-w-xl">
+    <div className="pointer-events-auto flex min-w-0 items-center justify-center px-2 sm:px-4">
+      <div className="flex max-w-full min-w-0 items-center gap-1 overflow-x-auto no-scrollbar">
         {tabs.map((tab) => (
           <div
             key={tab.id}
             data-testid="flow-tab"
             className={`
-              group relative flex items-center gap-2 px-3 py-1.5 rounded-[var(--brand-radius)] cursor-pointer select-none transition-all border
+              group relative flex items-center gap-2 cursor-pointer select-none transition-all
               ${activeTabId === tab.id
-                ? 'bg-[var(--brand-primary-50)] border-[var(--brand-primary-200)] text-[var(--brand-primary-700)] font-medium shadow-sm'
-                : 'border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                ? activeTabClassName
+                : inactiveTabClassName
               }
             `}
             onClick={() => onSwitchTab(tab.id)}
@@ -73,12 +76,12 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
                 onChange={(e) => setEditName(e.target.value)}
                 onBlur={handleFinishEdit}
                 onKeyDown={handleKeyDown}
-                className="bg-white border border-[var(--brand-primary-300)] rounded-[calc(var(--brand-radius)-4px)] px-1 py-0 text-xs font-medium w-24 outline-none focus:ring-1 focus:ring-[var(--brand-primary)]"
+                className="bg-white border border-[var(--brand-primary-300)] rounded-[var(--radius-xs)] px-1 py-0 text-xs font-medium w-24 outline-none focus:ring-1 focus:ring-[var(--brand-primary)]"
                 autoFocus
                 onClick={(e) => e.stopPropagation()}
               />
             ) : (
-              <span className="text-xs max-w-[120px] truncate">{tab.name}</span>
+              <span className="max-w-[96px] truncate text-xs sm:max-w-[120px]">{tab.name}</span>
             )}
 
             <button
@@ -88,7 +91,7 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
               }}
               title={t('flowTabs.closeTab')}
               className={`
-                p-0.5 rounded-full hover:bg-slate-200 transition-colors opacity-0 group-hover:opacity-100
+                rounded-full p-1 transition-colors opacity-0 group-hover:opacity-100 hover:bg-slate-200
                 ${activeTabId === tab.id ? 'text-[var(--brand-primary-400)] hover:text-[var(--brand-primary)]' : 'text-slate-400 hover:text-slate-600'}
               `}
             >
@@ -100,7 +103,7 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
         <button
           onClick={onAddTab}
           data-testid="flow-tab-add"
-          className={`p-1.5 ml-1 rounded-full text-slate-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-50)] transition-colors ${isBeveled ? 'btn-beveled bg-white' : ''}`}
+          className={`ml-1 flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] sm:h-9 sm:w-9 ${isBeveled ? 'btn-beveled bg-white' : ''}`}
           title={t('flowTabs.newFlowTab')}
         >
           <Plus className="w-4 h-4" />

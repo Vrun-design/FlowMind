@@ -86,7 +86,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                                     key={mode}
                                     type="button"
                                     onClick={() => onColorModeChange(mode)}
-                                    className={`rounded-[calc(var(--brand-radius)-4px)] px-2 py-1 text-xs font-medium transition-colors ${
+                                    className={`rounded-[var(--radius-xs)] px-2 py-1 text-xs font-medium transition-colors ${
                                         selected
                                             ? 'bg-white text-slate-900 shadow-sm'
                                             : 'text-slate-500 hover:text-slate-700'

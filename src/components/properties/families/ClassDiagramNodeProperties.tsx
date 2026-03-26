@@ -2,24 +2,26 @@ import React from 'react';
 import type { DiagramNodePropertiesComponentProps } from '@/diagram-types/core';
 import { NodeProperties } from '@/components/properties/NodeProperties';
 import { NodeActionButtons } from '@/components/properties/NodeActionButtons';
-
-function parseLines(input: string): string[] {
-  return input
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0);
-}
-
-function toMultiline(value: string[] | undefined): string {
-  return Array.isArray(value) ? value.join('\n') : '';
-}
+import { ClassNodeSection } from './ClassNodeSection';
+import { CollapsibleSection } from '@/components/ui/CollapsibleSection';
+import {
+  INSPECTOR_BUTTON_CLASSNAME,
+  INSPECTOR_INPUT_COMPACT_CLASSNAME,
+  InspectorField,
+  InspectorSectionDivider,
+} from '@/components/properties/InspectorPrimitives';
+import { createPropertyInputKeyDownHandler } from '@/components/properties/propertyInputBehavior';
+import { Braces, Code, Type } from 'lucide-react';
 
 export function ClassDiagramNodeProperties({
   selectedNode,
   onChange,
   onDuplicate,
   onDelete,
+  onOpenMermaidCodeEditor,
 }: DiagramNodePropertiesComponentProps): React.ReactElement {
+  const [activeSection, setActiveSection] = React.useState('definition');
+
   if (selectedNode.type !== 'class') {
     return (
       <NodeProperties
@@ -31,52 +33,58 @@ export function ClassDiagramNodeProperties({
     );
   }
 
-  const attributes = toMultiline(selectedNode.data.classAttributes);
-  const methods = toMultiline(selectedNode.data.classMethods);
+  const handleInputKeyDown = createPropertyInputKeyDownHandler({ blurOnEnter: true });
+
+  function toggleSection(section: string): void {
+    setActiveSection((currentSection) => (currentSection === section ? '' : section));
+  }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="text-xs font-semibold text-slate-600">Class Name</label>
-        <input
-          value={selectedNode.data.label || ''}
-          onChange={(event) => onChange(selectedNode.id, { label: event.target.value })}
-          className="mt-1 w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-          placeholder="Class name"
-        />
-      </div>
+    <>
+      <InspectorSectionDivider />
 
-      <div>
-        <label className="text-xs font-semibold text-slate-600">Stereotype</label>
-        <input
-          value={selectedNode.data.classStereotype || ''}
-          onChange={(event) => onChange(selectedNode.id, { classStereotype: event.target.value })}
-          className="mt-1 w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-          placeholder="interface, abstract, service..."
-        />
-      </div>
+      <CollapsibleSection
+        title="Class Name"
+        icon={<Type className="w-3.5 h-3.5" />}
+        isOpen={activeSection === 'name'}
+        onToggle={() => toggleSection('name')}
+      >
+        <InspectorField label="Name">
+          <input
+            value={selectedNode.data.label || ''}
+            onChange={(event) => onChange(selectedNode.id, { label: event.target.value })}
+            onKeyDown={handleInputKeyDown}
+            className={INSPECTOR_INPUT_COMPACT_CLASSNAME}
+            placeholder="Class name"
+          />
+        </InspectorField>
+      </CollapsibleSection>
 
-      <div>
-        <label className="text-xs font-semibold text-slate-600">Attributes (one per line)</label>
-        <textarea
-          value={attributes}
-          onChange={(event) => onChange(selectedNode.id, { classAttributes: parseLines(event.target.value) })}
-          className="mt-1 w-full min-h-[88px] rounded-md border border-slate-300 px-2 py-1.5 text-xs font-mono"
-          placeholder="+id: UUID&#10;+name: String"
-        />
-      </div>
+      <CollapsibleSection
+        title="Definition"
+        icon={<Braces className="w-3.5 h-3.5" />}
+        isOpen={activeSection === 'definition'}
+        onToggle={() => toggleSection('definition')}
+      >
+        <ClassNodeSection nodeId={selectedNode.id} data={selectedNode.data} onChange={onChange} />
+      </CollapsibleSection>
 
-      <div>
-        <label className="text-xs font-semibold text-slate-600">Methods (one per line)</label>
-        <textarea
-          value={methods}
-          onChange={(event) => onChange(selectedNode.id, { classMethods: parseLines(event.target.value) })}
-          className="mt-1 w-full min-h-[88px] rounded-md border border-slate-300 px-2 py-1.5 text-xs font-mono"
-          placeholder="+createUser(name: String): User"
-        />
-      </div>
+      <CollapsibleSection
+        title="Code"
+        icon={<Code className="w-3.5 h-3.5" />}
+        isOpen={activeSection === 'code'}
+        onToggle={() => toggleSection('code')}
+      >
+        <button
+          type="button"
+          className={`${INSPECTOR_BUTTON_CLASSNAME} w-full px-3 py-2 text-sm`}
+          onClick={() => onOpenMermaidCodeEditor?.()}
+        >
+          Open Mermaid code
+        </button>
+      </CollapsibleSection>
 
       <NodeActionButtons nodeId={selectedNode.id} onDuplicate={onDuplicate} onDelete={onDelete} />
-    </div>
+    </>
   );
 }

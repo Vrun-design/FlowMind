@@ -1,5 +1,6 @@
 import type { FlowEdge, FlowNode } from '@/lib/types';
 import { getNodeParentId } from '@/lib/nodeParent';
+import { normalizeErFields, stringifyErField } from '@/lib/entityFields';
 import {
   DEFAULT_CLASS_RELATION,
   DEFAULT_ER_RELATION,
@@ -283,7 +284,7 @@ function toERDiagramMermaid(nodes: FlowNode[], edges: FlowEdge[]): string {
   const lines: string[] = ['erDiagram'];
   sortNodesByPosition(nodes).forEach((node) => {
     lines.push(`    ${node.id} {`);
-    const fields = Array.isArray(node.data.erFields) ? node.data.erFields.map((entry) => String(entry).trim()).filter(Boolean) : [];
+    const fields = normalizeErFields(node.data.erFields).map((entry) => stringifyErField(entry).trim()).filter(Boolean);
     fields.forEach((field) => lines.push(`      ${field}`));
     lines.push('    }');
   });

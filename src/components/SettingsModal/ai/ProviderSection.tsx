@@ -61,7 +61,7 @@ export function ProviderSection({
                             onClick={() => onSelectProvider(provider.id)}
                             title={provider.name}
                             aria-label={`Select ${provider.name} as AI provider`}
-                            className={`group relative flex flex-col items-center justify-center shrink-0 w-[72px] h-[72px] rounded-2xl border transition-all duration-200 ${buttonClass}`}
+                            className={`group relative flex h-[72px] w-[72px] shrink-0 flex-col items-center justify-center rounded-[var(--radius-xl)] border transition-all duration-200 ${buttonClass}`}
                         >
                             <div className={`pointer-events-none transition-transform duration-200 ${iconWrapperClass}`}>
                                 <ProviderIcon provider={provider} isSelected={isSelected} />
@@ -73,7 +73,7 @@ export function ProviderSection({
                     );
                 })}
             </div>
-            <div className="flex items-center gap-2.5 px-3 py-2.5 bg-white rounded-xl border border-slate-200">
+            <div className="flex items-center gap-2.5 rounded-[var(--radius-lg)] border border-slate-200 bg-white px-3 py-2.5">
                 <img src={providerMeta.logoPath} alt={providerMeta.name} className="w-6 h-6 object-contain shrink-0" />
                 <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-slate-800">{providerMeta.name}</p>
@@ -86,11 +86,11 @@ export function ProviderSection({
                     </p>
                 </div>
                 <span
-                    className={`text-[9px] border px-1.5 py-0.5 rounded font-medium ${getRiskStyles(providerRisk)}`}
+                    className={`rounded-[var(--radius-xs)] border px-1.5 py-0.5 text-[9px] font-medium ${getRiskStyles(providerRisk)}`}
                 >
                     {getRiskLabel(t, providerRisk)}
                 </span>
-                {providerMeta.id === 'custom' && <span className="text-[9px] bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded font-medium text-slate-500">BYOK</span>}
+                {providerMeta.id === 'custom' && <span className="rounded-[var(--radius-xs)] border border-slate-200 bg-slate-100 px-1.5 py-0.5 text-[9px] font-medium text-slate-500">BYOK</span>}
             </div>
         </div>
     );

@@ -130,6 +130,39 @@ describe('edge operation utils', () => {
     });
   });
 
+  it('inherits architecture provider metadata when connector-creating a new node', () => {
+    const sourceArchitectureNode: FlowNode = {
+      id: 'arch-source',
+      type: 'architecture',
+      position: { x: 100, y: 100 },
+      data: {
+        label: 'FlowMind API',
+        archProvider: 'custom',
+        archProviderLabel: 'FlowMind',
+        customIconUrl: 'data:image/svg+xml;base64,abc',
+        archEnvironment: 'production',
+        archZone: 'ap-south-1',
+      },
+    };
+
+    const { newNode } = buildConnectedNode({
+      type: 'architecture',
+      position: { x: 350, y: 100 },
+      sourceNode: sourceArchitectureNode,
+      labels: {
+        noteLabel: 'Note',
+        noteSubLabel: 'Add comments here',
+      },
+    });
+
+    expect(newNode.type).toBe('architecture');
+    expect(newNode.data.archProvider).toBe('custom');
+    expect(newNode.data.archProviderLabel).toBe('FlowMind');
+    expect(newNode.data.customIconUrl).toBe('data:image/svg+xml;base64,abc');
+    expect(newNode.data.archEnvironment).toBe('production');
+    expect(newNode.data.archZone).toBe('ap-south-1');
+  });
+
   it('builds and relayouts a connected mindmap topic from the source branch', () => {
     const rootNode: FlowNode = {
       id: 'root',

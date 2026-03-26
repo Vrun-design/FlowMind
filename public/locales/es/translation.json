@@ -19,6 +19,8 @@
     "selectAll": "Seleccionar todo",
     "duplicate": "Duplicar",
     "duplicateDrag": "Duplicar y arrastrar",
+    "multiSelect": "Selección múltiple",
+    "selectionBox": "Caja de selección",
     "copy": "Copiar",
     "paste": "Pegar",
     "zoomIn": "Acercar",
@@ -35,6 +37,8 @@
     "error": "Error",
     "success": "Éxito",
     "help": "Ayuda",
+    "selectTool": "Herramienta de selección",
+    "handTool": "Herramienta mano",
     "getStarted": "Comenzar",
     "bringToFront": "Traer al frente",
     "sendToBack": "Enviar atrás",
@@ -52,7 +56,8 @@
     "distributeHorizontally": "Distribuir horizontalmente",
     "distributeVertically": "Distribuir verticalmente",
     "group": "Grupo",
-    "upload": "Upload"
+    "upload": "Upload",
+    "rename": "Renombrar"
   },
   "nav": {
     "home": "Inicio",
@@ -72,7 +77,8 @@
     "beta": "BETA",
     "versionHistory": "Historial de versiones",
     "loadJSON": "Cargar JSON",
-    "playbackMode": "Modo reproducción"
+    "playbackMode": "Modo reproducción",
+    "privacyMessage": "Sus diagramas permanecen con usted y no llegan a nuestros servidores."
   },
   "menu": {
     "file": "Archivo",
@@ -110,7 +116,21 @@
     "hintClipboard": "Copy to clipboard",
     "figmaEditable": "Figma Editable",
     "exportDiagram": "Export Diagram",
-    "exportAs": "Export As"
+    "exportAs": "Export As",
+    "exportOrShare": "Exportar o compartir este lienzo",
+    "svg": "Exportar como SVG",
+    "hintSvgScalable": "Archivo vectorial escalable",
+    "video": "Video de reproducción",
+    "hintPlaybackWebM": "Línea de tiempo de reproducción (WebM/MP4)",
+    "gif": "GIF de reproducción",
+    "hintPlaybackGif": "Bucle corto para docs/redes",
+    "share": "Compartir lienzo en vivo",
+    "hintShareViewer": "Enlace de invitación para esta sala",
+    "shareSection": "Compartir lienzo",
+    "revealVideo": "Reveal Video",
+    "hintRevealVideo": "Nodes fade in sequentially (WebM/MP4)",
+    "revealGif": "Reveal GIF",
+    "hintRevealGif": "Animated reveal for docs/social"
   },
   "import": {
     "title": "Importar",
@@ -122,7 +142,7 @@
     "newTab": "Nueva pestaña",
     "renameTab": "Renombrar pestaña",
     "closeTab": "Cerrar pestaña",
-    "addNode": "Agregar nodo",
+    "addNode": "Agregar forma",
     "deleteNode": "Eliminar nodo",
     "duplicateNode": "Duplicar nodo"
   },
@@ -193,7 +213,25 @@
     "recentFiles": "Archivos recientes",
     "files": "archivos",
     "createFirstFlow": "Crear su primer flujo",
-    "startFromScratch": "Comenzar desde cero o importar un diagrama existente."
+    "startFromScratch": "Comenzar desde cero o importar un diagrama existente.",
+    "currentFlow": "Flujo actual",
+    "autosaved": "Guardado automáticamente",
+    "localStorageHint": "Guardado automáticamente en este dispositivo. No subimos los datos de tus diagramas a nuestros servidores.",
+    "renameFlow": {
+      "title": "Renombrar flujo",
+      "description": "Actualiza el nombre que se muestra en tu panel y en las pestañas.",
+      "label": "Nombre del flujo",
+      "placeholder": "Introduce un nombre para el flujo",
+      "hint": "Los nombres son locales a este perfil del navegador, a menos que los exportes o los sincronices en otro lugar.",
+      "closeDialog": "Cerrar el diálogo de renombrar flujo"
+    },
+    "deleteFlow": {
+      "title": "Eliminar flujo",
+      "description": "Esto elimina de este dispositivo el flujo guardado automáticamente de forma local.",
+      "confirmation": "¿Eliminar \"{{name}}\"?",
+      "hint": "Esto no se puede deshacer a menos que tengas una copia exportada u otra copia.",
+      "closeDialog": "Cerrar el diálogo de eliminar flujo"
+    }
   },
   "settings": {
     "title": "Configuración",
@@ -226,7 +264,18 @@
     "description": "Descripción",
     "color": "Color",
     "icon": "Ícono",
-    "size": "Tamaño"
+    "size": "Tamaño",
+    "shape": "Forma",
+    "bulkShape": "Forma múltiple",
+    "bulkColor": "Color múltiple",
+    "bulkIcon": "Ícono múltiple",
+    "labelTransform": "Transformación de etiqueta",
+    "prefixOptional": "Prefijo (opcional)",
+    "suffixOptional": "Sufijo (opcional)",
+    "previewSummary": "Resumen previo",
+    "bulkApplySummary": "Se actualizarán {{count}} elementos seleccionados",
+    "selectFieldToApply": "Seleccione al menos un campo para aplicar.",
+    "applyToSelectedNodes": "Aplicar a los elementos seleccionados"
   },
   "ai": {
     "generate": "Generar con IA",
@@ -234,7 +283,8 @@
     "model": "Modelo",
     "apiKey": "Clave API",
     "placeholder": "Describe tu diagrama...",
-    "settingsSubtitle": "Configure your preferred AI provider, model, and API key below."
+    "settingsSubtitle": "Configure your preferred AI provider, model, and API key below.",
+    "generateWithFlowpilot": "Generar con Flowpilot"
   },
   "playback": {
     "title": "Reproducción",
@@ -327,9 +377,9 @@
     "description": "El canvas white-label definitivo.",
     "diagramAsCode": "Diagrama como código",
     "diagramAsCodeDesc": "Soporte de Mermaid.js y DSL tipado.",
-    "flowpilotAI": "Flowpilot IA",
+    "flowpilotAI": "Flowpilot",
     "aiAssistant": "Asistente IA",
-    "flowpilotAIDesc": "Chatea con tu diagrama.",
+    "flowpilotAIDesc": "Trabaja en tu diagrama con ediciones guiadas por IA.",
     "addRedisCache": "Agregar caché Redis frente a la BD.",
     "localPrivate": "Local & Privado",
     "localPrivateDesc": "Todo queda en tu máquina.",
@@ -356,7 +406,7 @@
     "designDesc": "Copiar del canvas y pegar en Figma.",
     "exportShare": "Exportar & Compartir",
     "pixelPerfectOutput": "SALIDA PIXEL PERFECT",
-    "exportShareDesc": "Exportar como SVG, PNG o PDF.",
+    "exportShareDesc": "Exportar como SVG o PNG.",
     "vectorEditable": "Vector • Editable en Figma",
     "rasterHighRes": "Raster • Alta resolución",
     "dataSaveRestore": "Datos • Guardar & restaurar"
@@ -385,8 +435,7 @@
     "communityDesc": "Únete a desarrolladores que construyen con OpenFlowKit.",
     "roadmap": "Hoja de ruta",
     "coreRenderer": "Motor principal",
-    "flowpilotAI": "Flowpilot IA",
-    "pdfExport": "Exportar PDF"
+    "flowpilotAI": "Flowpilot"
   },
   "demo": {
     "livePreview": "Vista previa en vivo",
@@ -440,7 +489,7 @@
   },
   "commandBar": {
     "ai": {
-      "title": "Preguntar a AI Studio",
+      "title": "Preguntar a Flowpilot",
       "clearChat": "Borrar historial",
       "placeholder": "Describe lo que quieres crear...",
       "examples": {
@@ -459,7 +508,9 @@
       "placeholder": "Buscar por etiqueta o ID...",
       "noResults": "No se encontraron nodos",
       "untitled": "Nodo sin título",
-      "type": "Tipo"
+      "type": "Tipo",
+      "showingCount": "Showing: {{count}}",
+      "totalCount": "Total on canvas: {{count}}"
     },
     "templates": {
       "title": "Plantillas",
@@ -473,7 +524,17 @@
       "dslPlaceholder": "Pega código DSL aquí...",
       "applyShortcut": "⌘+Enter para aplicar",
       "syntaxGuide": "Guía de sintaxis",
-      "apply": "Aplicar"
+      "apply": "Aplicar",
+      "quickFixes": "Correcciones rápidas",
+      "linePrefix": "Línea {{line}}: ",
+      "hintPrefix": "Pista:",
+      "strictModeGuidance": {
+        "defineEndpoints": "Define cada extremo de conexión como un nodo de arquitectura explícito antes de conectar aristas.",
+        "uniqueIds": "Usa IDs únicos para cada nodo de servicio/grupo/junción (sin IDs de arquitectura duplicados).",
+        "edgeSyntax": "Usa flechas de arista de arquitectura `-->`, `<--` o `<-->` y calificadores de lado como `api:R --> L:db`.",
+        "nodeSyntax": "Usa declaraciones de nodo válidas: `service id(icon)[Label]`, `group id[Label]`, `junction id[Label]`.",
+        "fallback": "Desactiva el modo estricto de arquitectura para permitir la recuperación automática, o corrige los diagnósticos y vuelve a intentarlo."
+      }
     },
     "layout": {
       "title": "Estudio de diseño",
@@ -495,7 +556,8 @@
       "compact": "Compacto",
       "normal": "Normal",
       "loose": "Espaciado",
-      "applyLayout": "Aplicar diseño"
+      "applyLayout": "Aplicar diseño",
+      "layoutStyle": "Estilo de diseño"
     },
     "designSystem": {
       "title": "Sistemas de diseño",
@@ -520,17 +582,24 @@
       "intelligentRoutingDesc": "Conexiones auto al arrastrar",
       "animatedEdges": "Bordes animados",
       "animatedEdgesDesc": "Partículas fluidas",
-      "strokeWidth": "Ancho de trazo"
+      "strokeWidth": "Ancho de trazo",
+      "largeGraphSafety": "Protección para grafos grandes",
+      "largeGraphSafetyAuto": "Auto",
+      "largeGraphSafetyOn": "Activado",
+      "largeGraphSafetyOff": "Desactivado",
+      "exportModeDeterministic": "Determinista",
+      "exportModeLegacy": "Heredado",
+      "exportMode": "Modo de exportación"
     }
   },
   "settingsModal": {
     "title": "Configuración",
     "general": "General",
-    "flowpilotAI": "Flowpilot IA",
+    "flowpilotAI": "Flowpilot",
     "shortcuts": "Atajos",
     "running": "{appName} en ejecución",
     "generalSettings": "Configuración general",
-    "flowpilotConfigurations": "Configuración de AI Studio",
+    "flowpilotConfigurations": "Configuración de Flowpilot",
     "keyboardShortcuts": "Atajos de teclado",
     "canvas": {
       "title": "Lienzo",
@@ -539,7 +608,17 @@
       "snapToGrid": "Ajustar a cuadrícula",
       "snapToGridDesc": "Alinear nodos al mover",
       "miniMap": "Mini mapa",
-      "miniMapDesc": "Mostrar mini mapa abajo a la derecha"
+      "miniMapDesc": "Mostrar mini mapa abajo a la derecha",
+      "architectureStrictMode": "Modo estricto de arquitectura",
+      "architectureStrictModeDesc": "Bloquea la importación Mermaid cuando los diagnósticos de arquitectura incluyen problemas de recuperación/validación",
+      "alignmentGuides": "Alignment Guides",
+      "alignmentGuidesDesc": "Show smart guide lines while dragging nodes",
+      "routingProfile": "Perfil de enrutamiento",
+      "routingProfileStandard": "Estándar",
+      "routingProfileInfrastructure": "Infraestructura",
+      "routingProfileHint": "El modo infraestructura favorece rutas ortogonales para mapas de servicios.",
+      "edgeBundling": "Agrupar aristas paralelas",
+      "edgeBundlingDesc": "Mantener conexiones paralelas en carriles compartidos"
     },
     "ai": {
       "provider": "Proveedor",
@@ -596,7 +675,21 @@
       "customEndpointTitle": "What is a custom endpoint?",
       "privacyTitle": "Privacy & Encryption",
       "customEndpointText": "Any <1>OpenAI-compatible</1> API endpoint — local or remote. Great for:",
-      "customEndpointMustSupport": "Must support <1>POST /chat/completions</1> (OpenAI format)"
+      "customEndpointMustSupport": "Must support <1>POST /chat/completions</1> (OpenAI format)",
+      "advancedEndpointOverride": "Anulación avanzada de URL base",
+      "baseUrlHint": "Déjalo vacío para usar el endpoint predeterminado del proveedor. Úsalo para la URL de tu propio proxy/worker.",
+      "resetEndpoint": "Restablecer al valor predeterminado",
+      "customHeadersTitle": "Encabezados personalizados",
+      "customHeadersSubtitle": "Envía encabezados extra para proxies de autenticación como Cloudflare Access.",
+      "addHeader": "Agregar encabezado",
+      "cloudflarePreset": "Usar preajuste de Cloudflare",
+      "customHeadersEmpty": "No hay encabezados personalizados configurados.",
+      "customHeadersSecurity": "Los valores de los encabezados se almacenan localmente en tu perfil del navegador.",
+      "risk": {
+        "browserFriendly": "Listo para navegador",
+        "proxyLikely": "Probablemente requiere proxy",
+        "mixed": "Depende del endpoint"
+      }
     },
     "brand": {
       "title": "Kits de marca",
@@ -643,7 +736,11 @@
       "shareFeedback": "Compartir comentarios",
       "shareFeedbackDesc": "Dar comentarios, reportar errores, pedir características"
     },
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "canvasSettings": "Configuración del lienzo",
+    "description": "Configura las preferencias del lienzo y los atajos de teclado.",
+    "close": "Cerrar configuración",
+    "closeDialog": "Cerrar diálogo de configuración"
   },
   "customNodes": {
     "browserContent": "Contenido del navegador",
@@ -653,16 +750,18 @@
     "title": "Atajos de teclado",
     "subtitle": "Domine su flujo de trabajo con velocidad.",
     "closeAriaLabel": "Cerrar ventana de atajos",
-    "proTip": "Consejo pro: Mantenga <key>?</key> para activar el cuadro de selección al arrastrar."
+    "proTip": "Consejo pro: Mantenga <key>Shift</key> para agregar a la selección o dibujar un cuadro de selección."
   },
   "toolbar": {
     "selectMode": "Modo selección (V)",
     "panMode": "Modo mover (H)",
-    "flowpilot": "Command Center (Cmd+K)",
+    "flowpilot": "Flowpilot",
     "templates": "Plantillas",
     "addItem": "Agregar elemento",
     "addToCanvas": "Agregar al lienzo",
-    "node": "Nodo",
+    "shapes": "Formas",
+    "assets": "Recursos",
+    "node": "Forma",
     "stickyNote": "Nota adhesiva",
     "section": "Sección",
     "text": "Texto",
@@ -671,7 +770,8 @@
     "autoLayout": "Diseño automático",
     "clearCanvas": "Limpiar lienzo",
     "undo": "Deshacer (Ctrl+Z)",
-    "redo": "Rehacer (Ctrl+Y)"
+    "redo": "Rehacer (Ctrl+Y)",
+    "commandCenter": "Abrir centro de comandos"
   },
   "flowEditor": {
     "cannotCloseLastTab": "No se puede cerrar la última pestaña.",
@@ -687,25 +787,27 @@
       "description": "Su lienzo está vacío. Genere un flujo con Flowpilot o comience desde cero.",
       "generateWithFlowpilot": "Generar con Flowpilot",
       "browseTemplates": "Explorar plantillas",
-      "addBlankNode": "Agregar nodo en blanco"
-    }
+      "addBlankNode": "Agregar forma en blanco"
+    },
+    "dslExportSkippedEdges": "Se omitieron {{count}} arista(s) no válidas en la exportación DSL."
   },
   "annotationNode": {
     "placeholder": "*Doble clic para editar la nota*"
   },
   "connectMenu": {
-    "createNewNode": "Crear nuevo nodo",
-    "process": "Proceso",
-    "processDesc": "Acción estándar",
-    "decision": "Decisión",
-    "decisionDesc": "Lógica de bifurcación",
+    "createNewNode": "Crear nueva forma",
+    "process": "Forma redondeada",
+    "processDesc": "Bloque de uso general",
+    "decision": "Forma de diamante",
+    "decisionDesc": "Bloque de bifurcación",
     "database": "Base de datos",
-    "databaseDesc": "Almacenamiento de datos",
+    "databaseDesc": "Forma de cilindro",
     "inputOutput": "Entrada / Salida",
-    "inputOutputDesc": "Flujo de datos",
-    "note": "Nota",
+    "inputOutputDesc": "Forma de paralelogramo",
+    "note": "Nota adhesiva",
     "noteDesc": "Documentación",
-    "releaseToConnect": "Soltar para conectar"
+    "releaseToConnect": "Soltar para conectar",
+    "close": "Cerrar menú de conexión"
   },
   "errorBoundary": {
     "title": "Algo salió mal",
@@ -729,7 +831,12 @@
     "restoreVersion": "Restaurar versión",
     "deleteVersion": "Eliminar versión",
     "nodes": "{{count}} nodos",
-    "edges": "{{count}} conexiones"
+    "edges": "{{count}} conexiones",
+    "close": "Cerrar panel de instantáneas",
+    "namedVersions": "Named Versions",
+    "noNamedSnapshots": "No named versions yet.",
+    "autosavedVersions": "Autosaved Checkpoints",
+    "noAutoSnapshots": "No autosaved checkpoints yet."
   },
   "templatesPanel": {
     "title": "Plantillas de flujo",
@@ -738,8 +845,11 @@
   },
   "propertiesPanel": {
     "stickyNote": "Nota adhesiva",
-    "nodeSettings": "Configuración del nodo",
+    "nodeSettings": "Configuración de forma",
     "connection": "Conexión"
+  },
+  "flowCanvas": {
+    "strictModePasteBlocked": "El modo estricto de arquitectura bloqueó el pegado de Mermaid. Abre la vista de código, corrige los diagnósticos y vuelve a intentarlo."
   },
   "flowTabs": {
     "closeTab": "Cerrar pestaña",
@@ -752,14 +862,54 @@
     "newNode": "New Node",
     "branch": "Branch",
     "processStep": "Process Step",
+    "addText": "Agregar texto",
     "group": "Group",
     "items": "items",
     "addCommentsHere": "Add your comments here.",
     "newSection": "New Section",
     "text": "Text",
-    "image": "Image"
+    "image": "Image",
+    "mindmap": "Tema"
   },
   "actions": {
     "clearCanvasConfirm": "Are you sure you want to clear the canvas?"
+  },
+  "share": {
+    "close": "Close",
+    "title": "Share Design",
+    "betaBadge": "Beta",
+    "description": "Invite collaborators to view and edit this flow with you in real-time.",
+    "roomId": "ID de la sala",
+    "link": "Enlace para compartir",
+    "copied": "Copied Link!",
+    "copyLink": "Copy Link",
+    "footerNote": "Your diagram stays local unless you share this room. If copy is blocked, copy the link above manually.",
+    "closeDialog": "Close share dialog",
+    "status": {
+      "cache": {
+        "syncing": " local cache syncing",
+        "ready": " local cache ready",
+        "hydrated": " restored from local cache"
+      },
+      "realtime": "Realtime peer sync",
+      "waiting": "Connecting to realtime sync",
+      "fallback": "Local-only mode"
+    },
+    "openDialog": "Share dialog",
+    "toast": {
+      "fallbackMode": "La sincronización en tiempo real no está disponible. Se continuará en modo solo local.",
+      "reconnected": "La colaboración en tiempo real se ha restablecido.",
+      "copyFailed": "Unable to copy share link.",
+      "linkCopied": "Collaboration link copied.",
+      "copyManual": "El acceso al portapapeles está bloqueado. Copia el enlace manualmente desde el diálogo de compartir."
+    }
+  },
+  "connectionPanel": {
+    "architecture": "Architecture",
+    "label": "Label",
+    "route": "Ruta",
+    "appearance": "Apariencia",
+    "condition": "Condition",
+    "deleteConnection": "Delete Connection"
   }
 }

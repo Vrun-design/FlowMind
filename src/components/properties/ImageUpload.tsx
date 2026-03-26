@@ -26,12 +26,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ imageUrl, onChange }) 
             <div className="flex flex-col gap-3">
 
                 {imageUrl ? (
-                    <div className="relative group rounded-lg overflow-hidden border border-slate-200">
+                    <div className="relative group overflow-hidden rounded-[var(--radius-lg)] border border-slate-200">
                         <img src={imageUrl} className="w-full h-32 object-cover opacity-90" alt="attached" />
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                                 onClick={() => onChange(undefined)}
-                                className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-medium hover:bg-red-600"
+                                className="rounded-[var(--radius-sm)] bg-red-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-600"
                             >
                                 Remove
                             </button>
@@ -40,7 +40,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ imageUrl, onChange }) 
                 ) : (
                     <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full py-6 border-2 border-dashed border-slate-300 rounded-xl hover:bg-slate-50 hover:border-indigo-400 hover:text-indigo-600 transition-all text-sm text-slate-500 flex flex-col items-center gap-2"
+                        className="flex w-full flex-col items-center gap-2 rounded-[var(--radius-lg)] border-2 border-dashed border-slate-300 py-6 text-sm text-slate-500 transition-all hover:border-indigo-400 hover:bg-slate-50 hover:text-indigo-600"
                     >
                         <Upload className="w-5 h-5" />
                         <span>Click to Upload Image</span>

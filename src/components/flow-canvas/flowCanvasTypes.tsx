@@ -1,5 +1,4 @@
 import type { EdgeTypes, NodeTypes } from '@/lib/reactflowCompat';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import AnnotationNode from '@/components/AnnotationNode';
 import CustomNode from '@/components/CustomNode';
 import { CustomBezierEdge, CustomSmoothStepEdge, CustomStepEdge, CustomStraightEdge } from '@/components/CustomEdge';
@@ -41,12 +40,8 @@ export const flowCanvasEdgeTypes: EdgeTypes = {
     default: CustomBezierEdge,
     smoothstep: CustomSmoothStepEdge,
     step: CustomStepEdge,
-    ...(ROLLOUT_FLAGS.connectorModelV1
-        ? {
-            bezier: CustomBezierEdge,
-            straight: CustomStraightEdge,
-        }
-        : {}),
+    bezier: CustomBezierEdge,
+    straight: CustomStraightEdge,
 };
 
 interface ConnectionLike {

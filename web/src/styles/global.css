@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
-@import "tailwindcss";
+@import "tailwindcss" source("../");
 
 html {
   scroll-behavior: smooth;
@@ -90,7 +89,7 @@ html {
 
   @keyframes blink {
     50% {
-      border-color: transparent
+      border-color: transparent;
     }
   }
 
@@ -149,9 +148,13 @@ html {
 
   /* Dimensions */
   --brand-radius: 8px;
-  --radius-sm: max(2px, calc(var(--brand-radius) - 3px));
+  --radius-xs: 4px;
+  --radius-sm: 6px;
   --radius-md: var(--brand-radius);
-  --radius-lg: calc(var(--brand-radius) + 4px);
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
   --brand-border-width: 1px;
 
   /* Typography */

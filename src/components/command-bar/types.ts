@@ -2,13 +2,17 @@ import type { FlowEdge, FlowNode } from '@/lib/types';
 import { FlowTemplate } from '../../services/templates';
 import { LayoutAlgorithm } from '../../services/elkLayout';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
+import type { SupportedLanguage } from '@/hooks/ai-generation/codeToArchitecture';
+import type { TerraformInputFormat } from '@/hooks/ai-generation/terraformToCloud';
+import type { EditorSurfaceTier } from '@/components/editorSurfaceTiers';
 
-export type CommandView = 'root' | 'templates' | 'search' | 'layout' | 'design-system' | 'assets' | 'layers' | 'pages';
+export type CommandView = 'root' | 'templates' | 'search' | 'layout' | 'design-system' | 'assets' | 'layers' | 'pages' | 'import';
 
 export interface CommandItem {
     id: string;
     label: string;
     icon: React.ReactNode;
+    tier: EditorSurfaceTier;
     shortcut?: string;
     action?: () => void;
     type: 'action' | 'navigation' | 'ai' | 'toggle';
@@ -44,6 +48,10 @@ export interface CommandBarProps {
     onAddBrowserWireframe?: () => void;
     onAddMobileWireframe?: () => void;
     onAddDomainLibraryItem?: (item: DomainLibraryItem) => void;
+    onCodeAnalysis?: (code: string, language: SupportedLanguage) => Promise<void>;
+    onSqlAnalysis?: (sql: string) => Promise<void>;
+    onTerraformAnalysis?: (input: string, format: TerraformInputFormat) => Promise<void>;
+    onOpenApiAnalysis?: (spec: string) => Promise<void>;
     settings?: {
         showGrid: boolean;
         onToggleGrid: () => void;

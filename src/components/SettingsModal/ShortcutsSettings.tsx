@@ -17,11 +17,11 @@ export const ShortcutsSettings = () => {
                     </div>
                     <div className="grid grid-cols-1 gap-3">
                         {section.items.map((item) => (
-                            <div key={item.label} className="flex items-center justify-between group p-2 hover:bg-slate-50/50 rounded-lg transition-colors">
+                            <div key={item.label} className="group flex items-center justify-between rounded-[var(--radius-sm)] p-2 transition-colors hover:bg-slate-50/50">
                                 <span className="text-slate-600 text-sm font-medium">{t(item.label)}</span>
                                 <div className="flex gap-1">
                                     {item.keys.map((key, i) => (
-                                        <kbd key={i} className="px-2 py-1 bg-white border border-slate-200 rounded-md text-xs font-semibold text-slate-500 min-w-[24px] text-center shadow-sm">
+                                        <kbd key={i} className="min-w-[24px] rounded-[var(--radius-xs)] border border-slate-200 bg-white px-2 py-1 text-center text-xs font-semibold text-slate-500 shadow-sm">
                                             {key}
                                         </kbd>
                                     ))}

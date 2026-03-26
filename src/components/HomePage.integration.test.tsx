@@ -44,7 +44,7 @@ describe('HomePage integration flows', () => {
 
         fireEvent.click(screen.getByText('Settings'));
         expect(screen.getByRole('heading', { name: 'Settings' })).toBeTruthy();
-        expect(screen.getByText('AI Studio')).toBeTruthy();
+        expect(screen.getByText('Flowpilot')).toBeTruthy();
     });
 
     it('opens persisted flows from the dashboard list', async () => {

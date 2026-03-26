@@ -26,6 +26,7 @@ export {
 export type {
     AIProvider,
     AISettings,
+    AISettingsStorageMode,
     CustomHeaderConfig,
     FlowState as FlowStoreState,
     ViewSettings,

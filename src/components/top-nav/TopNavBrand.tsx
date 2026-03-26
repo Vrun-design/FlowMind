@@ -20,7 +20,7 @@ export function TopNavBrand({ appName, logoUrl, logoStyle, ui }: TopNavBrandProp
     const showPrivacyBadge = ui.showBeta !== false;
 
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
             {(logoStyle === 'icon' || logoStyle === 'both') && (
                 <div className="w-9 h-9 flex items-center justify-center bg-[var(--brand-primary-50)] rounded-[var(--radius-md)] text-[var(--brand-primary)] overflow-hidden relative shrink-0">
                     {logoUrl ? (
@@ -53,14 +53,14 @@ export function TopNavBrand({ appName, logoUrl, logoStyle, ui }: TopNavBrandProp
             )}
 
             {(logoStyle === 'text' || logoStyle === 'both') && (
-                <div className="flex flex-col">
-                    <span className="font-bold text-slate-800 tracking-tight text-lg leading-none">{appName}</span>
+                <div className="min-w-0 flex flex-col">
+                    <span className="truncate text-base font-bold leading-none tracking-tight text-slate-800 sm:text-lg">{appName}</span>
                 </div>
             )}
 
             {showPrivacyBadge ? (
-                <Tooltip text={t('nav.privacyMessage', { defaultValue: 'All your diagram data is stored locally in your browser, not on our servers.' })} side="bottom">
-                    <div className="flex items-center justify-center text-[var(--brand-primary)] animate-in fade-in zoom-in-50 duration-300">
+                <Tooltip text={t('nav.privacyMessage', { defaultValue: 'Your diagrams stay with you and do not reach our servers.' })} side="bottom">
+                    <div className="hidden items-center justify-center text-[var(--brand-primary)] animate-in fade-in zoom-in-50 duration-300 sm:flex">
                         <ShieldCheck className="w-[18px] h-[18px] drop-shadow-sm text-white" fill="var(--brand-primary)" />
                     </div>
                 </Tooltip>

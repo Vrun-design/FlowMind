@@ -103,6 +103,7 @@ function TextNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
 
     return (
         <NodeChrome
+            nodeId={id}
             selected={Boolean(selected)}
             minWidth={50}
             minHeight={30}

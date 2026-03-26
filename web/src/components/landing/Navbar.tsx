@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Github, Menu, X, ChevronRight, WandSparkles } from 'lucide-react';
-import { Button } from './Button';
+import React, { useEffect, useState } from 'react';
+import { ChevronRight, Github, Menu, WandSparkles, X } from 'lucide-react';
 import { OpenFlowLogo } from '../icons/OpenFlowLogo';
-
+import { Button } from './Button';
+import { GITHUB_REPO_URL, NAV_LINKS } from './constants';
+import { useGithubStars } from './useGithubStars';
 
 interface NavbarProps {
   isScrolled: boolean;
@@ -11,30 +12,46 @@ interface NavbarProps {
 
 export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const stars = useGithubStars();
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : 'unset';
+
+    return () => {
       document.body.style.overflow = 'unset';
-    }
+    };
   }, [isMobileMenuOpen]);
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    e.preventDefault();
+  function handleNavClick(event: React.MouseEvent<HTMLAnchorElement>, id: string): void {
+    event.preventDefault();
     const element = document.getElementById(id.replace('#', ''));
-    if (element) {
+
+    if (element !== null) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-  };
+  }
 
-  const navLinks = [
-    { name: 'Features', href: '#architecture' },
-    { name: 'Figma', href: '#figma' },
-    { name: 'Use Cases', href: '#workflows' },
-    { name: 'Pricing', href: '#pricing' },
-  ];
+  function closeMobileMenu(): void {
+    setIsMobileMenuOpen(false);
+  }
+
+  function toggleMobileMenu(): void {
+    setIsMobileMenuOpen((previousValue) => !previousValue);
+  }
+
+  function handleMobileLaunch(): void {
+    closeMobileMenu();
+    onLaunch();
+  }
+
+  function handleMobileNavClick(event: React.MouseEvent<HTMLAnchorElement>, id: string): void {
+    closeMobileMenu();
+    handleNavClick(event, id);
+  }
+
+  function openGithub(): void {
+    window.open(GITHUB_REPO_URL, '_blank');
+  }
 
   const navContainerClasses = isMobileMenuOpen
     ? 'bg-white border-transparent shadow-none ring-0'
@@ -63,16 +80,18 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
             <div className="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center text-white shadow-lg shadow-brand-primary/20 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-105 ring-1 ring-white/20 shrink-0">
               <OpenFlowLogo className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-bold tracking-tight text-brand-primary font-sans group-hover:opacity-80 transition-opacity whitespace-nowrap">OpenFlowKit</span>
+            <span className="text-lg font-bold tracking-tight text-brand-primary font-sans group-hover:opacity-80 transition-opacity whitespace-nowrap">
+              OpenFlowKit
+            </span>
           </button>
 
           {/* Links - Desktop */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((item) => (
+            {NAV_LINKS.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                onClick={(e) => handleNavClick(e, item.href)}
+                onClick={(event) => handleNavClick(event, item.href)}
                 className="text-[13px] font-medium text-brand-secondary hover:text-brand-primary transition-colors relative group tracking-wide"
               >
                 {item.name}
@@ -86,11 +105,18 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
               <Button
                 variant="secondary"
                 size="sm"
-                className="h-9 px-4"
-                onClick={() => window.open("https://github.com/Vrun-design/openflowkit", "_blank")}
+                className="h-9 px-3 gap-1.5"
+                onClick={openGithub}
               >
-                <Github className="w-4 h-4 mr-2" />
-                <span>Github</span>
+                <Github className="w-4 h-4 text-brand-secondary group-hover:text-brand-dark transition-colors" />
+                <span className="font-medium text-[13px] text-brand-dark">Star</span>
+                {stars !== null && (
+                  <div className="flex items-center gap-1.5 pl-1.5 ml-0.5 border-l border-brand-border/60">
+                    <span className="text-[12px] font-mono font-medium text-brand-secondary tracking-tight">
+                      {stars.toLocaleString()}
+                    </span>
+                  </div>
+                )}
               </Button>
             </div>
 
@@ -107,8 +133,10 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
 
             {/* Mobile Menu Toggle */}
             <button
+              type="button"
               className="md:hidden p-2 text-brand-primary hover:bg-black/5 rounded-full transition-colors active:scale-90"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={toggleMobileMenu}
+              aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -121,16 +149,13 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
         className={`fixed inset-0 bg-white z-[55] transition-all duration-500 md:hidden flex flex-col pt-24 px-6 overflow-y-auto ${mobileMenuClasses}`}
       >
         <div className="flex flex-col gap-2">
-          {navLinks.map((item, i) => (
+          {NAV_LINKS.map((item, index) => (
             <a
               key={item.name}
               href={item.href}
-              onClick={(e) => {
-                setIsMobileMenuOpen(false);
-                handleNavClick(e, item.href);
-              }}
+              onClick={(event) => handleMobileNavClick(event, item.href)}
               className="text-3xl font-bold text-brand-primary py-4 border-b border-brand-border/40 flex items-center justify-between group"
-              style={{ transitionDelay: `${i * 50}ms` }}
+              style={{ transitionDelay: `${index * 50}ms` }}
             >
               {item.name}
               <ChevronRight className="w-6 h-6 opacity-0 -translate-x-4 group-hover:translate-x-0 group-hover:opacity-100 transition-all text-brand-muted" />
@@ -140,10 +165,7 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
             <Button
               size="lg"
               className="w-full justify-between h-14 text-base shadow-none"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                onLaunch();
-              }}
+              onClick={handleMobileLaunch}
             >
               <span>Get Started</span>
               <WandSparkles className="w-4 h-4" />
@@ -152,7 +174,7 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
               size="lg"
               variant="secondary"
               className="w-full justify-center h-14 text-base bg-gray-50 border-gray-200"
-              onClick={() => window.open("https://github.com/Vrun-design/openflowkit", "_blank")}
+              onClick={openGithub}
             >
               <Github className="w-5 h-5 mr-2" />
               View on GitHub

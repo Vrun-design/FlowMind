@@ -1,5 +1,5 @@
 import type { Connection } from '@/lib/reactflowCompat';
-import type { FlowEdge, FlowNode, NodeData } from '@/lib/types';
+import type { EdgeData, FlowEdge, FlowNode, NodeData } from '@/lib/types';
 import { createMindmapEdge, DEFAULT_EDGE_OPTIONS, NODE_HEIGHT, NODE_WIDTH } from '@/constants';
 import { getNodeHandleIdForSide, handleIdToSide, type HandleSide } from '@/lib/nodeHandles';
 import { NODE_DEFAULTS } from '@/theme';
@@ -38,6 +38,12 @@ interface BuildConnectedNodeParams {
     position: { x: number; y: number };
     shape?: NodeData['shape'];
     labels: AddedNodeContentLabels;
+    sourceNode?: FlowNode;
+}
+
+export interface ConnectedEdgePreset {
+    label?: string;
+    data?: EdgeData;
 }
 
 interface BuildConnectedMindmapTopicParams {
@@ -149,6 +155,7 @@ export function buildConnectedNode({
     position,
     shape,
     labels,
+    sourceNode,
 }: BuildConnectedNodeParams): { newNode: FlowNode; isGenericShape: boolean } {
     const id = createId();
     const defaultStyle = NODE_DEFAULTS[type] || NODE_DEFAULTS.process;
@@ -176,6 +183,77 @@ export function buildConnectedNode({
         };
     }
 
+    if (type === 'class') {
+        return {
+            newNode: {
+                id,
+                type: 'class',
+                position,
+                data: {
+                    label: 'ClassName',
+                    color: 'white',
+                    shape: 'rectangle',
+                    classAttributes: ['+ attribute: Type'],
+                    classMethods: ['+ method(): void'],
+                },
+            },
+            isGenericShape: false,
+        };
+    }
+
+    if (type === 'er_entity') {
+        return {
+            newNode: {
+                id,
+                type: 'er_entity',
+                position,
+                data: {
+                    label: 'EntityName',
+                    color: 'white',
+                    shape: 'rectangle',
+                    erFields: ['id: INT PK', 'name: VARCHAR'],
+                },
+            },
+            isGenericShape: false,
+        };
+    }
+
+    if (type === 'architecture') {
+        const sourceProvider = sourceNode?.data?.archProvider || 'custom';
+        return {
+            newNode: {
+                id,
+                type: 'architecture',
+                position,
+                data: {
+                    label: 'New Service',
+                    color: 'slate',
+                    shape: 'rectangle',
+                    icon: 'Server',
+                    archProvider: sourceProvider,
+                    archProviderLabel: sourceProvider === 'custom'
+                        ? sourceNode?.data?.archProviderLabel
+                        : undefined,
+                    archResourceType: 'service',
+                    archEnvironment: sourceNode?.data?.archEnvironment || 'default',
+                    archBoundaryId: sourceNode?.data?.archBoundaryId,
+                    archZone: sourceNode?.data?.archZone,
+                    archTrustDomain: sourceNode?.data?.archTrustDomain,
+                    customIconUrl: sourceProvider === 'custom'
+                        ? sourceNode?.data?.customIconUrl
+                        : undefined,
+                    archIconPackId: sourceProvider !== 'custom'
+                        ? sourceNode?.data?.archIconPackId
+                        : undefined,
+                    archIconShapeId: sourceProvider !== 'custom'
+                        ? sourceNode?.data?.archIconShapeId
+                        : undefined,
+                },
+            },
+            isGenericShape: false,
+        };
+    }
+
     return {
         newNode: createGenericShapeNode(id, position, {
             type,
@@ -197,7 +275,8 @@ export function buildConnectedEdge(
     sourceId: string,
     targetId: string,
     sourceHandle: string | null,
-    targetHandle: string | null
+    targetHandle: string | null,
+    edgePreset?: ConnectedEdgePreset
 ): FlowEdge {
     return {
         id: `e-${sourceId}-${targetId}`,
@@ -205,6 +284,11 @@ export function buildConnectedEdge(
         sourceHandle,
         target: targetId,
         targetHandle,
+        data: {
+            connectionType: sourceHandle || targetHandle ? 'fixed' : 'dynamic',
+            ...(edgePreset?.data ?? {}),
+        },
+        ...(edgePreset?.label ? { label: edgePreset.label } : {}),
         ...DEFAULT_EDGE_OPTIONS,
     };
 }

@@ -2,12 +2,6 @@ import { renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useKeyboardShortcuts } from './useKeyboardShortcuts';
 
-vi.mock('@/config/rolloutFlags', () => ({
-  ROLLOUT_FLAGS: {
-    canvasInteractionsV1: true,
-  },
-}));
-
 function renderShortcuts(overrides: Partial<Parameters<typeof useKeyboardShortcuts>[0]> = {}): void {
   const baseHandlers = {
     selectedNodeId: 'node-1',
@@ -142,5 +136,44 @@ describe('useKeyboardShortcuts', () => {
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete' }));
 
     expect(deleteEdge).toHaveBeenCalledWith('edge-1');
+  });
+
+  it('copies style on Cmd/Ctrl+Alt+C outside editable fields', () => {
+    const onCopyStyle = vi.fn();
+    renderShortcuts({ onCopyStyle });
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', ctrlKey: true, altKey: true }));
+
+    expect(onCopyStyle).toHaveBeenCalledTimes(1);
+  });
+
+  it('pastes style on Cmd/Ctrl+Alt+V outside editable fields', () => {
+    const onPasteStyle = vi.fn();
+    renderShortcuts({ onPasteStyle });
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'v', ctrlKey: true, altKey: true }));
+
+    expect(onPasteStyle).toHaveBeenCalledTimes(1);
+  });
+
+  it('creates a connected node on Alt+Arrow', () => {
+    const onQuickCreateShortcut = vi.fn();
+    renderShortcuts({ onQuickCreateShortcut });
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true }));
+
+    expect(onQuickCreateShortcut).toHaveBeenCalledWith('right');
+  });
+
+  it('applies annotation colors with number shortcuts', () => {
+    const onAnnotationColorShortcut = vi.fn();
+    renderShortcuts({
+      selectedNodeType: 'annotation',
+      onAnnotationColorShortcut,
+    });
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '3' }));
+
+    expect(onAnnotationColorShortcut).toHaveBeenCalledWith('blue');
   });
 });

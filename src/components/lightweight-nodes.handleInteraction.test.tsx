@@ -52,10 +52,13 @@ vi.mock('@/lib/reactflowCompat', async (importOriginal) => {
 });
 
 vi.mock('@/store', () => ({
-  useFlowStore: (selector?: (state: { selectedNodeId: string | null; setNodes: ReturnType<typeof vi.fn> }) => unknown) => {
-    const state = { selectedNodeId, setNodes: vi.fn() };
-    return typeof selector === 'function' ? selector(state) : state;
-  },
+  useFlowStore: Object.assign(
+    (selector?: (state: Record<string, unknown>) => unknown) => {
+      const state = { selectedNodeId, setNodes: vi.fn(), setEdges: vi.fn(), nodes: [], edges: [] };
+      return typeof selector === 'function' ? selector(state) : state;
+    },
+    { getState: () => ({ nodes: [], edges: [], setNodes: vi.fn(), setEdges: vi.fn() }) },
+  ),
 }));
 
 afterEach(() => {

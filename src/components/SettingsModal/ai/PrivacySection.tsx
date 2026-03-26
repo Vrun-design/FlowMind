@@ -8,7 +8,7 @@ export function PrivacySection(): React.ReactElement {
 
     return (
         <div className="pt-2">
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 shadow-sm">
+            <div className="rounded-[var(--radius-lg)] border border-slate-200 bg-slate-50 p-4 shadow-sm">
                 <div className="flex items-center gap-2 mb-3 text-slate-800">
                     <Shield className="w-4 h-4 text-[var(--brand-primary)]" />
                     <span className="text-xs font-semibold uppercase tracking-wider">{t('settingsModal.ai.privacyTitle')}</span>

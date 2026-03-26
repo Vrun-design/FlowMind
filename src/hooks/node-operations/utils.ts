@@ -161,6 +161,8 @@ export function createArchitectureServiceNode({
     sourceNode,
     layerId,
 }: CreateArchitectureServiceNodeOptions): FlowNode {
+    const sourceProvider = sourceNode.data?.archProvider || 'custom';
+
     return {
         id,
         type: 'architecture',
@@ -170,12 +172,24 @@ export function createArchitectureServiceNode({
             color: 'slate',
             shape: 'rectangle',
             icon: 'Server',
-            archProvider: sourceNode.data?.archProvider || 'custom',
+            archProvider: sourceProvider,
+            archProviderLabel: sourceProvider === 'custom'
+                ? sourceNode.data?.archProviderLabel
+                : undefined,
             archResourceType: 'service',
             archEnvironment: sourceNode.data?.archEnvironment || 'default',
             archBoundaryId: sourceNode.data?.archBoundaryId,
             archZone: sourceNode.data?.archZone,
             archTrustDomain: sourceNode.data?.archTrustDomain,
+            customIconUrl: sourceProvider === 'custom'
+                ? sourceNode.data?.customIconUrl
+                : undefined,
+            archIconPackId: sourceProvider !== 'custom'
+                ? sourceNode.data?.archIconPackId
+                : undefined,
+            archIconShapeId: sourceProvider !== 'custom'
+                ? sourceNode.data?.archIconShapeId
+                : undefined,
             layerId,
         },
         selected: true,

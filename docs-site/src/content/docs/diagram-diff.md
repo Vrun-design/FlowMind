@@ -36,7 +36,7 @@ Compare mode helps with both. It gives you a concrete change view against a know
 
 ## Good use cases
 
-- checking the impact of a major FlowPilot revision
+- checking the impact of a major Flowpilot revision
 - reviewing the result of a large infrastructure refresh
 - comparing before-and-after states during architecture refactors
 - validating that a simplification pass did not delete something important

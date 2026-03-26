@@ -10,7 +10,7 @@ Studio, görsel tuvalin yanında çalışan yapılandırılmış üretim alanıd
 
 | Sekme | Amaç |
 | --- | --- |
-| **FlowPilot** | AI ile üretim ve revizyon |
+| **Flowpilot** | AI ile üretim ve revizyon |
 | **Code** | OpenFlow DSL ve Mermaid ile çalışma |
 | **Infra** | Destekli altyapı girdileri için parse akışı |
 | **Lint** | Mimari kural ve ihlal görünümü |

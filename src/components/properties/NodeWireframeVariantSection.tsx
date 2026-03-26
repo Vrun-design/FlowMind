@@ -3,6 +3,7 @@ import type { Node } from '@/lib/reactflowCompat';
 import { Layout } from 'lucide-react';
 import type { NodeData } from '@/lib/types';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
+import { getWireframeVariants } from './wireframeVariants';
 
 interface NodeWireframeVariantSectionProps {
     selectedNode: Node<NodeData>;
@@ -11,16 +12,13 @@ interface NodeWireframeVariantSectionProps {
     onChange: (id: string, data: Partial<NodeData>) => void;
 }
 
-const BROWSER_VARIANTS = ['landing', 'dashboard', 'form', 'modal', 'cookie', 'pricing'];
-const MOBILE_VARIANTS = ['login', 'social', 'chat', 'product', 'list'];
-
 export function NodeWireframeVariantSection({
     selectedNode,
     isOpen,
     onToggle,
     onChange,
 }: NodeWireframeVariantSectionProps): React.ReactElement {
-    const variants = selectedNode.type === 'browser' ? BROWSER_VARIANTS : MOBILE_VARIANTS;
+    const variants = getWireframeVariants(selectedNode.type);
     const activeVariant = selectedNode.data?.variant || 'default';
 
     return (
@@ -33,14 +31,15 @@ export function NodeWireframeVariantSection({
             <div className="grid grid-cols-2 gap-2 mb-2">
                 {variants.map((variant) => (
                     <button
-                        key={variant}
-                        onClick={() => onChange(selectedNode.id, { variant })}
+                        key={variant.id}
+                        onClick={() => onChange(selectedNode.id, { variant: variant.id })}
                         className={`px-2 py-2 rounded text-xs font-medium border transition-all
-                            ${activeVariant === variant
+                            ${activeVariant === variant.id
                                 ? 'bg-[var(--brand-primary-50)] border-[var(--brand-primary-200)] text-[var(--brand-primary)]'
                                 : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'}`}
+                        title={variant.description}
                     >
-                        {variant.charAt(0).toUpperCase() + variant.slice(1)}
+                        {variant.label}
                     </button>
                 ))}
             </div>

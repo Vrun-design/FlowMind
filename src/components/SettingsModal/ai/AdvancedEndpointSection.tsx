@@ -27,7 +27,7 @@ export function AdvancedEndpointSection({
     const { t } = useTranslation();
 
     return (
-        <div className="rounded-xl border border-slate-200 overflow-hidden">
+        <div className="overflow-hidden rounded-[var(--radius-lg)] border border-slate-200">
             <button
                 type="button"
                 onClick={onToggleAdvancedEndpoint}
@@ -64,7 +64,7 @@ export function AdvancedEndpointSection({
                     {(currentProvider === 'custom' || currentProvider === 'openrouter' || !!customBaseUrl) && (
                         <p className="text-[11px] text-slate-500">
                             <Trans i18nKey="settingsModal.ai.customEndpointMustSupport">
-                                Must support <code className="bg-slate-100 px-1 rounded text-[10px]">POST /chat/completions</code> (OpenAI format)
+                                Must support <code className="rounded-[var(--radius-xs)] bg-slate-100 px-1 text-[10px]">POST /chat/completions</code> (OpenAI format)
                             </Trans>
                         </p>
                     )}

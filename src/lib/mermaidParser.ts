@@ -1,5 +1,4 @@
 import { MarkerType } from '@/lib/reactflowCompat';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import type React from 'react';
 import { createId } from './id';
 import { setNodeParent } from './nodeParent';
@@ -18,16 +17,14 @@ import {
 } from './mermaidParserHelpers';
 import type { FlowEdge, FlowNode } from './types';
 
-const EDGE_STYLE: React.CSSProperties = ROLLOUT_FLAGS.visualQualityV2
-    ? { stroke: '#64748b', strokeWidth: 1.5 }
-    : { stroke: '#94a3b8', strokeWidth: 2 };
+const EDGE_STYLE: React.CSSProperties = { stroke: '#64748b', strokeWidth: 1.5 };
 const EDGE_LABEL_STYLE: React.CSSProperties = { fill: '#334155', fontWeight: 500, fontSize: 12 };
 const EDGE_LABEL_BG_STYLE: React.CSSProperties = { fill: '#ffffff', stroke: '#cbd5e1', strokeWidth: 1 };
 
 const DEFAULT_EDGE_OPTIONS = {
     type: 'smoothstep' as const,
     markerEnd: { type: MarkerType.ArrowClosed },
-    animated: !ROLLOUT_FLAGS.visualQualityV2,
+    animated: false,
     style: EDGE_STYLE,
     labelStyle: EDGE_LABEL_STYLE,
     labelBgStyle: EDGE_LABEL_BG_STYLE,

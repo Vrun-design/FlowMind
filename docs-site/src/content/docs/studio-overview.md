@@ -12,7 +12,7 @@ Studio matters because OpenFlowKit is not only a drag-and-drop editor. The produ
 
 | Tab | Purpose |
 | --- | --- |
-| **FlowPilot** | AI-assisted generation, revision, and guided import flows |
+| **Flowpilot** | AI-assisted generation, revision, and guided import flows |
 | **Code** | OpenFlow DSL and Mermaid editing against the current canvas |
 | **Infra** | Infrastructure Sync for supported infra file inputs |
 | **Lint** | Architecture rules and live violation feedback |
@@ -29,16 +29,16 @@ Open Studio when you want to:
 
 If you are already happy with the diagram structure and only need visual cleanup, stay on the canvas and use the [Properties Panel](/properties-panel/) instead.
 
-## FlowPilot tab
+## Flowpilot tab
 
-FlowPilot is the AI-first area of Studio. Use it when you want:
+Flowpilot is the AI-first area of Studio. Use it when you want:
 
 - a first draft from plain language
 - a different structural take on an existing concept
 - code-to-architecture generation
 - structured imports that benefit from model interpretation
 
-Good FlowPilot sessions are specific. Name the systems, actors, branches, constraints, and intended audience. If you want output that is easy to refine later, ask for explicit structure instead of purely aesthetic phrasing.
+Good Flowpilot sessions are specific. Name the systems, actors, branches, constraints, and intended audience. If you want output that is easy to refine later, ask for explicit structure instead of purely aesthetic phrasing.
 
 ## Code tab
 

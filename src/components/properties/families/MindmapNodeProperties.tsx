@@ -10,6 +10,7 @@ import {
   InspectorField,
   InspectorSectionDivider,
 } from '@/components/properties/InspectorPrimitives';
+import { createPropertyInputKeyDownHandler } from '@/components/properties/propertyInputBehavior';
 import { SegmentedChoice } from '@/components/properties/SegmentedChoice';
 import { Palette, Type, Workflow } from 'lucide-react';
 
@@ -43,6 +44,8 @@ export function MindmapNodeProperties({
   const canAddSibling = Boolean(selectedNode.data.mindmapParentId && onAddMindmapSibling);
   const nodeRole = isRoot ? 'Root Topic' : `Branch (depth ${depth})`;
   const branchStyle = selectedNode.data.mindmapBranchStyle === 'straight' ? 'straight' : 'curved';
+  const collapsed = selectedNode.data.mindmapCollapsed === true;
+  const handleInputKeyDown = createPropertyInputKeyDownHandler({ blurOnEnter: true });
 
   function toggleSection(section: string): void {
     setActiveSection((currentSection) => (currentSection === section ? '' : section));
@@ -62,6 +65,7 @@ export function MindmapNodeProperties({
           <input
             value={selectedNode.data.label || ''}
             onChange={(event) => onChange(selectedNode.id, { label: event.target.value })}
+            onKeyDown={handleInputKeyDown}
             className={INSPECTOR_INPUT_COMPACT_CLASSNAME}
             placeholder="Mindmap topic"
           />
@@ -69,11 +73,12 @@ export function MindmapNodeProperties({
       </CollapsibleSection>
 
       <CollapsibleSection
-        title="Color"
+        title="Branch Color"
         icon={<Palette className="w-3.5 h-3.5" />}
         isOpen={activeSection === 'appearance'}
         onToggle={() => toggleSection('appearance')}
       >
+        <p className="mb-3 text-xs text-slate-500">Applies the selected color to this topic and all of its descendants.</p>
         <ColorPicker
           selectedColor={selectedNode.data.color}
           selectedColorMode={selectedNode.data.colorMode}
@@ -96,9 +101,10 @@ export function MindmapNodeProperties({
         onToggle={() => toggleSection('structure')}
       >
         <div className="space-y-3">
-          <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2">
-            <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Hierarchy</div>
-            <div className="mt-1 text-sm text-slate-700">{nodeRole}</div>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600">
+              {nodeRole}
+            </span>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
@@ -112,12 +118,22 @@ export function MindmapNodeProperties({
             <button
               type="button"
               disabled={!canAddSibling}
-              className={`${INSPECTOR_BUTTON_CLASSNAME} px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-45`}
+              className={`${INSPECTOR_BUTTON_CLASSNAME} px-3 py-2 text-sm`}
               onClick={() => onAddMindmapSibling?.(selectedNode.id)}
             >
               Add Sibling Topic
             </button>
           </div>
+
+          {!isRoot ? (
+            <button
+              type="button"
+              className={`${INSPECTOR_BUTTON_CLASSNAME} w-full px-3 py-2 text-sm`}
+              onClick={() => onChange(selectedNode.id, { mindmapCollapsed: !collapsed })}
+            >
+              {collapsed ? 'Expand Branch' : 'Collapse Branch'}
+            </button>
+          ) : null}
 
           {isRoot ? (
             <InspectorField label="Branch Style">

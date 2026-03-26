@@ -10,7 +10,7 @@ OpenFlowKit, sağlayıcı ikonları, mimari odaklı yerleşim ve AI/kod tabanlı
 
 - AWS şablonları
 - Assets içindeki AWS ikon kataloğu
-- FlowPilot ile mimari istemi
+- Flowpilot ile mimari istemi
 - OpenFlow DSL ile deterministik ilk taslak
 
 ## Önerilen akış

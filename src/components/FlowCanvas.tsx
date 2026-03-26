@@ -27,7 +27,6 @@ import { useFlowCanvasReactFlowConfig } from './flow-canvas/useFlowCanvasReactFl
 import { useFlowCanvasSelectionTools } from './flow-canvas/useFlowCanvasSelectionTools';
 import type { ConnectMenuState } from './flow-canvas/useFlowCanvasMenus';
 import { useToast } from './ui/ToastContext';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { isCanvasBackgroundTarget } from '@/hooks/edgeConnectInteractions';
 import { setEdgeInteractionLowDetailMode } from './custom-edge/edgeRenderMode';
 import { useCanvasActions, useCanvasState } from '@/store/canvasHooks';
@@ -48,8 +47,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
     onCanvasEntityIntent,
 }) => {
     const { t } = useTranslation();
-    const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
-    const canvasInteractionsV1Enabled = ROLLOUT_FLAGS.canvasInteractionsV1;
+    const visualQualityV2Enabled = true;
     const { nodes, edges } = useCanvasState();
     const { onNodesChange, onEdgesChange, setNodes, setEdges } = useCanvasActions();
     const activeTabId = useActiveTabId();
@@ -93,7 +91,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         handleAddDomainLibraryItemAndConnect,
         handleAddNode,
         deleteNode, deleteEdge, duplicateNode,
-        updateNodeZIndex,
+        updateNodeType, updateNodeZIndex,
         pasteSelection, copySelection,
         handleAlignNodes, handleDistributeNodes, handleGroupNodes,
         onReconnect,
@@ -124,6 +122,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         deleteNode,
         deleteEdge,
         updateNodeZIndex,
+        updateNodeType,
         handleAlignNodes,
         handleDistributeNodes,
         handleGroupNodes,
@@ -200,7 +199,6 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
     });
 
     const onCanvasDoubleClickCapture = (event: React.MouseEvent<HTMLDivElement>): void => {
-        if (!canvasInteractionsV1Enabled) return;
         if (!isCanvasBackgroundTarget(event.target)) return;
         const position = screenToFlowPosition({ x: event.clientX, y: event.clientY });
         handleAddNode(position);

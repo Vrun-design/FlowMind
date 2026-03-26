@@ -24,7 +24,7 @@ For fully deterministic infrastructure parsing that does not need AI, use [Infra
 
 Paste one or more `CREATE TABLE` statements to generate an ER diagram.
 
-FlowPilot will:
+Flowpilot will:
 
 - create one node per table
 - list primary keys, foreign keys, and key columns inside each node

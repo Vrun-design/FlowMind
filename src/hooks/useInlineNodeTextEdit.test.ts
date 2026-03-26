@@ -6,12 +6,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { useInlineNodeTextEdit } from './useInlineNodeTextEdit';
 import { requestNodeLabelEdit } from './nodeLabelEditRequest';
 
-vi.mock('@/config/rolloutFlags', () => ({
-  ROLLOUT_FLAGS: {
-    canvasInteractionsV1: true,
-  },
-}));
-
 describe('useInlineNodeTextEdit', () => {
   it('creates connected sibling when Tab is pressed while editing', () => {
     const nodeId = createId('node');

@@ -99,11 +99,11 @@ describe('resolveCollaborationCacheState', () => {
 
   it('formats and sorts top-nav collaboration participants with the local marker', () => {
     expect(buildTopNavParticipants([
-      { clientId: 'b', name: 'Beta', color: '#222', cursor: null },
+      { clientId: 'b', name: 'Guest ED88', color: '#222', cursor: null },
       { clientId: 'a', name: 'Alpha', color: '#111', cursor: null },
     ], 'a')).toEqual([
-      { clientId: 'a', name: 'Alpha (You)', color: '#111', isLocal: true },
-      { clientId: 'b', name: 'Beta', color: '#222', isLocal: false },
+      { clientId: 'a', name: 'You', color: '#111', isLocal: true },
+      { clientId: 'b', name: 'Guest', color: '#222', isLocal: false },
     ]);
   });
 
@@ -118,7 +118,7 @@ describe('resolveCollaborationCacheState', () => {
 
   it('creates and persists a local collaboration identity from the client id', () => {
     const identity = resolveLocalCollaborationIdentity('collab-client-1234');
-    expect(identity.name).toBe('Guest 1234');
+    expect(identity.name).toBe('Guest');
     expect(identity.color).toBeTruthy();
 
     window.localStorage.setItem('flowmind:collab-identity-v1', JSON.stringify({

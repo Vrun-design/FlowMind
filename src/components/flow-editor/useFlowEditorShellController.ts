@@ -130,7 +130,7 @@ export function useFlowEditorShellController({
     const shouldRenderPanels = isCommandBarOpen
         || isHistoryOpen
         || editorMode === 'studio'
-        || Boolean(selectedNode || selectedEdge);
+        || Boolean(selectedNode || selectedEdge || selectedNodes.length > 1);
 
     return {
         activeTab,

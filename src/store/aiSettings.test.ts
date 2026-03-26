@@ -1,8 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { sanitizeAISettings } from './aiSettings';
+import { clearPersistedAISettings, loadPersistedAISettings, persistAISettings } from './aiSettingsPersistence';
 import { DEFAULT_AI_SETTINGS } from './defaults';
 
 describe('aiSettings', () => {
+  afterEach(() => {
+    localStorage.removeItem('openflowkit-ai-settings');
+    sessionStorage.removeItem('openflowkit-ai-settings');
+  });
+
   it('falls back to defaults for invalid provider values', () => {
     const sanitized = sanitizeAISettings(
       {
@@ -15,6 +21,7 @@ describe('aiSettings', () => {
     );
 
     expect(sanitized.provider).toBe(DEFAULT_AI_SETTINGS.provider);
+    expect(sanitized.storageMode).toBe(DEFAULT_AI_SETTINGS.storageMode);
     expect(sanitized.apiKey).toBe('secret');
     expect(sanitized.model).toBe('gemini-2.5-pro');
     expect(sanitized.customBaseUrl).toBe('https://example.com');
@@ -24,6 +31,7 @@ describe('aiSettings', () => {
     const sanitized = sanitizeAISettings(
       {
         provider: 'custom',
+        storageMode: 'session',
         customHeaders: [
           { key: ' Authorization ', value: 'Bearer token', enabled: true },
           { key: '', value: 'skip-me' },
@@ -36,5 +44,71 @@ describe('aiSettings', () => {
     expect(sanitized.customHeaders).toEqual([
       { key: 'Authorization', value: 'Bearer token', enabled: true },
     ]);
+    expect(sanitized.storageMode).toBe('session');
+  });
+
+  it('persists and reloads sanitized AI settings from local storage by default', () => {
+    persistAISettings({
+      provider: 'custom',
+      storageMode: 'local',
+      apiKey: '  secret  ',
+      model: '  model-1  ',
+      customBaseUrl: '  https://example.com  ',
+      customHeaders: [{ key: ' Authorization ', value: 'Bearer token', enabled: true }],
+    });
+
+    expect(loadPersistedAISettings()).toEqual({
+      provider: 'custom',
+      storageMode: 'local',
+      apiKey: 'secret',
+      model: 'model-1',
+      customBaseUrl: 'https://example.com',
+      customHeaders: [{ key: 'Authorization', value: 'Bearer token', enabled: true }],
+    });
+  });
+
+  it('persists session-only AI settings in sessionStorage and clears local copy', () => {
+    localStorage.setItem('openflowkit-ai-settings', JSON.stringify({
+      provider: 'gemini',
+      storageMode: 'local',
+      apiKey: 'local-secret',
+    }));
+
+    persistAISettings({
+      provider: 'openai',
+      storageMode: 'session',
+      apiKey: ' session-secret ',
+      model: ' gpt-4o ',
+      customBaseUrl: undefined,
+      customHeaders: [],
+    });
+
+    expect(localStorage.getItem('openflowkit-ai-settings')).toBeNull();
+    expect(JSON.parse(sessionStorage.getItem('openflowkit-ai-settings') ?? '{}')).toMatchObject({
+      provider: 'openai',
+      storageMode: 'session',
+      apiKey: 'session-secret',
+      model: 'gpt-4o',
+    });
+    expect(loadPersistedAISettings().storageMode).toBe('session');
+  });
+
+  it('can clear persisted AI settings from both storage buckets', () => {
+    localStorage.setItem('openflowkit-ai-settings', JSON.stringify({
+      provider: 'gemini',
+      storageMode: 'local',
+      apiKey: 'local-secret',
+    }));
+    sessionStorage.setItem('openflowkit-ai-settings', JSON.stringify({
+      provider: 'openai',
+      storageMode: 'session',
+      apiKey: 'session-secret',
+    }));
+
+    clearPersistedAISettings();
+
+    expect(localStorage.getItem('openflowkit-ai-settings')).toBeNull();
+    expect(sessionStorage.getItem('openflowkit-ai-settings')).toBeNull();
+    expect(loadPersistedAISettings()).toEqual(DEFAULT_AI_SETTINGS);
   });
 });

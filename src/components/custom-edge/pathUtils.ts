@@ -1,5 +1,4 @@
 import { getBezierPath, getSmoothStepPath, getStraightPath, Position } from '@/lib/reactflowCompat';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { isEdgeInteractionLowDetailModeActive } from './edgeRenderMode';
 import { measureDevPerformance } from '@/lib/devPerformance';
 
@@ -295,10 +294,7 @@ function getPathMidpoint(points: { x: number; y: number }[]): { x: number; y: nu
 
 function getAdaptiveFanoutSpacing(siblingCount: number): number {
     if (siblingCount <= 1) return 0;
-    if (ROLLOUT_FLAGS.connectorModelV1) {
-        return Math.min(18, 10 + Math.max(0, siblingCount - 2) * 1.5);
-    }
-    return Math.min(22, 12 + Math.max(0, siblingCount - 2) * 2);
+    return Math.min(18, 10 + Math.max(0, siblingCount - 2) * 1.5);
 }
 
 function getParallelEdgeOffset(edgeId: string, source: string, target: string, allEdges: MinimalEdge[]): number {
@@ -682,7 +678,7 @@ export function buildEdgePath(
             && options.elkPoints
             && options.elkPoints.length > 0;
 
-        if (shouldUseElkRoute && ROLLOUT_FLAGS.connectorModelV1) {
+        if (shouldUseElkRoute) {
             const points = options.elkPoints;
             const sourceNode = getNodeById(allNodes, params.source);
             const targetNode = getNodeById(allNodes, params.target);
@@ -740,7 +736,7 @@ export function buildEdgePath(
         const shouldUseSharedSourceTrunk =
             !isMindmapBranch
             && (variant === 'smoothstep' || variant === 'step' || options.forceOrthogonal)
-            && sourceSiblingCount >= (ROLLOUT_FLAGS.connectorModelV1 ? 3 : 4)
+            && sourceSiblingCount >= 3
             && (
                 params.sourcePosition === Position.Left
                 || params.sourcePosition === Position.Right

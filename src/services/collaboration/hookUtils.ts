@@ -1,14 +1,24 @@
 import { createId } from '@/lib/id';
+import { LEGACY_COLLABORATION_KEYS } from '@/lib/legacyBranding';
 import type { CollaborationPresenceState } from './types';
 
 const COLLABORATION_CURSOR_PUBLISH_DISTANCE = 6;
-const LOCAL_COLLABORATION_IDENTITY_STORAGE_KEY = 'flowmind:collab-identity-v1';
+const LOCAL_COLLABORATION_IDENTITY_STORAGE_KEY = LEGACY_COLLABORATION_KEYS.identity;
 const LOCAL_COLLABORATION_COLORS = ['#2563eb', '#db2777', '#059669', '#7c3aed', '#ea580c', '#0f766e'];
-const LOCAL_COLLABORATION_ROOM_SECRET_STORAGE_PREFIX = 'flowmind:collab-room-secret:';
+const LOCAL_COLLABORATION_ROOM_SECRET_STORAGE_PREFIX = LEGACY_COLLABORATION_KEYS.roomSecretPrefix;
 
 interface LocalCollaborationIdentity {
     name: string;
     color: string;
+}
+
+function normalizeCollaborationDisplayName(name: string, isLocal: boolean): string {
+    if (isLocal) {
+        return 'You';
+    }
+
+    const isGeneratedGuestName = /^Guest [A-Z0-9]{4}$/u.test(name);
+    return isGeneratedGuestName ? 'Guest' : name;
 }
 
 export function resolveCollaborationCacheState(input: {
@@ -80,12 +90,15 @@ export function buildTopNavParticipants(
     return collaborationPresence
         .slice()
         .sort((left, right) => left.clientId.localeCompare(right.clientId))
-        .map((presence) => ({
-            clientId: presence.clientId,
-            name: presence.clientId === localCollaborationClientId ? `${presence.name} (You)` : presence.name,
-            color: presence.color,
-            isLocal: presence.clientId === localCollaborationClientId,
-        }));
+        .map((presence) => {
+            const isLocal = presence.clientId === localCollaborationClientId;
+            return {
+                clientId: presence.clientId,
+                name: normalizeCollaborationDisplayName(presence.name, isLocal),
+                color: presence.color,
+                isLocal,
+            };
+        });
 }
 
 export function resolveLocalCollaborationClientId(collaborationEnabled: boolean, roomId: string): string | null {
@@ -93,7 +106,7 @@ export function resolveLocalCollaborationClientId(collaborationEnabled: boolean,
         return null;
     }
 
-    const storageKey = `flowmind:collab-client-id:${roomId}`;
+    const storageKey = `${LEGACY_COLLABORATION_KEYS.clientIdPrefix}${roomId}`;
     const existingClientId = window.sessionStorage.getItem(storageKey);
     if (existingClientId) {
         return existingClientId;
@@ -136,7 +149,7 @@ export function resolveLocalCollaborationIdentity(clientId: string | null): Loca
     }
 
     const nextIdentity = {
-        name: `Guest ${clientId.slice(-4).toUpperCase()}`,
+        name: 'Guest',
         color: LOCAL_COLLABORATION_COLORS[hashString(clientId) % LOCAL_COLLABORATION_COLORS.length],
     };
     window.localStorage.setItem(LOCAL_COLLABORATION_IDENTITY_STORAGE_KEY, JSON.stringify(nextIdentity));

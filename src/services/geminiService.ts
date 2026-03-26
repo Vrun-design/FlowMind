@@ -250,7 +250,9 @@ export async function generateDiagramFromChat(
   imageBase64?: string,
   userApiKey?: string,
   modelId?: string,
-  isEditMode = false
+  isEditMode = false,
+  onChunk?: (delta: string) => void,
+  signal?: AbortSignal,
 ): Promise<string> {
   const apiKey = userApiKey;
 
@@ -276,18 +278,28 @@ export async function generateDiagramFromChat(
 
   const contents = [...history, newMessageContent];
 
-  const response = await ai.models.generateContent({
+  const stream = await ai.models.generateContentStream({
     model: modelId || GEMINI_DEFAULT_MODEL,
     contents,
     config: {
       systemInstruction: getSystemInstruction(isEditMode ? 'edit' : 'create'),
       responseMimeType: "text/plain",
-    }
+    },
   });
 
-  if (!response.text) throw new Error("No response from AI");
+  let fullText = '';
+  for await (const chunk of stream) {
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    const delta = chunk.text ?? '';
+    if (delta) {
+      fullText += delta;
+      onChunk?.(delta);
+    }
+  }
 
-  return response.text;
+  if (!fullText) throw new Error("No response from AI");
+
+  return fullText;
 }
 
 export async function generateDiagramFromPrompt(

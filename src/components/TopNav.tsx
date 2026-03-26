@@ -23,7 +23,9 @@ interface TopNavProps {
     // Actions
     onExportPNG: (format?: 'png' | 'jpeg') => void;
     onExportSVG: () => void;
+    onExportPDF: () => void;
     onExportAnimated: (format: 'video' | 'gif') => void;
+    onExportReveal: (format: 'reveal-video' | 'reveal-gif') => void;
     onExportJSON: () => void;
     onExportMermaid: () => void;
     onExportPlantUML: () => void;
@@ -50,7 +52,6 @@ interface TopNavProps {
     };
 }
 
-
 export function TopNav({
     tabs,
     activeTabId,
@@ -60,7 +61,9 @@ export function TopNav({
     onRenameTab,
     onExportPNG,
     onExportSVG,
+    onExportPDF,
     onExportAnimated,
+    onExportReveal,
     onExportJSON,
     onExportMermaid,
     onExportPlantUML,
@@ -85,9 +88,9 @@ export function TopNav({
     } = useTopNavState();
 
     return (
-        <div className="absolute top-0 left-0 right-0 z-50 h-16 bg-white/70 backdrop-blur-md border-b border-white/20 shadow-sm px-6 flex items-center justify-between transition-all">
+        <div className="absolute top-0 left-0 right-0 z-50 flex h-14 items-center justify-between border-b border-white/20 bg-white/70 px-3 shadow-sm backdrop-blur-md transition-all sm:px-4">
             {/* Left: Menu & Brand */}
-            <div className="flex items-center gap-4 min-w-[240px]">
+            <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
                 <TopNavMenu
                     isOpen={isMenuOpen}
                     isBeveled={isBeveled}
@@ -101,39 +104,41 @@ export function TopNav({
                 <TopNavBrand
                     appName={APP_NAME}
                     logoUrl={null}
-                    logoStyle={'text'}
+                    logoStyle="text"
                     ui={{ showBeta: true }}
                 />
             </div>
 
             {/* Center: Tabs */}
-            <div className="flex-1 flex justify-center max-w-2xl">
-                <div className="bg-slate-100/50 p-1 rounded-[var(--radius-lg)] border border-slate-200/60 backdrop-blur-sm">
-                    <FlowTabs
-                        tabs={tabs}
-                        activeTabId={activeTabId}
-                        onSwitchTab={onSwitchTab}
-                        onAddTab={onAddTab}
-                        onCloseTab={onCloseTab}
-                        onRenameTab={onRenameTab}
-                    />
-                </div>
+            <div className="flex min-w-0 flex-[1.2] justify-center px-2 sm:px-3">
+                <FlowTabs
+                    tabs={tabs}
+                    activeTabId={activeTabId}
+                    onSwitchTab={onSwitchTab}
+                    onAddTab={onAddTab}
+                    onCloseTab={onCloseTab}
+                    onRenameTab={onRenameTab}
+                />
             </div>
 
-            <TopNavActions
-                onPlay={onPlay}
-                onExportPNG={onExportPNG}
-                onExportSVG={onExportSVG}
-                onExportAnimated={onExportAnimated}
-                onExportJSON={onExportJSON}
-                onExportMermaid={onExportMermaid}
-                onExportPlantUML={onExportPlantUML}
-                onExportOpenFlowDSL={onExportOpenFlowDSL}
-                onExportFigma={onExportFigma}
-                onShare={onShare}
-                collaboration={collaboration}
-                isBeveled={isBeveled}
-            />
+            <div className="flex min-w-0 flex-1 justify-end">
+                <TopNavActions
+                    onPlay={onPlay}
+                    onExportPNG={onExportPNG}
+                    onExportSVG={onExportSVG}
+                    onExportPDF={onExportPDF}
+                    onExportAnimated={onExportAnimated}
+                    onExportReveal={onExportReveal}
+                    onExportJSON={onExportJSON}
+                    onExportMermaid={onExportMermaid}
+                    onExportPlantUML={onExportPlantUML}
+                    onExportOpenFlowDSL={onExportOpenFlowDSL}
+                    onExportFigma={onExportFigma}
+                    onShare={onShare}
+                    collaboration={collaboration}
+                    isBeveled={isBeveled}
+                />
+            </div>
 
             {isSettingsOpen ? (
                 <Suspense fallback={null}>

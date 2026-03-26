@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, Check, ChevronDown } from 'lucide-react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useVisualSettingsActions } from '@/store/viewHooks';
 
 interface Language {
@@ -59,13 +58,13 @@ function LanguageDropdown({
         aria-label="Close language selector"
       />
       <div
-        className={`absolute right-0 ${positionClass} ${width} bg-white/95 backdrop-blur-xl rounded-lg shadow-xl border border-slate-200 ring-1 ring-black/5 p-1 z-50 animate-in fade-in zoom-in-95 duration-200 ${originClass}`}
+        className={`absolute right-0 ${positionClass} ${width} rounded-[var(--radius-lg)] border border-slate-200 bg-white/95 p-1 shadow-[var(--shadow-md)] ring-1 ring-black/5 backdrop-blur-xl z-50 animate-in fade-in zoom-in-95 duration-200 ${originClass}`}
       >
         {LANGUAGES.map((lang) => (
           <button
             key={lang.code}
             onClick={() => onSelect(lang.code)}
-            className={`flex items-center justify-between w-full px-3 py-2.5 rounded-md text-sm font-medium transition-all ${currentCode === lang.code
+            className={`flex items-center justify-between w-full px-3 py-2.5 rounded-[var(--radius-sm)] text-sm font-medium transition-all ${currentCode === lang.code
               ? 'bg-[var(--brand-primary-50)] text-[var(--brand-primary)]'
               : 'text-slate-600 hover:bg-slate-50'
               }`}
@@ -75,7 +74,7 @@ function LanguageDropdown({
               <span className="flex items-center gap-2">
                 {lang.nativeName}
                 {lang.scope === 'ui' && (
-                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-500 uppercase tracking-wider">
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-[var(--radius-xs)] text-[10px] font-semibold bg-slate-100 text-slate-500 uppercase tracking-wider">
                     UI Only
                   </span>
                 )}
@@ -97,19 +96,12 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
   const { setViewSettings } = useVisualSettingsActions();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { slug } = useParams();
 
   const currentLanguage = LANGUAGES.find((l) => l.code === i18n.language) ?? LANGUAGES[0];
 
   async function changeLanguage(code: string): Promise<void> {
     await i18n.changeLanguage(code);
     setViewSettings({ language: code });
-
-    if (location.pathname.startsWith('/docs') && slug) {
-      navigate(`/docs/${code}/${slug}`, { replace: true });
-    }
 
     setIsOpen(false);
   }
@@ -124,7 +116,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       <div className="relative w-full">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center justify-between w-full px-3 py-2 rounded-lg border border-slate-200 transition-all text-sm font-medium bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300"
+          className="flex items-center justify-between w-full px-3 py-2 rounded-[var(--radius-md)] border border-slate-200 transition-all text-sm font-medium bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300"
         >
           <div className="flex items-center gap-2">
             <img src={currentLanguage.flag} alt={currentLanguage.name} className="w-5 h-3.5 object-cover rounded-[2px] border border-slate-200 shadow-sm" />
@@ -149,7 +141,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-1.5 px-2 py-1.5 rounded-md transition-all text-sm font-medium bg-transparent text-slate-600 hover:bg-slate-100"
+          className="flex items-center gap-1.5 px-2 py-1.5 rounded-[var(--radius-sm)] transition-all text-sm font-medium bg-transparent text-slate-600 hover:bg-slate-100"
           title="Change Language"
         >
           <img src={currentLanguage.flag} alt={currentLanguage.name} className="w-5 h-3.5 object-cover rounded-[2px] border border-slate-200 shadow-sm" />

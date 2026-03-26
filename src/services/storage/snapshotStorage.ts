@@ -1,4 +1,5 @@
 import type { FlowSnapshot } from '@/lib/types';
+import { LEGACY_STORAGE_KEYS } from '@/lib/legacyBranding';
 import { FLOW_DOCUMENT_STORE_NAME, openFlowPersistenceDatabase } from './indexedDbSchema';
 import {
   readLocalStorageString,
@@ -7,7 +8,7 @@ import {
 } from './uiLocalStorage';
 import { reportStorageTelemetry } from './storageTelemetry';
 
-const SNAPSHOT_STORAGE_KEY = 'flowmind_snapshots';
+const SNAPSHOT_STORAGE_KEY = LEGACY_STORAGE_KEYS.snapshots;
 
 type SnapshotRecord = {
   id: string;

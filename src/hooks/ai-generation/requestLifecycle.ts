@@ -20,6 +20,42 @@ interface GenerateAIFlowResultParams {
   selectedNodeIds?: string[];
   aiSettings: AISettings;
   globalEdgeOptions: GlobalEdgeOptions;
+  onChunk?: (delta: string) => void;
+  onRetry?: (attempt: number) => void;
+  signal?: AbortSignal;
+}
+
+const MAX_RETRIES = 3;
+const RETRY_BASE_MS = 1000;
+
+function isRetryableError(error: unknown): boolean {
+  if (error instanceof DOMException && error.name === 'AbortError') return false;
+  if (error instanceof Error) {
+    const msg = error.message.toLowerCase();
+    // Retry on rate-limit and network errors, not on auth or parse errors
+    return msg.includes('429') || msg.includes('rate') || msg.includes('network') || msg.includes('fetch');
+  }
+  return false;
+}
+
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  signal: AbortSignal | undefined,
+  onRetry?: (attempt: number) => void,
+): Promise<T> {
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    try {
+      return await fn();
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') throw error;
+      if (!isRetryableError(error) || attempt === MAX_RETRIES - 1) throw error;
+      onRetry?.(attempt + 1);
+      const delay = RETRY_BASE_MS * 2 ** attempt;
+      await new Promise<void>((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw new Error('Retries exhausted');
 }
 
 export interface GenerateAIFlowResult {
@@ -72,6 +108,9 @@ export async function generateAIFlowResult({
   selectedNodeIds,
   aiSettings,
   globalEdgeOptions,
+  onChunk,
+  onRetry,
+  signal,
 }: GenerateAIFlowResultParams): Promise<GenerateAIFlowResult> {
   const hasSelection = (selectedNodeIds?.length ?? 0) > 0;
   const currentGraph = serializeCanvasContextForAI(nodes, edges, selectedNodeIds);
@@ -81,16 +120,22 @@ export async function generateAIFlowResult({
 
   const isEditMode = nodes.length > 0;
 
-  const dslText = await generateDiagramFromChat(
-    chatMessages,
-    fullPrompt,
-    currentGraph,
-    imageBase64,
-    aiSettings.apiKey,
-    aiSettings.model,
-    aiSettings.provider || 'gemini',
-    aiSettings.customBaseUrl,
-    isEditMode
+  const dslText = await withRetry(
+    () => generateDiagramFromChat(
+      chatMessages,
+      fullPrompt,
+      currentGraph,
+      imageBase64,
+      aiSettings.apiKey,
+      aiSettings.model,
+      aiSettings.provider || 'gemini',
+      aiSettings.customBaseUrl,
+      isEditMode,
+      onChunk,
+      signal,
+    ),
+    signal,
+    onRetry,
   );
 
   const parsed = parseDslOrThrow(dslText);

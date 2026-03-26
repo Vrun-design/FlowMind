@@ -20,6 +20,8 @@
     "selectAll": "Tümünü Seç",
     "duplicate": "Çoğalt",
     "duplicateDrag": "Çoğalt ve Sürükle",
+    "multiSelect": "Çoklu seçim",
+    "selectionBox": "Seçim kutusu",
     "upload": "Yükle",
     "copy": "Kopyala",
     "paste": "Yapıştır",
@@ -38,6 +40,8 @@
     "success": "Başarılı",
     "settings": "Ayarlar",
     "help": "Yardım",
+    "selectTool": "Seçim Aracı",
+    "handTool": "El Aracı",
     "docs": "Dokümantasyon",
     "getStarted": "Hemen Başla",
     "publicBeta": "v1.0 Public Beta",
@@ -59,7 +63,8 @@
     "group": "Grupla",
     "export": "Dışa Aktar",
     "exportDiagram": "Diyagramı Dışa Aktar",
-    "exportAs": "Farklı Dışa Aktar"
+    "exportAs": "Farklı Dışa Aktar",
+    "rename": "Rename"
   },
   "nav": {
     "home": "Ana Sayfa",
@@ -79,7 +84,8 @@
     "beta": "BETA",
     "versionHistory": "Sürüm Geçmişi",
     "loadJSON": "JSON Yükle",
-    "playbackMode": "Oynatma Modu"
+    "playbackMode": "Oynatma Modu",
+    "privacyMessage": "Your diagrams stay with you and do not reach our servers."
   },
   "menu": {
     "file": "Dosya",
@@ -117,7 +123,21 @@
     "hintTransparent4K": "Şeffaf (4K)",
     "hintWhiteBg4K": "Beyaz Arka Plan (4K)",
     "hintDownload": "İndir",
-    "hintClipboard": "Panoya kopyala"
+    "hintClipboard": "Panoya kopyala",
+    "exportOrShare": "Export or share this canvas",
+    "svg": "Export as SVG",
+    "hintSvgScalable": "Scalable vector file",
+    "video": "Playback Video",
+    "hintPlaybackWebM": "Playback timeline (WebM/MP4)",
+    "gif": "Playback GIF",
+    "hintPlaybackGif": "Short loop for docs/social",
+    "share": "Share live canvas",
+    "hintShareViewer": "Invite link for this room",
+    "shareSection": "Share canvas",
+    "revealVideo": "Reveal Video",
+    "hintRevealVideo": "Nodes fade in sequentially (WebM/MP4)",
+    "revealGif": "Reveal GIF",
+    "hintRevealGif": "Animated reveal for docs/social"
   },
   "import": {
     "title": "İçe Aktar",
@@ -129,7 +149,7 @@
     "newTab": "Yeni Sekme",
     "renameTab": "Sekmeyi Yeniden Adlandır",
     "closeTab": "Sekmeyi Kapat",
-    "addNode": "Düğüm Ekle",
+    "addNode": "Şekil Ekle",
     "deleteNode": "Düğümü Sil",
     "duplicateNode": "Düğümü Çoğalt"
   },
@@ -137,6 +157,7 @@
     "newNode": "Yeni Düğüm",
     "processStep": "İşlem Adımı",
     "note": "Not",
+    "addText": "Metin ekle",
     "addCommentsHere": "Yorumlarınızı buraya ekleyin.",
     "newSection": "Yeni Bölüm",
     "text": "Metin",
@@ -145,7 +166,8 @@
     "items": "öğe",
     "database": "Veritabanı",
     "inputOutput": "Giriş / Çıkış",
-    "branch": "Dal"
+    "branch": "Dal",
+    "mindmap": "Topic"
   },
   "actions": {
     "clearCanvasConfirm": "Tuvali temizlemek istediğinizden emin misiniz?"
@@ -217,7 +239,25 @@
     "recentFiles": "Son Dosyalar",
     "files": "dosyalar",
     "createFirstFlow": "İlk akışınızı oluşturun",
-    "startFromScratch": "Sıfırdan başlayın veya mevcut bir diyagramı içe aktarın."
+    "startFromScratch": "Sıfırdan başlayın veya mevcut bir diyagramı içe aktarın.",
+    "currentFlow": "Current flow",
+    "autosaved": "Autosaved",
+    "localStorageHint": "Autosaved on this device. We do not upload your diagram data to our servers.",
+    "renameFlow": {
+      "title": "Rename flow",
+      "description": "Update the name shown on your dashboard and tabs.",
+      "label": "Flow name",
+      "placeholder": "Enter a flow name",
+      "hint": "Names are local to this browser profile unless you export or sync them elsewhere.",
+      "closeDialog": "Close rename flow dialog"
+    },
+    "deleteFlow": {
+      "title": "Delete flow",
+      "description": "This removes the local autosaved flow from this device.",
+      "confirmation": "Delete \"{{name}}\"?",
+      "hint": "This cannot be undone unless you have an exported backup or another copy.",
+      "closeDialog": "Close delete flow dialog"
+    }
   },
   "settings": {
     "title": "Ayarlar",
@@ -250,7 +290,18 @@
     "description": "Açıklama",
     "color": "Renk",
     "icon": "İkon",
-    "size": "Boyut"
+    "size": "Boyut",
+    "shape": "Şekil",
+    "bulkShape": "Toplu Şekil",
+    "bulkColor": "Toplu Renk",
+    "bulkIcon": "Toplu İkon",
+    "labelTransform": "Etiket Dönüşümü",
+    "prefixOptional": "Önek (isteğe bağlı)",
+    "suffixOptional": "Sonek (isteğe bağlı)",
+    "previewSummary": "Önizleme özeti",
+    "bulkApplySummary": "Seçili {{count}} öğe güncellenecek",
+    "selectFieldToApply": "Uygulamak için en az bir alan seçin.",
+    "applyToSelectedNodes": "Seçili öğelere uygula"
   },
   "ai": {
     "generate": "Yapay Zeka ile Oluştur",
@@ -264,7 +315,8 @@
     "pasteKeyStep": "Yukarıdaki alana yapıştırın — asla bizimle paylaşılmaz",
     "customEndpointTitle": "Özel endpoint nedir?",
     "customModelHint": "Endpoint'iniz için tam model kimliğini girin",
-    "privacyTitle": "Gizlilik ve Şifreleme"
+    "privacyTitle": "Gizlilik ve Şifreleme",
+    "generateWithFlowpilot": "Generate with Flowpilot"
   },
   "playback": {
     "title": "Oynatma",
@@ -358,9 +410,9 @@
     "description": "Nihai beyaz etiketli tuval. Tamamen özelleştirilebilir düğümler, kenarlar ve temalar — React Flow ile güçlendirilmiş. Bu sizin markanız, nefes almak için sonsuz alan verilmiş.",
     "diagramAsCode": "Kod Olarak Diyagram",
     "diagramAsCodeDesc": "Mermaid.js ve tip güvenli DSL'imiz için birinci sınıf destek. Mimarinizi kodla tanımlayın, JSON olarak dışa aktarın ve motorun düzeni halletmesine izin verin.",
-    "flowpilotAI": "AI Studio",
+    "flowpilotAI": "Flowpilot",
     "aiAssistant": "Yapay Zeka Asistanı",
-    "flowpilotAIDesc": "Diyagramınızla sohbet edin. \"Köşeleri daha yuvarlak yap\", \"Yük dengeleyici ekle\".",
+    "flowpilotAIDesc": "Yönlendirilmiş AI düzenlemeleriyle diyagramınız üzerinde çalışın. \"Köşeleri daha yuvarlak yap\", \"Yük dengeleyici ekle\".",
     "addRedisCache": "Veritabanının önüne Redis önbelleği ekle.",
     "localPrivate": "Yerel ve Özel",
     "localPrivateDesc": "Verilerinizi istemiyoruz. Her şey makinenizde kalır. Bulut kaydetme yok, izleme yok, sunucularımıza \"senkronizasyon\" yok. Tam özgürlüğe sahipsiniz.",
@@ -387,7 +439,7 @@
     "designDesc": "Ekranları yeniden oluşturmayı bırakın. Tuvalden kopyalayın ve düzenlenebilir SVG ve metin katmanları olarak Figma'ya yapıştırın.",
     "exportShare": "Dışa Aktar ve Paylaş",
     "pixelPerfectOutput": "PİKSEL MÜKEMMELİ ÇIKTI",
-    "exportShareDesc": "Diyagramları SVG, PNG veya PDF olarak dışa aktarın. Panoya kopyalayın ve düzenlenebilir katmanlarla Figma'ya yapıştırın. Paylaşmak veya sürüm kontrolü için JSON olarak kaydedin.",
+    "exportShareDesc": "Diyagramları SVG veya PNG olarak dışa aktarın. Panoya kopyalayın ve düzenlenebilir katmanlarla Figma'ya yapıştırın. Paylaşmak veya sürüm kontrolü için JSON olarak kaydedin.",
     "vectorEditable": "Vektör • Figma'da Düzenlenebilir",
     "rasterHighRes": "Raster • Yüksek çözünürlüklü dışa aktarma",
     "dataSaveRestore": "Veri • Akışları kaydet ve geri yükle"
@@ -416,8 +468,7 @@
     "communityDesc": "OpenFlowKit üzerinde çalışan geliştiricilere katılın.",
     "roadmap": "Yol Haritası",
     "coreRenderer": "Çekirdek Render",
-    "flowpilotAI": "AI Studio",
-    "pdfExport": "PDF Dışa Aktarma"
+    "flowpilotAI": "Flowpilot"
   },
   "demo": {
     "livePreview": "Canlı Önizleme",
@@ -490,7 +541,9 @@
       "placeholder": "Etiket veya ID ile ara...",
       "noResults": "Düğüm bulunamadı",
       "untitled": "İsimsiz Düğüm",
-      "type": "Tür"
+      "type": "Tür",
+      "showingCount": "Showing: {{count}}",
+      "totalCount": "Total on canvas: {{count}}"
     },
     "templates": {
       "title": "Şablonlar",
@@ -504,7 +557,17 @@
       "dslPlaceholder": "{appName} DSL kodunu buraya yapıştırın...",
       "applyShortcut": "⌘+Enter ile uygula",
       "syntaxGuide": "Sözdizimi Kılavuzu",
-      "apply": "Uygula"
+      "apply": "Uygula",
+      "quickFixes": "Hızlı düzeltmeler",
+      "linePrefix": "Satır {{line}}: ",
+      "hintPrefix": "İpucu:",
+      "strictModeGuidance": {
+        "defineEndpoints": "Kenarları bağlamadan önce her bağlantı ucunu açık bir mimari düğümü olarak tanımlayın.",
+        "uniqueIds": "Her service/group/junction düğümü için benzersiz kimlikler kullanın (yinelenen mimari kimliği olmasın).",
+        "edgeSyntax": "`-->`, `<--` veya `<-->` mimari kenar oklarını ve `api:R --> L:db` gibi yan niteleyicileri kullanın.",
+        "nodeSyntax": "Geçerli düğüm tanımlarını kullanın: `service id(icon)[Label]`, `group id[Label]`, `junction id[Label]`.",
+        "fallback": "Otomatik toparlamaya izin vermek için Mimari Katı Modu kapatın veya tanıları düzeltip yeniden deneyin."
+      }
     },
     "layout": {
       "title": "Düzen Stüdyosu",
@@ -526,7 +589,8 @@
       "compact": "Sıkışık",
       "normal": "Normal",
       "loose": "Geniş",
-      "applyLayout": "Düzeni Uygula"
+      "applyLayout": "Düzeni Uygula",
+      "layoutStyle": "Layout Style"
     },
     "designSystem": {
       "title": "Tasarım Sistemleri",
@@ -551,17 +615,24 @@
       "intelligentRoutingDesc": "Sürüklerken bağlantıları otomatik hizala",
       "animatedEdges": "Animasyonlu Kenarlar",
       "animatedEdgesDesc": "Akan parçacıklar",
-      "strokeWidth": "Çizgi Kalınlığı"
+      "strokeWidth": "Çizgi Kalınlığı",
+      "largeGraphSafety": "Large Graph Safety",
+      "largeGraphSafetyAuto": "Auto",
+      "largeGraphSafetyOn": "On",
+      "largeGraphSafetyOff": "Off",
+      "exportModeDeterministic": "Deterministic",
+      "exportModeLegacy": "Legacy",
+      "exportMode": "Export Mode"
     }
   },
   "settingsModal": {
     "title": "Ayarlar",
     "general": "Genel",
-    "flowpilotAI": "AI Studio",
+    "flowpilotAI": "Flowpilot",
     "shortcuts": "Kısayollar",
     "running": "{appName} Çalışıyor",
     "generalSettings": "Genel Ayarlar",
-    "flowpilotConfigurations": "AI Studio Yapılandırması",
+    "flowpilotConfigurations": "Flowpilot Yapılandırması",
     "keyboardShortcuts": "Klavye Kısayolları",
     "canvas": {
       "title": "Tuval",
@@ -570,7 +641,17 @@
       "snapToGrid": "Izgaraya Yapış",
       "snapToGridDesc": "Düğümleri taşırken ızgaraya hizala",
       "miniMap": "Mini Harita",
-      "miniMapDesc": "Sağ altta mini harita göster"
+      "miniMapDesc": "Sağ altta mini harita göster",
+      "architectureStrictMode": "Mimari Katı Mod",
+      "architectureStrictModeDesc": "Mimari tanıları toparlama/doğrulama sorunları içerdiğinde Mermaid içe aktarmayı engeller",
+      "alignmentGuides": "Alignment Guides",
+      "alignmentGuidesDesc": "Show smart guide lines while dragging nodes",
+      "routingProfile": "Routing Profile",
+      "routingProfileStandard": "Standard",
+      "routingProfileInfrastructure": "Infrastructure",
+      "routingProfileHint": "Infrastructure mode biases orthogonal routes for service maps.",
+      "edgeBundling": "Bundle Sibling Edges",
+      "edgeBundlingDesc": "Keep parallel connections on shared lanes"
     },
     "ai": {
       "provider": "Sağlayıcı",
@@ -851,7 +932,21 @@
       "pasteKeyStep": "Yukarıdaki alana yapıştırın — asla bizimle paylaşılmaz",
       "customEndpointTitle": "Özel endpoint nedir?",
       "customModelHint": "Endpoint'iniz için tam model kimliğini girin",
-      "privacyTitle": "Gizlilik ve Şifreleme"
+      "privacyTitle": "Gizlilik ve Şifreleme",
+      "advancedEndpointOverride": "Advanced Base URL Override",
+      "baseUrlHint": "Leave empty to use provider default endpoint. Use this for your own proxy/worker URL.",
+      "resetEndpoint": "Reset to default",
+      "customHeadersTitle": "Custom Headers",
+      "customHeadersSubtitle": "Send extra headers for auth proxies like Cloudflare Access.",
+      "addHeader": "Add Header",
+      "cloudflarePreset": "Use Cloudflare Preset",
+      "customHeadersEmpty": "No custom headers configured.",
+      "customHeadersSecurity": "Header values are stored locally in your browser profile.",
+      "risk": {
+        "browserFriendly": "Browser-ready",
+        "proxyLikely": "Proxy likely",
+        "mixed": "Depends on endpoint"
+      }
     },
     "brand": {
       "title": "Marka Kitleri",
@@ -897,7 +992,12 @@
       "helpImprove": "Geliştirmemize Yardımcı Olun",
       "shareFeedback": "Geri Bildirim Paylaş",
       "shareFeedbackDesc": "Geri bildirim verin, hataları bildirin ve özellik isteyin"
-    }
+    },
+    "settings": "Settings",
+    "canvasSettings": "Canvas Settings",
+    "description": "Configure canvas preferences and keyboard shortcuts.",
+    "close": "Close settings",
+    "closeDialog": "Close settings dialog"
   },
   "customNodes": {
     "browserContent": "Tarayıcı İçeriği",
@@ -907,16 +1007,18 @@
     "title": "Klavye Kısayolları",
     "subtitle": "İş akışınıza hızla hakim olun.",
     "closeAriaLabel": "Kısayol modalını kapat",
-    "proTip": "İpucu: Sürüklerken seçim kutusu etkinleştirmek için <key>?</key> tuşunu basılı tutun."
+    "proTip": "İpucu: Seçime eklemek veya seçim kutusu çizmek için <key>Shift</key> tuşunu basılı tutun."
   },
   "toolbar": {
     "selectMode": "Seçim Modu (V)",
     "panMode": "Kaydırma Modu (H)",
-    "flowpilot": "Command Center (Cmd+K)",
+    "flowpilot": "Flowpilot",
     "templates": "Şablonlar",
     "addItem": "Öğe Ekle",
     "addToCanvas": "Tuvale Ekle",
-    "node": "Düğüm",
+    "shapes": "Şekiller",
+    "assets": "Varlıklar",
+    "node": "Şekil",
     "stickyNote": "Yapışkan Not",
     "section": "Bölüm",
     "text": "Metin",
@@ -925,7 +1027,8 @@
     "autoLayout": "Otomatik Düzen",
     "clearCanvas": "Tuvali Temizle",
     "undo": "Geri Al (Ctrl+Z)",
-    "redo": "Yinele (Ctrl+Y)"
+    "redo": "Yinele (Ctrl+Y)",
+    "commandCenter": "Open Command Center"
   },
   "flowEditor": {
     "cannotCloseLastTab": "Son sekmeyi kapatamazsınız.",
@@ -941,25 +1044,27 @@
       "description": "Tuvaliniz boş. Flowpilot ile bir akış oluşturun, bir şablon kullanın veya sıfırdan başlayın.",
       "generateWithFlowpilot": "Flowpilot ile Oluştur",
       "browseTemplates": "Şablonlara Gözat",
-      "addBlankNode": "Boş Düğüm Ekle"
-    }
+      "addBlankNode": "Boş Şekil Ekle"
+    },
+    "dslExportSkippedEdges": "{{count}} invalid edge(s) were skipped in DSL export."
   },
   "annotationNode": {
     "placeholder": "*Düzenlemek için çift tıklayın*"
   },
   "connectMenu": {
-    "createNewNode": "Yeni Düğüm Oluştur",
-    "process": "İşlem",
-    "processDesc": "Standart eylem",
-    "decision": "Karar",
-    "decisionDesc": "Dallanma mantığı",
+    "createNewNode": "Yeni Şekil Oluştur",
+    "process": "Yuvarlatılmış Şekil",
+    "processDesc": "Genel amaçlı blok",
+    "decision": "Elmas Şekil",
+    "decisionDesc": "Dallanma bloğu",
     "database": "Veritabanı",
-    "databaseDesc": "Veri depolama",
+    "databaseDesc": "Silindir şekli",
     "inputOutput": "Giriş / Çıkış",
-    "inputOutputDesc": "Veri akışı",
-    "note": "Not",
+    "inputOutputDesc": "Paralelkenar şekli",
+    "note": "Yapışkan Not",
     "noteDesc": "Dokümantasyon",
-    "releaseToConnect": "Bağlamak için bırak"
+    "releaseToConnect": "Bağlamak için bırak",
+    "close": "Close connect menu"
   },
   "errorBoundary": {
     "title": "Bir şeyler yanlış gitti",
@@ -983,7 +1088,12 @@
     "restoreVersion": "Sürümü geri yükle",
     "deleteVersion": "Sürümü sil",
     "nodes": "{{count}} düğüm",
-    "edges": "{{count}} bağlantı"
+    "edges": "{{count}} bağlantı",
+    "close": "Close snapshots panel",
+    "namedVersions": "Named Versions",
+    "noNamedSnapshots": "No named versions yet.",
+    "autosavedVersions": "Autosaved Checkpoints",
+    "noAutoSnapshots": "No autosaved checkpoints yet."
   },
   "templatesPanel": {
     "title": "Akış Şablonları",
@@ -992,11 +1102,52 @@
   },
   "propertiesPanel": {
     "stickyNote": "Yapışkan Not",
-    "nodeSettings": "Düğüm Ayarları",
+    "nodeSettings": "Şekil Ayarları",
     "connection": "Bağlantı"
+  },
+  "flowCanvas": {
+    "strictModePasteBlocked": "Mimari Katı Mod, Mermaid yapıştırmayı engelledi. Kod görünümünü açın, tanıları düzeltin ve tekrar deneyin."
   },
   "flowTabs": {
     "closeTab": "Sekmeyi Kapat",
     "newFlowTab": "Yeni Akış Sekmesi"
+  },
+  "share": {
+    "close": "Close",
+    "title": "Share Design",
+    "betaBadge": "Beta",
+    "description": "Invite collaborators to view and edit this flow with you in real-time.",
+    "roomId": "Room ID",
+    "link": "Share link",
+    "copied": "Copied Link!",
+    "copyLink": "Copy Link",
+    "footerNote": "Your diagram stays local unless you share this room. If copy is blocked, copy the link above manually.",
+    "closeDialog": "Close share dialog",
+    "status": {
+      "cache": {
+        "syncing": " local cache syncing",
+        "ready": " local cache ready",
+        "hydrated": " restored from local cache"
+      },
+      "realtime": "Realtime peer sync",
+      "waiting": "Connecting to realtime sync",
+      "fallback": "Local-only mode"
+    },
+    "openDialog": "Share dialog",
+    "toast": {
+      "fallbackMode": "Realtime sync is unavailable. Continuing in local-only mode.",
+      "reconnected": "Realtime collaboration restored.",
+      "copyFailed": "Unable to copy share link.",
+      "linkCopied": "Collaboration link copied.",
+      "copyManual": "Clipboard access is blocked. Copy the link manually from the share dialog."
+    }
+  },
+  "connectionPanel": {
+    "architecture": "Architecture",
+    "label": "Label",
+    "route": "Route",
+    "appearance": "Appearance",
+    "condition": "Condition",
+    "deleteConnection": "Delete Connection"
   }
 }

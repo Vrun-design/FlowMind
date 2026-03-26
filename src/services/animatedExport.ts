@@ -1,6 +1,6 @@
 import type { PlaybackSequence } from './playback/contracts';
 
-export type AnimatedExportKind = 'video' | 'gif';
+export type AnimatedExportKind = 'video' | 'gif' | 'reveal-video' | 'reveal-gif';
 
 export interface AnimatedExportPreset {
   id: 'social-gif' | 'docs-loop' | 'presentation-video';

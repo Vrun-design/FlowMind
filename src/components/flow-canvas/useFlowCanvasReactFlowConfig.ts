@@ -10,6 +10,12 @@ import {
 } from '@/lib/reactflowCompat';
 import type { FlowEdge } from '@/lib/types';
 import { isDuplicateConnection } from './flowCanvasTypes';
+import {
+    FLOW_CANVAS_BASE_BEHAVIOR,
+    FLOW_CANVAS_STYLE_PRESETS,
+    getFlowCanvasClassName,
+    getFlowCanvasInteractionMode,
+} from './flowCanvasReactFlowContracts';
 
 interface ComputeFlowCanvasReactFlowConfigParams {
     visualQualityV2Enabled: boolean;
@@ -60,40 +66,18 @@ export function computeFlowCanvasReactFlowConfig({
     isEffectiveSelectMode,
     viewportCullingEnabled,
 }: ComputeFlowCanvasReactFlowConfigParams): Omit<FlowCanvasReactFlowConfig, 'isValidConnection'> {
+    const interactionMode = getFlowCanvasInteractionMode(isEffectiveSelectMode);
+    const stylePreset = visualQualityV2Enabled
+        ? FLOW_CANVAS_STYLE_PRESETS.enhanced
+        : FLOW_CANVAS_STYLE_PRESETS.standard;
+
     return {
-        className: `bg-[var(--brand-background)] ${isEffectiveSelectMode ? 'flow-canvas-select-mode' : 'flow-canvas-pan-mode'}`,
+        className: getFlowCanvasClassName(isEffectiveSelectMode),
         onlyRenderVisibleElements: viewportCullingEnabled,
-        connectionMode: ConnectionMode.Loose,
-        selectionOnDrag: isEffectiveSelectMode,
-        selectNodesOnDrag: false,
-        selectionKeyCode: 'Shift',
-        panOnDrag: isEffectiveSelectMode ? [1, 2] : [0, 1, 2],
-        panActivationKeyCode: 'Space',
-        zoomActivationKeyCode: ['Meta', 'Control'],
-        selectionMode: isEffectiveSelectMode ? SelectionMode.Partial : undefined,
-        multiSelectionKeyCode: 'Shift',
-        zoomOnScroll: false,
-        zoomOnPinch: true,
-        panOnScroll: true,
-        panOnScrollMode: PanOnScrollMode.Free,
-        preventScrolling: true,
-        zoomOnDoubleClick: false,
-        defaultEdgeOptions: {
-            style: visualQualityV2Enabled ? { stroke: '#64748b', strokeWidth: 1.5 } : { stroke: '#94a3b8', strokeWidth: 2 },
-            animated: false,
-            markerEnd: {
-                type: MarkerType.ArrowClosed,
-                color: visualQualityV2Enabled ? '#64748b' : '#94a3b8',
-                width: 20,
-                height: 20,
-            },
-        },
-        background: {
-            variant: BackgroundVariant.Dots,
-            gap: visualQualityV2Enabled ? 24 : 20,
-            size: visualQualityV2Enabled ? 1.5 : 1.25,
-            color: visualQualityV2Enabled ? 'rgba(148,163,184,0.35)' : '#94a3b8',
-        },
+        ...FLOW_CANVAS_BASE_BEHAVIOR,
+        ...interactionMode,
+        defaultEdgeOptions: stylePreset.defaultEdgeOptions,
+        background: stylePreset.background,
     };
 }
 

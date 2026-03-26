@@ -62,7 +62,8 @@
     "group": "Group",
     "export": "Export",
     "exportDiagram": "Export Diagram",
-    "exportAs": "Export As"
+    "exportAs": "Export As",
+    "rename": "Rename"
   },
   "nav": {
     "home": "Home",
@@ -82,7 +83,8 @@
     "beta": "BETA",
     "versionHistory": "Version History",
     "loadJSON": "Load JSON",
-    "playbackMode": "Playback Mode"
+    "playbackMode": "Playback Mode",
+    "privacyMessage": "Your diagrams stay with you and do not reach our servers."
   },
   "menu": {
     "file": "File",
@@ -107,20 +109,34 @@
     "title": "Export",
     "png": "Export as PNG",
     "jpeg": "Export as JPEG",
+    "svg": "Export as SVG",
+    "video": "Playback Video",
+    "gif": "Playback GIF",
+    "revealVideo": "Reveal Video",
+    "revealGif": "Reveal GIF",
     "json": "Export as JSON",
     "mermaid": "Export as Mermaid",
     "plantuml": "Export as PlantUML",
     "openflowdsl": "Export as {{appName}} DSL",
     "figma": "Export to Figma",
+    "share": "Share live canvas",
     "exportDiagram": "Export Diagram",
     "exportAs": "Export As",
+    "exportOrShare": "Export or share this canvas",
+    "shareSection": "Share canvas",
     "jsonLabel": "JSON File",
     "openflowdslLabel": "{{appName}} DSL",
     "figmaEditable": "Figma Editable",
     "hintTransparent4K": "Transparent (4K)",
     "hintWhiteBg4K": "White Background (4K)",
     "hintDownload": "Download",
-    "hintClipboard": "Copy to clipboard"
+    "hintClipboard": "Copy to clipboard",
+    "hintSvgScalable": "Scalable vector file",
+    "hintPlaybackWebM": "Playback timeline (WebM/MP4)",
+    "hintPlaybackGif": "Short loop for docs/social",
+    "hintRevealVideo": "Nodes fade in sequentially (WebM/MP4)",
+    "hintRevealGif": "Animated reveal for docs/social",
+    "hintShareViewer": "Invite link for this room"
   },
   "import": {
     "title": "Import",
@@ -149,7 +165,8 @@
     "items": "items",
     "database": "Database",
     "inputOutput": "Input / Output",
-    "branch": "Branch"
+    "branch": "Branch",
+    "mindmap": "Topic"
   },
   "actions": {
     "clearCanvasConfirm": "Are you sure you want to clear the canvas?"
@@ -221,7 +238,25 @@
     "recentFiles": "Recent Files",
     "files": "files",
     "createFirstFlow": "Create your first flow",
-    "startFromScratch": "Start from scratch or import an existing diagram."
+    "startFromScratch": "Start from scratch or import an existing diagram.",
+    "autosaved": "Autosaved",
+    "currentFlow": "Current flow",
+    "localStorageHint": "Autosaved on this device. We do not upload your diagram data to our servers.",
+    "renameFlow": {
+      "title": "Rename flow",
+      "description": "Update the name shown on your dashboard and tabs.",
+      "label": "Flow name",
+      "placeholder": "Enter a flow name",
+      "hint": "Names are local to this browser profile unless you export or sync them elsewhere.",
+      "closeDialog": "Close rename flow dialog"
+    },
+    "deleteFlow": {
+      "title": "Delete flow",
+      "description": "This removes the local autosaved flow from this device.",
+      "confirmation": "Delete \"{{name}}\"?",
+      "hint": "This cannot be undone unless you have an exported backup or another copy.",
+      "closeDialog": "Close delete flow dialog"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -269,6 +304,7 @@
   },
   "ai": {
     "generate": "Generate with AI",
+    "generateWithFlowpilot": "Generate with Flowpilot",
     "provider": "AI Provider",
     "model": "Model",
     "apiKey": "API Key",
@@ -357,10 +393,14 @@
   },
   "share": {
     "title": "Share Design",
+    "betaBadge": "Beta",
     "description": "Invite collaborators to view and edit this flow with you in real-time.",
+    "roomId": "Room ID",
+    "link": "Share link",
     "roomLink": "Collaboration Link",
     "copyLink": "Copy Link",
     "copied": "Copied Link!",
+    "footerNote": "Your diagram stays local unless you share this room. If copy is blocked, copy the link above manually.",
     "permissionsNote": "Anyone with the link can join.",
     "permissionsNoteSecondary": "Permission controls and durable backend sync are not configured yet.",
     "close": "Close",
@@ -372,7 +412,10 @@
     },
     "toast": {
       "linkCopied": "Collaboration link copied.",
-      "copyFailed": "Unable to copy share link."
+      "copyFailed": "Unable to copy share link.",
+      "copyManual": "Clipboard access is blocked. Copy the link manually from the share dialog.",
+      "fallbackMode": "Realtime sync is unavailable. Continuing in local-only mode.",
+      "reconnected": "Realtime collaboration restored."
     },
     "status": {
       "realtime": "Realtime peer sync",
@@ -465,7 +508,7 @@
     "designDesc": "Stop rebuilding screens. Copy from the canvas and paste into Figma as editable SVG and text layers.",
     "exportShare": "Export & Share",
     "pixelPerfectOutput": "PIXEL-PERFECT OUTPUT",
-    "exportShareDesc": "Export diagrams as SVG, PNG, or PDF. Copy to clipboard and paste into Figma with editable layers. Save as JSON to share or version control.",
+    "exportShareDesc": "Export diagrams as SVG or PNG. Copy to clipboard and paste into Figma with editable layers. Save as JSON to share or version control.",
     "vectorEditable": "Vector • Editable in Figma",
     "rasterHighRes": "Raster • High-res export",
     "dataSaveRestore": "Data • Save & restore flows"
@@ -494,8 +537,7 @@
     "communityDesc": "Join developers building on OpenFlowKit.",
     "roadmap": "Roadmap",
     "coreRenderer": "Core Renderer",
-    "flowpilotAI": "Flowpilot AI",
-    "pdfExport": "PDF Export"
+    "flowpilotAI": "Flowpilot AI"
   },
   "demo": {
     "livePreview": "Live Preview",
@@ -605,6 +647,7 @@
     },
     "layout": {
       "title": "Layout Studio",
+      "layoutStyle": "Layout Style",
       "algorithm": "Algorithm",
       "layered": "Layered",
       "layeredDesc": "Hierarchical, good for flows",
@@ -648,11 +691,22 @@
       "intelligentRoutingDesc": "Auto-snap connections on drag",
       "animatedEdges": "Animated Edges",
       "animatedEdgesDesc": "Flowing particles",
-      "strokeWidth": "Stroke Width"
+      "strokeWidth": "Stroke Width",
+      "largeGraphSafety": "Large Graph Safety",
+      "largeGraphSafetyAuto": "Auto",
+      "largeGraphSafetyOn": "On",
+      "largeGraphSafetyOff": "Off",
+      "exportMode": "Export Mode",
+      "exportModeDeterministic": "Deterministic",
+      "exportModeLegacy": "Legacy"
     }
   },
   "settingsModal": {
     "title": "Settings",
+    "settings": "Settings",
+    "description": "Configure canvas preferences and keyboard shortcuts.",
+    "close": "Close settings",
+    "closeDialog": "Close settings dialog",
     "general": "General",
     "flowpilotAI": "Flowpilot AI",
     "shortcuts": "Shortcuts",
@@ -671,13 +725,22 @@
       "miniMap": "Mini Map",
       "miniMapDesc": "Show mini-map in bottom right",
       "architectureStrictMode": "Architecture Strict Mode",
-      "architectureStrictModeDesc": "Block Mermaid import when architecture diagnostics include recovery/validation issues"
+      "architectureStrictModeDesc": "Block Mermaid import when architecture diagnostics include recovery/validation issues",
+      "routingProfile": "Routing Profile",
+      "routingProfileStandard": "Standard",
+      "routingProfileInfrastructure": "Infrastructure",
+      "routingProfileHint": "Infrastructure mode biases orthogonal routes for service maps.",
+      "edgeBundling": "Bundle Sibling Edges",
+      "edgeBundlingDesc": "Keep parallel connections on shared lanes"
     },
     "ai": {
       "provider": "Provider",
       "model": "Model",
       "apiKey": "API Key",
       "customBaseUrl": "Custom Base URL",
+      "advancedEndpointOverride": "Advanced Base URL Override",
+      "baseUrlHint": "Leave empty to use provider default endpoint. Use this for your own proxy/worker URL.",
+      "resetEndpoint": "Reset to default",
       "optional": "Optional",
       "testConnection": "Test Connection",
       "testing": "Testing...",
@@ -934,6 +997,12 @@
       },
       "customEndpointText": "Any <1>OpenAI-compatible</1> API endpoint — local or remote. Great for:",
       "customEndpointMustSupport": "Must support <1>POST /chat/completions</1> (OpenAI format)",
+      "customHeadersTitle": "Custom Headers",
+      "customHeadersSubtitle": "Send extra headers for auth proxies like Cloudflare Access.",
+      "customHeadersEmpty": "No custom headers configured.",
+      "customHeadersSecurity": "Header values are stored locally in your browser profile.",
+      "addHeader": "Add Header",
+      "cloudflarePreset": "Use Cloudflare Preset",
       "customEndpoints": {
         "ollama": {
           "name": "Ollama",
@@ -952,7 +1021,12 @@
       "pasteKeyStep": "Paste it in the field above — never shared with us",
       "customEndpointTitle": "What is a custom endpoint?",
       "customModelHint": "Enter the exact model ID for your endpoint",
-      "privacyTitle": "Privacy & Encryption"
+      "privacyTitle": "Privacy & Encryption",
+      "risk": {
+        "browserFriendly": "Browser-ready",
+        "proxyLikely": "Proxy likely",
+        "mixed": "Depends on endpoint"
+      }
     },
     "brand": {
       "title": "Brand Kits",
@@ -984,6 +1058,7 @@
       "showBetaBadgeHint": "Display the BETA chip next to logo"
     },
     "shortcutsHint": "You can also press ? to view these anytime.",
+    "canvasSettings": "Canvas Settings",
     "privacy": {
       "manifesto": "Our Privacy Manifesto",
       "manifestoText": "We believe in privacy by design and user autonomy. We don't collect your email, we don't have a login system, and we don't store your data on our servers.",
@@ -1013,7 +1088,7 @@
   "toolbar": {
     "selectMode": "Select Mode (V)",
     "panMode": "Pan Mode (H)",
-    "flowpilot": "Flowpilot (Cmd+K)",
+    "flowpilot": "Flowpilot",
     "templates": "Templates",
     "addItem": "Add Item",
     "addToCanvas": "Add to Canvas",
@@ -1028,7 +1103,8 @@
     "autoLayout": "Auto Layout",
     "clearCanvas": "Clear Canvas",
     "undo": "Undo (Ctrl+Z)",
-    "redo": "Redo (Ctrl+Y)"
+    "redo": "Redo (Ctrl+Y)",
+    "commandCenter": "Open Command Center"
   },
   "flowEditor": {
     "cannotCloseLastTab": "Cannot close the last tab.",
@@ -1036,6 +1112,7 @@
     "plantUMLCopied": "PlantUML diagram copied to clipboard!",
     "dslCopied": "OpenFlow DSL copied to clipboard!",
     "dslCopyFailed": "Failed to copy DSL",
+    "dslExportSkippedEdges": "{{count}} invalid edge(s) were skipped in DSL export.",
     "figmaCopied": "Diagram copied for Figma! You can now paste (Cmd+V) in Figma.",
     "figmaExportFailed": "Figma Export Failed: {{message}}",
     "applyingLayout": "Applying layout…",
@@ -1062,7 +1139,8 @@
     "inputOutputDesc": "Parallelogram shape",
     "note": "Sticky Note",
     "noteDesc": "Documentation",
-    "releaseToConnect": "Release to connect"
+    "releaseToConnect": "Release to connect",
+    "close": "Close connect menu"
   },
   "errorBoundary": {
     "title": "Something went wrong",
@@ -1080,6 +1158,7 @@
   },
   "snapshotsPanel": {
     "title": "Version History",
+    "close": "Close snapshots panel",
     "saveCurrentVersion": "Save Current Version",
     "versionName": "Version Name (e.g. 'Before Refactor')",
     "noSnapshots": "No snapshots saved yet.",
@@ -1106,7 +1185,9 @@
     "architecture": "Architecture",
     "condition": "Condition",
     "label": "Label",
+    "route": "Route",
     "style": "Style",
+    "appearance": "Appearance",
     "actions": "Actions",
     "deleteConnection": "Delete Connection"
   },

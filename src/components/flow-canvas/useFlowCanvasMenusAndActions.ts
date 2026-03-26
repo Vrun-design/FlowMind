@@ -11,6 +11,7 @@ interface UseFlowCanvasMenusAndActionsParams {
     deleteNode: (id: string) => void;
     deleteEdge: (id: string) => void;
     updateNodeZIndex: (id: string, action: 'front' | 'back') => void;
+    updateNodeType: (id: string, type: string) => void;
     handleAlignNodes: (direction: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => void;
     handleDistributeNodes: (direction: 'horizontal' | 'vertical') => void;
     handleGroupNodes: () => void;
@@ -26,6 +27,7 @@ export function useFlowCanvasMenusAndActions({
     deleteNode,
     deleteEdge,
     updateNodeZIndex,
+    updateNodeType,
     handleAlignNodes,
     handleDistributeNodes,
     handleGroupNodes,
@@ -44,6 +46,7 @@ export function useFlowCanvasMenusAndActions({
         deleteNode,
         deleteEdge,
         updateNodeZIndex,
+        updateNodeType,
         handleAlignNodes,
         handleDistributeNodes,
         handleGroupNodes,

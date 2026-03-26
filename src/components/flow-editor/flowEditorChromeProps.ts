@@ -10,7 +10,9 @@ interface BuildTopNavParams {
     handleRenameTab: (tabId: string, newName: string) => void;
     handleExport: (format?: 'png' | 'jpeg') => void;
     handleSvgExport: () => void;
+    handlePdfExport: () => void;
     handleAnimatedExport: (format: 'video' | 'gif') => void;
+    handleRevealExport: (format: 'reveal-video' | 'reveal-gif') => void;
     handleExportJSON: () => void;
     handleExportMermaid: () => void;
     handleExportPlantUML: () => void;
@@ -68,7 +70,9 @@ export function buildFlowEditorTopNavProps({
     handleRenameTab,
     handleExport,
     handleSvgExport,
+    handlePdfExport,
     handleAnimatedExport,
+    handleRevealExport,
     handleExportJSON,
     handleExportMermaid,
     handleExportPlantUML,
@@ -88,7 +92,9 @@ export function buildFlowEditorTopNavProps({
         onRenameTab: handleRenameTab,
         onExportPNG: handleExport,
         onExportSVG: handleSvgExport,
+        onExportPDF: handlePdfExport,
         onExportAnimated: handleAnimatedExport,
+        onExportReveal: handleRevealExport,
         onExportJSON: handleExportJSON,
         onExportMermaid: handleExportMermaid,
         onExportPlantUML: handleExportPlantUML,
@@ -175,7 +181,7 @@ export function buildFlowEditorEmptyStateProps({
     return {
         title: t('flowEditor.emptyState.title', { defaultValue: 'Start your diagram' }),
         description: t('flowEditor.emptyState.description', { defaultValue: 'Choose the fastest way to get a first draft on the canvas, then refine it with layout, properties, and Studio tools.' }),
-        generateLabel: t('flowEditor.emptyState.generateWithAIStudio', { defaultValue: 'Generate with AI Studio' }),
+        generateLabel: t('flowEditor.emptyState.generateWithFlowpilot', { defaultValue: 'Generate with Flowpilot' }),
         templatesLabel: t('flowEditor.emptyState.browseTemplates', { defaultValue: 'Browse templates' }),
         addNodeLabel: t('flowEditor.emptyState.addBlankNode', { defaultValue: 'Start from a blank node' }),
         onGenerate: () => openStudioPanel('ai'),
@@ -198,7 +204,9 @@ export function useFlowEditorChromeProps(params: UseFlowEditorChromePropsParams)
         handleRenameTab,
         handleExport,
         handleSvgExport,
+        handlePdfExport,
         handleAnimatedExport,
+        handleRevealExport,
         handleExportJSON,
         handleExportMermaid,
         handleExportPlantUML,
@@ -245,7 +253,9 @@ export function useFlowEditorChromeProps(params: UseFlowEditorChromePropsParams)
         handleRenameTab,
         handleExport,
         handleSvgExport,
+        handlePdfExport,
         handleAnimatedExport,
+        handleRevealExport,
         handleExportJSON,
         handleExportMermaid,
         handleExportPlantUML,
@@ -264,7 +274,9 @@ export function useFlowEditorChromeProps(params: UseFlowEditorChromePropsParams)
         handleRenameTab,
         handleExport,
         handleSvgExport,
+        handlePdfExport,
         handleAnimatedExport,
+        handleRevealExport,
         handleExportJSON,
         handleExportMermaid,
         handleExportPlantUML,

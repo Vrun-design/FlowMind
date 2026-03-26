@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ComponentType } from 'react';
-import { Figma, FileCode, FileJson, Film, GitBranch, Image, Link, Wand2 } from 'lucide-react';
+import { Figma, FileCode, FileJson, Film, FileText, GitBranch, Image, Link, Wand2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { APP_NAME } from '@/lib/brand';
 
@@ -25,8 +25,11 @@ export function ExportMenuPanel({ onSelect }: ExportMenuPanelProps): React.React
         { key: 'png', label: t('export.png', 'Export PNG'), hint: t('export.hintTransparent4K', 'Transparent image'), Icon: Image },
         { key: 'jpeg', label: t('export.jpeg', 'Export JPG'), hint: t('export.hintWhiteBg4K', 'White-background image'), Icon: Image },
         { key: 'svg', label: t('export.svg', 'Export SVG'), hint: t('export.hintSvgScalable', 'Scalable vector file'), Icon: Image },
+        { key: 'pdf', label: 'Export PDF', hint: 'Single-page document', Icon: FileText },
         { key: 'video', label: t('export.video', 'Playback Video'), hint: t('export.hintPlaybackWebM', 'Playback timeline (WebM/MP4)'), Icon: Film },
         { key: 'gif', label: t('export.gif', 'Playback GIF'), hint: t('export.hintPlaybackGif', 'Short loop for docs/social'), Icon: Film },
+        { key: 'reveal-video', label: t('export.revealVideo', 'Reveal Video'), hint: t('export.hintRevealVideo', 'Nodes fade in sequentially (WebM/MP4)'), Icon: Film },
+        { key: 'reveal-gif', label: t('export.revealGif', 'Reveal GIF'), hint: t('export.hintRevealGif', 'Animated reveal for docs/social'), Icon: Film },
         { key: 'json', label: t('export.jsonLabel', 'JSON File'), hint: t('export.hintDownload', 'Reopen in OpenFlowKit'), Icon: FileJson },
         { key: 'openflow', label: t('export.openflowdslLabel', { appName: APP_NAME, defaultValue: `${APP_NAME} DSL` }), hint: t('export.hintClipboard', 'Copy source DSL'), Icon: Wand2 },
         { key: 'mermaid', label: t('export.mermaid', 'Mermaid'), hint: t('export.hintClipboard', 'Copy Mermaid code'), Icon: GitBranch },
@@ -39,7 +42,7 @@ export function ExportMenuPanel({ onSelect }: ExportMenuPanelProps): React.React
     ];
 
     return (
-        <div className="absolute top-full right-0 mt-2 w-52 bg-white/95 backdrop-blur-xl rounded-[var(--radius-lg)] shadow-xl border border-white/20 ring-1 ring-black/5 p-1.5 flex flex-col gap-0.5 animate-in fade-in zoom-in-95 duration-100 origin-top-right z-50">
+        <div className="absolute top-full right-0 mt-2 w-52 bg-white/95 backdrop-blur-xl rounded-[var(--radius-lg)] shadow-[var(--shadow-md)] border border-white/20 ring-1 ring-black/5 p-1.5 flex flex-col gap-0.5 animate-in fade-in zoom-in-95 duration-100 origin-top-right z-50">
             <div className="px-2 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                 {t('export.exportAs', 'Export files')}
             </div>

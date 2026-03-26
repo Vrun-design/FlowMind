@@ -1,20 +1,20 @@
 ---
 draft: false
 title: AI Generation
-description: Generate and refine diagrams in Studio with FlowPilot, BYOK providers, code-to-architecture, and structured imports.
+description: Generate and refine diagrams in Studio with Flowpilot, BYOK providers, code-to-architecture, and structured imports.
 ---
 
-OpenFlowKit includes AI-assisted diagram generation through the Studio rail. FlowPilot is best used for first drafts, structural revisions, and code-backed architecture exploration.
+OpenFlowKit includes AI-assisted diagram generation through the Studio rail. Flowpilot is best used for first drafts, structural revisions, and code-backed architecture exploration.
 
 AI generation is most valuable when you need to go from ambiguity to structure quickly. It is not the only way to create diagrams in OpenFlowKit, and it is usually not the final step. Think of it as a draft accelerator.
 
 ## Where AI lives in the product
 
-AI is available in the Studio panel under **FlowPilot** and through the **Open FlowPilot** command in the Command Center. Common sub-flows include:
+AI is available in the Studio panel under **Flowpilot** and through the **Open Flowpilot** command in the Command Center. Common sub-flows include:
 
 | Mode | What it does |
 | --- | --- |
-| **FlowPilot** | Chat-based generation and iteration |
+| **Flowpilot** | Chat-based generation and iteration |
 | **From Code** | Paste source code and generate an architecture diagram |
 | **Import** | Paste SQL, Terraform, K8s, or OpenAPI and generate a draft |
 
@@ -74,7 +74,7 @@ Weak prompts ask for “a diagram” without constraints. Strong prompts explain
 
 ## Recommended workflow
 
-1. Generate a first draft with FlowPilot.
+1. Generate a first draft with Flowpilot.
 2. Inspect the structure on the canvas.
 3. Use the [Properties Panel](/properties-panel/) to normalize labels, color, and routing.
 4. Run [Smart Layout](/smart-layout/) if the structure is right but spacing is poor.
@@ -86,7 +86,7 @@ AI output should be treated as a draft, not a certified system model. For docume
 
 ## Related pages
 
-- [Ask FlowPilot](/ask-flowpilot/)
+- [Ask Flowpilot](/ask-flowpilot/)
 - [Studio Overview](/studio-overview/)
 - [Choose an Input Mode](/choose-input-mode/)
 - [Prompting AI Agents](/prompting-agents/)

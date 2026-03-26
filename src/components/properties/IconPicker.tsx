@@ -1,7 +1,21 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Ban, Upload } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Ban, Upload } from 'lucide-react';
 import { ICON_NAMES, ICON_PICKER_PRIORITY_NAMES, NamedIcon } from '../IconMap';
 import { Tooltip } from '../Tooltip';
+import { IconSearchField, IconTileScrollGrid } from './IconTilePickerPrimitives';
+
+const DEFAULT_ICON_COUNT = 48;
+const SEARCH_RESULT_COUNT = 50;
+
+function readFileAsDataUrl(file: File, onLoad: (result: string) => void): void {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+            onLoad(reader.result);
+        }
+    };
+    reader.readAsDataURL(file);
+}
 
 interface IconPickerProps {
     selectedIcon?: string;
@@ -22,35 +36,36 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         const term = iconSearch.toLowerCase();
 
         if (!term) {
-            const others = ICON_NAMES.filter((name) => !ICON_PICKER_PRIORITY_NAMES.includes(name)).slice(0, 48);
+            const others = ICON_NAMES.filter((name) => !ICON_PICKER_PRIORITY_NAMES.includes(name)).slice(0, DEFAULT_ICON_COUNT);
             return [...ICON_PICKER_PRIORITY_NAMES.filter((name) => ICON_NAMES.includes(name)), ...others];
         }
 
-        return ICON_NAMES.filter((name) => name.toLowerCase().includes(term)).slice(0, 50);
+        return ICON_NAMES.filter((name) => name.toLowerCase().includes(term)).slice(0, SEARCH_RESULT_COUNT);
     }, [iconSearch]);
+
+    function handleCustomIconFileChange(event: React.ChangeEvent<HTMLInputElement>): void {
+        const file = event.target.files?.[0];
+        if (!file) {
+            return;
+        }
+
+        readFileAsDataUrl(file, onCustomIconChange);
+    }
 
     return (
         <div className="space-y-3">
-            <div className="mb-2">
-                <div className="relative w-full">
-                    <Search className="w-3 h-3 absolute left-2 top-2 text-[var(--brand-secondary)]" />
-                    <input
-                        type="text"
-                        placeholder="Search icons..."
-                        value={iconSearch}
-                        onChange={(e) => setIconSearch(e.target.value)}
-                        className="w-full pl-7 pr-2 py-1.5 bg-[var(--brand-background)] rounded-[calc(var(--brand-radius)-4px)] text-xs outline-none focus:ring-1 focus:ring-[var(--brand-primary)] text-[var(--brand-text)] border border-slate-200"
-                    />
-                </div>
-            </div>
+            <IconSearchField
+                value={iconSearch}
+                onChange={(event) => setIconSearch(event.target.value)}
+                placeholder="Search icons..."
+            />
 
-            <div className="grid grid-cols-6 gap-2 p-2 bg-[var(--brand-background)] rounded-[var(--brand-radius)] border border-slate-200 max-h-40 overflow-y-auto custom-scrollbar">
-                {/* No Icon Option */}
-                <Tooltip text="No Icon">
+            <IconTileScrollGrid>
+                <Tooltip text="No Icon" className="block w-full aspect-square">
                     <button
                         onClick={() => onChange('none')}
                         className={`
-                            p-2 rounded-lg flex items-center justify-center transition-all
+                            h-full w-full p-2 rounded-lg flex items-center justify-center transition-all
                             ${selectedIcon === 'none'
                                 ? 'bg-red-100 text-red-600 ring-1 ring-red-400'
                                 : 'hover:bg-white hover:shadow-sm text-slate-400'
@@ -62,28 +77,25 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     </button>
                 </Tooltip>
 
-                {filteredIcons.map((key) => {
-                    return (
-                        <Tooltip key={key} text={key}>
-                            <button
-                                onClick={() => onChange(key)}
-                                className={`
-                                    p-2 rounded-lg flex items-center justify-center transition-all
-                                    ${selectedIcon === key
-                                        ? 'bg-[var(--brand-primary-100)] text-[var(--brand-primary)] ring-1 ring-[var(--brand-primary-400)]'
-                                        : 'hover:bg-[var(--brand-surface)] hover:shadow-sm text-[var(--brand-secondary)]'
-                                    }
-                                `}
-                                aria-label={key}
-                            >
-                                <NamedIcon name={key} className="w-5 h-5" />
-                            </button>
-                        </Tooltip>
-                    );
-                })}
-            </div>
+                {filteredIcons.map((key) => (
+                    <Tooltip key={key} text={key} className="block w-full aspect-square">
+                        <button
+                            onClick={() => onChange(key)}
+                            className={`
+                                h-full w-full p-2 rounded-lg flex items-center justify-center transition-all
+                                ${selectedIcon === key
+                                    ? 'bg-[var(--brand-primary-100)] text-[var(--brand-primary)] ring-1 ring-[var(--brand-primary-400)]'
+                                    : 'hover:bg-[var(--brand-surface)] hover:shadow-sm text-[var(--brand-secondary)]'
+                                }
+                            `}
+                            aria-label={key}
+                        >
+                            <NamedIcon name={key} className="w-5 h-5" />
+                        </button>
+                    </Tooltip>
+                ))}
+            </IconTileScrollGrid>
 
-            {/* Custom Icon Upload */}
             <div className="flex items-center gap-2">
                 {customIconUrl ? (
                     <div className="flex items-center gap-2 w-full">
@@ -106,16 +118,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                             type="file"
                             accept="image/svg+xml,image/png,image/jpeg,image/webp"
                             className="hidden"
-                            onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                    const reader = new FileReader();
-                                    reader.onloadend = () => {
-                                        onCustomIconChange(reader.result as string);
-                                    };
-                                    reader.readAsDataURL(file);
-                                }
-                            }}
+                            onChange={handleCustomIconFileChange}
                         />
                     </label>
                 )}

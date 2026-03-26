@@ -36,7 +36,7 @@ export function ToolbarAddMenuPanel({ onAddShape }: ToolbarAddMenuPanelProps): R
     const { t } = useTranslation();
 
     return (
-        <div className="absolute bottom-full left-1/2 mb-3 w-52 -translate-x-1/2 rounded-[var(--radius-lg)] border border-white/20 bg-white/95 p-1 shadow-xl ring-1 ring-black/5 backdrop-blur-md animate-in slide-in-from-bottom-4 zoom-in-95 duration-200 origin-bottom pointer-events-auto">
+        <div className="absolute bottom-full left-1/2 mb-3 w-52 -translate-x-1/2 rounded-[var(--radius-lg)] border border-white/20 bg-white/95 p-1 shadow-[var(--shadow-md)] ring-1 ring-black/5 backdrop-blur-md animate-in slide-in-from-bottom-4 zoom-in-95 duration-200 origin-bottom pointer-events-auto">
             <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 {t('toolbar.shapes', 'Shapes')}
             </div>

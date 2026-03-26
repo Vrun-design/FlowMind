@@ -7,7 +7,6 @@ import ArchitectureNode from './ArchitectureNode';
 vi.mock('@/config/rolloutFlags', () => ({
   ROLLOUT_FLAGS: {
     visualQualityV2: true,
-    shapeLibraryV1: false,
   },
 }));
 
@@ -109,5 +108,41 @@ describe('ArchitectureNode handle interaction policy', () => {
     const diagnosticsNode = container.querySelector('[data-transform-family="architecture"]');
     expect(diagnosticsNode).not.toBeNull();
     expect(Number(diagnosticsNode?.getAttribute('data-transform-min-height') ?? '0')).toBeGreaterThanOrEqual(96);
+  });
+
+  it('keeps service search out of the canvas node chrome', () => {
+    render(
+      <ArchitectureNode
+        id="arch-4"
+        type="architecture"
+        selected={true}
+        dragging={false}
+        zIndex={1}
+        data={{ label: 'API', archProvider: 'aws', archResourceType: 'service' }}
+        isConnectable={true}
+        xPos={0}
+        yPos={0}
+      />
+    );
+
+    expect(screen.queryByPlaceholderText('Search AWS services')).toBeNull();
+  });
+
+  it('renders the custom provider label in the node badge', () => {
+    render(
+      <ArchitectureNode
+        id="arch-5"
+        type="architecture"
+        selected={false}
+        dragging={false}
+        zIndex={1}
+        data={{ label: 'API', archProvider: 'custom', archProviderLabel: 'Hetzner', archResourceType: 'service' }}
+        isConnectable={true}
+        xPos={0}
+        yPos={0}
+      />
+    );
+
+    expect(screen.getByText('Hetzner')).toBeTruthy();
   });
 });

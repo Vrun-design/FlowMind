@@ -3,6 +3,7 @@ import { Node } from '@/lib/reactflowCompat';
 import { NodeData } from '@/lib/types';
 import { Bold, Italic, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
 import { CollapsibleSection } from '../ui/CollapsibleSection';
+import { handlePropertyInputKeyDown } from './propertyInputBehavior';
 
 interface NodeContentSectionProps {
     selectedNode: Node<NodeData>;
@@ -45,6 +46,14 @@ export function NodeContentSection({
     onLabelKeyDown,
     onDescKeyDown,
 }: NodeContentSectionProps): React.ReactElement {
+    function handleContentKeyDown(
+        event: React.KeyboardEvent<HTMLTextAreaElement>,
+        delegate: (nextEvent: React.KeyboardEvent) => void
+    ): void {
+        handlePropertyInputKeyDown(event, { blurOnModifiedEnter: true });
+        delegate(event);
+    }
+
     return (
         <CollapsibleSection
             title="Content"
@@ -148,7 +157,7 @@ export function NodeContentSection({
                             e.target.style.height = 'auto';
                             e.target.style.height = `${e.target.scrollHeight}px`;
                         }}
-                        onKeyDown={onLabelKeyDown}
+                        onKeyDown={(event) => handleContentKeyDown(event, onLabelKeyDown)}
                         placeholder="Type label here..."
                         rows={1}
                         style={{ minHeight: '32px' }}
@@ -168,7 +177,7 @@ export function NodeContentSection({
                                 e.target.style.height = 'auto';
                                 e.target.style.height = `${e.target.scrollHeight}px`;
                             }}
-                            onKeyDown={onDescKeyDown}
+                            onKeyDown={(event) => handleContentKeyDown(event, onDescKeyDown)}
                             placeholder="Add description..."
                             rows={1}
                             style={{ minHeight: '40px' }}

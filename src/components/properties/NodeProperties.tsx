@@ -15,13 +15,14 @@ import { NodeImageSettingsSection } from './NodeImageSettingsSection';
 import { NodeTextStyleSection } from './NodeTextStyleSection';
 import { NodeWireframeVariantSection } from './NodeWireframeVariantSection';
 import { InspectorSectionDivider } from './InspectorPrimitives';
-import { Input } from '../ui/Input';
 import { Tooltip } from '../Tooltip';
 import { Select } from '../ui/Select';
 import type { DomainLibraryCategory, DomainLibraryItem } from '@/services/domainLibrary';
 import { loadProviderCatalog, loadProviderShapePreview } from '@/services/shapeLibrary/providerCatalog';
 import { loadIconAssetCatalog } from '@/services/iconAssetCatalog';
 import { NamedIcon } from '../IconMap';
+import { createPropertyInputKeyDownHandler } from './propertyInputBehavior';
+import { IconSearchField, IconTileScrollGrid } from './IconTilePickerPrimitives';
 
 interface NodePropertiesProps {
     selectedNode: Node<NodeData>;
@@ -54,13 +55,15 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
         query: '',
         category: 'all',
     });
+    const handlePropertyInputKeyDown = createPropertyInputKeyDownHandler({ blurOnEnter: true });
 
     function getDefaultSection(): string {
+        if (isImage) return 'image';
         if (isWireframeApp) return 'variant';
         if (isIconAssetNode) return 'asset';
         if (isSection) return 'content';
         if (isText || isAnnotation) return 'content';
-        return 'shape';
+        return 'content';
     }
 
     // Persist accordion state per node to avoid effect-driven synchronous setState.
@@ -245,9 +248,10 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                     onToggle={() => toggleSection('asset')}
                 >
                     <div className="mt-4 space-y-3">
-                        <Input
+                        <IconSearchField
                             value={assetQuery}
                             onChange={(event) => setAssetSearchState({ nodeId: selectedNode.id, query: event.target.value, category: assetFilterCategory })}
+                            onKeyDown={handlePropertyInputKeyDown}
                             placeholder={`Search ${String(assetProvider || 'asset')} icons`}
                         />
                         {assetCategories.length > 1 ? (
@@ -261,17 +265,16 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                                 placeholder="All categories"
                             />
                         ) : null}
-                        <div className="max-h-[20rem] overflow-y-auto pr-1 custom-scrollbar">
-                        <div className="grid grid-cols-6 gap-2">
+                        <IconTileScrollGrid>
                             {filteredAssetItems.map((item) => (
-                                <Tooltip key={item.id} text={item.label}>
+                                <Tooltip key={item.id} text={item.label} className="block w-full aspect-square">
                                     <button
                                         type="button"
                                         aria-label={item.label}
-                                        className={`flex aspect-square items-center justify-center rounded-[var(--radius-md)] border p-2 transition-all ${
+                                        className={`flex h-full w-full items-center justify-center rounded-[var(--radius-md)] border p-2 transition-all ${
                                             selectedNode.data?.archIconShapeId === item.archIconShapeId
                                                 ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)]'
-                                                : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                                                : 'border-transparent bg-transparent hover:border-slate-200 hover:bg-slate-50'
                                         }`}
                                         onClick={async () => {
                                             const preview = item.archIconPackId && item.archIconShapeId
@@ -298,8 +301,7 @@ export const NodeProperties: React.FC<NodePropertiesProps> = ({
                                     </button>
                                 </Tooltip>
                             ))}
-                        </div>
-                        </div>
+                        </IconTileScrollGrid>
                     </div>
                 </CollapsibleSection>
             )}

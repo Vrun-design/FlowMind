@@ -51,7 +51,7 @@ function ViewerCanvas({ nodes, edges }: { nodes: FlowNode[]; edges: FlowEdge[] }
             fitViewOptions={{ padding: 0.15 }}
             className="bg-[var(--brand-background,#f8fafc)]"
         >
-            <Background variant={BackgroundVariant.Dots} gap={24} size={1.5} color="rgba(148,163,184,0.3)" />
+            <Background variant={BackgroundVariant.Dots} gap={24} size={1.9} color="rgba(148,163,184,0.6)" />
             <Controls showInteractive={false} />
         </ReactFlow>
     );

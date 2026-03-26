@@ -61,11 +61,11 @@ export function HomeFlowRenameDialog({
                 aria-modal="true"
                 aria-labelledby="home-flow-rename-title"
                 aria-describedby="home-flow-rename-description"
-                className="w-full max-w-md rounded-[var(--radius-xl)] border border-slate-200 bg-white shadow-2xl"
+                className="w-full max-w-md rounded-[var(--radius-lg)] border border-slate-200 bg-white shadow-[var(--shadow-overlay)]"
             >
                 <div className="flex items-start justify-between border-b border-slate-100 px-6 py-5">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--brand-primary-50)] text-[var(--brand-primary)]">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-[var(--brand-primary-50)] text-[var(--brand-primary)]">
                             <Pencil className="h-4 w-4" />
                         </div>
                         <div>
@@ -96,7 +96,7 @@ export function HomeFlowRenameDialog({
                         id="home-flow-rename-input"
                         value={draftName}
                         onChange={(event) => setDraftName(event.target.value)}
-                        className="w-full rounded-[var(--radius-lg)] border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-[var(--brand-primary)]"
+                        className="w-full rounded-[var(--radius-md)] border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-[var(--brand-primary)]"
                         placeholder={t('home.renameFlow.placeholder', 'Enter a flow name')}
                         autoFocus
                     />
@@ -163,7 +163,7 @@ export function HomeFlowDeleteDialog({
                 aria-modal="true"
                 aria-labelledby="home-flow-delete-title"
                 aria-describedby="home-flow-delete-description"
-                className="w-full max-w-md rounded-[var(--radius-xl)] border border-slate-200 bg-white shadow-2xl"
+                className="w-full max-w-md rounded-[var(--radius-lg)] border border-slate-200 bg-white shadow-[var(--shadow-overlay)]"
             >
                 <div className="flex items-start justify-between border-b border-slate-100 px-6 py-5">
                     <div className="flex items-center gap-3">

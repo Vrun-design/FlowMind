@@ -1,6 +1,17 @@
 import { type LegacyEdge, type LegacyNode } from '@/lib/reactflowCompat';
 import type { ClassRelationToken, ERRelationToken } from '@/lib/relationSemantics';
 
+export interface ErField {
+  name: string;
+  dataType: string;
+  isPrimaryKey: boolean;
+  isForeignKey: boolean;
+  isNotNull?: boolean;
+  isUnique?: boolean;
+  referencesTable?: string;
+  referencesField?: string;
+}
+
 export const DIAGRAM_TYPES = [
   'flowchart',
   'stateDiagram',
@@ -63,7 +74,7 @@ export interface NodeData {
   classStereotype?: string;
   classAttributes?: string[];
   classMethods?: string[];
-  erFields?: string[];
+  erFields?: Array<string | ErField>;
   journeySection?: string;
   journeyActor?: string;
   journeyTask?: string;
@@ -72,7 +83,9 @@ export interface NodeData {
   mindmapParentId?: string;
   mindmapSide?: 'left' | 'right';
   mindmapBranchStyle?: 'curved' | 'straight';
+  mindmapCollapsed?: boolean;
   archProvider?: string;
+  archProviderLabel?: string;
   archResourceType?: string;
   archEnvironment?: string;
   archBoundaryId?: string;
@@ -116,6 +129,7 @@ export interface EdgeData {
     y: number;
   }[];
   mindmapBranchKind?: 'root' | 'branch';
+  connectionType?: 'fixed' | 'dynamic';
   waypoint?: {
     x: number;
     y: number;

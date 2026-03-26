@@ -29,7 +29,8 @@ describe('handle interaction usage guardrails', () => {
       const source = readSource(path);
       const usesSharedHelpers = source.includes('getHandlePointerEvents') && source.includes('getV2HandleVisibilityClass');
       const usesNodeChrome = source.includes('NodeChrome');
-      expect(usesSharedHelpers || usesNodeChrome, path).toBe(true);
+      const usesStructuredNodeHandles = source.includes('StructuredNodeHandles');
+      expect(usesSharedHelpers || usesNodeChrome || usesStructuredNodeHandles, path).toBe(true);
     }
   });
 

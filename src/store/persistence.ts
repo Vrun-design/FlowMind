@@ -4,8 +4,8 @@ import { clonePlaybackState, sanitizePlaybackState } from '@/services/playback/m
 import type { FlowTab } from '@/lib/types';
 import { isDiagramType } from '@/lib/types';
 import { sanitizeAISettings } from './aiSettings';
+import { loadPersistedAISettings, persistAISettings } from './aiSettingsPersistence';
 import {
-    DEFAULT_AI_SETTINGS,
     DEFAULT_DESIGN_SYSTEM,
     INITIAL_GLOBAL_EDGE_OPTIONS,
     INITIAL_LAYERS,
@@ -21,7 +21,6 @@ export type PersistedFlowStateSlice = Pick<
     | 'activeDesignSystemId'
     | 'viewSettings'
     | 'globalEdgeOptions'
-    | 'aiSettings'
     | 'layers'
     | 'activeLayerId'
 >;
@@ -152,6 +151,10 @@ export function migratePersistedFlowState(persistedState: unknown): unknown {
         state.aiSettings && typeof state.aiSettings === 'object'
             ? (state.aiSettings as Partial<FlowState['aiSettings']>)
             : undefined;
+    const migratedAISettings = sanitizeAISettings(persistedAiSettings, loadPersistedAISettings());
+    if (persistedAiSettings) {
+        persistAISettings(migratedAISettings);
+    }
 
     return {
         ...state,
@@ -169,7 +172,7 @@ export function migratePersistedFlowState(persistedState: unknown): unknown {
             ...INITIAL_VIEW_SETTINGS,
             ...persistedViewSettings,
         },
-        aiSettings: sanitizeAISettings(persistedAiSettings, DEFAULT_AI_SETTINGS),
+        aiSettings: migratedAISettings,
     };
 }
 
@@ -181,7 +184,6 @@ export function partializePersistedFlowState(state: FlowState): PersistedFlowSta
         activeDesignSystemId: state.activeDesignSystemId,
         viewSettings: state.viewSettings,
         globalEdgeOptions: state.globalEdgeOptions,
-        aiSettings: sanitizeAISettings(state.aiSettings, DEFAULT_AI_SETTINGS),
         layers: state.layers,
         activeLayerId: state.activeLayerId,
     };
@@ -214,7 +216,7 @@ export function createInitialFlowState(): Pick<
         activeDesignSystemId: 'default',
         viewSettings: INITIAL_VIEW_SETTINGS,
         globalEdgeOptions: INITIAL_GLOBAL_EDGE_OPTIONS,
-        aiSettings: DEFAULT_AI_SETTINGS,
+        aiSettings: loadPersistedAISettings(),
         layers: INITIAL_LAYERS,
         activeLayerId: 'default',
         selectedNodeId: null,

@@ -6,26 +6,29 @@ interface TooltipProps {
     children: React.ReactNode;
     side?: 'top' | 'bottom' | 'left' | 'right';
     sideOffset?: number;
+    className?: string;
 }
 
-export const Tooltip: React.FC<TooltipProps> = ({
+const ARROW_CLASSES = {
+    top: '-bottom-1 left-1/2 -translate-x-1/2 border-t-slate-900 border-x-transparent border-b-transparent',
+    bottom: '-top-1 left-1/2 -translate-x-1/2 border-b-slate-900 border-x-transparent border-t-transparent',
+    left: '-right-1 top-1/2 -translate-y-1/2 border-l-slate-900 border-y-transparent border-r-transparent',
+    right: '-left-1 top-1/2 -translate-y-1/2 border-r-slate-900 border-y-transparent border-l-transparent',
+} as const;
+
+export function Tooltip({
     children,
     text,
     side = 'top',
-    sideOffset = 12
-}) => {
+    sideOffset = 12,
+    className = ''
+}: TooltipProps): React.ReactElement {
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const tooltipRef = useRef<HTMLDivElement | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [resolvedSide, setResolvedSide] = useState(side);
     const [position, setPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
-
-    const arrowClasses = {
-        top: '-bottom-1 left-1/2 -translate-x-1/2 border-t-slate-900 border-x-transparent border-b-transparent',
-        bottom: '-top-1 left-1/2 -translate-x-1/2 border-b-slate-900 border-x-transparent border-t-transparent',
-        left: '-right-1 top-1/2 -translate-y-1/2 border-l-slate-900 border-y-transparent border-r-transparent',
-        right: '-left-1 top-1/2 -translate-y-1/2 border-r-slate-900 border-y-transparent border-l-transparent',
-    };
+    const triggerClassName = className.trim();
 
     const updatePosition = useCallback((): void => {
         if (!triggerRef.current || !tooltipRef.current) {
@@ -110,7 +113,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
     return (
         <div
             ref={triggerRef}
-            className="flex items-center justify-center"
+            className={triggerClassName}
             onMouseEnter={() => setIsOpen(true)}
             onMouseLeave={() => setIsOpen(false)}
             onFocus={() => setIsOpen(true)}
@@ -128,11 +131,11 @@ export const Tooltip: React.FC<TooltipProps> = ({
                         }}
                     >
                         {text}
-                        <span className={`absolute border-4 border-transparent ${arrowClasses[resolvedSide]}`}></span>
+                        <span className={`absolute border-4 border-transparent ${ARROW_CLASSES[resolvedSide]}`}></span>
                     </div>,
                     document.body
                 )
                 : null}
         </div>
     );
-};
+}

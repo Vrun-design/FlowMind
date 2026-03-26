@@ -6,6 +6,7 @@ import { FlowCanvasAlignmentGuidesOverlay } from './FlowCanvasAlignmentGuidesOve
 import type { AlignmentGuides, SelectionDragPreview } from './alignmentGuides';
 import type { FlowNode } from '@/lib/types';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
+import type { ConnectedEdgePreset } from '@/hooks/edge-operations/utils';
 
 const LazyConnectMenu = lazy(async () => {
     const module = await import('../ConnectMenu');
@@ -33,7 +34,8 @@ interface FlowCanvasOverlaysProps {
         position: { x: number; y: number },
         sourceId?: string,
         sourceHandle?: string,
-        shape?: NodeData['shape']
+        shape?: NodeData['shape'],
+        edgePreset?: ConnectedEdgePreset
     ) => void;
     handleAddDomainLibraryItemAndConnect: (
         item: DomainLibraryItem,
@@ -84,9 +86,9 @@ export function FlowCanvasOverlays({
                         sourceId={connectMenu.sourceId}
                         sourceType={connectMenu.sourceType}
                         onClose={() => setConnectMenu(null)}
-                        onSelect={(type, shape) => {
+                        onSelect={(type, shape, edgePreset) => {
                             const flowPos = screenToFlowPosition(connectMenu.position);
-                            handleAddAndConnect(type, flowPos, connectMenu.sourceId, connectMenu.sourceHandle, shape as NodeData['shape']);
+                            handleAddAndConnect(type, flowPos, connectMenu.sourceId, connectMenu.sourceHandle, shape as NodeData['shape'], edgePreset);
                         }}
                         onSelectAsset={(item) => {
                             const flowPos = screenToFlowPosition(connectMenu.position);
@@ -106,6 +108,7 @@ export function FlowCanvasOverlays({
                         onDuplicate={contextActions.onDuplicate}
                         onDelete={contextActions.onDelete}
                         onSendToBack={contextActions.onSendToBack}
+                        onChangeNodeType={contextActions.onChangeNodeType}
                         canPaste={true}
                         selectedCount={contextActions.selectedCount}
                         onAlignNodes={contextActions.onAlignNodes}

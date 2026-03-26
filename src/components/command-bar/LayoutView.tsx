@@ -125,7 +125,13 @@ export function LayoutView({
 
     return (
         <div className="flex flex-col h-full">
-            <ViewHeader title={t('commandBar.layout.title')} icon={<Zap className="w-4 h-4 text-[var(--brand-primary)]" />} onBack={handleBack} />
+            <ViewHeader
+                title={t('commandBar.layout.title')}
+                icon={<Zap className="w-4 h-4 text-[var(--brand-primary)]" />}
+                description="Use auto layout as a refinement step after you sketch the structure."
+                onBack={handleBack}
+                onClose={onClose}
+            />
 
             <div className="flex-1 overflow-y-auto p-4">
                 <div className="space-y-3 rounded-[var(--radius-md)] border border-[var(--color-brand-border)] bg-[var(--brand-background)] p-3">

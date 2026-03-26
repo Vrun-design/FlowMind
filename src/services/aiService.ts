@@ -1,6 +1,6 @@
 import { getSystemInstruction, ChatMessage, generateDiagramFromChat as generateDiagramFromChatGemini, chatWithDocsGemini } from './geminiService';
 import { DEFAULT_MODELS, PROVIDER_BASE_URLS } from '@/config/aiProviders';
-import { err, ok, unwrapResult, type Result } from '@/lib/result';
+import { err, ok, type Result } from '@/lib/result';
 
 export type AIProvider = 'gemini' | 'openai' | 'claude' | 'groq' | 'nvidia' | 'cerebras' | 'mistral' | 'openrouter' | 'custom';
 
@@ -13,6 +13,8 @@ interface AiServiceError {
     message: string;
     status?: number;
 }
+
+type TextMessage = { role: string; content: string };
 
 function getEnvApiKey(provider: AIProvider): string | undefined {
     switch (provider) {
@@ -29,7 +31,7 @@ function getEnvApiKey(provider: AIProvider): string | undefined {
     }
 }
 
-function historyToMessages(history: ChatMessage[]): { role: string; content: string }[] {
+function historyToMessages(history: ChatMessage[]): TextMessage[] {
     return history.map(h => ({
         role: h.role === 'model' ? 'assistant' : 'user',
         content: h.parts.map(p => p.text || '').join(''),
@@ -97,12 +99,98 @@ async function parseFailedResponse(response: Response, prefix: string): Promise<
     };
 }
 
+async function readSSEStream(
+    response: Response,
+    extractDelta: (data: string) => string | undefined,
+    onChunk: (delta: string) => void,
+): Promise<string> {
+    const reader = response.body!.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    let buffer = '';
+    let done = false;
+
+    while (!done) {
+        const chunk = await reader.read();
+        done = chunk.done;
+        if (chunk.value) buffer += decoder.decode(chunk.value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+        for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const data = line.slice(6).trim();
+            if (data === '[DONE]') return fullText;
+            try {
+                const delta = extractDelta(data);
+                if (delta) {
+                    fullText += delta;
+                    onChunk(delta);
+                }
+            } catch { /* skip malformed SSE lines */ }
+        }
+    }
+    return fullText;
+}
+
+function extractOpenAIDelta(data: string): string | undefined {
+    return (JSON.parse(data) as { choices?: Array<{ delta?: { content?: string } }> })
+        ?.choices?.[0]?.delta?.content || undefined;
+}
+
+function extractClaudeDelta(data: string): string | undefined {
+    const parsed = JSON.parse(data) as { type?: string; delta?: { type?: string; text?: string } };
+    if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
+        return parsed.delta.text || undefined;
+    }
+    return undefined;
+}
+
+function extractImageParts(imageBase64: string): { mimeType: string; cleanBase64: string } {
+    const match = imageBase64.match(/^data:image\/([^;]+);base64,/);
+    return {
+        mimeType: match ? `image/${match[1]}` : 'image/png',
+        cleanBase64: imageBase64.replace(/^data:image\/[^;]+;base64,/, ''),
+    };
+}
+
+function withOpenAIImage(messages: TextMessage[], imageBase64: string): unknown[] {
+    const { mimeType, cleanBase64 } = extractImageParts(imageBase64);
+    return messages.map((m, i) => {
+        if (i !== messages.length - 1 || m.role !== 'user') return m;
+        return {
+            role: 'user',
+            content: [
+                { type: 'image_url', image_url: { url: `data:${mimeType};base64,${cleanBase64}` } },
+                { type: 'text', text: m.content },
+            ],
+        };
+    });
+}
+
+function withClaudeImage(messages: TextMessage[], imageBase64: string): unknown[] {
+    const { mimeType, cleanBase64 } = extractImageParts(imageBase64);
+    return messages.map((m, i) => {
+        if (i !== messages.length - 1 || m.role !== 'user') return m;
+        return {
+            role: 'user',
+            content: [
+                { type: 'image', source: { type: 'base64', media_type: mimeType, data: cleanBase64 } },
+                { type: 'text', text: m.content },
+            ],
+        };
+    });
+}
+
 async function callOpenAICompatible(
     baseUrl: string,
     apiKey: string,
     model: string,
-    messages: { role: string; content: string }[]
+    messages: TextMessage[],
+    onChunk?: (delta: string) => void,
+    signal?: AbortSignal,
+    imageBase64?: string,
 ): Promise<string> {
+    const body = imageBase64 ? withOpenAIImage(messages, imageBase64) : messages;
     const response = await fetch(`${baseUrl}/chat/completions`, {
         method: 'POST',
         headers: {
@@ -111,26 +199,31 @@ async function callOpenAICompatible(
         },
         body: JSON.stringify({
             model,
-            messages,
+            messages: body,
             temperature: 0.2,
             max_tokens: 4096,
+            stream: true,
         }),
+        signal,
     });
 
     if (!response.ok) {
         throw toAiServiceError(await parseFailedResponse(response, 'API error'));
     }
 
-    const data = await response.json();
-    return unwrapResult(parseOpenAICompatibleContent(data), toAiServiceError);
+    return readSSEStream(response, extractOpenAIDelta, onChunk ?? (() => undefined));
 }
 
 async function callClaude(
     apiKey: string,
     model: string,
-    messages: { role: string; content: string }[],
-    systemInstruction: string
+    messages: TextMessage[],
+    systemInstruction: string,
+    onChunk?: (delta: string) => void,
+    signal?: AbortSignal,
+    imageBase64?: string,
 ): Promise<string> {
+    const body = imageBase64 ? withClaudeImage(messages, imageBase64) : messages;
     const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -141,17 +234,18 @@ async function callClaude(
         body: JSON.stringify({
             model,
             system: systemInstruction,
-            messages,
+            messages: body,
             max_tokens: 4096,
+            stream: true,
         }),
+        signal,
     });
 
     if (!response.ok) {
         throw toAiServiceError(await parseFailedResponse(response, 'Anthropic API error'));
     }
 
-    const data = await response.json();
-    return unwrapResult(parseClaudeContent(data), toAiServiceError);
+    return readSSEStream(response, extractClaudeDelta, onChunk ?? (() => undefined));
 }
 
 export async function generateDiagramFromChat(
@@ -163,7 +257,9 @@ export async function generateDiagramFromChat(
     modelIdSetting?: string,
     provider: AIProvider = 'gemini',
     customBaseUrlSetting?: string,
-    isEditMode = false
+    isEditMode = false,
+    onChunk?: (delta: string) => void,
+    signal?: AbortSignal,
 ): Promise<string> {
     const apiKey = resolveApiKey(provider, apiKeySetting);
     const modelId = resolveModelId(provider, modelIdSetting);
@@ -173,20 +269,20 @@ export async function generateDiagramFromChat(
         : `User Request: ${newMessage}\n\nGenerate a new OpenFlow DSL diagram.`;
 
     if (provider === 'gemini') {
-        return generateDiagramFromChatGemini(history, newMessage, currentDSL, imageBase64, apiKey, modelId, isEditMode);
+        return generateDiagramFromChatGemini(history, newMessage, currentDSL, imageBase64, apiKey, modelId, isEditMode, onChunk, signal);
     }
 
     const systemInstruction = getSystemInstruction(isEditMode ? 'edit' : 'create');
 
     if (provider === 'claude') {
-        const messages = [
+        const messages: TextMessage[] = [
             ...historyToMessages(history),
             { role: 'user', content: userPrompt },
         ];
-        return callClaude(apiKey, modelId || DEFAULT_MODELS.claude, messages, systemInstruction);
+        return callClaude(apiKey, modelId || DEFAULT_MODELS.claude, messages, systemInstruction, onChunk, signal, imageBase64);
     }
 
-    const messages = [
+    const messages: TextMessage[] = [
         { role: 'system', content: systemInstruction },
         ...historyToMessages(history),
         { role: 'user', content: userPrompt },
@@ -196,7 +292,10 @@ export async function generateDiagramFromChat(
         resolveOpenAICompatibleBaseUrl(provider, customBaseUrlSetting),
         apiKey,
         modelId || DEFAULT_MODELS[provider],
-        messages
+        messages,
+        onChunk,
+        signal,
+        imageBase64,
     );
 }
 
@@ -229,14 +328,14 @@ ${docsContext}
 `;
 
     if (provider === 'claude') {
-        const messages = [
+        const messages: TextMessage[] = [
             ...historyToMessages(history),
             { role: 'user', content: newMessage },
         ];
         return callClaude(apiKey, modelId || DEFAULT_MODELS.claude, messages, systemInstruction);
     }
 
-    const messages = [
+    const messages: TextMessage[] = [
         { role: 'system', content: systemInstruction },
         ...historyToMessages(history),
         { role: 'user', content: newMessage },

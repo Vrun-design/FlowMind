@@ -219,9 +219,13 @@ html {
 
   /* Dimensions */
   --brand-radius: 8px;
-  --radius-sm: max(2px, calc(var(--brand-radius) - 3px));
+  --radius-xs: 4px;
+  --radius-sm: 6px;
   --radius-md: var(--brand-radius);
-  --radius-lg: calc(var(--brand-radius) + 4px);
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
   --brand-border-width: 1px;
 
   /* Typography */
@@ -231,6 +235,13 @@ html {
   --brand-glass-blur: 12px;
   --brand-glass-opacity: 0.7;
   --brand-glass-bg: rgba(255, 255, 255, 0.7);
+
+  /* App Shadows */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.03), 0 1px 1px rgba(15, 23, 42, 0.02);
+  --shadow-sm: 0 4px 10px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03);
+  --shadow-md: 0 10px 24px rgba(15, 23, 42, 0.07), 0 3px 8px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 16px 36px rgba(15, 23, 42, 0.09), 0 6px 16px rgba(15, 23, 42, 0.05);
+  --shadow-overlay: 0 22px 48px rgba(15, 23, 42, 0.11), 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
 body {

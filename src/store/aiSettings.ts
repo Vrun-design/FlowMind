@@ -1,4 +1,4 @@
-import type { AIProvider, AISettings, CustomHeaderConfig } from './types';
+import type { AIProvider, AISettings, AISettingsStorageMode, CustomHeaderConfig } from './types';
 
 export const AI_PROVIDERS = [
   'gemini',
@@ -37,6 +37,10 @@ function sanitizeCustomHeaders(value: unknown): CustomHeaderConfig[] {
     });
 }
 
+function isAISettingsStorageMode(value: unknown): value is AISettingsStorageMode {
+  return value === 'local' || value === 'session';
+}
+
 export function isAIProvider(value: unknown): value is AIProvider {
   return typeof value === 'string' && AI_PROVIDERS.includes(value as AIProvider);
 }
@@ -47,6 +51,7 @@ export function sanitizeAISettings(
 ): AISettings {
   return {
     provider: isAIProvider(input?.provider) ? input.provider : fallback.provider,
+    storageMode: isAISettingsStorageMode(input?.storageMode) ? input.storageMode : fallback.storageMode,
     apiKey: isNonEmptyString(input?.apiKey) ? input.apiKey.trim() : undefined,
     model: isNonEmptyString(input?.model) ? input.model.trim() : undefined,
     customBaseUrl: isNonEmptyString(input?.customBaseUrl) ? input.customBaseUrl.trim() : undefined,

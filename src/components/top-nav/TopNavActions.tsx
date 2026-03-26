@@ -30,7 +30,9 @@ interface TopNavActionsProps {
     onPlay: () => void;
     onExportPNG: (format?: 'png' | 'jpeg') => void;
     onExportSVG: () => void;
+    onExportPDF: () => void;
     onExportAnimated: (format: 'video' | 'gif') => void;
+    onExportReveal: (format: 'reveal-video' | 'reveal-gif') => void;
     onExportJSON: () => void;
     onExportMermaid: () => void;
     onExportPlantUML: () => void;
@@ -97,7 +99,9 @@ export function TopNavActions({
     onPlay,
     onExportPNG,
     onExportSVG,
+    onExportPDF,
     onExportAnimated,
+    onExportReveal,
     onExportJSON,
     onExportMermaid,
     onExportPlantUML,
@@ -108,16 +112,22 @@ export function TopNavActions({
     isBeveled,
 }: TopNavActionsProps): React.ReactElement {
     const { t } = useTranslation();
+    const playLabel = t('common.play', 'Preview');
     const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
     const viewerCount = collaboration?.viewerCount ?? 1;
     const visibleViewerCount = Math.min(viewerCount, 4);
     const visibleParticipants = collaboration?.participants.slice(0, visibleViewerCount) ?? [];
+    const shareButtonClassName = `ml-1 h-10 w-10 rounded-[var(--radius-md)] border text-slate-600 transition-all sm:h-9 sm:w-9 ${isBeveled
+        ? 'btn-beveled-secondary'
+        : 'bg-white border-slate-200 hover:border-slate-300 shadow-sm hover:shadow'
+        }`;
+    const playButtonClassName = 'h-10 px-2.5 font-medium sm:h-9 sm:px-3';
 
     return (
-        <div className="flex items-center gap-3 min-w-[240px] justify-end">
-            <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center justify-end gap-2 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-2">
                 {collaboration && (
-                    <div className="flex items-center gap-2 mr-1 border-r border-slate-200/60 pr-3">
+                    <div className="mr-1 hidden items-center gap-2 border-r border-slate-200/60 pr-3 md:flex">
                         {/* Status Indicator */}
                         <Tooltip text={getCollaborationStatusLabel(collaboration.status, collaboration.cacheState, t)} side="bottom">
                             <div className={`w-2 h-2 rounded-full ${getCollaborationStatusDotClass(collaboration.status)}`} />
@@ -148,10 +158,7 @@ export function TopNavActions({
                                 size="icon"
                                 onClick={() => setIsShareModalOpen(true)}
                                 data-testid="topnav-share"
-                                className={`h-8 w-8 ml-1 rounded-[var(--radius-md)] border text-slate-600 transition-all ${isBeveled
-                                    ? 'btn-beveled-secondary'
-                                    : 'bg-white border-slate-200 hover:border-slate-300 shadow-sm hover:shadow'
-                                    }`}
+                                className={shareButtonClassName}
                                 icon={<Share2 className="w-4 h-4" />}
                             />
                         </Tooltip>
@@ -161,19 +168,23 @@ export function TopNavActions({
                 <Tooltip text={t('nav.playbackMode', 'Preview playback')} side="bottom">
                     <Button
                         variant="secondary"
+                        size="sm"
                         onClick={onPlay}
                         data-testid="topnav-play"
-                        className="h-9 px-4 text-sm font-medium"
-                        icon={<Play className="w-3.5 h-3.5 mr-1" />}
+                        aria-label={playLabel}
+                        className={playButtonClassName}
+                        icon={<Play className="h-3.5 w-3.5 sm:mr-1" />}
                     >
-                        {t('common.play', 'Preview')}
+                        <span className="hidden sm:inline">{playLabel}</span>
                     </Button>
                 </Tooltip>
 
                 <ExportMenu
                     onExportPNG={onExportPNG}
                     onExportSVG={onExportSVG}
+                    onExportPDF={onExportPDF}
                     onExportAnimated={onExportAnimated}
+                    onExportReveal={onExportReveal}
                     onExportJSON={onExportJSON}
                     onExportMermaid={onExportMermaid}
                     onExportPlantUML={onExportPlantUML}

@@ -20,7 +20,7 @@ description: Abonelik, checkout, retry ve istisna yolları içeren ödeme sistem
 
 - boş flowchart tuvali
 - SaaS veya ödeme odaklı şablon
-- FlowPilot istemi
+- Flowpilot istemi
 - OpenFlow DSL ile metin tabanlı taslak
 
 ## Önerilen akış

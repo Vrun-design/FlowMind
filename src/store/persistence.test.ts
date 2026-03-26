@@ -1,10 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { FlowEdge, FlowNode, FlowTab } from '@/lib/types';
 import {
     createInitialFlowState,
     migratePersistedFlowState,
     partializePersistedFlowState,
 } from './persistence';
+import * as aiSettingsPersistence from './aiSettingsPersistence';
 
 function createNode(id: string, label: string): FlowNode {
     return {
@@ -32,12 +33,24 @@ function createTab(id: string, name: string, nodes: FlowNode[], edges: FlowEdge[
 
 describe('store persistence helpers', () => {
     it('creates the expected initial persisted runtime slice', () => {
+        const loadPersistedAISettingsSpy = vi.spyOn(aiSettingsPersistence, 'loadPersistedAISettings').mockReturnValue({
+            provider: 'openai',
+            storageMode: 'local',
+            apiKey: 'persisted-key',
+            model: 'gpt-test',
+            customBaseUrl: undefined,
+            customHeaders: [],
+        });
         const state = createInitialFlowState();
 
         expect(state.activeTabId).toBe('tab-1');
         expect(state.tabs).toHaveLength(1);
         expect(state.layers[0]?.id).toBe('default');
         expect(state.designSystems[0]?.id).toBe('default');
+        expect(state.aiSettings.provider).toBe('openai');
+        expect(state.aiSettings.apiKey).toBe('persisted-key');
+
+        loadPersistedAISettingsSpy.mockRestore();
     });
 
     it('partializes store state while stripping transient canvas fields from tabs', () => {
@@ -150,6 +163,15 @@ describe('store persistence helpers', () => {
     });
 
     it('sanitizes persisted ai settings during migration', () => {
+        const loadPersistedAISettingsSpy = vi.spyOn(aiSettingsPersistence, 'loadPersistedAISettings').mockReturnValue({
+            provider: 'gemini',
+            storageMode: 'local',
+            apiKey: undefined,
+            model: undefined,
+            customBaseUrl: undefined,
+            customHeaders: [],
+        });
+        const persistAISettingsSpy = vi.spyOn(aiSettingsPersistence, 'persistAISettings').mockImplementation(() => undefined);
         const migrated = migratePersistedFlowState({
             tabs: [
                 {
@@ -182,5 +204,24 @@ describe('store persistence helpers', () => {
         expect(migrated.aiSettings.customHeaders).toEqual([
             { key: 'Authorization', value: 'Bearer token', enabled: true },
         ]);
+        expect(persistAISettingsSpy).toHaveBeenCalledWith({
+            provider: 'gemini',
+            storageMode: 'local',
+            apiKey: 'secret',
+            model: undefined,
+            customBaseUrl: undefined,
+            customHeaders: [
+                { key: 'Authorization', value: 'Bearer token', enabled: true },
+            ],
+        });
+
+        loadPersistedAISettingsSpy.mockRestore();
+        persistAISettingsSpy.mockRestore();
+    });
+
+    it('does not include aiSettings in the main persisted flow slice', () => {
+        const persistedSlice = partializePersistedFlowState(createInitialFlowState() as never);
+
+        expect('aiSettings' in persistedSlice).toBe(false);
     });
 });

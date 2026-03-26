@@ -46,9 +46,11 @@ describe('flowCanvasEdgeTypes', () => {
     const edgeTypeKeys = Object.keys(flowCanvasEdgeTypes).sort();
     expect(edgeTypeKeys).toMatchInlineSnapshot(`
       [
+        "bezier",
         "default",
         "smoothstep",
         "step",
+        "straight",
       ]
     `);
   });

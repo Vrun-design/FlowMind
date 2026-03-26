@@ -13,7 +13,7 @@ Komut Merkezi, editörün klavye öncelikli başlatıcısıdır. Yüzen bir pane
 
 Sık kullanılan komutlar:
 
-- Open FlowPilot
+- Open Flowpilot
 - Edit Flow DSL
 - Edit Mermaid Code
 - Assets

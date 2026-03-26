@@ -33,7 +33,7 @@ export function NodeTextStyleSection({
                         <button
                             key={font}
                             onClick={() => onChange(selectedNode.id, { fontFamily: font })}
-                            className={`flex-1 px-2 py-1.5 rounded-[calc(var(--brand-radius)-4px)] text-[10px] font-bold uppercase whitespace-nowrap
+                            className={`flex-1 px-2 py-1.5 rounded-[var(--radius-xs)] text-[10px] font-bold uppercase whitespace-nowrap
                                 ${(selectedNode.data?.fontFamily || 'inter') === font
                                     ? 'bg-[var(--brand-surface)] shadow-sm text-[var(--brand-primary)]'
                                     : 'text-[var(--brand-secondary)] hover:text-[var(--brand-text)]'}`}
@@ -47,7 +47,7 @@ export function NodeTextStyleSection({
                         <button
                             key={size}
                             onClick={() => onChange(selectedNode.id, { fontSize: size.toString() })}
-                            className={`flex-1 px-2 py-1.5 rounded-[calc(var(--brand-radius)-4px)] text-[10px] font-bold
+                            className={`flex-1 px-2 py-1.5 rounded-[var(--radius-xs)] text-[10px] font-bold
                                 ${(selectedNode.data?.fontSize || '16') === size.toString()
                                     ? 'bg-[var(--brand-surface)] shadow-sm text-[var(--brand-primary)]'
                                     : 'text-[var(--brand-secondary)] hover:text-[var(--brand-text)]'}`}

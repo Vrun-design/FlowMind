@@ -7,6 +7,8 @@ import { InlineTextEditSurface } from '@/components/InlineTextEditSurface';
 import { NodeChrome } from '@/components/NodeChrome';
 import { resolveNodeVisualStyle } from '@/theme';
 import { requestMindmapTopicAction } from '@/hooks/mindmapTopicActionRequest';
+import { useFlowStore } from '@/store';
+import { getMindmapChildrenById, getMindmapDescendantIds } from '@/lib/mindmapTree';
 
 function MindmapNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
   const HANDLE_INSET_PX = 8;
@@ -24,6 +26,17 @@ function MindmapNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
   const activeColor = data.color || (isRoot ? 'slate' : 'white');
   const activeColorMode = data.colorMode || (isRoot ? 'filled' : 'subtle');
   const visualStyle = resolveNodeVisualStyle(activeColor, activeColorMode, data.customColor);
+  const setNodes = useFlowStore((state) => state.setNodes);
+  const setEdges = useFlowStore((state) => state.setEdges);
+  const childCount = useFlowStore((state) => {
+    const childrenById = getMindmapChildrenById(state.nodes, state.edges);
+    return (childrenById.get(id) ?? []).length;
+  });
+  const hiddenDescendantCount = useFlowStore((state) => {
+    const childrenById = getMindmapChildrenById(state.nodes, state.edges);
+    return getMindmapDescendantIds(id, childrenById).size;
+  });
+  const isCollapsed = data.mindmapCollapsed === true;
   const branchHandles = [
     { id: 'left', position: Position.Left, side: 'left' as const },
     { id: 'right', position: Position.Right, side: 'right' as const },
@@ -55,6 +68,28 @@ function MindmapNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
     event.stopPropagation();
     requestMindmapTopicAction(id, 'sibling');
   };
+  const toggleCollapsed = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const nextCollapsed = !isCollapsed;
+    const { nodes: currentNodes, edges: currentEdges } = useFlowStore.getState();
+    const currentChildrenById = getMindmapChildrenById(currentNodes, currentEdges);
+    const descendantIds = getMindmapDescendantIds(id, currentChildrenById);
+    setNodes((prev) => prev.map((node) => {
+      if (node.id === id) {
+        return { ...node, data: { ...node.data, mindmapCollapsed: nextCollapsed } };
+      }
+      if (descendantIds.has(node.id)) {
+        return { ...node, hidden: nextCollapsed };
+      }
+      return node;
+    }));
+    setEdges((prev) => prev.map((edge) => (
+      descendantIds.has(edge.source) || descendantIds.has(edge.target)
+        ? { ...edge, hidden: nextCollapsed }
+        : edge
+    )));
+  };
 
   return (
     <NodeChrome
@@ -73,6 +108,17 @@ function MindmapNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
           color: visualStyle.text,
         }}
         >
+        {childCount > 0 ? (
+          <button
+            type="button"
+            aria-label={isCollapsed ? 'Expand branch' : 'Collapse branch'}
+            onClick={toggleCollapsed}
+            className={`absolute -bottom-2 left-1/2 z-10 flex h-5 min-w-5 -translate-x-1/2 items-center justify-center rounded-full border bg-white px-1 text-[10px] font-semibold text-slate-600 shadow-sm hover:bg-slate-50 ${selected ? 'opacity-100' : 'opacity-0 transition-opacity duration-150 group-hover:opacity-100'}`}
+            style={{ borderColor: visualStyle.border }}
+          >
+            {isCollapsed ? `+${hiddenDescendantCount}` : '▾'}
+          </button>
+        ) : null}
         {isRoot ? (
           <>
             <button

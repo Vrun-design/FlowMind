@@ -18,8 +18,8 @@ export function HomeSidebar({
     const { t } = useTranslation();
 
     return (
-        <aside className="w-64 border-r border-slate-200 flex flex-col fixed inset-y-0 left-0 z-20 bg-[var(--brand-surface)]">
-            <div className="h-14 flex items-center gap-3 px-4 border-b border-slate-100">
+        <aside className="sticky top-0 z-20 flex w-full flex-col border-b border-slate-200 bg-[var(--brand-surface)] md:fixed md:inset-y-0 md:left-0 md:w-64 md:border-b-0 md:border-r">
+            <div className="flex h-14 items-center gap-3 border-b border-slate-100 px-4">
                 <div className="w-8 h-8 flex items-center justify-center bg-[var(--brand-primary)]/10 rounded-lg text-[var(--brand-primary)] overflow-hidden shrink-0">
                     <OpenFlowLogo className="w-5 h-5" />
                 </div>
@@ -31,12 +31,13 @@ export function HomeSidebar({
                 </div>
             </div>
 
-            <div className="p-3 space-y-1">
+            <div className="flex gap-2 overflow-x-auto p-3 md:block md:space-y-1">
                 <SidebarItem
                     icon={<Home className="w-4 h-4" />}
                     isActive={activeTab === 'home'}
                     onClick={() => onTabChange('home')}
                     testId="sidebar-home"
+                    className="min-w-fit md:min-w-0"
                 >
                     {t('nav.home', 'Home')}
                 </SidebarItem>
@@ -45,6 +46,7 @@ export function HomeSidebar({
                     isActive={activeTab === 'settings'}
                     onClick={() => onTabChange('settings')}
                     testId="sidebar-settings"
+                    className="min-w-fit md:min-w-0"
                 >
                     {t('nav.settings', 'Settings')}
                 </SidebarItem>
@@ -52,12 +54,13 @@ export function HomeSidebar({
                     icon={<Book className="w-4 h-4" />}
                     to="https://docs.openflowkit.com"
                     testId="sidebar-docs"
+                    className="min-w-fit md:min-w-0"
                 >
                     {t('nav.documentation', 'Documentation')}
                 </SidebarItem>
             </div>
 
-            <div className="mt-auto p-4 space-y-3">
+            <div className="hidden p-4 md:mt-auto md:block md:space-y-3">
                 <LanguageSelector variant="compact" placement="top" />
                 <div className="border-t border-slate-100 pt-3">
                     <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">

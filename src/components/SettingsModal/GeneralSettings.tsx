@@ -57,7 +57,7 @@ export const GeneralSettings = () => {
                     {t('commandBar.visuals.title', 'Connection Styles')}
                 </h3>
                 <div className="space-y-3">
-                    <div className="rounded-xl border border-[var(--color-brand-border)] bg-[var(--brand-surface)] p-3">
+                    <div className="rounded-[var(--radius-lg)] border border-[var(--color-brand-border)] bg-[var(--brand-surface)] p-3">
                         <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-[var(--brand-secondary)]">
                             {t('commandBar.visuals.edgeStyle')}
                         </label>
@@ -71,7 +71,7 @@ export const GeneralSettings = () => {
                                 <button
                                     key={style.type}
                                     onClick={() => setGlobalEdgeOptions({ type: style.type as GlobalEdgeOptions['type'] })}
-                                    className={`h-9 rounded-lg border text-xs font-semibold transition-colors ${
+                                    className={`h-9 rounded-[var(--radius-sm)] border text-xs font-semibold transition-colors ${
                                         globalEdgeOptions.type === style.type
                                             || (style.type === 'default' && globalEdgeOptions.type === 'bezier')
                                             ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-700)]'
@@ -91,7 +91,7 @@ export const GeneralSettings = () => {
                         checked={viewSettings.smartRoutingEnabled}
                         onChange={(checked) => setSmartRoutingEnabled(checked)}
                     />
-                    <div className="rounded-xl border border-[var(--color-brand-border)] bg-[var(--brand-surface)] p-3">
+                    <div className="rounded-[var(--radius-lg)] border border-[var(--color-brand-border)] bg-[var(--brand-surface)] p-3">
                         <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-[var(--brand-secondary)]">
                             {t('settingsModal.canvas.routingProfile', 'Routing Profile')}
                         </label>
@@ -103,7 +103,7 @@ export const GeneralSettings = () => {
                                 <button
                                     key={option.profile}
                                     onClick={() => setSmartRoutingProfile(option.profile as 'standard' | 'infrastructure')}
-                                    className={`h-9 rounded-lg border text-xs font-semibold transition-colors ${
+                                    className={`h-9 rounded-[var(--radius-sm)] border text-xs font-semibold transition-colors ${
                                         viewSettings.smartRoutingProfile === option.profile
                                             ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-700)]'
                                             : 'border-[var(--color-brand-border)] text-[var(--brand-text)] hover:border-[var(--brand-primary)]'
@@ -146,7 +146,7 @@ export const GeneralSettings = () => {
                         onChange={(checked) => setViewSettings({ architectureStrictMode: checked })}
                     />
 
-                    <div className="rounded-xl border border-[var(--color-brand-border)] bg-[var(--brand-surface)] p-3">
+                    <div className="rounded-[var(--radius-lg)] border border-[var(--color-brand-border)] bg-[var(--brand-surface)] p-3">
                         <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-[var(--brand-secondary)]">
                             {t('commandBar.visuals.strokeWidth')}
                         </label>
@@ -155,7 +155,7 @@ export const GeneralSettings = () => {
                                 <button
                                     key={width}
                                     onClick={() => setGlobalEdgeOptions({ strokeWidth: width })}
-                                    className={`h-9 rounded-lg border text-xs font-semibold transition-colors ${
+                                    className={`h-9 rounded-[var(--radius-sm)] border text-xs font-semibold transition-colors ${
                                         globalEdgeOptions.strokeWidth === width
                                             ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-700)]'
                                             : 'border-[var(--color-brand-border)] text-[var(--brand-text)] hover:border-[var(--brand-primary)]'
@@ -167,7 +167,7 @@ export const GeneralSettings = () => {
                         </div>
                     </div>
 
-                    <div className="rounded-xl border border-[var(--color-brand-border)] bg-[var(--brand-surface)] p-3">
+                    <div className="rounded-[var(--radius-lg)] border border-[var(--color-brand-border)] bg-[var(--brand-surface)] p-3">
                         <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-[var(--brand-secondary)]">
                             {t('commandBar.visuals.largeGraphSafety', 'Large Graph Safety')}
                         </label>
@@ -180,7 +180,7 @@ export const GeneralSettings = () => {
                                 <button
                                     key={option.mode}
                                     onClick={() => setLargeGraphSafetyMode(option.mode as 'auto' | 'on' | 'off')}
-                                    className={`h-9 rounded-lg border text-xs font-semibold transition-colors ${
+                                    className={`h-9 rounded-[var(--radius-sm)] border text-xs font-semibold transition-colors ${
                                         viewSettings.largeGraphSafetyMode === option.mode
                                             ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-700)]'
                                             : 'border-[var(--color-brand-border)] text-[var(--brand-text)] hover:border-[var(--brand-primary)]'
@@ -202,7 +202,7 @@ export const GeneralSettings = () => {
                                 <button
                                     key={option.profile}
                                     onClick={() => setLargeGraphSafetyProfile(option.profile as 'performance' | 'balanced' | 'quality')}
-                                    className={`h-9 rounded-lg border text-xs font-semibold transition-colors ${
+                                    className={`h-9 rounded-[var(--radius-sm)] border text-xs font-semibold transition-colors ${
                                         viewSettings.largeGraphSafetyProfile === option.profile
                                             ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-700)]'
                                             : 'border-[var(--color-brand-border)] text-[var(--brand-text)] hover:border-[var(--brand-primary)]'
@@ -231,9 +231,9 @@ const SettingRow = ({
     checked: boolean;
     onChange: (v: boolean) => void;
 }) => (
-    <div className="flex items-center justify-between p-3 bg-[var(--brand-surface)] rounded-xl border border-[var(--color-brand-border)] hover:border-[var(--brand-primary)] transition-colors">
+    <div className="flex items-center justify-between rounded-[var(--radius-lg)] border border-[var(--color-brand-border)] bg-[var(--brand-surface)] p-3 transition-colors hover:border-[var(--brand-primary)]">
         <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[var(--brand-background)] flex items-center justify-center text-[var(--brand-secondary)] border border-[var(--color-brand-border)]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--color-brand-border)] bg-[var(--brand-background)] text-[var(--brand-secondary)]">
                 {icon}
             </div>
             <div>

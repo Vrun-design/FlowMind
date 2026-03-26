@@ -22,7 +22,7 @@ export function CustomHeadersEditor({
     const { t } = useTranslation();
 
     return (
-        <div className="rounded-xl border border-slate-200 bg-white p-3 space-y-2">
+        <div className="space-y-2 rounded-[var(--radius-lg)] border border-slate-200 bg-white p-3">
             <div className="flex items-center justify-between">
                 <div>
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-600">
@@ -36,7 +36,7 @@ export function CustomHeadersEditor({
                     <button
                         type="button"
                         onClick={onAddHeader}
-                        className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-[10px] font-semibold text-slate-700"
+                        className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-700 hover:bg-slate-200"
                     >
                         <Plus className="w-3.5 h-3.5" />
                         {t('settingsModal.ai.addHeader', { defaultValue: 'Add Header' })}
@@ -44,7 +44,7 @@ export function CustomHeadersEditor({
                     <button
                         type="button"
                         onClick={onApplyCloudflarePreset}
-                        className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-blue-50 border border-blue-200 hover:bg-blue-100 text-[10px] font-semibold text-blue-700"
+                        className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-blue-200 bg-blue-50 px-2 py-1 text-[10px] font-semibold text-blue-700 hover:bg-blue-100"
                     >
                         {t('settingsModal.ai.cloudflarePreset', { defaultValue: 'Use Cloudflare Preset' })}
                     </button>

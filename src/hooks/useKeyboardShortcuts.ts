@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { requestNodeLabelEdit } from './nodeLabelEditRequest';
 
 interface ShortcutHandlers {
@@ -24,6 +23,10 @@ interface ShortcutHandlers {
   onZoomOut?: () => void;
   onCopy?: () => void;
   onPaste?: () => void;
+  onCopyStyle?: () => void;
+  onPasteStyle?: () => void;
+  onQuickCreateShortcut?: (direction: 'up' | 'right' | 'down' | 'left') => void;
+  onAnnotationColorShortcut?: (color: 'yellow' | 'green' | 'blue' | 'pink' | 'violet' | 'orange') => void;
   onClearSelection?: () => void;
   onNudge?: (dx: number, dy: number) => void;
 }
@@ -50,6 +53,10 @@ export function useKeyboardShortcuts({
   onZoomOut,
   onCopy,
   onPaste,
+  onCopyStyle,
+  onPasteStyle,
+  onQuickCreateShortcut,
+  onAnnotationColorShortcut,
   onClearSelection,
   onNudge,
 }: ShortcutHandlers): void {
@@ -164,6 +171,39 @@ export function useKeyboardShortcuts({
         }
       }
 
+      if (!isCmdOrCtrl && e.altKey && !isEditable) {
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          onQuickCreateShortcut?.('up');
+          return;
+        }
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          onQuickCreateShortcut?.('right');
+          return;
+        }
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          onQuickCreateShortcut?.('down');
+          return;
+        }
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          onQuickCreateShortcut?.('left');
+          return;
+        }
+      }
+
+      if (!isCmdOrCtrl && !isEditable && selectedNodeType === 'annotation') {
+        const annotationColors = ['yellow', 'green', 'blue', 'pink', 'violet', 'orange'] as const;
+        const shortcutIndex = Number(e.key) - 1;
+        if (shortcutIndex >= 0 && shortcutIndex < annotationColors.length) {
+          e.preventDefault();
+          onAnnotationColorShortcut?.(annotationColors[shortcutIndex]);
+          return;
+        }
+      }
+
       // Mindmap quick-add sibling (Enter)
       if (!isCmdOrCtrl && !isShift && e.key === 'Enter') {
         if (isEditable) return;
@@ -177,7 +217,6 @@ export function useKeyboardShortcuts({
       // Enter inline label edit for selected node (F2)
       if (e.key === 'F2') {
         if (isEditable) return;
-        if (!ROLLOUT_FLAGS.canvasInteractionsV1) return;
         if (!selectedNodeId) return;
         e.preventDefault();
         requestNodeLabelEdit(selectedNodeId);
@@ -187,7 +226,6 @@ export function useKeyboardShortcuts({
       const isPrintableCharacter = e.key.length === 1 && !isCmdOrCtrl && !e.altKey;
       if (isPrintableCharacter) {
         if (isEditable) return;
-        if (!ROLLOUT_FLAGS.canvasInteractionsV1) return;
         if (!selectedNodeId) return;
         e.preventDefault();
         requestNodeLabelEdit(selectedNodeId, {
@@ -212,9 +250,19 @@ export function useKeyboardShortcuts({
         // Don't preventDefault — let browser clipboard also work
       }
 
+      if (isCmdOrCtrl && e.altKey && key === 'c' && !isEditable) {
+        e.preventDefault();
+        onCopyStyle?.();
+      }
+
       // Paste (Cmd+V)
       if (isCmdOrCtrl && key === 'v' && !isEditable) {
         onPaste?.();
+      }
+
+      if (isCmdOrCtrl && e.altKey && key === 'v' && !isEditable) {
+        e.preventDefault();
+        onPasteStyle?.();
       }
 
       // Escape — deselect / clear selection
@@ -237,5 +285,5 @@ export function useKeyboardShortcuts({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [selectedNodeId, selectedEdgeId, selectedNodeType, deleteNode, deleteEdge, undo, redo, duplicateNode, selectAll, onAddMindmapChildShortcut, onAddMindmapSiblingShortcut, onCommandBar, onSearch, onShortcutsHelp, onSelectMode, onPanMode, onFitView, onZoomIn, onZoomOut, onCopy, onPaste, onClearSelection, onNudge]);
+  }, [selectedNodeId, selectedEdgeId, selectedNodeType, deleteNode, deleteEdge, undo, redo, duplicateNode, selectAll, onAddMindmapChildShortcut, onAddMindmapSiblingShortcut, onCommandBar, onSearch, onShortcutsHelp, onSelectMode, onPanMode, onFitView, onZoomIn, onZoomOut, onCopy, onPaste, onCopyStyle, onPasteStyle, onQuickCreateShortcut, onAnnotationColorShortcut, onClearSelection, onNudge]);
 }

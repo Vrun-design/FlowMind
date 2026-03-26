@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { motion } from 'framer-motion';
 import { ChevronDown, Check } from 'lucide-react';
+import { EDITOR_FIELD_DEFAULT_CLASS } from './editorFieldStyles';
 
 export interface SelectOption {
     value: string;
@@ -18,6 +20,12 @@ interface SelectProps {
     className?: string;
 }
 
+interface MenuPosition {
+    top: number;
+    left: number;
+    width: number;
+}
+
 const GROUP_ORDER = ['Flagship', 'Reasoning', 'Speed', 'Legacy', 'Custom', 'Other'];
 
 function sortGroups(a: string, b: string): number {
@@ -32,6 +40,12 @@ function sortGroups(a: string, b: string): number {
 export function Select({ value, onChange, options, placeholder = 'Select...', className = '' }: SelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
+    const [menuPosition, setMenuPosition] = useState<MenuPosition>({
+        top: 0,
+        left: 0,
+        width: 0,
+    });
 
     const selectedOption = options.find(o => o.value === value);
 
@@ -45,26 +59,78 @@ export function Select({ value, onChange, options, placeholder = 'Select...', cl
     const groups = Object.keys(groupedOptions);
     const hasGroups = groups.length > 1 || (groups.length === 1 && groups[0] !== 'Other');
     const sortedGroups = hasGroups ? [...groups].sort(sortGroups) : [];
+    const shouldRenderMenu = isOpen && typeof document !== 'undefined';
+
+    useLayoutEffect(() => {
+        if (!isOpen || !containerRef.current) {
+            return;
+        }
+
+        function updateMenuPosition() {
+            if (!containerRef.current) {
+                return;
+            }
+            const rect = containerRef.current.getBoundingClientRect();
+            setMenuPosition({
+                top: rect.bottom + 4,
+                left: rect.left,
+                width: rect.width,
+            });
+        }
+
+        updateMenuPosition();
+        window.addEventListener('resize', updateMenuPosition);
+        window.addEventListener('scroll', updateMenuPosition, true);
+
+        return () => {
+            window.removeEventListener('resize', updateMenuPosition);
+            window.removeEventListener('scroll', updateMenuPosition, true);
+        };
+    }, [isOpen]);
 
     useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        function handlePointerDownOutside(event: PointerEvent) {
+            const target = event.target as Node;
+            const clickedTrigger = containerRef.current?.contains(target);
+            const clickedMenu = menuRef.current?.contains(target);
+
+            if (!clickedTrigger && !clickedMenu) {
                 setIsOpen(false);
             }
         }
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+
+        function handleEscape(event: KeyboardEvent) {
+            if (event.key === 'Escape') {
+                setIsOpen(false);
+            }
+        }
+
+        document.addEventListener('pointerdown', handlePointerDownOutside, true);
+        document.addEventListener('keydown', handleEscape);
+
+        return () => {
+            document.removeEventListener('pointerdown', handlePointerDownOutside, true);
+            document.removeEventListener('keydown', handleEscape);
+        };
     }, []);
+
+    function handleToggle(): void {
+        setIsOpen((current) => !current);
+    }
+
+    function handleSelect(optionValue: string): void {
+        onChange(optionValue);
+        setIsOpen(false);
+    }
 
     return (
         <div className={`relative ${className}`} ref={containerRef}>
             <button
                 type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                className={`
-                    w-full flex items-center justify-between px-3 py-2.5 bg-white border rounded-lg text-sm text-left transition-all
-                    ${isOpen ? 'border-[var(--brand-primary)] ring-1 ring-[var(--brand-primary)]/20' : 'border-slate-300 hover:border-slate-400'}
-                `}
+                onClick={handleToggle}
+                aria-expanded={isOpen}
+                aria-haspopup="listbox"
+                className={`${EDITOR_FIELD_DEFAULT_CLASS} flex items-center justify-between px-3 py-2.5 text-left ${isOpen ? 'border-[var(--brand-primary-300)] ring-1 ring-[var(--brand-primary)]/15' : 'hover:border-slate-300'}`.trim()}
             >
                 <div className="flex flex-col items-start overflow-hidden">
                     <span className={`block truncate ${selectedOption ? 'text-slate-900 font-medium' : 'text-slate-400'}`}>
@@ -79,14 +145,20 @@ export function Select({ value, onChange, options, placeholder = 'Select...', cl
                 <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            <AnimatePresence>
-                {isOpen && (
+            {shouldRenderMenu
+                ? createPortal(
                     <motion.div
+                        ref={menuRef}
                         initial={{ opacity: 0, y: -5, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -5, scale: 0.98 }}
                         transition={{ duration: 0.15, ease: "easeOut" }}
-                        className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl max-h-64 overflow-y-auto no-scrollbar focus:outline-none"
+                        role="listbox"
+                        className="fixed z-[1000] max-h-64 overflow-y-auto rounded-[var(--radius-lg)] border border-slate-200 bg-white shadow-[var(--shadow-md)] no-scrollbar focus:outline-none"
+                        style={{
+                            top: `${menuPosition.top}px`,
+                            left: `${menuPosition.left}px`,
+                            width: `${menuPosition.width}px`,
+                        }}
                     >
                         <div className="py-1">
                             {hasGroups ? (
@@ -103,7 +175,7 @@ export function Select({ value, onChange, options, placeholder = 'Select...', cl
                                                     key={option.value}
                                                     option={option}
                                                     isSelected={value === option.value}
-                                                    onClick={() => { onChange(option.value); setIsOpen(false); }}
+                                                    onClick={() => handleSelect(option.value)}
                                                 />
                                             ))}
                                         </div>
@@ -115,7 +187,7 @@ export function Select({ value, onChange, options, placeholder = 'Select...', cl
                                         key={option.value}
                                         option={option}
                                         isSelected={value === option.value}
-                                        onClick={() => { onChange(option.value); setIsOpen(false); }}
+                                        onClick={() => handleSelect(option.value)}
                                     />
                                 ))
                             )}
@@ -126,9 +198,9 @@ export function Select({ value, onChange, options, placeholder = 'Select...', cl
                                 </div>
                             )}
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    </motion.div>,
+                    document.body
+                ) : null}
         </div>
     );
 }

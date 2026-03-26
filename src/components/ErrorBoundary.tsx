@@ -38,7 +38,7 @@ class ErrorBoundaryComponent extends Component<Props, State> {
 
             return (
                 <div className={`flex items-center justify-center bg-slate-50 dark:bg-slate-900 p-4 ${this.props.className || 'min-h-screen'}`}>
-                    <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-700 p-8 text-center">
+                    <div className="max-w-md w-full overflow-hidden rounded-xl border border-slate-200 bg-white p-8 text-center shadow-[var(--shadow-lg)] dark:border-slate-700 dark:bg-slate-800">
                         <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
                             <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
                         </div>

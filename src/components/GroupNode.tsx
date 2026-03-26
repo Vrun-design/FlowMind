@@ -4,7 +4,6 @@ import type { LegacyNodeProps } from '@/lib/reactflowCompat';
 import type { NodeData } from '@/lib/types';
 import { getNodeParentId } from '@/lib/nodeParent';
 import { ChevronDown, ChevronRight, FolderOpen, FolderClosed } from 'lucide-react';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from './handleInteraction';
 import { NodeTransformControls } from './NodeTransformControls';
 import { useActiveNodeSelection } from './useActiveNodeSelection';
@@ -24,7 +23,7 @@ function GroupNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Rea
     const [collapsed, setCollapsed] = useState(false);
     const { setNodes } = useReactFlow();
     const allNodes = useNodes();
-    const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
+    const visualQualityV2Enabled = true;
     const isActiveSelected = useActiveNodeSelection(Boolean(selected));
     const handlePointerEvents = getHandlePointerEvents(visualQualityV2Enabled, isActiveSelected);
     const handleVisibilityClass = visualQualityV2Enabled

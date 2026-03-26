@@ -3,9 +3,10 @@ import type { LegacyNodeProps } from '@/lib/reactflowCompat';
 import type { NodeData } from '@/lib/types';
 import { NodeChrome } from './NodeChrome';
 
-function ImageNode({ data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
+function ImageNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
     return (
         <NodeChrome
+            nodeId={id}
             selected={Boolean(selected)}
             minWidth={50}
             minHeight={50}

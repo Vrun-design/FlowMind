@@ -4,6 +4,7 @@ import {
     Code2,
     Compass,
     FileCode,
+    Import,
     Palette,
     Search,
     Settings,
@@ -11,7 +12,7 @@ import {
     Workflow,
 } from 'lucide-react';
 import { useFlowStore } from '@/store';
-import { APP_NAME } from '@/lib/brand';
+import { APP_NAME, FLOWPILOT_NAME } from '@/lib/brand';
 import type { CommandItem, CommandBarProps } from './types';
 import { AssetsIcon } from '../icons/AssetsIcon';
 
@@ -22,7 +23,7 @@ interface UseCommandBarCommandsParams {
     onOpenStudioAI?: CommandBarProps['onOpenStudioAI'];
     onOpenStudioOpenFlow?: CommandBarProps['onOpenStudioOpenFlow'];
     onOpenStudioMermaid?: CommandBarProps['onOpenStudioMermaid'];
-    onOpenStudioPlayback?: CommandBarProps['onOpenStudioPlayback'];
+    hasImport?: boolean;
 }
 
 export function useCommandBarCommands({
@@ -32,46 +33,42 @@ export function useCommandBarCommands({
     onOpenStudioAI,
     onOpenStudioOpenFlow,
     onOpenStudioMermaid,
-    onOpenStudioPlayback,
+    hasImport = false,
 }: UseCommandBarCommandsParams): CommandItem[] {
     return useMemo(() => {
         return [
             {
                 id: 'studio-ai',
-                label: 'Open AI Studio',
+                label: `Open ${FLOWPILOT_NAME}`,
                 icon: <WandSparkles className="w-4 h-4 text-[var(--brand-primary)]" />,
+                tier: 'core',
                 type: 'action',
-                description: 'Open AI editing in the right rail',
+                description: `Open ${FLOWPILOT_NAME} in the right rail`,
                 action: onOpenStudioAI,
             },
             {
-                id: 'studio-openflow',
-                label: 'Edit Flow DSL',
-                icon: <FileCode className="w-4 h-4 text-emerald-500" />,
-                type: 'action',
-                description: `Open ${APP_NAME} DSL in Studio`,
-                action: onOpenStudioOpenFlow,
+                id: 'templates',
+                label: 'Start from Template',
+                icon: <Compass className="w-4 h-4 text-blue-500" />,
+                tier: 'core',
+                type: 'navigation',
+                description: 'Browse pre-built flows and starter layouts',
+                view: 'templates',
             },
-            {
-                id: 'studio-mermaid',
-                label: 'Edit Mermaid Code',
-                icon: <Code2 className="w-4 h-4 text-pink-500" />,
-                type: 'action',
-                description: 'Open Mermaid editing in Studio',
-                action: onOpenStudioMermaid,
-            },
-            {
-                id: 'studio-playback',
-                label: 'Open Playback Studio',
-                icon: <Workflow className="w-4 h-4 text-violet-500" />,
-                type: 'action' as const,
-                description: 'Author scenes, timeline order, and playback preview',
-                action: onOpenStudioPlayback,
-            },
+            ...(hasImport ? [{
+                id: 'import',
+                label: 'Import from data',
+                icon: <Import className="w-4 h-4 text-violet-500" />,
+                tier: 'core' as const,
+                type: 'navigation' as const,
+                view: 'import' as const,
+                description: 'SQL -> ERD, Terraform -> Cloud, OpenAPI -> Sequence, Code -> Architecture',
+            }] : []),
             {
                 id: 'assets',
                 label: 'Assets',
                 icon: <AssetsIcon className="w-4 h-4 text-[var(--brand-primary)]" />,
+                tier: 'advanced',
                 type: 'navigation',
                 view: 'assets',
                 description: 'Wireframes, notes, sections, and media',
@@ -80,6 +77,7 @@ export function useCommandBarCommands({
                 id: 'search-nodes',
                 label: 'Search Nodes',
                 icon: <Search className="w-4 h-4 text-[var(--brand-primary-400)]" />,
+                tier: 'core',
                 shortcut: '⌘F',
                 type: 'navigation',
                 view: 'search',
@@ -89,17 +87,28 @@ export function useCommandBarCommands({
                 id: 'layout',
                 label: 'Auto Layout',
                 icon: <Workflow className="w-4 h-4 text-sky-500" />,
+                tier: 'core',
                 type: 'navigation',
                 view: 'layout',
                 description: 'Arrange the current flow automatically',
             },
             {
-                id: 'templates',
-                label: 'Start from Template',
-                icon: <Compass className="w-4 h-4 text-blue-500" />,
-                type: 'navigation',
-                description: 'Browse pre-built flows and starter layouts',
-                view: 'templates',
+                id: 'studio-openflow',
+                label: 'Edit Flow DSL',
+                icon: <FileCode className="w-4 h-4 text-emerald-500" />,
+                tier: 'advanced',
+                type: 'action',
+                description: `Open ${APP_NAME} DSL in Studio`,
+                action: onOpenStudioOpenFlow,
+            },
+            {
+                id: 'studio-mermaid',
+                label: 'Edit Mermaid Code',
+                icon: <Code2 className="w-4 h-4 text-pink-500" />,
+                tier: 'advanced',
+                type: 'action',
+                description: 'Open Mermaid editing in Studio',
+                action: onOpenStudioMermaid,
             },
             ...(settings
                 ? [
@@ -107,6 +116,7 @@ export function useCommandBarCommands({
                         id: 'toggle-grid',
                         label: 'Show Grid',
                         icon: <Settings className="w-4 h-4 text-slate-500" />,
+                        tier: 'advanced' as const,
                         type: 'toggle' as const,
                         value: settings.showGrid,
                         action: settings.onToggleGrid,
@@ -117,6 +127,7 @@ export function useCommandBarCommands({
                         id: 'toggle-snap',
                         label: 'Snap to Grid',
                         icon: <Settings className="w-4 h-4 text-slate-500" />,
+                        tier: 'advanced' as const,
                         type: 'toggle' as const,
                         value: settings.snapToGrid,
                         action: settings.onToggleSnap,
@@ -129,6 +140,7 @@ export function useCommandBarCommands({
                 id: 'undo',
                 label: 'Undo',
                 icon: <ArrowRight className="w-4 h-4 rotate-180 text-slate-500" />,
+                tier: 'advanced',
                 shortcut: '⌘Z',
                 type: 'action',
                 action: onUndo,
@@ -138,6 +150,7 @@ export function useCommandBarCommands({
                 id: 'redo',
                 label: 'Redo',
                 icon: <ArrowRight className="w-4 h-4 text-slate-500" />,
+                tier: 'advanced',
                 shortcut: '⌘Y',
                 type: 'action',
                 action: onRedo,
@@ -147,6 +160,7 @@ export function useCommandBarCommands({
                 id: 'select-all-edges',
                 label: 'Select All Edges',
                 icon: <ArrowRight className="w-4 h-4 text-cyan-500" />,
+                tier: 'advanced',
                 type: 'action',
                 description: 'Highlight all connections',
                 action: () => {
@@ -159,10 +173,11 @@ export function useCommandBarCommands({
                 id: 'design-systems',
                 label: 'Design Systems',
                 icon: <Palette className="w-4 h-4 text-[var(--brand-primary)]" />,
+                tier: 'advanced',
                 type: 'navigation',
                 view: 'design-system',
                 description: 'Manage themes & styles',
             },
         ];
-    }, [onOpenStudioAI, onOpenStudioOpenFlow, onOpenStudioMermaid, onOpenStudioPlayback, settings, onUndo, onRedo]);
+    }, [onOpenStudioAI, onOpenStudioOpenFlow, onOpenStudioMermaid, hasImport, settings, onUndo, onRedo]);
 }

@@ -116,7 +116,7 @@ export function StudioPlaybackPanel({
                             key={preset}
                             type="button"
                             onClick={() => applyPreset(preset)}
-                            className="rounded-[calc(var(--brand-radius)-4px)] border border-slate-200 bg-slate-50 px-3 py-2 text-left transition-colors hover:border-[var(--brand-primary-200)] hover:bg-[var(--brand-primary-50)]"
+                            className="rounded-[var(--radius-xs)] border border-slate-200 bg-slate-50 px-3 py-2 text-left transition-colors hover:border-[var(--brand-primary-200)] hover:bg-[var(--brand-primary-50)]"
                         >
                             <div className="text-sm font-semibold text-[var(--brand-text)]">{PRESET_LABELS[preset].label}</div>
                             <div className="mt-1 text-[11px] leading-5 text-[var(--brand-secondary)]">{PRESET_LABELS[preset].description}</div>
@@ -135,7 +135,7 @@ export function StudioPlaybackPanel({
                         return (
                             <div
                                 key={scene.id}
-                                className={`rounded-[calc(var(--brand-radius)-4px)] border px-3 py-2 ${isSelected ? 'border-[var(--brand-primary-300)] bg-[var(--brand-primary-50)]' : 'border-slate-200 bg-slate-50'}`}
+                                className={`rounded-[var(--radius-xs)] border px-3 py-2 ${isSelected ? 'border-[var(--brand-primary-300)] bg-[var(--brand-primary-50)]' : 'border-slate-200 bg-slate-50'}`}
                             >
                                 <div className="flex items-center gap-2">
                                     <button
@@ -172,7 +172,7 @@ export function StudioPlaybackPanel({
                 <button
                     type="button"
                     onClick={() => commitPlayback(addPlaybackScene(playback))}
-                    className="mt-3 inline-flex items-center gap-2 rounded-[calc(var(--brand-radius)-4px)] border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:border-[var(--brand-primary-200)] hover:text-[var(--brand-primary)]"
+                    className="mt-3 inline-flex items-center gap-2 rounded-[var(--radius-xs)] border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:border-[var(--brand-primary-200)] hover:text-[var(--brand-primary)]"
                 >
                     <Plus className="h-3.5 w-3.5" />
                     Add scene
@@ -185,7 +185,7 @@ export function StudioPlaybackPanel({
             >
                 {hasPlayback ? (
                     <div className="space-y-4">
-                        <div className="rounded-[calc(var(--brand-radius)-4px)] border border-slate-200 bg-slate-50 px-3 py-3">
+                        <div className="rounded-[var(--radius-xs)] border border-slate-200 bg-slate-50 px-3 py-3">
                             <div className="flex items-center justify-between gap-3">
                                 <div>
                                     <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Preview</div>
@@ -241,7 +241,7 @@ export function StudioPlaybackPanel({
                             />
                         </div>
 
-                        <div className="flex items-center justify-between gap-3 rounded-[calc(var(--brand-radius)-4px)] border border-slate-200 bg-slate-50 px-3 py-2">
+                        <div className="flex items-center justify-between gap-3 rounded-[var(--radius-xs)] border border-slate-200 bg-slate-50 px-3 py-2">
                             <div>
                                 <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Default step duration</div>
                                 <div className="mt-1 text-[11px] text-slate-500">Used for new presets and fallback timing</div>
@@ -256,7 +256,7 @@ export function StudioPlaybackPanel({
                                     onPlaybackSpeedChange(next);
                                     commitPlayback(setPlaybackDefaultDuration(playback, next));
                                 }}
-                                className="w-24 rounded-[calc(var(--brand-radius)-4px)] border border-slate-200 bg-white px-2 py-1.5 text-sm"
+                                className="w-24 rounded-[var(--radius-xs)] border border-slate-200 bg-white px-2 py-1.5 text-sm"
                             />
                         </div>
 
@@ -267,7 +267,7 @@ export function StudioPlaybackPanel({
                                 return (
                                     <div
                                         key={step.id}
-                                        className={`rounded-[calc(var(--brand-radius)-4px)] border px-3 py-2 ${includedInSelectedScene ? 'border-slate-200 bg-white' : 'border-slate-100 bg-slate-50/60 opacity-70'}`}
+                                        className={`rounded-[var(--radius-xs)] border px-3 py-2 ${includedInSelectedScene ? 'border-slate-200 bg-white' : 'border-slate-100 bg-slate-50/60 opacity-70'}`}
                                     >
                                         <div className="flex items-center gap-2">
                                             {selectedScene ? (
@@ -313,7 +313,7 @@ export function StudioPlaybackPanel({
                                                     const nextDuration = Math.max(200, Number(event.target.value) || playback.defaultStepDurationMs);
                                                     commitPlayback(setPlaybackStepDuration(playback, step.id, nextDuration));
                                                 }}
-                                                className="w-20 rounded-[calc(var(--brand-radius)-4px)] border border-slate-200 bg-white px-2 py-1.5 text-sm"
+                                                className="w-20 rounded-[var(--radius-xs)] border border-slate-200 bg-white px-2 py-1.5 text-sm"
                                                 aria-label={`Duration for ${step.nodeId}`}
                                             />
                                         </div>
@@ -323,7 +323,7 @@ export function StudioPlaybackPanel({
                         </div>
                     </div>
                 ) : (
-                    <div className="rounded-[calc(var(--brand-radius)-4px)] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center">
+                    <div className="rounded-[var(--radius-xs)] border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center">
                         <ListOrdered className="mx-auto h-6 w-6 text-slate-400" />
                         <div className="mt-3 text-sm font-medium text-[var(--brand-text)]">No playback timeline yet</div>
                         <div className="mt-1 text-xs text-[var(--brand-secondary)]">Generate a preset to create scenes and stable step order from the current graph.</div>

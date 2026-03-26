@@ -4,7 +4,7 @@ import type { ChangeEvent, KeyboardEvent, RefObject } from 'react';
 interface UseAIViewStateParams {
     searchQuery: string;
     isGenerating: boolean;
-    onAIGenerate: (prompt: string, imageBase64?: string) => Promise<void>;
+    onAIGenerate: (prompt: string, imageBase64?: string) => Promise<boolean>;
     onClose: () => void;
     chatMessageCount: number;
 }
@@ -43,11 +43,12 @@ export function useAIViewState({
         const promptText = text || prompt;
         if ((!promptText.trim() && !selectedImage) || isGenerating) return;
 
-
-        await onAIGenerate(promptText, selectedImage || undefined);
-        setPrompt('');
-        setSelectedImage(null);
-        onClose();
+        const didGenerate = await onAIGenerate(promptText, selectedImage || undefined);
+        if (didGenerate) {
+            setPrompt('');
+            setSelectedImage(null);
+            onClose();
+        }
     }
 
     function handleKeyDown(e: KeyboardEvent): void {

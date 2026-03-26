@@ -1,75 +1,30 @@
 import React, { memo } from 'react';
-import { Handle, Position } from '@/lib/reactflowCompat';
 import type { LegacyNodeProps } from '@/lib/reactflowCompat';
 import type { NodeData } from '@/lib/types';
 import { useInlineNodeTextEdit } from '@/hooks/useInlineNodeTextEdit';
 import { InlineTextEditSurface } from '@/components/InlineTextEditSurface';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
-import { useFlowStore } from '@/store';
-import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from '@/components/handleInteraction';
 import { getTransformDiagnosticsAttrs } from '@/components/transformDiagnostics';
 import { NodeTransformControls } from '@/components/NodeTransformControls';
 import { useActiveNodeSelection } from '@/components/useActiveNodeSelection';
+import { NodeQuickCreateButtons } from '@/components/NodeQuickCreateButtons';
+import { formatErFieldLabel, normalizeErFields, parseErField, stringifyErField } from '@/lib/entityFields';
+import { useStructuredListEditor } from '@/hooks/useStructuredListEditor';
+import { StructuredNodeHandles } from './StructuredNodeHandles';
+
+const applyErFieldPatch = (items: string[]): Record<string, unknown> => {
+  return { erFields: items.map((s) => parseErField(s)) };
+};
 
 function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
-  const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
+  const visualQualityV2Enabled = true;
   const isActiveSelected = useActiveNodeSelection(Boolean(selected));
-  const handlePointerEvents = getHandlePointerEvents(visualQualityV2Enabled, isActiveSelected);
-  const handleVisibilityClass = visualQualityV2Enabled
-    ? getV2HandleVisibilityClass(isActiveSelected)
-    : isActiveSelected
-      ? 'opacity-100'
-      : 'opacity-0 group-hover:opacity-100 [.is-connecting_&]:opacity-100';
-  const fields = Array.isArray(data.erFields) ? data.erFields : [];
+  const fields = normalizeErFields(data.erFields);
   const labelEdit = useInlineNodeTextEdit(id, 'label', data.label || '');
-  const { setNodes } = useFlowStore();
-  const [editingFieldIndex, setEditingFieldIndex] = React.useState<number | null>(null);
-  const [fieldDraft, setFieldDraft] = React.useState('');
+  const fieldStrings = React.useMemo(() => fields.map(stringifyErField), [fields]);
+  const fieldEditor = useStructuredListEditor(id, fieldStrings, applyErFieldPatch);
   const entityBaseMinHeight = 130;
   const estimatedFieldsHeight = fields.length > 0 ? Math.min(fields.length, 6) * 18 + 24 : 18;
   const contentMinHeight = Math.max(entityBaseMinHeight, 56 + estimatedFieldsHeight);
-
-  const updateField = React.useCallback((index: number, value: string) => {
-    setNodes((nodes) =>
-      nodes.map((node) => {
-        if (node.id !== id) return node;
-        const current = Array.isArray(node.data?.erFields) ? [...node.data.erFields] : [];
-        if (index >= current.length) {
-          current.push(value);
-        } else {
-          current[index] = value;
-        }
-        return { ...node, data: { ...node.data, erFields: current } };
-      })
-    );
-  }, [id, setNodes]);
-
-  const removeField = React.useCallback((index: number) => {
-    setNodes((nodes) =>
-      nodes.map((node) => {
-        if (node.id !== id) return node;
-        const current = Array.isArray(node.data?.erFields) ? [...node.data.erFields] : [];
-        current.splice(index, 1);
-        return { ...node, data: { ...node.data, erFields: current } };
-      })
-    );
-  }, [id, setNodes]);
-
-  const beginFieldEdit = (index: number, value: string) => {
-    setEditingFieldIndex(index);
-    setFieldDraft(value);
-  };
-
-  const commitFieldEdit = () => {
-    if (editingFieldIndex === null) return;
-    const trimmed = fieldDraft.trim();
-    if (trimmed) {
-      updateField(editingFieldIndex, trimmed);
-    } else if (editingFieldIndex < fields.length) {
-      removeField(editingFieldIndex);
-    }
-    setEditingFieldIndex(null);
-  };
 
   return (
     <>
@@ -80,10 +35,8 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
       />
 
       <div
-        className={`${visualQualityV2Enabled ? 'bg-slate-50' : 'bg-white'} border border-slate-300 rounded-lg shadow-sm min-w-[220px]`}
-        style={{
-          minHeight: contentMinHeight,
-        }}
+        className={`relative ${visualQualityV2Enabled ? 'bg-slate-50' : 'bg-white'} border border-slate-300 rounded-lg shadow-sm min-w-[220px]`}
+        style={{ minHeight: contentMinHeight }}
         {...getTransformDiagnosticsAttrs({
           nodeFamily: 'entity',
           selected: Boolean(selected),
@@ -91,6 +44,7 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
           hasSubLabel: fields.length > 0,
         })}
       >
+        <NodeQuickCreateButtons nodeId={id} visible={Boolean(selected)} />
         <div className="border-b border-slate-300 px-3 py-2 bg-slate-50 rounded-t-lg">
           <div className="text-[11px] font-semibold text-slate-500">Entity</div>
           <InlineTextEditSurface
@@ -111,24 +65,14 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
             <ul className="space-y-1">
               {fields.map((field, index) => (
                 <li key={`field-${index}`} className="text-xs text-slate-700 font-mono break-words">
-                  {editingFieldIndex === index ? (
+                  {fieldEditor.editingIndex === index ? (
                     <input
                       autoFocus
-                      value={fieldDraft}
-                      onChange={(event) => setFieldDraft(event.target.value)}
-                      onBlur={commitFieldEdit}
+                      value={fieldEditor.draft}
+                      onChange={(event) => fieldEditor.setDraft(event.target.value)}
+                      onBlur={fieldEditor.commitEdit}
                       onMouseDown={(event) => event.stopPropagation()}
-                      onKeyDown={(event) => {
-                        event.stopPropagation();
-                        if (event.key === 'Escape') {
-                          event.preventDefault();
-                          setEditingFieldIndex(null);
-                        }
-                        if (event.key === 'Enter') {
-                          event.preventDefault();
-                          commitFieldEdit();
-                        }
-                      }}
+                      onKeyDown={(event) => fieldEditor.handleKeyDown(event, index)}
                       className="w-full rounded border border-slate-300 bg-white px-1 py-0.5 outline-none"
                     />
                   ) : (
@@ -137,10 +81,20 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
                       className="w-full text-left hover:bg-slate-50 rounded px-1 -mx-1"
                       onClick={(event) => {
                         event.stopPropagation();
-                        beginFieldEdit(index, field);
+                        fieldEditor.beginEdit(index, stringifyErField(field));
                       }}
                     >
-                      {field}
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-mono">{formatErFieldLabel(field)}</span>
+                        <span className="flex shrink-0 gap-1">
+                          {field.isPrimaryKey ? (
+                            <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">PK</span>
+                          ) : null}
+                          {field.isForeignKey ? (
+                            <span className="rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-700">FK</span>
+                          ) : null}
+                        </span>
+                      </div>
                     </button>
                   )}
                 </li>
@@ -149,35 +103,24 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
           ) : (
             <div className="text-[11px] text-slate-400">No fields</div>
           )}
-          {editingFieldIndex === fields.length && (
+          {fieldEditor.editingIndex === fields.length ? (
             <input
               autoFocus
-              value={fieldDraft}
-              onChange={(event) => setFieldDraft(event.target.value)}
-              onBlur={commitFieldEdit}
+              value={fieldEditor.draft}
+              onChange={(event) => fieldEditor.setDraft(event.target.value)}
+              onBlur={fieldEditor.commitEdit}
               onMouseDown={(event) => event.stopPropagation()}
-              onKeyDown={(event) => {
-                event.stopPropagation();
-                if (event.key === 'Escape') {
-                  event.preventDefault();
-                  setEditingFieldIndex(null);
-                }
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  commitFieldEdit();
-                }
-              }}
+              onKeyDown={(event) => fieldEditor.handleKeyDown(event, fields.length)}
               placeholder="fieldName: TYPE"
               className="mt-1 w-full rounded border border-slate-300 bg-white px-1 py-0.5 text-xs font-mono outline-none"
             />
-          )}
-          {editingFieldIndex !== fields.length && (
+          ) : (
             <button
               type="button"
               className="mt-1 text-[11px] text-slate-500 hover:text-slate-700"
               onClick={(event) => {
                 event.stopPropagation();
-                beginFieldEdit(fields.length, '');
+                fieldEditor.beginEdit(fields.length, '');
               }}
             >
               + Add field
@@ -186,42 +129,7 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
         </div>
       </div>
 
-      <Handle
-        type="source"
-        position={Position.Top}
-        id="top"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('top', isActiveSelected, handlePointerEvents)}
-      />
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="bottom"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('bottom', isActiveSelected, handlePointerEvents)}
-      />
-      <Handle
-        type="source"
-        position={Position.Left}
-        id="left"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('left', isActiveSelected, handlePointerEvents)}
-      />
-      <Handle
-        type="source"
-        position={Position.Right}
-        id="right"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('right', isActiveSelected, handlePointerEvents)}
-      />
+      <StructuredNodeHandles isActiveSelected={isActiveSelected} />
     </>
   );
 }

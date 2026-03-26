@@ -42,7 +42,7 @@ function OpenSettingsModalContent({ onClose, initialTab }: OpenSettingsModalCont
                 aria-modal="true"
                 aria-labelledby="settings-modal-title"
                 aria-describedby="settings-modal-description"
-                className="bg-white/95 backdrop-blur-xl w-full max-w-3xl max-h-full md:h-[80vh] rounded-[calc(var(--brand-radius)*1.5)] shadow-2xl border border-white/20 ring-1 ring-black/5 flex flex-col md:flex-row overflow-hidden animate-in zoom-in-95 duration-200"
+                className="bg-white/95 backdrop-blur-xl w-full max-w-3xl max-h-full md:h-[80vh] rounded-[var(--radius-xl)] shadow-[var(--shadow-overlay)] border border-white/20 ring-1 ring-black/5 flex flex-col md:flex-row overflow-hidden animate-in zoom-in-95 duration-200"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Sidebar */}

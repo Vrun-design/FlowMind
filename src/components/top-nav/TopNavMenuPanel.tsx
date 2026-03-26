@@ -29,7 +29,7 @@ export function TopNavMenuPanel({
                 onClick={onClose}
                 aria-label="Close menu"
             />
-            <div className="absolute top-full left-0 mt-3 w-56 bg-white/90 backdrop-blur-xl rounded-[var(--radius-lg)] shadow-2xl border border-white/50 ring-1 ring-black/5 p-2 flex flex-col gap-1 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
+            <div className="absolute top-full left-0 mt-3 w-56 bg-white/90 backdrop-blur-xl rounded-[var(--radius-lg)] shadow-[var(--shadow-md)] border border-white/50 ring-1 ring-black/5 p-2 flex flex-col gap-1 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
                 <div className="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
                     {t('nav.menu', 'Menu')}
                 </div>

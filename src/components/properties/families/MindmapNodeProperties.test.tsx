@@ -64,7 +64,7 @@ describe('MindmapNodeProperties', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Color' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Branch Color' }));
     fireEvent.click(screen.getByRole('button', { name: 'Blue' }));
 
     expect(onChange).toHaveBeenCalledWith('branch-topic', expect.objectContaining({ color: 'blue' }));

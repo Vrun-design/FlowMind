@@ -7,6 +7,7 @@ import type { DomainLibraryItem } from '@/services/domainLibrary';
 import type { ChatMessage } from '@/services/aiService';
 import type { SupportedLanguage } from '@/hooks/ai-generation/codeToArchitecture';
 import type { TerraformInputFormat } from '@/hooks/ai-generation/terraformToCloud';
+import type { AIReadinessState } from '@/hooks/ai-generation/readiness';
 
 export interface CommandBarPanelBuilderParams {
     isCommandBarOpen: boolean;
@@ -36,6 +37,10 @@ export interface CommandBarPanelBuilderParams {
     handleAddImage: (imageUrl: string) => void;
     handleAddWireframe: (surface: 'browser' | 'mobile') => void;
     handleAddDomainLibraryItem: (item: DomainLibraryItem) => void;
+    handleCodeAnalysis?: (code: string, language: SupportedLanguage) => Promise<boolean>;
+    handleSqlAnalysis?: (sql: string) => Promise<boolean>;
+    handleTerraformAnalysis?: (input: string, format: TerraformInputFormat) => Promise<boolean>;
+    handleOpenApiAnalysis?: (spec: string) => Promise<boolean>;
     showGrid: boolean;
     toggleGrid: () => void;
     snapToGrid: boolean;
@@ -72,19 +77,28 @@ export interface PropertiesRailBuilderParams {
     handleAddMindmapSibling: FlowEditorPanelsProps['properties']['onAddMindmapSibling'];
     handleAddArchitectureService: FlowEditorPanelsProps['properties']['onAddArchitectureService'];
     handleCreateArchitectureBoundary: FlowEditorPanelsProps['properties']['onCreateArchitectureBoundary'];
+    handleApplyArchitectureTemplate: FlowEditorPanelsProps['properties']['onApplyArchitectureTemplate'];
+    handleGenerateEntityFields: FlowEditorPanelsProps['properties']['onGenerateEntityFields'];
+    handleSuggestArchitectureNode: FlowEditorPanelsProps['properties']['onSuggestArchitectureNode'];
+    handleConvertEntitySelectionToClassDiagram: FlowEditorPanelsProps['properties']['onConvertEntitySelectionToClassDiagram'];
+    handleOpenMermaidCodeEditor: FlowEditorPanelsProps['properties']['onOpenMermaidCodeEditor'];
     clearSelection: () => void;
 }
 
 export interface StudioRailBuilderParams {
     closeStudioPanel: () => void;
     handleCommandBarApply: (nodes: FlowNode[], edges: FlowEdge[]) => void;
-    handleAIRequest: (prompt: string, imageBase64?: string) => Promise<void>;
-    handleCodeAnalysis: (code: string, language: SupportedLanguage) => Promise<void>;
-    handleSqlAnalysis: (sql: string) => Promise<void>;
-    handleTerraformAnalysis: (input: string, format: TerraformInputFormat) => Promise<void>;
-    handleOpenApiAnalysis: (spec: string) => Promise<void>;
-    handleApplyInfraDsl: (dsl: string) => void;
+    handleAIRequest: (prompt: string, imageBase64?: string) => Promise<boolean>;
     isGenerating: boolean;
+    streamingText: string | null;
+    retryCount: number;
+    cancelGeneration: () => void;
+    pendingDiff: import('@/hooks/useAIGeneration').ImportDiff | null;
+    confirmPendingDiff: () => void;
+    discardPendingDiff: () => void;
+    aiReadiness: AIReadinessState;
+    lastAIError: string | null;
+    onClearAIError: () => void;
     chatMessages: ChatMessage[];
     clearChat: () => void;
     selectedNode: FlowNode | null;
@@ -106,6 +120,18 @@ export interface BuildFlowEditorPanelsPropsParams {
     studio: StudioRailBuilderParams;
     isHistoryOpen: boolean;
     editorMode: FlowEditorMode;
+}
+
+function wrapAsyncCommand<TArgs extends unknown[]>(
+    handler?: (...args: TArgs) => Promise<boolean>
+): ((...args: TArgs) => Promise<void>) | undefined {
+    if (!handler) {
+        return undefined;
+    }
+
+    return async (...args: TArgs): Promise<void> => {
+        await handler(...args);
+    };
 }
 
 export function buildCommandBarPanelProps({
@@ -132,6 +158,10 @@ export function buildCommandBarPanelProps({
     handleAddImage,
     handleAddWireframe,
     handleAddDomainLibraryItem,
+    handleCodeAnalysis,
+    handleSqlAnalysis,
+    handleTerraformAnalysis,
+    handleOpenApiAnalysis,
     showGrid,
     toggleGrid,
     snapToGrid,
@@ -163,6 +193,10 @@ export function buildCommandBarPanelProps({
         onAddBrowserWireframe: () => handleAddWireframe('browser'),
         onAddMobileWireframe: () => handleAddWireframe('mobile'),
         onAddDomainLibraryItem: handleAddDomainLibraryItem,
+        onCodeAnalysis: wrapAsyncCommand(handleCodeAnalysis),
+        onSqlAnalysis: wrapAsyncCommand(handleSqlAnalysis),
+        onTerraformAnalysis: wrapAsyncCommand(handleTerraformAnalysis),
+        onOpenApiAnalysis: wrapAsyncCommand(handleOpenApiAnalysis),
         showGrid,
         onToggleGrid: toggleGrid,
         snapToGrid,
@@ -212,6 +246,11 @@ export function buildPropertiesRailProps({
     handleAddMindmapSibling,
     handleAddArchitectureService,
     handleCreateArchitectureBoundary,
+    handleApplyArchitectureTemplate,
+    handleGenerateEntityFields,
+    handleSuggestArchitectureNode,
+    handleConvertEntitySelectionToClassDiagram,
+    handleOpenMermaidCodeEditor,
     clearSelection,
 }: PropertiesRailBuilderParams): FlowEditorPanelsProps['properties'] {
     return {
@@ -230,6 +269,11 @@ export function buildPropertiesRailProps({
         onAddMindmapSibling: handleAddMindmapSibling,
         onAddArchitectureService: handleAddArchitectureService,
         onCreateArchitectureBoundary: handleCreateArchitectureBoundary,
+        onApplyArchitectureTemplate: handleApplyArchitectureTemplate,
+        onGenerateEntityFields: handleGenerateEntityFields,
+        onSuggestArchitectureNode: handleSuggestArchitectureNode,
+        onConvertEntitySelectionToClassDiagram: handleConvertEntitySelectionToClassDiagram,
+        onOpenMermaidCodeEditor: handleOpenMermaidCodeEditor,
         onClose: clearSelection,
     };
 }
@@ -238,12 +282,16 @@ export function buildStudioRailProps({
     closeStudioPanel,
     handleCommandBarApply,
     handleAIRequest,
-    handleCodeAnalysis,
-    handleSqlAnalysis,
-    handleTerraformAnalysis,
-    handleOpenApiAnalysis,
-    handleApplyInfraDsl,
     isGenerating,
+    streamingText,
+    retryCount,
+    cancelGeneration,
+    pendingDiff,
+    confirmPendingDiff,
+    discardPendingDiff,
+    aiReadiness,
+    lastAIError,
+    onClearAIError,
     chatMessages,
     clearChat,
     selectedNode,
@@ -261,12 +309,16 @@ export function buildStudioRailProps({
         onClose: closeStudioPanel,
         onApply: handleCommandBarApply,
         onAIGenerate: handleAIRequest,
-        onCodeAnalysis: handleCodeAnalysis,
-        onSqlAnalysis: handleSqlAnalysis,
-        onTerraformAnalysis: handleTerraformAnalysis,
-        onOpenApiAnalysis: handleOpenApiAnalysis,
-        onApplyInfraDsl: handleApplyInfraDsl,
         isGenerating,
+        streamingText,
+        retryCount,
+        cancelGeneration,
+        pendingDiff,
+        onConfirmDiff: confirmPendingDiff,
+        onDiscardDiff: discardPendingDiff,
+        aiReadiness,
+        lastAIError,
+        onClearAIError,
         chatMessages,
         onClearChat: clearChat,
         selectedNode,

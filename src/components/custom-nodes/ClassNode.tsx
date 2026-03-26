@@ -1,27 +1,26 @@
 import React, { memo } from 'react';
-import { Handle, Position } from '@/lib/reactflowCompat';
 import type { LegacyNodeProps } from '@/lib/reactflowCompat';
 import type { NodeData } from '@/lib/types';
 import { useInlineNodeTextEdit } from '@/hooks/useInlineNodeTextEdit';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { useFlowStore } from '@/store';
-import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from '@/components/handleInteraction';
 import { InlineTextEditSurface } from '@/components/InlineTextEditSurface';
 import { getTransformDiagnosticsAttrs } from '@/components/transformDiagnostics';
 import { NodeTransformControls } from '@/components/NodeTransformControls';
 import { useActiveNodeSelection } from '@/components/useActiveNodeSelection';
+import { getStructuredListNavigationAction } from './structuredListNavigation';
+import { NodeQuickCreateButtons } from '@/components/NodeQuickCreateButtons';
+import { getClassVisibilityTone, parseClassMember } from '@/lib/classMembers';
+import { StructuredNodeHandles } from './StructuredNodeHandles';
+
+function getClassList(data: NodeData, key: 'classAttributes' | 'classMethods'): string[] {
+  return Array.isArray(data[key]) ? data[key] : [];
+}
 
 function ClassNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
-  const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
+  const visualQualityV2Enabled = true;
   const isActiveSelected = useActiveNodeSelection(Boolean(selected));
-  const handlePointerEvents = getHandlePointerEvents(visualQualityV2Enabled, isActiveSelected);
-  const handleVisibilityClass = visualQualityV2Enabled
-    ? getV2HandleVisibilityClass(isActiveSelected)
-    : isActiveSelected
-      ? 'opacity-100'
-      : 'opacity-0 group-hover:opacity-100 [.is-connecting_&]:opacity-100';
-  const attributes = Array.isArray(data.classAttributes) ? data.classAttributes : [];
-  const methods = Array.isArray(data.classMethods) ? data.classMethods : [];
+  const attributes = getClassList(data, 'classAttributes');
+  const methods = getClassList(data, 'classMethods');
   const labelEdit = useInlineNodeTextEdit(id, 'label', data.label || '');
   const stereotypeEdit = useInlineNodeTextEdit(id, 'classStereotype', data.classStereotype || '');
   const { setNodes } = useFlowStore();
@@ -33,65 +32,166 @@ function ClassNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Rea
   const estimatedMethodsHeight = methods.length > 0 ? Math.min(methods.length, 4) * 18 + 16 : 16;
   const contentMinHeight = Math.max(classBaseMinHeight, 76 + estimatedAttributesHeight + estimatedMethodsHeight);
 
-  const updateClassList = React.useCallback((key: 'classAttributes' | 'classMethods', index: number, nextValue: string) => {
+  function mutateClassList(
+    key: 'classAttributes' | 'classMethods',
+    updater: (current: string[]) => string[],
+  ): void {
     setNodes((nodes) =>
       nodes.map((node) => {
         if (node.id !== id) return node;
-        const current = Array.isArray(node.data?.[key]) ? [...(node.data?.[key] as string[])] : [];
-        if (index >= current.length) {
-          current.push(nextValue);
-        } else {
-          current[index] = nextValue;
-        }
-        return { ...node, data: { ...node.data, [key]: current } };
-      })
+        const current = getClassList(node.data, key);
+        return { ...node, data: { ...node.data, [key]: updater([...current]) } };
+      }),
     );
-  }, [id, setNodes]);
+  }
 
-  const removeClassListItem = React.useCallback((key: 'classAttributes' | 'classMethods', index: number) => {
-    setNodes((nodes) =>
-      nodes.map((node) => {
-        if (node.id !== id) return node;
-        const current = Array.isArray(node.data?.[key]) ? [...(node.data?.[key] as string[])] : [];
-        current.splice(index, 1);
-        return { ...node, data: { ...node.data, [key]: current } };
-      })
-    );
-  }, [id, setNodes]);
-
-  const beginAttributeEdit = (index: number, value: string) => {
-    setEditingMethodIndex(null);
-    setEditingAttributeIndex(index);
+  function beginEdit(
+    key: 'classAttributes' | 'classMethods',
+    index: number,
+    value: string,
+  ): void {
+    if (key === 'classAttributes') {
+      setEditingMethodIndex(null);
+      setEditingAttributeIndex(index);
+    } else {
+      setEditingAttributeIndex(null);
+      setEditingMethodIndex(index);
+    }
     setListDraft(value);
-  };
+  }
 
-  const beginMethodEdit = (index: number, value: string) => {
-    setEditingAttributeIndex(null);
-    setEditingMethodIndex(index);
-    setListDraft(value);
-  };
-
-  const commitAttributeEdit = () => {
-    if (editingAttributeIndex === null) return;
+  function commitBlur(key: 'classAttributes' | 'classMethods'): void {
+    const editingIndex = key === 'classAttributes' ? editingAttributeIndex : editingMethodIndex;
+    if (editingIndex === null) return;
+    const currentItems = key === 'classAttributes' ? attributes : methods;
     const trimmed = listDraft.trim();
     if (trimmed) {
-      updateClassList('classAttributes', editingAttributeIndex, trimmed);
-    } else if (editingAttributeIndex < attributes.length) {
-      removeClassListItem('classAttributes', editingAttributeIndex);
+      mutateClassList(key, (list) => {
+        if (editingIndex >= list.length) list.push(trimmed);
+        else list[editingIndex] = trimmed;
+        return list;
+      });
+    } else if (editingIndex < currentItems.length) {
+      mutateClassList(key, (list) => { list.splice(editingIndex, 1); return list; });
     }
-    setEditingAttributeIndex(null);
-  };
+    if (key === 'classAttributes') setEditingAttributeIndex(null);
+    else setEditingMethodIndex(null);
+  }
 
-  const commitMethodEdit = () => {
-    if (editingMethodIndex === null) return;
+  function handleListKeyDown(
+    event: React.KeyboardEvent<HTMLInputElement>,
+    key: 'classAttributes' | 'classMethods',
+    index: number,
+  ): void {
+    event.stopPropagation();
+    const currentItems = key === 'classAttributes' ? attributes : methods;
+    const action = getStructuredListNavigationAction(
+      event.key,
+      { ctrlKey: event.ctrlKey, metaKey: event.metaKey, shiftKey: event.shiftKey },
+      index,
+      currentItems.length,
+    );
+
+    if (!action) return;
+    event.preventDefault();
+
+    if (action.type === 'cancel') {
+      if (key === 'classAttributes') setEditingAttributeIndex(null);
+      else setEditingMethodIndex(null);
+      return;
+    }
+
+    // Persist current value without removing empty rows during navigation
     const trimmed = listDraft.trim();
     if (trimmed) {
-      updateClassList('classMethods', editingMethodIndex, trimmed);
-    } else if (editingMethodIndex < methods.length) {
-      removeClassListItem('classMethods', editingMethodIndex);
+      mutateClassList(key, (list) => {
+        if (index >= list.length) list.push(trimmed);
+        else list[index] = trimmed;
+        return list;
+      });
     }
-    setEditingMethodIndex(null);
-  };
+
+    if (action.type === 'insertBelow') {
+      mutateClassList(key, (list) => { list.splice(action.targetIndex, 0, ''); return list; });
+      beginEdit(key, action.targetIndex, '');
+      return;
+    }
+
+    beginEdit(key, action.targetIndex, currentItems[action.targetIndex] ?? '');
+  }
+
+  function renderClassMember(value: string): React.ReactElement {
+    const parsed = parseClassMember(value);
+    return (
+      <span className="inline-flex items-start gap-1 break-words">
+        <span className={`font-semibold ${getClassVisibilityTone(parsed.visibility)}`}>{parsed.symbol}</span>
+        <span>{parsed.signature}</span>
+      </span>
+    );
+  }
+
+  function renderListSection(
+    key: 'classAttributes' | 'classMethods',
+    items: string[],
+    editingIndex: number | null,
+    placeholder: string,
+    emptyLabel: string,
+    addLabel: string,
+  ): React.ReactElement {
+    return (
+      <>
+        {items.length > 0 ? (
+          <ul className="space-y-1">
+            {items.map((item, index) => (
+              <li key={`${key}-${index}`} className="text-xs text-slate-700 font-mono break-words">
+                {editingIndex === index ? (
+                  <input
+                    autoFocus
+                    value={listDraft}
+                    onChange={(event) => setListDraft(event.target.value)}
+                    onBlur={() => commitBlur(key)}
+                    onMouseDown={(event) => event.stopPropagation()}
+                    onKeyDown={(event) => handleListKeyDown(event, key, index)}
+                    className="w-full rounded border border-slate-300 bg-white px-1 py-0.5 outline-none"
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    className="w-full text-left hover:bg-slate-50 rounded px-1 -mx-1"
+                    onClick={(event) => { event.stopPropagation(); beginEdit(key, index, item); }}
+                  >
+                    {renderClassMember(item)}
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="text-[11px] text-slate-400">{emptyLabel}</div>
+        )}
+        {editingIndex === items.length ? (
+          <input
+            autoFocus
+            value={listDraft}
+            onChange={(event) => setListDraft(event.target.value)}
+            onBlur={() => commitBlur(key)}
+            onMouseDown={(event) => event.stopPropagation()}
+            onKeyDown={(event) => handleListKeyDown(event, key, items.length)}
+            placeholder={placeholder}
+            className="mt-1 w-full rounded border border-slate-300 bg-white px-1 py-0.5 text-xs font-mono outline-none"
+          />
+        ) : (
+          <button
+            type="button"
+            className="mt-1 text-[11px] text-slate-500 hover:text-slate-700"
+            onClick={(event) => { event.stopPropagation(); beginEdit(key, items.length, ''); }}
+          >
+            {addLabel}
+          </button>
+        )}
+      </>
+    );
+  }
 
   return (
     <>
@@ -102,10 +202,8 @@ function ClassNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Rea
       />
 
       <div
-        className={`${visualQualityV2Enabled ? 'bg-slate-50' : 'bg-white'} border border-slate-300 rounded-lg shadow-sm min-w-[220px]`}
-        style={{
-          minHeight: contentMinHeight,
-        }}
+        className={`relative ${visualQualityV2Enabled ? 'bg-slate-50' : 'bg-white'} border border-slate-300 rounded-lg shadow-sm min-w-[220px]`}
+        style={{ minHeight: contentMinHeight }}
         {...getTransformDiagnosticsAttrs({
           nodeFamily: 'class',
           selected: Boolean(selected),
@@ -113,6 +211,7 @@ function ClassNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Rea
           hasSubLabel: Boolean(data.classStereotype),
         })}
       >
+        <NodeQuickCreateButtons nodeId={id} visible={Boolean(selected)} />
         <div className="border-b border-slate-300 px-3 py-2 text-center">
           {data.classStereotype && (
             <InlineTextEditSurface
@@ -143,200 +242,15 @@ function ClassNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Rea
         </div>
 
         <div className="border-b border-slate-300 px-3 py-2">
-          {attributes.length > 0 ? (
-            <ul className="space-y-1">
-              {attributes.map((attribute, index) => (
-                <li key={`attr-${index}`} className="text-xs text-slate-700 font-mono break-words">
-                  {editingAttributeIndex === index ? (
-                    <input
-                      autoFocus
-                      value={listDraft}
-                      onChange={(event) => setListDraft(event.target.value)}
-                      onBlur={commitAttributeEdit}
-                      onMouseDown={(event) => event.stopPropagation()}
-                      onKeyDown={(event) => {
-                        event.stopPropagation();
-                        if (event.key === 'Escape') {
-                          event.preventDefault();
-                          setEditingAttributeIndex(null);
-                        }
-                        if (event.key === 'Enter') {
-                          event.preventDefault();
-                          commitAttributeEdit();
-                        }
-                      }}
-                      className="w-full rounded border border-slate-300 bg-white px-1 py-0.5 outline-none"
-                    />
-                  ) : (
-                    <button
-                      type="button"
-                      className="w-full text-left hover:bg-slate-50 rounded px-1 -mx-1"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        beginAttributeEdit(index, attribute);
-                      }}
-                    >
-                      {attribute}
-                    </button>
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="text-[11px] text-slate-400">No attributes</div>
-          )}
-          {editingAttributeIndex === attributes.length && (
-            <input
-              autoFocus
-              value={listDraft}
-              onChange={(event) => setListDraft(event.target.value)}
-              onBlur={commitAttributeEdit}
-              onMouseDown={(event) => event.stopPropagation()}
-              onKeyDown={(event) => {
-                event.stopPropagation();
-                if (event.key === 'Escape') {
-                  event.preventDefault();
-                  setEditingAttributeIndex(null);
-                }
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  commitAttributeEdit();
-                }
-              }}
-              placeholder="+ attribute: Type"
-              className="mt-1 w-full rounded border border-slate-300 bg-white px-1 py-0.5 text-xs font-mono outline-none"
-            />
-          )}
-          {editingAttributeIndex !== attributes.length && (
-            <button
-              type="button"
-              className="mt-1 text-[11px] text-slate-500 hover:text-slate-700"
-              onClick={(event) => {
-                event.stopPropagation();
-                beginAttributeEdit(attributes.length, '');
-              }}
-            >
-              + Add attribute
-            </button>
-          )}
+          {renderListSection('classAttributes', attributes, editingAttributeIndex, '+ attribute: Type', 'No attributes', '+ Add attribute')}
         </div>
 
         <div className="px-3 py-2">
-          {methods.length > 0 ? (
-            <ul className="space-y-1">
-              {methods.map((method, index) => (
-                <li key={`method-${index}`} className="text-xs text-slate-700 font-mono break-words">
-                  {editingMethodIndex === index ? (
-                    <input
-                      autoFocus
-                      value={listDraft}
-                      onChange={(event) => setListDraft(event.target.value)}
-                      onBlur={commitMethodEdit}
-                      onMouseDown={(event) => event.stopPropagation()}
-                      onKeyDown={(event) => {
-                        event.stopPropagation();
-                        if (event.key === 'Escape') {
-                          event.preventDefault();
-                          setEditingMethodIndex(null);
-                        }
-                        if (event.key === 'Enter') {
-                          event.preventDefault();
-                          commitMethodEdit();
-                        }
-                      }}
-                      className="w-full rounded border border-slate-300 bg-white px-1 py-0.5 outline-none"
-                    />
-                  ) : (
-                    <button
-                      type="button"
-                      className="w-full text-left hover:bg-slate-50 rounded px-1 -mx-1"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        beginMethodEdit(index, method);
-                      }}
-                    >
-                      {method}
-                    </button>
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="text-[11px] text-slate-400">No methods</div>
-          )}
-          {editingMethodIndex === methods.length && (
-            <input
-              autoFocus
-              value={listDraft}
-              onChange={(event) => setListDraft(event.target.value)}
-              onBlur={commitMethodEdit}
-              onMouseDown={(event) => event.stopPropagation()}
-              onKeyDown={(event) => {
-                event.stopPropagation();
-                if (event.key === 'Escape') {
-                  event.preventDefault();
-                  setEditingMethodIndex(null);
-                }
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  commitMethodEdit();
-                }
-              }}
-              placeholder="+ method(): void"
-              className="mt-1 w-full rounded border border-slate-300 bg-white px-1 py-0.5 text-xs font-mono outline-none"
-            />
-          )}
-          {editingMethodIndex !== methods.length && (
-            <button
-              type="button"
-              className="mt-1 text-[11px] text-slate-500 hover:text-slate-700"
-              onClick={(event) => {
-                event.stopPropagation();
-                beginMethodEdit(methods.length, '');
-              }}
-            >
-              + Add method
-            </button>
-          )}
+          {renderListSection('classMethods', methods, editingMethodIndex, '+ method(): void', 'No methods', '+ Add method')}
         </div>
       </div>
 
-      <Handle
-        type="source"
-        position={Position.Top}
-        id="top"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('top', isActiveSelected, handlePointerEvents)}
-      />
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="bottom"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('bottom', isActiveSelected, handlePointerEvents)}
-      />
-      <Handle
-        type="source"
-        position={Position.Left}
-        id="left"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('left', isActiveSelected, handlePointerEvents)}
-      />
-      <Handle
-        type="source"
-        position={Position.Right}
-        id="right"
-        isConnectableStart
-        isConnectableEnd
-        className={`!w-3 !h-3 !border-2 !border-white transition-all duration-150 hover:scale-125 ${handleVisibilityClass}`}
-        style={getConnectorHandleStyle('right', isActiveSelected, handlePointerEvents)}
-      />
+      <StructuredNodeHandles isActiveSelected={isActiveSelected} />
     </>
   );
 }

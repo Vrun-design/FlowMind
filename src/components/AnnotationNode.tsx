@@ -6,6 +6,8 @@ import { useInlineNodeTextEdit } from '@/hooks/useInlineNodeTextEdit';
 import { InlineTextEditSurface } from './InlineTextEditSurface';
 import { NodeChrome } from './NodeChrome';
 import { hasMarkdownSyntax } from './markdownSyntax';
+import { useFlowStore } from '@/store';
+import { ANNOTATION_COLOR_OPTIONS, resolveAnnotationTheme } from './annotationTheme';
 
 const LazyMarkdownRenderer = lazy(async () => {
   const module = await import('./MarkdownRenderer');
@@ -14,11 +16,15 @@ const LazyMarkdownRenderer = lazy(async () => {
 
 function AnnotationNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
   const { t } = useTranslation();
+  const { setNodes } = useFlowStore();
   const labelEdit = useInlineNodeTextEdit(id, 'label', data.label || '');
   const subLabelEdit = useInlineNodeTextEdit(id, 'subLabel', data.subLabel || '', {
     multiline: true,
     allowTabCreateSibling: false,
   });
+  const annotationTheme = resolveAnnotationTheme(data.color);
+  const lineCount = (data.subLabel || '').split('\n').length;
+  const contentMinHeight = Math.max(100, 84 + lineCount * 18);
   const subLabelContent = data.subLabel || t('annotationNode.placeholder');
   const renderedSubLabel = hasMarkdownSyntax(subLabelContent)
     ? (
@@ -29,6 +35,7 @@ function AnnotationNode({ id, data, selected }: LegacyNodeProps<NodeData>): Reac
     : <span className="whitespace-pre-wrap break-words">{subLabelContent}</span>;
   return (
     <NodeChrome
+      nodeId={id}
       selected={Boolean(selected)}
       minWidth={150}
       minHeight={100}
@@ -37,13 +44,31 @@ function AnnotationNode({ id, data, selected }: LegacyNodeProps<NodeData>): Reac
     >
       <div
         className={`
-          relative group flex flex-col h-full shadow-md flow-lod-shadow rounded-br-3xl rounded-tl-sm rounded-tr-sm rounded-bl-sm border border-yellow-300 transition-all duration-200
-          bg-yellow-100/90
+          relative group flex flex-col shadow-md flow-lod-shadow rounded-br-3xl rounded-tl-sm rounded-tr-sm rounded-bl-sm border transition-all duration-200
+          ${annotationTheme.container}
           ${selected ? 'z-10' : 'hover:shadow-lg'}
         `}
-        style={{ minWidth: 200, width: '100%', height: '100%' }}
+        style={{ minWidth: 200, width: '100%', minHeight: contentMinHeight }}
       >
-        <div className="p-4 flex flex-col h-full">
+        {selected ? (
+          <div className="absolute -top-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1 shadow-sm">
+            {ANNOTATION_COLOR_OPTIONS.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                aria-label={`Set annotation color ${option.label}`}
+                className={`h-3.5 w-3.5 rounded-full border transition-transform hover:scale-110 ${option.dot} ${data.color === option.id ? 'ring-2 ring-slate-400/70' : 'border-white/70'}`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setNodes((nodes) => nodes.map((node) => (
+                    node.id === id ? { ...node, data: { ...node.data, color: option.id } } : node
+                  )));
+                }}
+              />
+            ))}
+          </div>
+        ) : null}
+        <div className="p-4 flex flex-col">
             {data.label && (
                 <InlineTextEditSurface
                     isEditing={labelEdit.isEditing}
@@ -53,8 +78,8 @@ function AnnotationNode({ id, data, selected }: LegacyNodeProps<NodeData>): Reac
                     onDraftChange={labelEdit.setDraft}
                     onCommit={labelEdit.commit}
                     onKeyDown={labelEdit.handleKeyDown}
-                    className="text-sm font-bold text-yellow-900 border-b border-yellow-200 pb-2 mb-2"
-                    inputClassName="text-yellow-900"
+                    className={`mb-2 border-b pb-2 text-sm font-bold ${annotationTheme.title}`}
+                    inputClassName={annotationTheme.title.split(' ')[0]}
                     isSelected={Boolean(selected)}
                 />
             )}
@@ -66,15 +91,15 @@ function AnnotationNode({ id, data, selected }: LegacyNodeProps<NodeData>): Reac
                 onDraftChange={subLabelEdit.setDraft}
                 onCommit={subLabelEdit.commit}
                 onKeyDown={subLabelEdit.handleKeyDown}
-                className="text-xs text-yellow-800 font-medium leading-relaxed markdown-content flex-1 overflow-hidden flow-lod-secondary"
-                inputClassName="text-yellow-800"
+                className={`text-xs font-medium leading-relaxed markdown-content flow-lod-secondary ${annotationTheme.body}`}
+                inputClassName={annotationTheme.body}
                 inputMode="multiline"
                 isSelected={Boolean(selected)}
             />
         </div>
 
         {/* Decorative corner fold */}
-        <div className="absolute bottom-0 right-0 w-8 h-8 bg-yellow-200/50 rounded-tl-xl border-t border-l border-yellow-300/30"></div>
+        <div className={`absolute bottom-0 right-0 h-8 w-8 rounded-tl-xl border-l border-t ${annotationTheme.fold}`}></div>
       </div>
     </NodeChrome>
   );

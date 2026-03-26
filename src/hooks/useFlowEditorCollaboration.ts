@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import type { FlowEdge, FlowNode } from '@/lib/types';
 import type { ToastType } from '@/components/ui/ToastContext';
 import { useFlowStore } from '@/store';
@@ -80,7 +79,7 @@ export function useFlowEditorCollaboration({
     const [collaborationTransportStatus, setCollaborationTransportStatus] = useState<'realtime' | 'waiting' | 'fallback'>('fallback');
     const [collaborationCacheState, setCollaborationCacheState] = useState<'unavailable' | 'syncing' | 'ready' | 'hydrated'>(
         resolveInitialCollaborationCacheState({
-            indexedDbEnabled: ROLLOUT_FLAGS.collaborationIndexedDbV1,
+            indexedDbEnabled: true,
             indexedDbAvailable,
         })
     );
@@ -298,7 +297,6 @@ export function useFlowEditorCollaboration({
             return;
         }
         const currentMap = new Map(collaborationPresence.map((p) => [p.clientId, p.name]));
-        const previousMap = previousPresenceMapRef.current;
 
         if (!hasHydratedPresenceRef.current) {
             previousPresenceMapRef.current = currentMap;
@@ -306,19 +304,8 @@ export function useFlowEditorCollaboration({
             return;
         }
 
-        for (const [clientId, name] of currentMap) {
-            if (!previousMap.has(clientId) && clientId !== localCollaborationClientId) {
-                addToast(`${name} joined`, 'info', 3000);
-            }
-        }
-        for (const [clientId, name] of previousMap) {
-            if (!currentMap.has(clientId) && clientId !== localCollaborationClientId) {
-                addToast(`${name} left`, 'info', 3000);
-            }
-        }
-
         previousPresenceMapRef.current = currentMap;
-    }, [collaborationEnabled, collaborationPresence, localCollaborationClientId, addToast]);
+    }, [collaborationEnabled, collaborationPresence]);
 
     useEffect(() => {
         if (!collaborationEnabled) {

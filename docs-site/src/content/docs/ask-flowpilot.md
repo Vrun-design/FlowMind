@@ -1,14 +1,14 @@
 ---
 draft: false
 title: Ask Flowpilot
-description: Use FlowPilot as the chat-based Studio assistant for drafting, revising, and explaining diagrams.
+description: Use Flowpilot as the chat-based Studio assistant for drafting, revising, and explaining diagrams.
 ---
 
-FlowPilot is the chat-based assistant inside Studio. It is the fastest way to describe a diagram in plain language, revise an existing draft, or ask for a different structural take before you start polishing the result manually.
+Flowpilot is the chat-based assistant inside Studio. It is the fastest way to describe a diagram in plain language, revise an existing draft, or ask for a different structural take before you start polishing the result manually.
 
 ## Good use cases
 
-Ask FlowPilot when you want to:
+Ask Flowpilot when you want to:
 
 - create a first draft from a text prompt
 - revise an existing system into a cleaner structure
@@ -36,7 +36,7 @@ Show public ingress, async jobs, and failure-handling paths.
 
 ## What to do after generation
 
-FlowPilot is strongest as a draft generator, not the final editor. After generation:
+Flowpilot is strongest as a draft generator, not the final editor. After generation:
 
 - inspect the structure on the canvas
 - relabel and normalize in the [Properties Panel](/properties-panel/)

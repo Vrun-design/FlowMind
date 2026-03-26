@@ -1,7 +1,9 @@
 import React, { useMemo, useEffect } from 'react';
-import { Search, X, ChevronRight } from 'lucide-react';
+import { X, ChevronRight } from 'lucide-react';
+import { FLOWPILOT_NAME } from '@/lib/brand';
 import { Button } from '../ui/Button';
 import { CommandItem, CommandView } from './types';
+import { SearchField } from '../ui/SearchField';
 
 interface RootViewProps {
     commands: CommandItem[];
@@ -48,7 +50,7 @@ const CommandItemRow = ({ item, isSelected, onClick }: { item: CommandItem, isSe
         </div>
 
         <div className="flex-1 flex flex-col justify-center">
-            <span className="text-sm font-semibold leading-none mb-1">{item.label}</span>
+            <span className="mb-1 text-sm font-semibold leading-none">{item.label}</span>
             {item.description && (
                 <span className={`text-[11px] ${isSelected ? 'text-[var(--brand-primary-500)]' : 'text-slate-400'}`}>
                     {item.description}
@@ -133,9 +135,8 @@ export const RootView = ({
 
     return (
         <>
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-200/50">
-                <Search className="w-5 h-5 text-slate-400" />
-                <input
+            <div className="border-b border-slate-200/50 px-4 py-3">
+                <SearchField
                     ref={inputRef}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -144,19 +145,18 @@ export const RootView = ({
                         e.stopPropagation();
                     }}
                     aria-label="Search command bar actions"
-                    placeholder="Search actions, AI Studio, code, or canvas tools..."
-                    className="flex-1 bg-transparent border-none outline-none text-slate-700 placeholder:text-slate-400 text-base focus:ring-0"
+                    placeholder={`Search actions, ${FLOWPILOT_NAME}, code, or canvas tools...`}
                     autoFocus
+                    trailingContent={(
+                        <Button
+                            onClick={onClose}
+                            variant="ghost"
+                            size="icon"
+                            className="rounded-[var(--radius-sm)] h-8 w-8"
+                            icon={<X className="w-4 h-4" />}
+                        />
+                    )}
                 />
-                <div className="flex items-center gap-2">
-                    <Button
-                        onClick={onClose}
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-md h-6 w-6"
-                        icon={<X className="w-4 h-4" />}
-                    />
-                </div>
             </div>
 
             <div
@@ -164,17 +164,30 @@ export const RootView = ({
                 aria-label={searchQuery ? 'Command search results' : 'Command quick actions'}
                 className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent py-2"
             >
-                <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    {searchQuery ? 'Results' : 'Quick Actions'}
-                </div>
-                {filteredCommands.map((item, idx) => (
-                    <CommandItemRow
-                        key={item.id}
-                        item={item}
-                        isSelected={selectedIndex === idx}
-                        onClick={() => runCommandItem(item, setView, onClose)}
-                    />
-                ))}
+                {searchQuery ? (
+                    <>
+                        <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                            Results
+                        </div>
+                        {filteredCommands.map((item, idx) => (
+                            <CommandItemRow
+                                key={item.id}
+                                item={item}
+                                isSelected={selectedIndex === idx}
+                                onClick={() => runCommandItem(item, setView, onClose)}
+                            />
+                        ))}
+                    </>
+                ) : (
+                    filteredCommands.map((item, idx) => (
+                        <CommandItemRow
+                            key={item.id}
+                            item={item}
+                            isSelected={selectedIndex === idx}
+                            onClick={() => runCommandItem(item, setView, onClose)}
+                        />
+                    ))
+                )}
                 {filteredCommands.length === 0 && searchQuery && (
                     <div className="px-4 py-3 text-center text-sm text-slate-500">
                         No matching commands for &quot;{searchQuery}&quot;

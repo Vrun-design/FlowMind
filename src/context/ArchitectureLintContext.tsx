@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { FlowEdge, FlowNode } from '@/lib/types';
 import type { LintViolation } from '@/services/architectureLint/types';
 import { evaluateRules, parseRulesJson } from '@/services/architectureLint/ruleEngine';
+import { loadWorkspaceRules, WORKSPACE_RULES_CHANGED_EVENT } from '@/services/architectureLint/workspaceRules';
 
 interface ArchitectureLintContextValue {
     violations: LintViolation[];
@@ -29,7 +30,17 @@ interface ArchitectureLintProviderProps {
 }
 
 export function ArchitectureLintProvider({ nodes, edges, rulesJson, children }: ArchitectureLintProviderProps): React.ReactElement {
-    const { rules, error: parseError } = useMemo(() => parseRulesJson(rulesJson), [rulesJson]);
+    const { rules: diagramRules, error: diagramParseError } = useMemo(() => parseRulesJson(rulesJson), [rulesJson]);
+
+    const [workspaceRulesJson, setWorkspaceRulesJson] = useState(() => loadWorkspaceRules());
+    useEffect(() => {
+        const refresh = () => setWorkspaceRulesJson(loadWorkspaceRules());
+        window.addEventListener(WORKSPACE_RULES_CHANGED_EVENT, refresh);
+        return () => window.removeEventListener(WORKSPACE_RULES_CHANGED_EVENT, refresh);
+    }, []);
+
+    const { rules: workspaceRules } = useMemo(() => parseRulesJson(workspaceRulesJson), [workspaceRulesJson]);
+    const rules = useMemo(() => [...workspaceRules, ...diagramRules], [workspaceRules, diagramRules]);
 
     const violations = useMemo(
         () => (rules.length > 0 ? evaluateRules(nodes, edges, rules) : []),
@@ -47,8 +58,8 @@ export function ArchitectureLintProvider({ nodes, edges, rulesJson, children }: 
     );
 
     const value = useMemo(
-        () => ({ violations, violatingNodeIds, violatingEdgeIds, parseError }),
-        [violations, violatingNodeIds, violatingEdgeIds, parseError],
+        () => ({ violations, violatingNodeIds, violatingEdgeIds, parseError: diagramParseError }),
+        [violations, violatingNodeIds, violatingEdgeIds, diagramParseError],
     );
 
     return <ArchitectureLintContext.Provider value={value}>{children}</ArchitectureLintContext.Provider>;

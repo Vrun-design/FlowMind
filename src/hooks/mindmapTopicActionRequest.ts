@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
+import { LEGACY_EVENT_NAMES } from '@/lib/legacyBranding';
 
 export type MindmapTopicActionType = 'child' | 'sibling';
 export type MindmapTopicSide = 'left' | 'right' | null;
 
-const MINDMAP_TOPIC_ACTION_REQUEST_EVENT = 'flowmind:mindmap-topic-action-request';
+const MINDMAP_TOPIC_ACTION_REQUEST_EVENT = LEGACY_EVENT_NAMES.mindmapTopicActionRequest;
 
 interface MindmapTopicActionRequestDetail {
   nodeId: string;

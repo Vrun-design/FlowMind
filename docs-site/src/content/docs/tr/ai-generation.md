@@ -1,18 +1,18 @@
 ---
 draft: false
 title: AI Generation
-description: FlowPilot, BYOK sağlayıcılar, koddan mimari üretimi ve yapılandırılmış içe aktarma ile diyagram üretin ve geliştirin.
+description: Flowpilot, BYOK sağlayıcılar, koddan mimari üretimi ve yapılandırılmış içe aktarma ile diyagram üretin ve geliştirin.
 ---
 
-OpenFlowKit, Studio alanı üzerinden yapay zeka destekli diyagram üretimi sunar. FlowPilot özellikle ilk taslak, yapısal revizyon ve kod tabanlı mimari görünümü üretmek için güçlüdür.
+OpenFlowKit, Studio alanı üzerinden yapay zeka destekli diyagram üretimi sunar. Flowpilot özellikle ilk taslak, yapısal revizyon ve kod tabanlı mimari görünümü üretmek için güçlüdür.
 
 ## Üründe AI nerede yer alır?
 
-AI akışları Studio içindeki **FlowPilot** alanında ve Komut Merkezi üzerinden açılan **Open FlowPilot** eyleminde bulunur.
+AI akışları Studio içindeki **Flowpilot** alanında ve Komut Merkezi üzerinden açılan **Open Flowpilot** eyleminde bulunur.
 
 | Mod | Ne yapar |
 | --- | --- |
-| **FlowPilot** | sohbet tabanlı üretim ve revizyon |
+| **Flowpilot** | sohbet tabanlı üretim ve revizyon |
 | **From Code** | kaynak koddan mimari diyagram taslağı |
 | **Import** | SQL, Terraform, K8s veya OpenAPI girdilerinden taslak |
 
@@ -66,7 +66,7 @@ Uygulama birden çok BYOK sağlayıcıyı destekler:
 
 ## Önerilen iş akışı
 
-1. FlowPilot ile ilk taslağı üretin
+1. Flowpilot ile ilk taslağı üretin
 2. tuval üzerinde yapıyı kontrol edin
 3. [Properties Panel](/tr/properties-panel/) ile ayrıntıları düzeltin
 4. gerekiyorsa [Smart Layout](/tr/smart-layout/) uygulayın

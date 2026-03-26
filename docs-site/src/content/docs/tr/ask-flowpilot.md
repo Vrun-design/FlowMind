@@ -1,14 +1,14 @@
 ---
 draft: false
 title: Ask Flowpilot
-description: FlowPilot’i Studio içindeki sohbet tabanlı yardımcı olarak kullanın; diyagram taslağı üretin, revize edin ve yön değiştirin.
+description: Flowpilot’i Studio içindeki sohbet tabanlı yardımcı olarak kullanın; diyagram taslağı üretin, revize edin ve yön değiştirin.
 ---
 
-FlowPilot, Studio içindeki sohbet tabanlı asistandır. Bir diyagramı doğal dille tarif etmek, mevcut bir taslağı yeniden kurmak veya farklı bir yapısal yaklaşım istemek için en hızlı yoldur.
+Flowpilot, Studio içindeki sohbet tabanlı asistandır. Bir diyagramı doğal dille tarif etmek, mevcut bir taslağı yeniden kurmak veya farklı bir yapısal yaklaşım istemek için en hızlı yoldur.
 
 ## İyi kullanım senaryoları
 
-FlowPilot’i şu durumlarda kullanın:
+Flowpilot’i şu durumlarda kullanın:
 
 - metin isteminden ilk taslağı üretmek için
 - mevcut sistemi daha temiz bir yapıya çevirmek için
@@ -36,7 +36,7 @@ Public ingress, async işler ve hata işleme yollarını göster.
 
 ## Üretimden sonra ne yapılmalı?
 
-FlowPilot en güçlü halini taslak üreticisi olarak gösterir, son editör olarak değil. Üretimden sonra:
+Flowpilot en güçlü halini taslak üreticisi olarak gösterir, son editör olarak değil. Üretimden sonra:
 
 - yapıyı tuvalde inceleyin
 - [Properties Panel](/tr/properties-panel/) ile etiket ve görsel ayarları düzeltin

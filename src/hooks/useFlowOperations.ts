@@ -2,6 +2,7 @@ import { useNodeOperations } from './useNodeOperations';
 import { useEdgeOperations } from './useEdgeOperations';
 import { useLayoutOperations } from './useLayoutOperations';
 import { useClipboardOperations } from './useClipboardOperations';
+import { useStyleClipboard } from './useStyleClipboard';
 import { useTranslation } from 'react-i18next';
 import { useFlowCoreActions } from './flow-operations/useFlowCoreActions';
 import { useCanvasActions } from '@/store/canvasHooks';
@@ -20,6 +21,7 @@ export const useFlowOperations = (
   const edgeOps = useEdgeOperations(recordHistory, onShowConnectMenu);
   const layoutOps = useLayoutOperations(recordHistory);
   const clipboardOps = useClipboardOperations(recordHistory);
+  const styleClipboardOps = useStyleClipboard(recordHistory);
   const coreOps = useFlowCoreActions({
     setSelectedNodeId,
     setSelectedEdgeId,
@@ -34,6 +36,7 @@ export const useFlowOperations = (
     ...edgeOps,
     ...layoutOps,
     ...clipboardOps,
+    ...styleClipboardOps,
     ...coreOps,
   };
 };

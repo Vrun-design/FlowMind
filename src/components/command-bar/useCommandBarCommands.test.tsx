@@ -25,11 +25,28 @@ describe('useCommandBarCommands', () => {
         );
 
         const ids = result.current.map((command) => command.id);
-        expect(ids).toContain('studio-ai');
-        expect(ids).toContain('studio-openflow');
-        expect(ids).toContain('studio-mermaid');
-        expect(ids).toContain('studio-playback');
-        expect(ids).toContain('assets');
+        expect(ids).toEqual([
+            'studio-ai',
+            'templates',
+            'assets',
+            'search-nodes',
+            'layout',
+            'studio-openflow',
+            'studio-mermaid',
+            'toggle-grid',
+            'toggle-snap',
+            'undo',
+            'redo',
+            'select-all-edges',
+            'design-systems',
+        ]);
+
+        expect(result.current.find((command) => command.id === 'studio-ai')?.tier).toBe('core');
+        expect(result.current.find((command) => command.id === 'templates')?.tier).toBe('core');
+        expect(result.current.find((command) => command.id === 'layout')?.tier).toBe('core');
+        expect(result.current.find((command) => command.id === 'assets')?.tier).toBe('advanced');
+        expect(result.current.find((command) => command.id === 'studio-openflow')?.tier).toBe('advanced');
+        expect(result.current.find((command) => command.id === 'design-systems')?.tier).toBe('advanced');
 
         result.current.find((command) => command.id === 'studio-ai')?.action?.();
         result.current.find((command) => command.id === 'studio-openflow')?.action?.();

@@ -6,39 +6,43 @@ interface ViewHeaderProps {
     title: string;
     icon: React.ReactNode;
     onBack: () => void;
-    onClose?: () => void; // Optional if we want global close, but usually passed via context or prop if needed, currently mainly used for layout consistency
+    description?: string;
+    meta?: React.ReactNode;
+    onClose?: () => void;
 }
 
-export const ViewHeader = ({ title, icon, onBack }: ViewHeaderProps) => (
-    <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-200/50 bg-slate-50/50">
-        <Button
-            onClick={onBack}
-            variant="ghost"
-            size="icon"
-            className="rounded-[var(--radius-sm)] h-6 w-6"
-            icon={<ArrowLeft className="w-4 h-4" />}
-        />
-        <div className="flex items-center gap-2 font-medium text-slate-700">
-            {icon}
-            <span>{title}</span>
-        </div>
-        {/* Close button is typically handled by parent container's overlay click or Esc, 
-            but in the original it was sometimes present. 
-            However, the main Close is on the `RootView` header. 
-            Sub-views usually just have Back. 
-            Original `ViewHeader` had a Close button on the right that called `onBack` (which effectively closes if it was root, or goes back).
-            Wait, original code:
-            <div className="ml-auto">
-                <Button onClick={onBack} ... icon={<X ... />} />
-            </div>
-            It calls `onBack`.
-        */}
-        <div className="ml-auto">
+export const ViewHeader = ({
+    title,
+    icon,
+    onBack,
+    description,
+    meta,
+    onClose,
+}: ViewHeaderProps) => (
+    <div className="border-b border-slate-200/60 bg-white/90 px-4 py-3 backdrop-blur-sm">
+        <div className="flex items-start gap-3">
             <Button
                 onClick={onBack}
                 variant="ghost"
                 size="icon"
-                className="rounded-full h-6 w-6"
+                className="mt-0.5 rounded-[var(--radius-sm)]"
+                icon={<ArrowLeft className="w-4 h-4" />}
+            />
+            <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 font-medium text-slate-700">
+                    {icon}
+                    <span>{title}</span>
+                </div>
+                {description ? (
+                    <p className="mt-1 text-[11px] leading-5 text-slate-500">{description}</p>
+                ) : null}
+                {meta ? <div className="mt-2">{meta}</div> : null}
+            </div>
+            <Button
+                onClick={onClose ?? onBack}
+                variant="ghost"
+                size="icon"
+                className="rounded-[var(--radius-sm)]"
                 icon={<X className="w-4 h-4" />}
             />
         </div>

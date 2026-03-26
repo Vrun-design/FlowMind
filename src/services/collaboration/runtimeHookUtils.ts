@@ -1,5 +1,4 @@
 import type { FlowEdge, FlowNode } from '@/lib/types';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { createCollaborationSessionBootstrap } from './session';
 import { createCollaborationRuntimeController, type CollaborationRuntimeController } from './runtimeController';
 import { computeCollaborationOperationsFromCanvasChange, type CollaborationCanvasSnapshot } from './canvasDiff';
@@ -90,7 +89,7 @@ export function seedCollaborationDocumentIfEmpty({
 }: SeedCollaborationDocumentIfEmptyParams): void {
     const documentState = runtimeController.getDocumentState();
     setCollaborationCacheState(resolveCollaborationCacheState({
-        indexedDbEnabled: ROLLOUT_FLAGS.collaborationIndexedDbV1,
+        indexedDbEnabled: true,
         indexedDbAvailable,
         hasPersistedDocumentContent: documentState.nodes.length > 0 || documentState.edges.length > 0,
     }));
@@ -133,7 +132,7 @@ export function resetCollaborationRuntimeState({
 }: ResetCollaborationRuntimeStateParams): void {
     setCollaborationPresence([]);
     setCollaborationCacheState(resolveInitialCollaborationCacheState({
-        indexedDbEnabled: ROLLOUT_FLAGS.collaborationIndexedDbV1,
+        indexedDbEnabled: true,
         indexedDbAvailable,
     }));
     previousCollaborationCanvasRef.current = null;

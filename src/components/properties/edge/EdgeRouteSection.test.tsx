@@ -107,4 +107,32 @@ describe('EdgeRouteSection', () => {
         expect(screen.getByText(/2 custom bends/i)).toBeTruthy();
         expect(screen.getByText(/reset to return to automatic routing/i)).toBeTruthy();
     });
+
+    it('switches connector ownership to fixed and dynamic', () => {
+        const onChange = vi.fn();
+        render(
+            <EdgeRouteSection
+                selectedEdge={createEdge({
+                    sourceHandle: 'right',
+                    targetHandle: 'left',
+                    data: {
+                        connectionType: 'fixed',
+                    },
+                })}
+                onChange={onChange}
+            />
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: 'Dynamic' }));
+
+        expect(onChange).toHaveBeenCalledWith('edge-1', {
+            sourceHandle: null,
+            targetHandle: null,
+            data: {
+                connectionType: 'dynamic',
+                archSourceSide: undefined,
+                archTargetSide: undefined,
+            },
+        });
+    });
 });

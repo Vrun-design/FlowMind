@@ -19,6 +19,8 @@
     "selectAll": "すべて選択",
     "duplicate": "複製",
     "duplicateDrag": "複製してドラッグ",
+    "multiSelect": "複数選択",
+    "selectionBox": "選択ボックス",
     "copy": "コピー",
     "paste": "貼り付け",
     "zoomIn": "ズームイン",
@@ -35,6 +37,8 @@
     "error": "エラー",
     "success": "成功",
     "help": "ヘルプ",
+    "selectTool": "選択ツール",
+    "handTool": "手のひらツール",
     "getStarted": "始める",
     "bringToFront": "最前面へ",
     "sendToBack": "最背面へ",
@@ -52,7 +56,8 @@
     "distributeHorizontally": "水平方向に分布",
     "distributeVertically": "垂直方向に分布",
     "group": "グループ",
-    "upload": "Upload"
+    "upload": "Upload",
+    "rename": "名前を変更"
   },
   "nav": {
     "home": "ホーム",
@@ -72,7 +77,8 @@
     "beta": "ベータ",
     "versionHistory": "バージョン履歴",
     "loadJSON": "JSONを読む",
-    "playbackMode": "再生モード"
+    "playbackMode": "再生モード",
+    "privacyMessage": "図はあなたの手元に残り、当社のサーバーには届きません。"
   },
   "menu": {
     "file": "ファイル",
@@ -110,7 +116,21 @@
     "hintClipboard": "Copy to clipboard",
     "figmaEditable": "Figma Editable",
     "exportDiagram": "Export Diagram",
-    "exportAs": "Export As"
+    "exportAs": "Export As",
+    "exportOrShare": "このキャンバスをエクスポートまたは共有",
+    "svg": "SVGとしてエクスポート",
+    "hintSvgScalable": "拡大縮小可能なベクターファイル",
+    "video": "再生動画",
+    "hintPlaybackWebM": "再生タイムライン (WebM/MP4)",
+    "gif": "再生GIF",
+    "hintPlaybackGif": "ドキュメントやSNS向けの短いループ",
+    "share": "ライブキャンバスを共有",
+    "hintShareViewer": "このルームへの招待リンク",
+    "shareSection": "キャンバスを共有",
+    "revealVideo": "Reveal Video",
+    "hintRevealVideo": "Nodes fade in sequentially (WebM/MP4)",
+    "revealGif": "Reveal GIF",
+    "hintRevealGif": "Animated reveal for docs/social"
   },
   "import": {
     "title": "インポート",
@@ -122,7 +142,7 @@
     "newTab": "新しいタブ",
     "renameTab": "タブの名前を変更",
     "closeTab": "タブを閉じる",
-    "addNode": "ノードを追加",
+    "addNode": "図形を追加",
     "deleteNode": "ノードを削除",
     "duplicateNode": "ノードを複製"
   },
@@ -193,7 +213,25 @@
     "recentFiles": "最近のファイル",
     "files": "ファイル",
     "createFirstFlow": "最初のフローを作成",
-    "startFromScratch": "一から始めるか、既存の図をインポートします。"
+    "startFromScratch": "一から始めるか、既存の図をインポートします。",
+    "currentFlow": "現在のフロー",
+    "autosaved": "自動保存済み",
+    "localStorageHint": "このデバイスに自動保存されます。図のデータを当社のサーバーにアップロードすることはありません。",
+    "renameFlow": {
+      "title": "フロー名を変更",
+      "description": "ダッシュボードとタブに表示される名前を更新します。",
+      "label": "フロー名",
+      "placeholder": "フロー名を入力",
+      "hint": "名前は、このブラウザープロファイル内でのみ保持されます。エクスポートまたは別の場所に同期した場合を除きます。",
+      "closeDialog": "フロー名変更ダイアログを閉じる"
+    },
+    "deleteFlow": {
+      "title": "フローを削除",
+      "description": "このデバイスからローカルに自動保存されたフローを削除します。",
+      "confirmation": "「{{name}}」を削除しますか？",
+      "hint": "エクスポートしたバックアップまたは別のコピーがない限り、この操作は元に戻せません。",
+      "closeDialog": "フロー削除ダイアログを閉じる"
+    }
   },
   "settings": {
     "title": "設定",
@@ -226,7 +264,18 @@
     "description": "説明",
     "color": "色",
     "icon": "アイコン",
-    "size": "サイズ"
+    "size": "サイズ",
+    "shape": "図形",
+    "bulkShape": "複数図形",
+    "bulkColor": "一括カラー",
+    "bulkIcon": "一括アイコン",
+    "labelTransform": "ラベル変換",
+    "prefixOptional": "接頭辞（任意）",
+    "suffixOptional": "接尾辞（任意）",
+    "previewSummary": "プレビュー",
+    "bulkApplySummary": "選択中の {{count}} 項目を更新します",
+    "selectFieldToApply": "適用する項目を少なくとも 1 つ選択してください。",
+    "applyToSelectedNodes": "選択した項目に適用"
   },
   "ai": {
     "generate": "AIで生成",
@@ -234,7 +283,8 @@
     "model": "モデル",
     "apiKey": "APIキー",
     "placeholder": "フローチャートを説明してください...",
-    "settingsSubtitle": "Configure your preferred AI provider, model, and API key below."
+    "settingsSubtitle": "Configure your preferred AI provider, model, and API key below.",
+    "generateWithFlowpilot": "Flowpilotで生成"
   },
   "playback": {
     "title": "再生",
@@ -327,9 +377,9 @@
     "description": "究極のホワイトラベルキャンバス。",
     "diagramAsCode": "コードとしての図",
     "diagramAsCodeDesc": "Mermaid.jsとDSLをサポート。",
-    "flowpilotAI": "AI Studio",
+    "flowpilotAI": "Flowpilot",
     "aiAssistant": "AIアシスタント",
-    "flowpilotAIDesc": "図と対話する。",
+    "flowpilotAIDesc": "ガイド付きAI編集で図を調整します。",
     "addRedisCache": "DBの前にRedisキャッシュを追加する。",
     "localPrivate": "ローカル＆プライベート",
     "localPrivateDesc": "すべてはあなたのマシンに残ります。",
@@ -356,7 +406,7 @@
     "designDesc": "キャンバスからコピーしてFigmaに貼り付けます。",
     "exportShare": "出力と共有",
     "pixelPerfectOutput": "ピクセルパーフェクトな出力",
-    "exportShareDesc": "SVG、PNGまたはPDFとして出力します。",
+    "exportShareDesc": "SVGまたはPNGとして出力します。",
     "vectorEditable": "ベクター • Figmaで編集可能",
     "rasterHighRes": "ラスター • 高解像度出力",
     "dataSaveRestore": "データ • 保存と復元"
@@ -385,8 +435,7 @@
     "communityDesc": "OpenFlowKitを活用している開発者に参加しましょう。",
     "roadmap": "ロードマップ",
     "coreRenderer": "コアレンダラー",
-    "flowpilotAI": "AI Studio",
-    "pdfExport": "PDFエクスポート"
+    "flowpilotAI": "Flowpilot"
   },
   "demo": {
     "livePreview": "ライブプレビュー",
@@ -459,7 +508,9 @@
       "placeholder": "ラベルまたはIDで検索...",
       "noResults": "ノードが見つかりません",
       "untitled": "無題のノード",
-      "type": "タイプ"
+      "type": "タイプ",
+      "showingCount": "Showing: {{count}}",
+      "totalCount": "Total on canvas: {{count}}"
     },
     "templates": {
       "title": "テンプレート",
@@ -473,7 +524,17 @@
       "dslPlaceholder": "ここにDSLコードを貼り付け...",
       "applyShortcut": "⌘+Enterで適用",
       "syntaxGuide": "構文ガイド",
-      "apply": "適用"
+      "apply": "適用",
+      "quickFixes": "クイック修正",
+      "linePrefix": "{{line}}行: ",
+      "hintPrefix": "ヒント:",
+      "strictModeGuidance": {
+        "defineEndpoints": "エッジを接続する前に、すべてのエッジ終端を明示的なアーキテクチャノードとして定義してください。",
+        "uniqueIds": "各 service/group/junction ノードには一意の ID を使用してください（重複するアーキテクチャ ID は不可）。",
+        "edgeSyntax": "アーキテクチャのエッジ矢印 `-->`、`<--`、`<-->` と、`api:R --> L:db` のような側面修飾子を使用してください。",
+        "nodeSyntax": "有効なノード宣言を使用してください: `service id(icon)[Label]`、`group id[Label]`、`junction id[Label]`。",
+        "fallback": "自動回復を許可するにはアーキテクチャ厳格モードをオフにするか、診断を修正して再試行してください。"
+      }
     },
     "layout": {
       "title": "レイアウトスタジオ",
@@ -495,7 +556,8 @@
       "compact": "コンパクト",
       "normal": "標準",
       "loose": "ゆったり",
-      "applyLayout": "レイアウトを適用"
+      "applyLayout": "レイアウトを適用",
+      "layoutStyle": "レイアウトスタイル"
     },
     "designSystem": {
       "title": "デザインシステム",
@@ -520,17 +582,24 @@
       "intelligentRoutingDesc": "ドラッグ時に自動スナップ",
       "animatedEdges": "アニメーションエッジ",
       "animatedEdgesDesc": "流れるパーティクル",
-      "strokeWidth": "線の太さ"
+      "strokeWidth": "線の太さ",
+      "largeGraphSafety": "大規模グラフ保護",
+      "largeGraphSafetyAuto": "自動",
+      "largeGraphSafetyOn": "オン",
+      "largeGraphSafetyOff": "オフ",
+      "exportModeDeterministic": "決定的",
+      "exportModeLegacy": "従来方式",
+      "exportMode": "エクスポートモード"
     }
   },
   "settingsModal": {
     "title": "設定",
     "general": "一般",
-    "flowpilotAI": "AI Studio",
+    "flowpilotAI": "Flowpilot",
     "shortcuts": "ショートカット",
     "running": "{appName} 実行中",
     "generalSettings": "一般設定",
-    "flowpilotConfigurations": "AI Studio設定",
+    "flowpilotConfigurations": "Flowpilot設定",
     "keyboardShortcuts": "キーボードショートカット",
     "canvas": {
       "title": "キャンバス",
@@ -539,7 +608,17 @@
       "snapToGrid": "グリッドにスナップ",
       "snapToGridDesc": "ノードを自動でスナップ",
       "miniMap": "ミニマップ",
-      "miniMapDesc": "右下にミニマップを表示"
+      "miniMapDesc": "右下にミニマップを表示",
+      "architectureStrictMode": "アーキテクチャ厳格モード",
+      "architectureStrictModeDesc": "アーキテクチャ診断に回復/検証の問題が含まれる場合、Mermaid のインポートをブロックします",
+      "alignmentGuides": "Alignment Guides",
+      "alignmentGuidesDesc": "Show smart guide lines while dragging nodes",
+      "routingProfile": "ルーティングプロファイル",
+      "routingProfileStandard": "標準",
+      "routingProfileInfrastructure": "インフラストラクチャ",
+      "routingProfileHint": "インフラストラクチャモードでは、サービスマップ向けに直交ルートを優先します。",
+      "edgeBundling": "平行エッジを束ねる",
+      "edgeBundlingDesc": "平行接続を共通レーン上に維持する"
     },
     "ai": {
       "provider": "プロバイダー",
@@ -596,7 +675,21 @@
       "customEndpointTitle": "What is a custom endpoint?",
       "privacyTitle": "Privacy & Encryption",
       "customEndpointText": "Any <1>OpenAI-compatible</1> API endpoint — local or remote. Great for:",
-      "customEndpointMustSupport": "Must support <1>POST /chat/completions</1> (OpenAI format)"
+      "customEndpointMustSupport": "Must support <1>POST /chat/completions</1> (OpenAI format)",
+      "advancedEndpointOverride": "詳細なベースURL上書き",
+      "baseUrlHint": "空欄のままにすると、プロバイダー既定のエンドポイントを使用します。独自のプロキシ/ワーカーURLに使用してください。",
+      "resetEndpoint": "既定に戻す",
+      "customHeadersTitle": "カスタムヘッダー",
+      "customHeadersSubtitle": "Cloudflare Access のような認証プロキシ向けに追加ヘッダーを送信します。",
+      "addHeader": "ヘッダーを追加",
+      "cloudflarePreset": "Cloudflareプリセットを使用",
+      "customHeadersEmpty": "カスタムヘッダーは設定されていません。",
+      "customHeadersSecurity": "ヘッダー値はブラウザープロファイル内にローカル保存されます。",
+      "risk": {
+        "browserFriendly": "ブラウザ向け",
+        "proxyLikely": "プロキシが必要な可能性",
+        "mixed": "エンドポイント次第"
+      }
     },
     "brand": {
       "title": "ブランドキット",
@@ -643,7 +736,11 @@
       "shareFeedback": "フィードバックを共有",
       "shareFeedbackDesc": "フィードバック、バグ報告、機能リクエストの送信"
     },
-    "settings": "設定"
+    "settings": "設定",
+    "canvasSettings": "キャンバス設定",
+    "description": "キャンバス設定とキーボードショートカットを構成します。",
+    "close": "設定を閉じる",
+    "closeDialog": "設定ダイアログを閉じる"
   },
   "customNodes": {
     "browserContent": "ブラウザコンテンツ",
@@ -653,16 +750,18 @@
     "title": "キーボードショートカット",
     "subtitle": "スピードでワークフローをマスターしましょう。",
     "closeAriaLabel": "ショートカットモーダルを閉じる",
-    "proTip": "プロのヒント：ドラッグ中に <key>?</key> を押し続けると選択ボックスが有効になります。"
+    "proTip": "ヒント: <key>Shift</key> を押し続けると選択に追加したり、選択ボックスを描けます。"
   },
   "toolbar": {
     "selectMode": "選択モード (V)",
     "panMode": "パンモード (H)",
-    "flowpilot": "Command Center (Cmd+K)",
+    "flowpilot": "Flowpilot",
     "templates": "テンプレート",
     "addItem": "アイテムを追加",
     "addToCanvas": "キャンバスに追加",
-    "node": "ノード",
+    "shapes": "図形",
+    "assets": "アセット",
+    "node": "図形",
     "stickyNote": "付箋",
     "section": "セクション",
     "text": "テキスト",
@@ -671,7 +770,8 @@
     "autoLayout": "自動レイアウト",
     "clearCanvas": "キャンバスをクリア",
     "undo": "元に戻す (Ctrl+Z)",
-    "redo": "やり直す (Ctrl+Y)"
+    "redo": "やり直す (Ctrl+Y)",
+    "commandCenter": "コマンドセンターを開く"
   },
   "flowEditor": {
     "cannotCloseLastTab": "最後のタブは閉じられません。",
@@ -685,27 +785,29 @@
     "emptyState": {
       "title": "構築を開始",
       "description": "キャンバスが空です。Flowpilotでフローを生成するか、一から始めてください。",
-      "generateWithFlowpilot": "AI Studioで生成",
+      "generateWithFlowpilot": "Flowpilotで生成",
       "browseTemplates": "テンプレートを閲覧",
-      "addBlankNode": "空のノードを追加"
-    }
+      "addBlankNode": "空の図形を追加"
+    },
+    "dslExportSkippedEdges": "DSL エクスポートで {{count}} 件の無効なエッジをスキップしました。"
   },
   "annotationNode": {
     "placeholder": "*ダブルクリックしてメモを編集*"
   },
   "connectMenu": {
-    "createNewNode": "新しいノードを作成",
-    "process": "プロセス",
-    "processDesc": "標準アクション",
-    "decision": "決定",
-    "decisionDesc": "分岐ロジック",
+    "createNewNode": "新しい図形を作成",
+    "process": "角丸図形",
+    "processDesc": "汎用ブロック",
+    "decision": "ひし形",
+    "decisionDesc": "分岐ブロック",
     "database": "データベース",
-    "databaseDesc": "データ保存",
+    "databaseDesc": "円柱図形",
     "inputOutput": "入力 / 出力",
-    "inputOutputDesc": "データフロー",
-    "note": "メモ",
+    "inputOutputDesc": "平行四辺形",
+    "note": "付箋",
     "noteDesc": "ドキュメント",
-    "releaseToConnect": "接続するには離す"
+    "releaseToConnect": "接続するには離す",
+    "close": "接続メニューを閉じる"
   },
   "errorBoundary": {
     "title": "問題が発生しました",
@@ -729,7 +831,12 @@
     "restoreVersion": "バージョンを復元",
     "deleteVersion": "バージョンを削除",
     "nodes": "{{count}} ノード",
-    "edges": "{{count}} エッジ"
+    "edges": "{{count}} エッジ",
+    "close": "スナップショットパネルを閉じる",
+    "namedVersions": "Named Versions",
+    "noNamedSnapshots": "No named versions yet.",
+    "autosavedVersions": "Autosaved Checkpoints",
+    "noAutoSnapshots": "No autosaved checkpoints yet."
   },
   "templatesPanel": {
     "title": "フローテンプレート",
@@ -738,8 +845,11 @@
   },
   "propertiesPanel": {
     "stickyNote": "付箋",
-    "nodeSettings": "ノード設定",
+    "nodeSettings": "図形設定",
     "connection": "接続"
+  },
+  "flowCanvas": {
+    "strictModePasteBlocked": "アーキテクチャ厳格モードにより Mermaid の貼り付けがブロックされました。コードビューを開き、診断を修正してから再試行してください。"
   },
   "flowTabs": {
     "closeTab": "タブを閉じる",
@@ -752,14 +862,54 @@
     "newNode": "New Node",
     "branch": "Branch",
     "processStep": "Process Step",
+    "addText": "テキストを追加",
     "group": "Group",
     "items": "items",
     "addCommentsHere": "Add your comments here.",
     "newSection": "New Section",
     "text": "Text",
-    "image": "Image"
+    "image": "Image",
+    "mindmap": "トピック"
   },
   "actions": {
     "clearCanvasConfirm": "Are you sure you want to clear the canvas?"
+  },
+  "share": {
+    "close": "Close",
+    "title": "Share Design",
+    "betaBadge": "ベータ",
+    "description": "Invite collaborators to view and edit this flow with you in real-time.",
+    "roomId": "ルームID",
+    "link": "共有リンク",
+    "copied": "Copied Link!",
+    "copyLink": "Copy Link",
+    "footerNote": "Your diagram stays local unless you share this room. If copy is blocked, copy the link above manually.",
+    "closeDialog": "Close share dialog",
+    "status": {
+      "cache": {
+        "syncing": " local cache syncing",
+        "ready": " local cache ready",
+        "hydrated": " restored from local cache"
+      },
+      "realtime": "Realtime peer sync",
+      "waiting": "Connecting to realtime sync",
+      "fallback": "Local-only mode"
+    },
+    "openDialog": "Share dialog",
+    "toast": {
+      "fallbackMode": "リアルタイム同期は利用できません。ローカル専用モードで続行します。",
+      "reconnected": "リアルタイム共同編集が復旧しました。",
+      "copyFailed": "Unable to copy share link.",
+      "linkCopied": "Collaboration link copied.",
+      "copyManual": "クリップボードへのアクセスがブロックされています。共有ダイアログからリンクを手動でコピーしてください。"
+    }
+  },
+  "connectionPanel": {
+    "architecture": "Architecture",
+    "label": "Label",
+    "route": "ルート",
+    "appearance": "外観",
+    "condition": "Condition",
+    "deleteConnection": "Delete Connection"
   }
 }

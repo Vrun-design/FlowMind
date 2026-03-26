@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ShareModal } from './ShareModal';
+import { getShareStatusDefaultMessage, SHARE_MODAL_COPY } from './shareModalContent';
 
 vi.mock('react-i18next', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-i18next')>();
@@ -37,10 +38,10 @@ describe('ShareModal', () => {
     );
 
     expect(screen.getByTestId('share-panel')).toBeTruthy();
-    expect(screen.getByRole('dialog', { name: 'Share live canvas' }).getAttribute('aria-describedby')).toBe('share-modal-description');
+    expect(screen.getByRole('dialog', { name: new RegExp(SHARE_MODAL_COPY.title) }).getAttribute('aria-describedby')).toBe('share-modal-description');
     expect(screen.getByText('https://example.com/flow?room=room-123')).toBeTruthy();
-    expect(screen.getByText(/local-only mode/i)).toBeTruthy();
-    expect(screen.getByText(/copy the invite link above manually/i)).toBeTruthy();
+    expect(screen.getByText(getShareStatusDefaultMessage('fallback'))).toBeTruthy();
+    expect(screen.getByText(SHARE_MODAL_COPY.footerNote)).toBeTruthy();
   });
 
   it('invokes copy and close actions', () => {
@@ -59,8 +60,8 @@ describe('ShareModal', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /copy invite link/i }));
-    fireEvent.click(screen.getByLabelText('Close'));
+    fireEvent.click(screen.getByRole('button', { name: SHARE_MODAL_COPY.copyLink }));
+    fireEvent.click(screen.getByLabelText(SHARE_MODAL_COPY.close));
 
     expect(onCopyInvite).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);

@@ -13,7 +13,7 @@ The Command Center is the keyboard-first launcher for the editor. It opens as a 
 
 The top-level command list includes actions such as:
 
-- Open FlowPilot
+- Open Flowpilot
 - Edit Flow DSL
 - Edit Mermaid Code
 - Assets

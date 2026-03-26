@@ -1,4 +1,3 @@
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { createJSONStorage, type PersistStorage, type StateStorage } from 'zustand/middleware';
 import type { PersistedFlowStateSlice } from '@/store/persistence';
 import { ensureFlowPersistenceSchema } from './indexedDbSchema';
@@ -126,7 +125,7 @@ function resolveStateStorage(): StateStorage {
   const localStorageRef = typeof localStorage === 'undefined' ? null : localStorage;
   const indexedDbFactory = getBrowserIndexedDbFactory();
 
-  if (!ROLLOUT_FLAGS.indexedDbStorageV1 || !indexedDbFactory) {
+  if (!indexedDbFactory) {
     return getBrowserLocalStorage();
   }
 
@@ -137,7 +136,6 @@ function resolveStateStorage(): StateStorage {
 }
 
 export function initializeIndexedDbSchemaScaffold(): void {
-  if (!ROLLOUT_FLAGS.indexedDbStorageV1) return;
   const indexedDbFactory = getBrowserIndexedDbFactory();
   if (!indexedDbFactory) return;
 

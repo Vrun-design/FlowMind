@@ -9,7 +9,6 @@ import MemoizedMarkdown from './MemoizedMarkdown';
 import { resolveNodeVisualStyle } from '../theme';
 import { useDesignSystem } from '../hooks/useDesignSystem';
 import { useInlineNodeTextEdit } from '@/hooks/useInlineNodeTextEdit';
-import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { getTransformDiagnosticsAttrs } from './transformDiagnostics';
 import { InlineTextEditSurface } from './InlineTextEditSurface';
 import { NodeChrome } from './NodeChrome';
@@ -106,6 +105,7 @@ function NodeShapeSVG({ shape, fill, stroke, strokeWidth }: NodeShapeSVGProps): 
 }
 
 interface IconAssetNodeBodyProps {
+  nodeId: string;
   selected: boolean;
   connectionHandleClass: string;
   explicitWidth: number | string | undefined;
@@ -127,6 +127,7 @@ interface IconAssetNodeBodyProps {
 
 /** Renders the compact icon-first presentation used for architecture asset nodes. */
 function IconAssetNodeBody({
+  nodeId,
   selected,
   connectionHandleClass,
   explicitWidth,
@@ -146,6 +147,7 @@ function IconAssetNodeBody({
     <>
       <NodeTransformControls isVisible={selected} minWidth={96} minHeight={96} keepAspectRatio={false} />
       <NodeChrome
+        nodeId={nodeId}
         selected={selected}
         minWidth={96}
         minHeight={hasLabel ? 108 : 88}
@@ -256,7 +258,7 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
   const activeColorMode = data.colorMode || 'subtle';
   const activeIconKey = data.icon === 'none' ? null : (data.icon || defaults.icon);
   const activeShape = data.shape || defaults.shape || 'rounded';
-  const visualQualityV2Enabled = ROLLOUT_FLAGS.visualQualityV2;
+  const visualQualityV2Enabled = true;
   const visualStyle = resolveNodeVisualStyle(activeColor, activeColorMode, data.customColor);
 
   // Resolve icons
@@ -391,6 +393,7 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
     return (
       <>
         <IconAssetNodeBody
+          nodeId={id}
           selected={Boolean(selected)}
           connectionHandleClass={connectionHandleClass}
           explicitWidth={explicitWidth}
@@ -416,6 +419,7 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
       />
 
       <NodeChrome
+        nodeId={id}
         selected={Boolean(selected)}
         minWidth={minWidth}
         minHeight={effectiveMinHeight}

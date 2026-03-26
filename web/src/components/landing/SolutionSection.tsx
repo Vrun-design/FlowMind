@@ -1,5 +1,5 @@
 import React from 'react';
-import { WandSparkles, FileCode, Palette, ShieldCheck, HardDrive, Layers, Lock } from 'lucide-react';
+import { WandSparkles, FileCode, ShieldCheck, HardDrive, Layers, Lock, Key } from 'lucide-react';
 
 export function SolutionSection(): React.ReactElement {
     return (
@@ -29,8 +29,8 @@ export function SolutionSection(): React.ReactElement {
             <div className="container mx-auto px-6 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[minmax(340px,auto)]">
 
-                    {/* Card 1: Advanced Diagram as Code (Span 7) */}
-                    <div className="md:col-span-7 bg-white rounded-[2.5rem] border border-brand-border p-8 md:p-12 relative overflow-hidden group hover:shadow-2xl hover:shadow-brand-blue/5 transition-all duration-700 flex flex-col justify-between">
+                    {/* Card 1: Advanced Diagram as Code (Span 8) */}
+                    <div className="col-span-1 md:col-span-12 lg:col-span-8 order-1 bg-white rounded-[var(--radius-3xl)] border border-brand-border p-8 md:p-12 relative overflow-hidden group hover:shadow-2xl hover:shadow-brand-blue/5 transition-all duration-700 flex flex-col justify-between">
 
                         <div className="absolute top-0 right-0 w-[60%] h-full bg-gradient-to-l from-gray-50 to-transparent pointer-events-none"></div>
 
@@ -39,8 +39,8 @@ export function SolutionSection(): React.ReactElement {
                                 <FileCode className="w-6 h-6" />
                             </div>
                             <h3 className="text-3xl font-bold text-brand-dark mb-4 tracking-tight">Diagram as Code</h3>
-                            <p className="text-brand-secondary text-lg leading-relaxed">
-                                First-class support for Mermaid.js and our type-safe DSL. Define your architecture in code, export as JSON, and let the engine handle the layout.
+                            <p className="text-brand-secondary text-lg leading-relaxed pr-8">
+                                First-class support for our type-safe DSL. Define nodes in code and let the engine handle the layout.
                             </p>
                         </div>
 
@@ -77,7 +77,7 @@ export function SolutionSection(): React.ReactElement {
                     </div>
 
                     {/* Card 2: Flowpilot AI (Span 5) */}
-                    <div className="md:col-span-5 bg-[#0A0A0A] rounded-[2.5rem] p-8 md:p-12 flex flex-col relative overflow-hidden group border border-white/10 shadow-2xl min-h-[400px]">
+                    <div className="col-span-1 md:col-span-6 lg:col-span-5 order-3 bg-[#0A0A0A] rounded-[var(--radius-3xl)] p-8 md:p-12 flex flex-col relative overflow-hidden group border border-white/10 shadow-2xl min-h-[400px]">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#222_0%,transparent_60%)]"></div>
 
                         {/* Content Top */}
@@ -88,7 +88,7 @@ export function SolutionSection(): React.ReactElement {
                             </div>
                             <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">Flowpilot AI</h3>
                             <p className="text-white/60 text-base leading-relaxed">
-                                Chat with your diagram. &quot;Make the corners rounder&quot;, &quot;Add a load balancer&quot;.
+                                Chat with your diagram in natural language to build and style blocks instantly.
                             </p>
                         </div>
 
@@ -130,8 +130,8 @@ export function SolutionSection(): React.ReactElement {
                         </div>
                     </div>
 
-                    {/* Card 3: Local First (Span 6) */}
-                    <div className="md:col-span-6 bg-white rounded-[2.5rem] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-brand-primary/20 transition-all relative overflow-hidden min-h-[320px]">
+                    {/* Card 3: Local First (Span 4) */}
+                    <div className="col-span-1 md:col-span-6 lg:col-span-4 order-2 bg-white rounded-[var(--radius-3xl)] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-brand-primary/20 transition-all relative overflow-hidden min-h-[320px]">
                         <div className="absolute right-0 top-0 p-12 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity transform group-hover:scale-110 duration-700 pointer-events-none">
                             <ShieldCheck className="w-64 h-64" />
                         </div>
@@ -141,81 +141,69 @@ export function SolutionSection(): React.ReactElement {
                                 <Lock className="w-6 h-6" />
                             </div>
                             <h3 className="text-2xl font-bold text-brand-dark mb-3">Local &amp; Private</h3>
-                            <p className="text-brand-secondary text-lg leading-relaxed">
-                                We don&apos;t want your data. Everything stays on your machine. No cloud saves, no tracking, no &quot;syncing&quot; to our servers. You have full freedom.
+                            <p className="text-brand-secondary text-base leading-relaxed">
+                                Everything stays on your machine. No cloud tracking, no forced syncing. You have full freedom.
                             </p>
                         </div>
 
-                        <div className="relative z-10 mt-8 flex items-center gap-4">
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100 text-[11px] font-mono text-gray-600 font-medium">
+                        <div className="relative z-10 mt-8 flex flex-wrap items-center gap-3">
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100 text-[11px] font-mono text-gray-600 font-medium whitespace-nowrap">
                                 <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
                                 Offline Ready
                             </div>
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100 text-[11px] font-mono text-gray-600 font-medium">
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100 text-[11px] font-mono text-gray-600 font-medium whitespace-nowrap">
                                 <HardDrive className="w-3 h-3" />
                                 Local File System
                             </div>
                         </div>
                     </div>
 
-                    {/* Card 4: Aesthetics (Span 6) */}
-                    <div className="md:col-span-6 bg-gradient-to-br from-gray-50 via-white to-purple-50/30 rounded-[2.5rem] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-purple-200 transition-all relative overflow-hidden min-h-[320px]">
+                    {/* Card 4: BYOK (Span 4) */}
+                    <div className="col-span-1 md:col-span-6 lg:col-span-4 order-5 bg-gradient-to-br from-gray-50 via-white to-emerald-50/30 rounded-[var(--radius-3xl)] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-emerald-200 transition-all relative overflow-hidden min-h-[320px]">
                         {/* Decorative Background */}
                         <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] opacity-30"></div>
-                        <div className="absolute -right-20 -top-20 w-64 h-64 bg-gradient-to-br from-brand-blue/20 to-purple-500/20 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                        <div className="absolute -right-20 -top-20 w-64 h-64 bg-gradient-to-br from-brand-blue/20 to-emerald-500/20 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
 
                         <div className="relative z-10 max-w-md">
-                            <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform border border-purple-100/50">
-                                <Palette className="w-6 h-6" />
+                            <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform border border-emerald-100/50">
+                                <Key className="w-6 h-6" />
                             </div>
-                            <h3 className="text-2xl font-bold text-brand-dark mb-3">Amazing Aesthetics</h3>
-                            <p className="text-brand-secondary text-lg leading-relaxed">
-                                Break free from &quot;Enterprise Beige&quot;. Fully customizable fonts, colors, and shapes. Create diagrams that look like art, not documentation.
+                            <h3 className="text-2xl font-bold text-brand-dark mb-3">Bring Your Own Key</h3>
+                            <p className="text-brand-secondary text-base leading-relaxed">
+                                Plug in your own OpenAI or Anthropic keys. Stored securely on your device, avoiding all vendor lock-ins.
                             </p>
                         </div>
 
-                        {/* Visual: Interactive Palette */}
-                        <div className="relative z-10 mt-8">
-                            <div className="flex items-center gap-3">
-                                {/* Swatch 1 */}
-                                <div className="group/swatch relative cursor-pointer">
-                                    <div className="w-10 h-10 rounded-full bg-[#FF5F57] shadow-sm ring-2 ring-white hover:scale-110 transition-transform"></div>
-                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover/swatch:opacity-100 transition-opacity whitespace-nowrap">Sunset Red</div>
+                        {/* Visual: API Key Input */}
+                        <div className="relative z-10 mt-8 w-full max-w-[280px]">
+                            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 flex items-center gap-3 transform group-hover:-translate-y-1 transition-transform">
+                                <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                                    <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 text-emerald-600" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 </div>
-                                {/* Swatch 2 */}
-                                <div className="group/swatch relative cursor-pointer">
-                                    <div className="w-10 h-10 rounded-full bg-[#FEBC2E] shadow-sm ring-2 ring-white hover:scale-110 transition-transform delay-75"></div>
-                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover/swatch:opacity-100 transition-opacity whitespace-nowrap">Amber Warning</div>
-                                </div>
-                                {/* Swatch 3 */}
-                                <div className="group/swatch relative cursor-pointer">
-                                    <div className="w-10 h-10 rounded-full bg-[#28C840] shadow-sm ring-2 ring-white hover:scale-110 transition-transform delay-100"></div>
-                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover/swatch:opacity-100 transition-opacity whitespace-nowrap">Success Green</div>
-                                </div>
-                                {/* Swatch 4 */}
-                                <div className="group/swatch relative cursor-pointer">
-                                    <div className="w-10 h-10 rounded-full bg-brand-blue shadow-sm ring-2 ring-white hover:scale-110 transition-transform delay-150"></div>
-                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover/swatch:opacity-100 transition-opacity whitespace-nowrap">Klein Blue</div>
-                                </div>
-
-                                <div className="w-px h-8 bg-brand-border mx-2"></div>
-
-                                <div className="text-xs font-mono text-brand-secondary bg-white border border-brand-border px-3 py-2 rounded-lg">
-                                    font-family: &apos;Inter&apos;, sans-serif;
+                                <div className="flex-1 overflow-hidden">
+                                    <div className="text-[10px] font-bold text-gray-500 mb-1 uppercase tracking-wider">OpenAI API Key</div>
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="flex gap-0.5">
+                                            {[...Array(12)].map((_, i) => (
+                                                <div key={i} className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                                            ))}
+                                        </div>
+                                        <span className="text-xs font-mono text-gray-600 ml-1">v4X9</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Card 5: Export Everywhere (Span 7) */}
-                    <div className="md:col-span-7 bg-[#0A0A0A] rounded-[2.5rem] p-8 md:p-12 flex flex-col justify-between relative overflow-hidden group shadow-2xl min-h-[380px]">
+                    <div className="col-span-1 md:col-span-12 lg:col-span-7 order-4 bg-[#0A0A0A] rounded-[var(--radius-3xl)] p-8 md:p-12 flex flex-col justify-between relative overflow-hidden group shadow-2xl min-h-[380px]">
                         <div className="relative z-20 max-w-lg mb-8">
                             <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white mb-6 border border-white/10 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-download-cloud"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" /><path d="M12 12v9" /><path d="m8 17 4 4 4-4" /></svg>
                             </div>
                             <h3 className="text-3xl font-bold text-white mb-3 tracking-tight">Export Everywhere</h3>
                             <p className="text-white/60 text-lg leading-relaxed">
-                                Don&apos;t lock your data in. Export to native Figma vector layers, high-res PNGs, SVG, JSON, Mermaid, or PlantUML. Your architecture diagrams should be as portable as your code.
+                                Export to native Figma vector layers, pristine SVG, PNG, or JSON. Your diagrams are instantly portable.
                             </p>
                         </div>
                         
@@ -240,53 +228,17 @@ export function SolutionSection(): React.ReactElement {
                         </div>
                     </div>
 
-                    {/* Card 6: Templates (Span 5) */}
-                    <div className="md:col-span-5 bg-gradient-to-br from-indigo-50/50 to-white rounded-[2.5rem] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-indigo-100 transition-all min-h-[380px] overflow-hidden">
-                        <div className="relative z-20">
-                            <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 border border-indigo-100 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-layout-template"><rect width="18" height="7" x="3" y="3" rx="1" /><rect width="9" height="7" x="3" y="14" rx="1" /><rect width="5" height="7" x="16" y="14" rx="1" /></svg>
-                            </div>
-                            <h3 className="text-3xl font-bold text-brand-dark mb-3 tracking-tight">20+ Templates</h3>
-                            <p className="text-brand-secondary text-lg leading-relaxed">
-                                Don&apos;t start from scratch. Use curated, production-ready blueprints for AWS architecture, authentication flows, and database ERDs.
-                            </p>
-                        </div>
-                        
-                        {/* Polished Visual: Static 2x2 Grid of faint wireframes */}
-                        <div className="relative z-10 mt-10 h-32 w-full perspective-1000">
-                            <div className="absolute inset-x-0 bottom-0 top-0 grid grid-cols-2 grid-rows-2 gap-3 transform rotate-x-[20deg] rotate-y-[-10deg] rotate-z-[10deg] scale-[1.15] translate-y-6 group-hover:translate-y-2 group-hover:rotate-x-[10deg] transition-all duration-700 ease-out origin-top">
-                                {/* Wireframe 1 */}
-                                <div className="bg-white rounded-xl shadow-lg border border-indigo-100/50 p-2 flex flex-col gap-2">
-                                    <div className="h-2 w-1/2 bg-indigo-100 rounded-sm"></div>
-                                    <div className="flex gap-2 h-full"><div className="w-1/3 bg-gray-50 rounded-sm border border-gray-100"></div><div className="flex-1 bg-gray-50 rounded-sm border border-gray-100"></div></div>
-                                </div>
-                                {/* Wireframe 2 */}
-                                <div className="bg-white rounded-xl shadow-lg border border-indigo-100/50 p-2 flex flex-col gap-2 opacity-80">
-                                    <div className="h-2 w-2/3 bg-indigo-50 rounded-sm"></div>
-                                    <div className="grid grid-cols-2 gap-1 h-full"><div className="bg-gray-50 rounded-sm"></div><div className="bg-gray-50 rounded-sm"></div></div>
-                                </div>
-                                {/* Wireframe 3 */}
-                                <div className="bg-white rounded-xl shadow-lg border border-indigo-100/50 p-2 flex flex-col gap-2 opacity-60">
-                                    <div className="flex justify-between items-center"><div className="h-2 w-1/3 bg-indigo-50 rounded-sm"></div><div className="h-3 w-3 rounded-full bg-gray-100"></div></div>
-                                    <div className="flex-1 bg-gray-50 border border-gray-100 border-dashed rounded-sm"></div>
-                                </div>
-                                {/* Wireframe 4 */}
-                                <div className="bg-white rounded-xl shadow-lg border border-indigo-100/50 p-2 opacity-40 flex items-center justify-center">
-                                    <div className="h-1 w-8 bg-gray-200 rounded-full"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
 
                     {/* Card 7: Auto-Layout (Span 4) */}
-                    <div className="md:col-span-4 bg-white rounded-[2.5rem] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-gray-300 transition-all min-h-[380px] overflow-hidden">
+                    <div className="col-span-1 md:col-span-6 lg:col-span-4 order-6 bg-white rounded-[var(--radius-3xl)] border border-brand-border p-8 md:p-12 flex flex-col justify-between group hover:border-gray-300 transition-all min-h-[380px] overflow-hidden">
                         <div className="relative z-20">
                             <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-700 mb-6 border border-gray-200 group-hover:scale-110 transition-transform duration-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-git-merge"><circle cx="18" cy="18" r="3" /><circle cx="6" cy="6" r="3" /><path d="M6 21V9a9 9 0 0 0 9 9" /></svg>
                             </div>
                             <h3 className="text-2xl font-bold text-brand-dark mb-3 tracking-tight">Smart Auto-Layout</h3>
                             <p className="text-brand-secondary text-base leading-relaxed">
-                                One click and the powerful ELK.js engine automatically routes edges and aligns nodes perfectly.
+                                Powered by ELK.js to automatically route edges and perfectly snap nodes into alignment.
                             </p>
                         </div>
                         
@@ -314,14 +266,14 @@ export function SolutionSection(): React.ReactElement {
                     </div>
 
                     {/* Card 8: Real-Time Sync (Span 4) */}
-                    <div className="md:col-span-4 bg-gray-50/50 rounded-[2.5rem] border border-brand-border p-8 md:p-12 flex flex-col justify-between group transition-colors min-h-[380px] overflow-hidden hover:bg-white">
+                    <div className="col-span-1 md:col-span-12 lg:col-span-4 order-7 bg-gray-50/50 rounded-[var(--radius-3xl)] border border-brand-border p-8 md:p-12 flex flex-col justify-between group transition-colors min-h-[380px] overflow-hidden hover:bg-white">
                         <div className="relative z-20">
                             <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6 border border-blue-100 group-hover:scale-110 transition-transform duration-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
                             </div>
                             <h3 className="text-2xl font-bold text-brand-dark mb-3 tracking-tight">Multiplayer Sync</h3>
                             <p className="text-brand-secondary text-base leading-relaxed">
-                                Share a link and build together. True peer-to-peer WebRTC cursors enable zero-latency live multiplayer editing.
+                                Share a link and build together with true peer-to-peer WebRTC zero-latency live cursors.
                             </p>
                         </div>
 
@@ -345,43 +297,7 @@ export function SolutionSection(): React.ReactElement {
                         </div>
                     </div>
 
-                    {/* Card 9: Command Center (Span 4) */}
-                    <div className="md:col-span-4 bg-brand-canvas rounded-[2.5rem] border border-brand-border p-8 md:p-12 flex flex-col justify-between group min-h-[380px] overflow-hidden hover:border-gray-300 transition-colors">
-                        <div className="relative z-20">
-                            <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-gray-800 mb-6 border border-gray-200 group-hover:scale-110 transition-transform duration-500 shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
-                            </div>
-                            <h3 className="text-2xl font-bold text-brand-dark mb-3 tracking-tight">Command Center</h3>
-                            <p className="text-brand-secondary text-base leading-relaxed">
-                                Move at the speed of thought. Press <kbd className="font-sans px-1.5 py-0.5 bg-white border border-gray-200 text-gray-800 rounded font-medium text-xs shadow-sm mx-1">⌘K</kbd> to search nodes, add templates, or export files.
-                            </p>
-                        </div>
-                        
-                        {/* Polished Visual: Command Palette UI */}
-                        <div className="relative z-10 mt-12 w-full flex justify-center">
-                            <div className="w-[90%] bg-white rounded-xl shadow-[0_15px_40px_-10px_rgba(0,0,0,0.1)] border border-gray-200 overflow-hidden transform group-hover:-translate-y-2 transition-transform duration-500 flex flex-col">
-                                <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-100 bg-gray-50">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                    <span className="text-[10px] text-gray-400 font-mono">Create node...</span>
-                                </div>
-                                <div className="p-1.5">
-                                    <div className="flex items-center justify-between px-2 py-1.5 bg-brand-primary/5 rounded space-x-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 rounded bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20"><div className="w-1.5 h-1.5 rounded-full bg-brand-primary"></div></div>
-                                            <span className="text-[10px] text-brand-dark font-medium whitespace-nowrap">API Service Node</span>
-                                        </div>
-                                        <kbd className="text-[8px] text-brand-primary font-mono bg-brand-primary/10 px-1 py-0.5 rounded font-bold">↵</kbd>
-                                    </div>
-                                    <div className="flex items-center justify-between px-2 py-1.5 group-hover:bg-gray-50 rounded transition-colors mt-0.5 space-x-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 rounded bg-gray-100 flex items-center justify-center border border-gray-200"><div className="w-1.5 h-1.5 rounded-sm bg-gray-400"></div></div>
-                                            <span className="text-[10px] text-gray-500 whitespace-nowrap">Database Node</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
 
                 </div>
             </div>

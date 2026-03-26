@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useMindmapTopicActionRequest } from '@/hooks/mindmapTopicActionRequest';
 import type { FlowEdge, FlowNode } from '@/lib/types';
+import { useNodeQuickCreateRequest } from '@/hooks/nodeQuickCreateRequest';
 
 interface UseFlowEditorInteractionBindingsParams {
     selectedNodeId: string | null;
@@ -24,6 +25,10 @@ interface UseFlowEditorInteractionBindingsParams {
     zoomOut: (options?: { duration?: number }) => void;
     copySelection: () => void;
     pasteSelection: () => void;
+    copyStyleSelection: () => void;
+    pasteStyleSelection: () => void;
+    createConnectedNodeInDirection: (nodeId: string, direction: 'up' | 'right' | 'down' | 'left') => void;
+    updateNodeData: (id: string, data: Partial<FlowNode['data']>) => void;
     setSelectedNodeId: (id: string | null) => void;
     setSelectedEdgeId: (id: string | null) => void;
     setNodes: (updater: (nodes: FlowNode[]) => FlowNode[]) => void;
@@ -51,6 +56,10 @@ export function useFlowEditorInteractionBindings({
     zoomOut,
     copySelection,
     pasteSelection,
+    copyStyleSelection,
+    pasteStyleSelection,
+    createConnectedNodeInDirection,
+    updateNodeData,
     setSelectedNodeId,
     setSelectedEdgeId,
     setNodes,
@@ -86,6 +95,18 @@ export function useFlowEditorInteractionBindings({
         onZoomOut: () => zoomOut({ duration: 300 }),
         onCopy: copySelection,
         onPaste: pasteSelection,
+        onCopyStyle: copyStyleSelection,
+        onPasteStyle: pasteStyleSelection,
+        onQuickCreateShortcut: (direction) => {
+            if (selectedNodeId) {
+                createConnectedNodeInDirection(selectedNodeId, direction);
+            }
+        },
+        onAnnotationColorShortcut: (color) => {
+            if (selectedNodeId) {
+                updateNodeData(selectedNodeId, { color });
+            }
+        },
         onClearSelection: () => {
             setSelectedNodeId(null);
             setSelectedEdgeId(null);
@@ -100,6 +121,12 @@ export function useFlowEditorInteractionBindings({
             ));
         },
     });
+
+    useNodeQuickCreateRequest(
+        useCallback((nodeId, direction) => {
+            createConnectedNodeInDirection(nodeId, direction);
+        }, [createConnectedNodeInDirection])
+    );
 
     useMindmapTopicActionRequest(
         useCallback(({ nodeId, action, side }) => {

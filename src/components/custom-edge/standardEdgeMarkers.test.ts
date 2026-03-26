@@ -3,7 +3,7 @@ import { MarkerType } from '@/lib/reactflowCompat';
 import { resolveStandardEdgeMarkers } from './standardEdgeMarkers';
 
 describe('resolveStandardEdgeMarkers', () => {
-  it('keeps upstream marker urls when connectorModelV1 is disabled', () => {
+  it('keeps upstream marker urls when local marker generation is disabled', () => {
     const result = resolveStandardEdgeMarkers({
       connectorModelEnabled: false,
       edgeId: 'edge-1',
@@ -19,7 +19,7 @@ describe('resolveStandardEdgeMarkers', () => {
     expect(result.markerEndUrl).toBe('url(#rf-end)');
   });
 
-  it('creates local arrow markers for closed-arrow configs when connectorModelV1 is enabled', () => {
+  it('creates local arrow markers for closed-arrow configs when local marker generation is enabled', () => {
     const result = resolveStandardEdgeMarkers({
       connectorModelEnabled: true,
       edgeId: 'edge-1',

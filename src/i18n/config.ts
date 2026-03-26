@@ -10,6 +10,12 @@ import esTranslation from './locales/es/translation.json';
 import zhTranslation from './locales/zh/translation.json';
 import jaTranslation from './locales/ja/translation.json';
 
+interface TranslationEntry {
+  path: string;
+  value: string;
+  segments: string[];
+}
+
 function lookupTranslationValue(source: unknown, key: string): string | undefined {
   const segments = key.split('.');
   let current: unknown = source;
@@ -24,22 +30,109 @@ function lookupTranslationValue(source: unknown, key: string): string | undefine
   return typeof current === 'string' ? current : undefined;
 }
 
-function formatMissingKeyAsEnglishLabel(key: string): string {
-  const lastSegment = key.split('.').pop() ?? key;
-  const withSpaces = lastSegment
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/[_-]+/g, ' ')
-    .trim();
-
-  if (!withSpaces) {
-    return key;
+function collectTranslationEntries(source: unknown, prefix = '', entries: TranslationEntry[] = []) {
+  if (!source || typeof source !== 'object') {
+    return entries;
   }
 
-  return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
+  for (const [segment, value] of Object.entries(source as Record<string, unknown>)) {
+    const nextPath = prefix ? `${prefix}.${segment}` : segment;
+
+    if (typeof value === 'string') {
+      entries.push({ path: nextPath, value, segments: nextPath.split('.') });
+      continue;
+    }
+
+    collectTranslationEntries(value, nextPath, entries);
+  }
+
+  return entries;
+}
+
+const englishTranslationEntries = collectTranslationEntries(enTranslation);
+const warnedMissingKeys = new Set<string>();
+
+function shouldWarnForMissingTranslations(): boolean {
+  return typeof import.meta !== 'undefined' && Boolean(import.meta.env?.DEV);
+}
+
+function warnMissingTranslationKey(key: string) {
+  if (!shouldWarnForMissingTranslations() || warnedMissingKeys.has(key)) {
+    return;
+  }
+
+  warnedMissingKeys.add(key);
+  console.warn(`[i18n] Missing translation key: "${key}"`);
+}
+
+function getCommonEnglishFallback(): string {
+  return lookupTranslationValue(enTranslation, 'common.error') ?? 'Error';
+}
+
+function countMatchingSuffixSegments(left: string[], right: string[]): number {
+  let count = 0;
+
+  while (count < left.length && count < right.length) {
+    if (left[left.length - 1 - count] !== right[right.length - 1 - count]) {
+      break;
+    }
+    count += 1;
+  }
+
+  return count;
+}
+
+function lookupBestEnglishFallbackValue(key: string): string | undefined {
+  const requestedSegments = key.split('.');
+  let bestMatches: TranslationEntry[] = [];
+  let bestScore = 0;
+  let bestLengthDelta = Number.POSITIVE_INFINITY;
+
+  for (const entry of englishTranslationEntries) {
+    const score = countMatchingSuffixSegments(requestedSegments, entry.segments);
+    if (score === 0) {
+      continue;
+    }
+
+    const lengthDelta = Math.abs(entry.segments.length - requestedSegments.length);
+
+    if (score > bestScore || (score === bestScore && lengthDelta < bestLengthDelta)) {
+      bestScore = score;
+      bestLengthDelta = lengthDelta;
+      bestMatches = [entry];
+      continue;
+    }
+
+    if (score === bestScore && lengthDelta === bestLengthDelta) {
+      bestMatches.push(entry);
+    }
+  }
+
+  if (bestMatches.length === 0) {
+    return undefined;
+  }
+
+  const distinctValues = [...new Set(bestMatches.map((entry) => entry.value))];
+  if (distinctValues.length === 1) {
+    return distinctValues[0];
+  }
+
+  bestMatches.sort((left, right) => {
+    if (left.segments.length !== right.segments.length) {
+      return left.segments.length - right.segments.length;
+    }
+    return left.path.localeCompare(right.path);
+  });
+
+  return bestMatches[0].value;
 }
 
 export function getTranslationFallback(key: string): string {
-  return lookupTranslationValue(enTranslation, key) ?? formatMissingKeyAsEnglishLabel(key);
+  return (
+    lookupTranslationValue(enTranslation, key) ??
+    lookupBestEnglishFallbackValue(key) ??
+    getCommonEnglishFallback()
+  );
 }
 
 i18n
@@ -48,9 +141,13 @@ i18n
   .init({
     fallbackLng: 'en',
     debug: false,
+    missingKeyHandler: (_languages, _namespace, key) => warnMissingTranslationKey(key),
     returnNull: false,
     returnEmptyString: false,
-    parseMissingKeyHandler: (key) => getTranslationFallback(key),
+    parseMissingKeyHandler: (key) => {
+      warnMissingTranslationKey(key);
+      return getTranslationFallback(key);
+    },
     interpolation: {
       escapeValue: false,
     },

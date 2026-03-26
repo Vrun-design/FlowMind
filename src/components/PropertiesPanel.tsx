@@ -1,6 +1,7 @@
 import React from 'react';
 import { Node, Edge } from '@/lib/reactflowCompat';
 import { NodeData } from '@/lib/types';
+import type { ArchitectureTemplateId } from '@/lib/architectureTemplates';
 import { EdgeProperties } from './properties/EdgeProperties';
 import { BulkNodeProperties } from './properties/BulkNodeProperties';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +24,11 @@ interface PropertiesPanelProps {
     onAddMindmapSibling: (nodeId: string) => void;
     onAddArchitectureService: (sourceId: string) => void;
     onCreateArchitectureBoundary: (sourceId: string) => void;
+    onApplyArchitectureTemplate: (sourceId: string, templateId: ArchitectureTemplateId) => void;
+    onGenerateEntityFields: (nodeId: string) => Promise<void> | void;
+    onSuggestArchitectureNode: (nodeId: string) => Promise<void> | void;
+    onConvertEntitySelectionToClassDiagram: () => void;
+    onOpenMermaidCodeEditor: () => void;
     onClose: () => void;
 }
 
@@ -40,11 +46,16 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     onAddMindmapSibling,
     onAddArchitectureService,
     onCreateArchitectureBoundary,
+    onApplyArchitectureTemplate,
+    onGenerateEntityFields,
+    onSuggestArchitectureNode,
+    onConvertEntitySelectionToClassDiagram,
+    onOpenMermaidCodeEditor,
     onClose
 }) => {
     const { t } = useTranslation();
 
-    if (!selectedNode && !selectedEdge) return null;
+    if (!selectedNode && !selectedEdge && selectedNodes.length < 2) return null;
 
     const isBulkEdit = selectedNodes.length > 1;
     const panelTitle = isBulkEdit
@@ -78,6 +89,11 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                         onAddMindmapSibling={onAddMindmapSibling}
                         onAddArchitectureService={onAddArchitectureService}
                         onCreateArchitectureBoundary={onCreateArchitectureBoundary}
+                        onApplyArchitectureTemplate={onApplyArchitectureTemplate}
+                        onGenerateEntityFields={onGenerateEntityFields}
+                        onSuggestArchitectureNode={onSuggestArchitectureNode}
+                        onConvertEntitySelectionToClassDiagram={onConvertEntitySelectionToClassDiagram}
+                        onOpenMermaidCodeEditor={onOpenMermaidCodeEditor}
                     />
                 )}
 

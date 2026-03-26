@@ -19,6 +19,8 @@
     "selectAll": "全选",
     "duplicate": "复制",
     "duplicateDrag": "复制并拖拽",
+    "multiSelect": "多选",
+    "selectionBox": "选择框",
     "copy": "复制",
     "paste": "粘贴",
     "zoomIn": "放大",
@@ -35,6 +37,8 @@
     "error": "错误",
     "success": "成功",
     "help": "帮助",
+    "selectTool": "选择工具",
+    "handTool": "抓手工具",
     "getStarted": "开始使用",
     "bringToFront": "移至顶层",
     "sendToBack": "移至底层",
@@ -52,7 +56,8 @@
     "distributeHorizontally": "水平分布",
     "distributeVertically": "垂直分布",
     "group": "分组",
-    "upload": "Upload"
+    "upload": "Upload",
+    "rename": "重命名"
   },
   "nav": {
     "home": "首页",
@@ -72,7 +77,8 @@
     "beta": "测试版",
     "versionHistory": "版本历史",
     "loadJSON": "加载 JSON",
-    "playbackMode": "回放模式"
+    "playbackMode": "回放模式",
+    "privacyMessage": "您的图表只留在您这里，不会发送到我们的服务器。"
   },
   "menu": {
     "file": "文件",
@@ -110,7 +116,21 @@
     "hintClipboard": "Copy to clipboard",
     "figmaEditable": "Figma Editable",
     "exportDiagram": "Export Diagram",
-    "exportAs": "Export As"
+    "exportAs": "Export As",
+    "exportOrShare": "导出或分享此画布",
+    "svg": "导出为 SVG",
+    "hintSvgScalable": "可缩放矢量文件",
+    "video": "回放视频",
+    "hintPlaybackWebM": "回放时间线（WebM/MP4）",
+    "gif": "回放 GIF",
+    "hintPlaybackGif": "适用于文档/社交媒体的短循环",
+    "share": "分享实时画布",
+    "hintShareViewer": "此房间的邀请链接",
+    "shareSection": "分享画布",
+    "revealVideo": "Reveal Video",
+    "hintRevealVideo": "Nodes fade in sequentially (WebM/MP4)",
+    "revealGif": "Reveal GIF",
+    "hintRevealGif": "Animated reveal for docs/social"
   },
   "import": {
     "title": "导入",
@@ -122,7 +142,7 @@
     "newTab": "新建标签页",
     "renameTab": "重命名标签页",
     "closeTab": "关闭标签页",
-    "addNode": "添加节点",
+    "addNode": "添加形状",
     "deleteNode": "删除节点",
     "duplicateNode": "复制节点"
   },
@@ -193,7 +213,25 @@
     "recentFiles": "最近文件",
     "files": "个文件",
     "createFirstFlow": "创建您的第一个流程",
-    "startFromScratch": "从零开始或导入现有图表。"
+    "startFromScratch": "从零开始或导入现有图表。",
+    "currentFlow": "当前流程",
+    "autosaved": "已自动保存",
+    "localStorageHint": "已自动保存在此设备上。我们不会将您的图表数据上传到我们的服务器。",
+    "renameFlow": {
+      "title": "重命名流程",
+      "description": "更新仪表板和标签页中显示的名称。",
+      "label": "流程名称",
+      "placeholder": "输入流程名称",
+      "hint": "除非您将其导出或同步到其他地方，否则名称仅保存在当前浏览器配置中。",
+      "closeDialog": "关闭重命名流程对话框"
+    },
+    "deleteFlow": {
+      "title": "删除流程",
+      "description": "这会从此设备中移除本地自动保存的流程。",
+      "confirmation": "删除“{{name}}”？",
+      "hint": "除非您有导出的备份或另一份副本，否则此操作无法撤销。",
+      "closeDialog": "关闭删除流程对话框"
+    }
   },
   "settings": {
     "title": "设置",
@@ -226,7 +264,18 @@
     "description": "描述",
     "color": "颜色",
     "icon": "图标",
-    "size": "大小"
+    "size": "大小",
+    "shape": "形状",
+    "bulkShape": "批量形状",
+    "bulkColor": "批量颜色",
+    "bulkIcon": "批量图标",
+    "labelTransform": "标签变换",
+    "prefixOptional": "前缀（可选）",
+    "suffixOptional": "后缀（可选）",
+    "previewSummary": "预览摘要",
+    "bulkApplySummary": "将更新已选择的 {{count}} 个项目",
+    "selectFieldToApply": "请至少选择一个要应用的字段。",
+    "applyToSelectedNodes": "应用到所选项目"
   },
   "ai": {
     "generate": "使用 AI 生成",
@@ -234,7 +283,8 @@
     "model": "模型",
     "apiKey": "API 密钥",
     "placeholder": "描述你的流程图...",
-    "settingsSubtitle": "Configure your preferred AI provider, model, and API key below."
+    "settingsSubtitle": "Configure your preferred AI provider, model, and API key below.",
+    "generateWithFlowpilot": "使用 Flowpilot 生成"
   },
   "playback": {
     "title": "回放",
@@ -327,9 +377,9 @@
     "description": "终极白标画布。",
     "diagramAsCode": "代码即图表",
     "diagramAsCodeDesc": "支持 Mermaid.js 和 DSL。",
-    "flowpilotAI": "AI Studio",
+    "flowpilotAI": "Flowpilot",
     "aiAssistant": "AI 助手",
-    "flowpilotAIDesc": "与你的图表对话。",
+    "flowpilotAIDesc": "通过引导式 AI 编辑来完善你的图表。",
     "addRedisCache": "在数据库前添加一个 Redis 缓存。",
     "localPrivate": "本地且私密",
     "localPrivateDesc": "一切都留在你的机器上。",
@@ -356,7 +406,7 @@
     "designDesc": "从画布复制并作为可编辑的 SVG 粘贴到 Figma 中。",
     "exportShare": "导出与分享",
     "pixelPerfectOutput": "像素级完美输出",
-    "exportShareDesc": "将图表导出为 SVG、PNG 或 PDF。",
+    "exportShareDesc": "将图表导出为 SVG 或 PNG。",
     "vectorEditable": "矢量 • 在 Figma 中可编辑",
     "rasterHighRes": "光栅 • 高分辨率导出",
     "dataSaveRestore": "数据 • 保存与恢复流程"
@@ -385,8 +435,7 @@
     "communityDesc": "加入构建者行列。",
     "roadmap": "路线图",
     "coreRenderer": "核心渲染器",
-    "flowpilotAI": "AI Studio",
-    "pdfExport": "PDF 导出"
+    "flowpilotAI": "Flowpilot"
   },
   "demo": {
     "livePreview": "实时预览",
@@ -459,7 +508,9 @@
       "placeholder": "通过标签或 ID 搜索...",
       "noResults": "未找到节点",
       "untitled": "未命名节点",
-      "type": "类型"
+      "type": "类型",
+      "showingCount": "Showing: {{count}}",
+      "totalCount": "Total on canvas: {{count}}"
     },
     "templates": {
       "title": "模板",
@@ -473,7 +524,17 @@
       "dslPlaceholder": "粘贴 DSL 代码...",
       "applyShortcut": "按 ⌘+Enter 应用",
       "syntaxGuide": "语法指南",
-      "apply": "应用"
+      "apply": "应用",
+      "quickFixes": "快速修复",
+      "linePrefix": "第 {{line}} 行：",
+      "hintPrefix": "提示：",
+      "strictModeGuidance": {
+        "defineEndpoints": "在连接边之前，将每个边端点都定义为显式的架构节点。",
+        "uniqueIds": "为每个 service/group/junction 节点使用唯一 ID（不要出现重复的架构 ID）。",
+        "edgeSyntax": "使用架构边箭头 `-->`、`<--` 或 `<-->`，以及类似 `api:R --> L:db` 的侧向限定符。",
+        "nodeSyntax": "使用有效的节点声明：`service id(icon)[Label]`、`group id[Label]`、`junction id[Label]`。",
+        "fallback": "关闭架构严格模式以允许自动恢复，或修复诊断后重试。"
+      }
     },
     "layout": {
       "title": "布局工作室",
@@ -495,7 +556,8 @@
       "compact": "紧凑",
       "normal": "正常",
       "loose": "宽松",
-      "applyLayout": "应用布局"
+      "applyLayout": "应用布局",
+      "layoutStyle": "布局样式"
     },
     "designSystem": {
       "title": "设计系统",
@@ -520,17 +582,24 @@
       "intelligentRoutingDesc": "拖动时自动吸附",
       "animatedEdges": "动画连线",
       "animatedEdgesDesc": "流动的粒子",
-      "strokeWidth": "线宽"
+      "strokeWidth": "线宽",
+      "largeGraphSafety": "大图保护",
+      "largeGraphSafetyAuto": "自动",
+      "largeGraphSafetyOn": "开启",
+      "largeGraphSafetyOff": "关闭",
+      "exportModeDeterministic": "确定性",
+      "exportModeLegacy": "旧版",
+      "exportMode": "导出模式"
     }
   },
   "settingsModal": {
     "title": "设置",
     "general": "通用",
-    "flowpilotAI": "AI Studio",
+    "flowpilotAI": "Flowpilot",
     "shortcuts": "快捷键",
     "running": "正在运行 {appName}",
     "generalSettings": "通用设置",
-    "flowpilotConfigurations": "AI Studio 配置",
+    "flowpilotConfigurations": "Flowpilot 配置",
     "keyboardShortcuts": "键盘快捷键",
     "canvas": {
       "title": "画布",
@@ -539,7 +608,17 @@
       "snapToGrid": "对齐网格",
       "snapToGridDesc": "移动时自动对齐",
       "miniMap": "小地图",
-      "miniMapDesc": "右下角显示小地图"
+      "miniMapDesc": "右下角显示小地图",
+      "architectureStrictMode": "架构严格模式",
+      "architectureStrictModeDesc": "当架构诊断包含恢复/校验问题时，阻止 Mermaid 导入",
+      "alignmentGuides": "Alignment Guides",
+      "alignmentGuidesDesc": "Show smart guide lines while dragging nodes",
+      "routingProfile": "路由配置",
+      "routingProfileStandard": "标准",
+      "routingProfileInfrastructure": "基础设施",
+      "routingProfileHint": "基础设施模式会优先为服务图使用正交线路。",
+      "edgeBundling": "捆绑平行边",
+      "edgeBundlingDesc": "让平行连接保持在共享通道上"
     },
     "ai": {
       "provider": "提供商",
@@ -596,7 +675,21 @@
       "customEndpointTitle": "What is a custom endpoint?",
       "privacyTitle": "Privacy & Encryption",
       "customEndpointText": "Any <1>OpenAI-compatible</1> API endpoint — local or remote. Great for:",
-      "customEndpointMustSupport": "Must support <1>POST /chat/completions</1> (OpenAI format)"
+      "customEndpointMustSupport": "Must support <1>POST /chat/completions</1> (OpenAI format)",
+      "advancedEndpointOverride": "高级基础 URL 覆盖",
+      "baseUrlHint": "留空以使用提供商默认端点。可用于您自己的代理/worker URL。",
+      "resetEndpoint": "重置为默认值",
+      "customHeadersTitle": "自定义请求头",
+      "customHeadersSubtitle": "为 Cloudflare Access 之类的认证代理发送额外请求头。",
+      "addHeader": "添加请求头",
+      "cloudflarePreset": "使用 Cloudflare 预设",
+      "customHeadersEmpty": "尚未配置自定义请求头。",
+      "customHeadersSecurity": "请求头的值会本地存储在您的浏览器配置中。",
+      "risk": {
+        "browserFriendly": "浏览器友好",
+        "proxyLikely": "可能需要代理",
+        "mixed": "取决于端点"
+      }
     },
     "brand": {
       "title": "品牌套件",
@@ -643,7 +736,11 @@
       "shareFeedback": "分享反馈",
       "shareFeedbackDesc": "提供反馈、报告错误"
     },
-    "settings": "设置"
+    "settings": "设置",
+    "canvasSettings": "画布设置",
+    "description": "配置画布偏好设置和键盘快捷键。",
+    "close": "关闭设置",
+    "closeDialog": "关闭设置对话框"
   },
   "customNodes": {
     "browserContent": "浏览器内容",
@@ -653,16 +750,18 @@
     "title": "键盘快捷键",
     "subtitle": "用速度掌控您的工作流程。",
     "closeAriaLabel": "关闭快捷键窗口",
-    "proTip": "专业技巧：拖动时按住 <key>?</key> 以启用选择框。"
+    "proTip": "提示：按住 <key>Shift</key> 可加入选择或拖出选择框。"
   },
   "toolbar": {
     "selectMode": "选择模式 (V)",
     "panMode": "平移模式 (H)",
-    "flowpilot": "Command Center (Cmd+K)",
+    "flowpilot": "Flowpilot",
     "templates": "模板",
     "addItem": "添加元素",
     "addToCanvas": "添加到画布",
-    "node": "节点",
+    "shapes": "形状",
+    "assets": "资源",
+    "node": "形状",
     "stickyNote": "便利贴",
     "section": "分区",
     "text": "文本",
@@ -671,7 +770,8 @@
     "autoLayout": "自动布局",
     "clearCanvas": "清除画布",
     "undo": "撤销 (Ctrl+Z)",
-    "redo": "重做 (Ctrl+Y)"
+    "redo": "重做 (Ctrl+Y)",
+    "commandCenter": "打开命令中心"
   },
   "flowEditor": {
     "cannotCloseLastTab": "无法关闭最后一个标签页。",
@@ -684,28 +784,30 @@
     "applyingLayout": "正在应用布局…",
     "emptyState": {
       "title": "开始构建",
-      "description": "您的画布是空的。使用 AI Studio 生成流程，或从空白开始。",
-      "generateWithFlowpilot": "使用 AI Studio 生成",
+      "description": "您的画布是空的。使用 Flowpilot 生成流程，或从空白开始。",
+      "generateWithFlowpilot": "使用 Flowpilot 生成",
       "browseTemplates": "浏览模板",
-      "addBlankNode": "添加空白节点"
-    }
+      "addBlankNode": "添加空白形状"
+    },
+    "dslExportSkippedEdges": "DSL 导出时跳过了 {{count}} 条无效边。"
   },
   "annotationNode": {
     "placeholder": "*双击编辑注释*"
   },
   "connectMenu": {
-    "createNewNode": "创建新节点",
-    "process": "流程",
-    "processDesc": "标准操作",
-    "decision": "决策",
-    "decisionDesc": "分支逻辑",
+    "createNewNode": "创建新形状",
+    "process": "圆角形状",
+    "processDesc": "通用块",
+    "decision": "菱形形状",
+    "decisionDesc": "分支块",
     "database": "数据库",
-    "databaseDesc": "数据存储",
+    "databaseDesc": "圆柱形状",
     "inputOutput": "输入 / 输出",
-    "inputOutputDesc": "数据流",
-    "note": "注释",
+    "inputOutputDesc": "平行四边形",
+    "note": "便利贴",
     "noteDesc": "文档说明",
-    "releaseToConnect": "松开以连接"
+    "releaseToConnect": "松开以连接",
+    "close": "关闭连接菜单"
   },
   "errorBoundary": {
     "title": "出现了错误",
@@ -729,7 +831,12 @@
     "restoreVersion": "恢复版本",
     "deleteVersion": "删除版本",
     "nodes": "{{count}} 个节点",
-    "edges": "{{count}} 条边"
+    "edges": "{{count}} 条边",
+    "close": "关闭快照面板",
+    "namedVersions": "Named Versions",
+    "noNamedSnapshots": "No named versions yet.",
+    "autosavedVersions": "Autosaved Checkpoints",
+    "noAutoSnapshots": "No autosaved checkpoints yet."
   },
   "templatesPanel": {
     "title": "流程模板",
@@ -738,8 +845,11 @@
   },
   "propertiesPanel": {
     "stickyNote": "便利贴",
-    "nodeSettings": "节点设置",
+    "nodeSettings": "形状设置",
     "connection": "连接"
+  },
+  "flowCanvas": {
+    "strictModePasteBlocked": "架构严格模式已阻止 Mermaid 粘贴。请打开代码视图，修复诊断后重试。"
   },
   "flowTabs": {
     "closeTab": "关闭标签页",
@@ -752,14 +862,54 @@
     "newNode": "New Node",
     "branch": "Branch",
     "processStep": "Process Step",
+    "addText": "添加文本",
     "group": "Group",
     "items": "items",
     "addCommentsHere": "Add your comments here.",
     "newSection": "New Section",
     "text": "Text",
-    "image": "Image"
+    "image": "Image",
+    "mindmap": "主题"
   },
   "actions": {
     "clearCanvasConfirm": "Are you sure you want to clear the canvas?"
+  },
+  "share": {
+    "close": "Close",
+    "title": "Share Design",
+    "betaBadge": "测试版",
+    "description": "Invite collaborators to view and edit this flow with you in real-time.",
+    "roomId": "房间 ID",
+    "link": "分享链接",
+    "copied": "Copied Link!",
+    "copyLink": "Copy Link",
+    "footerNote": "Your diagram stays local unless you share this room. If copy is blocked, copy the link above manually.",
+    "closeDialog": "Close share dialog",
+    "status": {
+      "cache": {
+        "syncing": " local cache syncing",
+        "ready": " local cache ready",
+        "hydrated": " restored from local cache"
+      },
+      "realtime": "Realtime peer sync",
+      "waiting": "Connecting to realtime sync",
+      "fallback": "Local-only mode"
+    },
+    "openDialog": "Share dialog",
+    "toast": {
+      "fallbackMode": "实时同步不可用。将继续以仅本地模式运行。",
+      "reconnected": "实时协作已恢复。",
+      "copyFailed": "Unable to copy share link.",
+      "linkCopied": "Collaboration link copied.",
+      "copyManual": "剪贴板访问被阻止。请从分享对话框中手动复制链接。"
+    }
+  },
+  "connectionPanel": {
+    "architecture": "Architecture",
+    "label": "Label",
+    "route": "路由",
+    "appearance": "外观",
+    "condition": "Condition",
+    "deleteConnection": "Delete Connection"
   }
 }

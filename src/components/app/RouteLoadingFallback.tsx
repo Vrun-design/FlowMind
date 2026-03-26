@@ -1,5 +1,6 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
+import { DEFAULT_ROUTE_LOADING_COPY } from './routeLoadingCopy';
 
 interface RouteLoadingFallbackProps {
   title?: string;
@@ -7,8 +8,8 @@ interface RouteLoadingFallbackProps {
 }
 
 export function RouteLoadingFallback({
-  title = 'Opening workspace',
-  description = 'Loading the next screen and restoring the current workspace context.',
+  title = DEFAULT_ROUTE_LOADING_COPY.title,
+  description = DEFAULT_ROUTE_LOADING_COPY.description,
 }: RouteLoadingFallbackProps): React.ReactElement {
   return (
     <div

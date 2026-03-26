@@ -3,13 +3,7 @@ import type { LegacyNodeProps } from '@/lib/reactflowCompat';
 import type { NodeData } from '@/lib/types';
 import { useFlowStore } from '@/store';
 import { NodeChrome } from '@/components/NodeChrome';
-
-function getScoreTone(score: number | undefined): string {
-  if (typeof score !== 'number') return 'bg-slate-100 text-slate-600';
-  if (score >= 4) return 'bg-emerald-100 text-emerald-700';
-  if (score >= 2) return 'bg-amber-100 text-amber-700';
-  return 'bg-rose-100 text-rose-700';
-}
+import { JourneyScoreControl } from '@/components/journey/JourneyScoreControl';
 
 function useInlineJourneyEdit(
   nodeId: string,
@@ -84,11 +78,29 @@ function JourneyNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
   const sectionEdit = useInlineJourneyEdit(id, data.journeySection || '', (nextValue) => ({
     journeySection: nextValue || 'General',
   }));
+  const { setNodes } = useFlowStore();
   const sectionLabel = data.journeySection || 'General';
   const score = data.journeyScore;
 
+  function updateScore(nextScore: number): void {
+    setNodes((nodes) =>
+      nodes.map((node) => (
+        node.id === id
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                journeyScore: nextScore,
+              },
+            }
+          : node
+      ))
+    );
+  }
+
   return (
     <NodeChrome
+      nodeId={id}
       selected={Boolean(selected)}
       minWidth={220}
       minHeight={120}
@@ -117,9 +129,12 @@ function JourneyNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
               sectionLabel
             )}
           </span>
-          <span className={`rounded-md px-2 py-0.5 text-[11px] font-semibold ${getScoreTone(score)}`}>
-            {typeof score === 'number' ? `${score}/5` : 'Unscored'}
-          </span>
+          <JourneyScoreControl
+            score={score}
+            onChange={updateScore}
+            className="rounded-md bg-slate-50 px-2 py-1"
+            starClassName="text-sm leading-none"
+          />
         </div>
 
         <div

@@ -1,5 +1,6 @@
 import { createMindmapEdge } from '@/constants';
 import type { FlowEdge, FlowNode, NodeData } from '@/lib/types';
+import { getMindmapChildrenById, getMindmapDescendantIds } from '@/lib/mindmapTree';
 
 const ROOT_CHILD_HORIZONTAL_GAP = 280;
 const BRANCH_HORIZONTAL_GAP = 220;
@@ -14,42 +15,6 @@ type MindmapBranchStyle = NonNullable<NodeData['mindmapBranchStyle']>;
 
 function isMindmapNode(node: FlowNode | undefined): node is FlowNode {
   return Boolean(node) && node.type === 'mindmap';
-}
-
-function getMindmapChildrenById(nodes: FlowNode[], edges: FlowEdge[]): Map<string, string[]> {
-  const nodeIds = new Set(nodes.filter(isMindmapNode).map((node) => node.id));
-  const childrenById = new Map<string, string[]>();
-  const connectedTargets = new Set<string>();
-
-  edges.forEach((edge) => {
-    if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target)) {
-      return;
-    }
-
-    const children = childrenById.get(edge.source) ?? [];
-    children.push(edge.target);
-    childrenById.set(edge.source, children);
-    connectedTargets.add(edge.target);
-  });
-
-  nodes.filter(isMindmapNode).forEach((node) => {
-    const parentId = typeof node.data.mindmapParentId === 'string' ? node.data.mindmapParentId : '';
-    if (!parentId || !nodeIds.has(parentId) || connectedTargets.has(node.id)) {
-      return;
-    }
-
-    const children = childrenById.get(parentId) ?? [];
-    if (!children.includes(node.id)) {
-      children.push(node.id);
-    }
-    childrenById.set(parentId, children);
-  });
-
-  childrenById.forEach((children) => {
-    children.sort((left, right) => left.localeCompare(right));
-  });
-
-  return childrenById;
 }
 
 function getConnectedMindmapComponent(nodeId: string, nodes: FlowNode[], edges: FlowEdge[]): Set<string> {
@@ -75,22 +40,6 @@ function getConnectedMindmapComponent(nodeId: string, nodes: FlowNode[], edges: 
   }
 
   return visited;
-}
-
-function getMindmapDescendantIds(nodeId: string, childrenById: Map<string, string[]>): Set<string> {
-  const descendants = new Set<string>();
-  const pending = [...(childrenById.get(nodeId) ?? [])];
-
-  while (pending.length > 0) {
-    const currentId = pending.pop();
-    if (!currentId || descendants.has(currentId)) {
-      continue;
-    }
-    descendants.add(currentId);
-    pending.push(...(childrenById.get(currentId) ?? []));
-  }
-
-  return descendants;
 }
 
 function findMindmapRootId(componentIds: Set<string>, edges: FlowEdge[]): string | null {

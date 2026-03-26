@@ -8,14 +8,91 @@ import { loadProviderCatalogSuggestions, loadProviderShapePreview } from '@/serv
 import { Tooltip } from './Tooltip';
 import { loadIconAssetSuggestions } from '@/services/iconAssetCatalog';
 import { NamedIcon } from './IconMap';
+import type { ConnectedEdgePreset } from '@/hooks/edge-operations/utils';
 
 interface ConnectMenuProps {
     position: { x: number; y: number };
     sourceId: string;
     sourceType?: string | null;
-    onSelect: (type: string, shape?: string) => void;
+    onSelect: (type: string, shape?: string, edgePreset?: ConnectedEdgePreset) => void;
     onSelectAsset: (item: DomainLibraryItem) => void;
     onClose: () => void;
+}
+
+interface ConnectMenuOption {
+    type: string;
+    shape?: string;
+    edgePreset?: ConnectedEdgePreset;
+    title: string;
+    description: string;
+    toneClassName: string;
+    icon: React.ReactNode;
+}
+
+function getContextualOptions(sourceType?: string | null): ConnectMenuOption[] {
+    switch (sourceType) {
+        case 'class':
+            return [{
+                type: 'class',
+                title: 'Class Node',
+                description: 'Create a connected class',
+                toneClassName: 'bg-sky-50 text-sky-600 border-sky-100',
+                icon: <Settings className="w-4.5 h-4.5" />,
+            }];
+        case 'er_entity':
+            return [{
+                type: 'er_entity',
+                title: 'Entity',
+                description: 'Create a connected entity',
+                toneClassName: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                icon: <Database className="w-4.5 h-4.5" />,
+            }];
+        case 'architecture':
+            return [{
+                type: 'architecture',
+                title: 'Architecture Node',
+                description: 'Create another architecture service',
+                toneClassName: 'bg-cyan-50 text-cyan-700 border-cyan-100',
+                icon: <Settings className="w-4.5 h-4.5" />,
+            }];
+        case 'journey':
+            return [{
+                type: 'journey',
+                title: 'Journey Step',
+                description: 'Create the next journey step',
+                toneClassName: 'bg-violet-50 text-violet-600 border-violet-100',
+                icon: <WandSparkles className="w-4.5 h-4.5" />,
+            }];
+        case 'annotation':
+            return [{
+                type: 'annotation',
+                title: 'Note',
+                description: 'Create another sticky note',
+                toneClassName: 'bg-yellow-50 text-yellow-600 border-yellow-100',
+                icon: <StickyNote className="w-4.5 h-4.5" />,
+            }];
+        case 'decision':
+            return [
+                {
+                    type: 'process',
+                    edgePreset: { label: 'Yes', data: { condition: 'yes' } },
+                    title: 'Yes Branch',
+                    description: 'Add the success path',
+                    toneClassName: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                    icon: <Settings className="w-4.5 h-4.5" />,
+                },
+                {
+                    type: 'process',
+                    edgePreset: { label: 'No', data: { condition: 'no' } },
+                    title: 'No Branch',
+                    description: 'Add the alternative path',
+                    toneClassName: 'bg-rose-50 text-rose-600 border-rose-100',
+                    icon: <Settings className="w-4.5 h-4.5" />,
+                },
+            ];
+        default:
+            return [];
+    }
 }
 
 export const ConnectMenu = ({ position, sourceId, sourceType, onSelect, onSelectAsset, onClose }: ConnectMenuProps): React.ReactElement => {
@@ -113,9 +190,58 @@ export const ConnectMenu = ({ position, sourceId, sourceType, onSelect, onSelect
         }
         return assetProvider.toUpperCase();
     }, [assetProvider]);
+    const contextualOptions = useMemo(() => getContextualOptions(sourceType), [sourceType]);
+    const genericOptions = useMemo<ConnectMenuOption[]>(() => [
+        {
+            type: 'process',
+            title: t('connectMenu.process'),
+            description: t('connectMenu.processDesc'),
+            toneClassName: 'bg-blue-50 text-blue-600 border-blue-100',
+            icon: <Settings className="w-4.5 h-4.5" />,
+        },
+        {
+            type: 'decision',
+            title: t('connectMenu.decision'),
+            description: t('connectMenu.decisionDesc'),
+            toneClassName: 'bg-amber-50 text-amber-600 border-amber-100',
+            icon: <WandSparkles className="w-4.5 h-4.5" />,
+        },
+        {
+            type: 'process',
+            shape: 'cylinder',
+            title: t('connectMenu.database'),
+            description: t('connectMenu.databaseDesc'),
+            toneClassName: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+            icon: <Database className="w-4.5 h-4.5" />,
+        },
+        {
+            type: 'process',
+            shape: 'parallelogram',
+            title: t('connectMenu.inputOutput'),
+            description: t('connectMenu.inputOutputDesc'),
+            toneClassName: 'bg-violet-50 text-violet-600 border-violet-100',
+            icon: <ArrowRightLeft className="w-4.5 h-4.5" />,
+        },
+        {
+            type: 'annotation',
+            title: t('connectMenu.note'),
+            description: t('connectMenu.noteDesc'),
+            toneClassName: 'bg-yellow-50 text-yellow-600 border-yellow-100',
+            icon: <StickyNote className="w-4.5 h-4.5" />,
+        },
+    ], [t]);
+    const menuOptions = useMemo(() => {
+        const contextualKeys = new Set(
+            contextualOptions.map((option) => `${option.type}:${option.shape ?? 'default'}`)
+        );
+        return [
+            ...contextualOptions,
+            ...genericOptions.filter((option) => !contextualKeys.has(`${option.type}:${option.shape ?? 'default'}`)),
+        ];
+    }, [contextualOptions, genericOptions]);
 
-    function handleSelect(type: string, shape?: string): void {
-        onSelect(type, shape);
+    function handleSelect(type: string, shape?: string, edgePreset?: ConnectedEdgePreset): void {
+        onSelect(type, shape, edgePreset);
         onClose();
     }
 
@@ -136,7 +262,7 @@ export const ConnectMenu = ({ position, sourceId, sourceType, onSelect, onSelect
                 aria-label="Close connect menu"
             />
             <div
-                className="fixed z-[70] bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200/50 overflow-hidden min-w-[180px] animate-in zoom-in-95 fade-in duration-150 ring-1 ring-black/5"
+                className="fixed z-[70] min-w-[180px] overflow-hidden rounded-2xl border border-slate-200/50 bg-white/95 shadow-[var(--shadow-lg)] ring-1 ring-black/5 backdrop-blur-xl animate-in zoom-in-95 fade-in duration-150"
                 style={{ top: position.y, left: position.x }}
             >
                 <div className="p-1.5 space-y-0.5">
@@ -188,70 +314,21 @@ export const ConnectMenu = ({ position, sourceId, sourceType, onSelect, onSelect
                         </>
                     ) : (
                         <>
-                            <button
-                                onClick={() => handleSelect('process')}
-                                className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50 active:bg-slate-100 rounded-xl transition-all group"
-                            >
-                                <div className="w-9 h-9 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform">
-                                    <Settings className="w-4.5 h-4.5" />
-                                </div>
-                                <div className="flex flex-col items-start translate-y-[1px]">
-                                    <span className="font-bold text-slate-700 leading-none mb-1">{t('connectMenu.process')}</span>
-                                    <span className="text-[10px] text-slate-400 font-medium">{t('connectMenu.processDesc')}</span>
-                                </div>
-                            </button>
-
-                            <button
-                                onClick={() => handleSelect('decision')}
-                                className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50 active:bg-slate-100 rounded-xl transition-all group"
-                            >
-                                <div className="w-9 h-9 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center border border-amber-100 group-hover:scale-110 transition-transform">
-                                    <WandSparkles className="w-4.5 h-4.5" />
-                                </div>
-                                <div className="flex flex-col items-start translate-y-[1px]">
-                                    <span className="font-bold text-slate-700 leading-none mb-1">{t('connectMenu.decision')}</span>
-                                    <span className="text-[10px] text-slate-400 font-medium">{t('connectMenu.decisionDesc')}</span>
-                                </div>
-                            </button>
-
-                            <button
-                                onClick={() => handleSelect('process', 'cylinder')}
-                                className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50 active:bg-slate-100 rounded-xl transition-all group"
-                            >
-                                <div className="w-9 h-9 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center border border-emerald-100 group-hover:scale-110 transition-transform">
-                                    <Database className="w-4.5 h-4.5" />
-                                </div>
-                                <div className="flex flex-col items-start translate-y-[1px]">
-                                    <span className="font-bold text-slate-700 leading-none mb-1">{t('connectMenu.database')}</span>
-                                    <span className="text-[10px] text-slate-400 font-medium">{t('connectMenu.databaseDesc')}</span>
-                                </div>
-                            </button>
-
-                            <button
-                                onClick={() => handleSelect('process', 'parallelogram')}
-                                className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50 active:bg-slate-100 rounded-xl transition-all group"
-                            >
-                                <div className="w-9 h-9 bg-violet-50 text-violet-600 rounded-lg flex items-center justify-center border border-violet-100 group-hover:scale-110 transition-transform">
-                                    <ArrowRightLeft className="w-4.5 h-4.5" />
-                                </div>
-                                <div className="flex flex-col items-start translate-y-[1px]">
-                                    <span className="font-bold text-slate-700 leading-none mb-1">{t('connectMenu.inputOutput')}</span>
-                                    <span className="text-[10px] text-slate-400 font-medium">{t('connectMenu.inputOutputDesc')}</span>
-                                </div>
-                            </button>
-
-                            <button
-                                onClick={() => handleSelect('annotation')}
-                                className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50 active:bg-slate-100 rounded-xl transition-all group"
-                            >
-                                <div className="w-9 h-9 bg-yellow-50 text-yellow-600 rounded-lg flex items-center justify-center border border-yellow-100 group-hover:scale-110 transition-transform">
-                                    <StickyNote className="w-4.5 h-4.5" />
-                                </div>
-                                <div className="flex flex-col items-start translate-y-[1px]">
-                                    <span className="font-bold text-slate-700 leading-none mb-1">{t('connectMenu.note')}</span>
-                                    <span className="text-[10px] text-slate-400 font-medium">{t('connectMenu.noteDesc')}</span>
-                                </div>
-                            </button>
+                            {menuOptions.map((option) => (
+                                <button
+                                    key={`${option.type}:${option.shape ?? 'default'}:${option.title}`}
+                                    onClick={() => handleSelect(option.type, option.shape, option.edgePreset)}
+                                    className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50 active:bg-slate-100 rounded-xl transition-all group"
+                                >
+                                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center border group-hover:scale-110 transition-transform ${option.toneClassName}`}>
+                                        {option.icon}
+                                    </div>
+                                    <div className="flex flex-col items-start translate-y-[1px]">
+                                        <span className="font-bold text-slate-700 leading-none mb-1">{option.title}</span>
+                                        <span className="text-[10px] text-slate-400 font-medium">{option.description}</span>
+                                    </div>
+                                </button>
+                            ))}
                         </>
                     )}
                 </div>
