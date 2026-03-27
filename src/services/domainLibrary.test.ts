@@ -12,9 +12,10 @@ describe('domainLibrary', () => {
         expect(categories.has('cncf')).toBe(true);
         expect(categories.has('network')).toBe(true);
         expect(categories.has('security')).toBe(true);
+        expect(categories.has('c4')).toBe(true);
     });
 
-    it('creates process nodes from generic library items', () => {
+    it('creates architecture nodes for network/c4 library items', () => {
         const item = DOMAIN_LIBRARY_ITEMS.find((entry) => entry.id === 'sec-firewall');
         expect(item).toBeDefined();
         const node = createDomainLibraryNode(
@@ -23,9 +24,25 @@ describe('domainLibrary', () => {
             { x: 120, y: 200 },
             'default'
         );
-        expect(node.type).toBe('process');
+        // sec-firewall maps to an architecture node with archResourceType 'firewall'
+        expect(node.type).toBe('architecture');
         expect(node.data.label).toBe('Firewall');
         expect(node.data.color).toBe('red');
+        expect(node.data.layerId).toBe('default');
+        expect((node.data as { archResourceType?: string }).archResourceType).toBe('firewall');
+    });
+
+    it('creates process nodes from generic items without nodeType', () => {
+        const item = DOMAIN_LIBRARY_ITEMS.find((entry) => entry.id === 'sec-waf');
+        expect(item).toBeDefined();
+        const node = createDomainLibraryNode(
+            item!,
+            'lib-1',
+            { x: 120, y: 200 },
+            'default'
+        );
+        expect(node.type).toBe('process');
+        expect(node.data.label).toBe('WAF');
         expect(node.data.layerId).toBe('default');
     });
 

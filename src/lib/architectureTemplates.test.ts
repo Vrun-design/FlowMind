@@ -26,6 +26,8 @@ describe('architectureTemplates', () => {
       'three-tier-web',
       'microservices',
       'event-driven',
+      'c4-system-context',
+      'network-edge-security',
     ]);
   });
 
@@ -47,5 +49,43 @@ describe('architectureTemplates', () => {
       'node-api:node-cache',
       'node-api:node-database',
     ]);
+  });
+
+  it('builds the C4 system context template with C4 resource types', () => {
+    const template = buildArchitectureTemplate(
+      'c4-system-context',
+      createSourceNode(),
+      (key) => `node-${key}`,
+      (key) => `edge-${key}`,
+    );
+
+    expect(template).not.toBeNull();
+    expect(template?.sourceData.archResourceType).toBe('system');
+    expect(template?.nodes.map((node) => node.data.archResourceType)).toEqual([
+      'person',
+      'container',
+      'container',
+      'database_container',
+    ]);
+  });
+
+  it('builds the network edge security template with network resource types', () => {
+    const template = buildArchitectureTemplate(
+      'network-edge-security',
+      createSourceNode(),
+      (key) => `node-${key}`,
+      (key) => `edge-${key}`,
+    );
+
+    expect(template).not.toBeNull();
+    expect(template?.sourceData.archResourceType).toBe('dns');
+    expect(template?.nodes.map((node) => node.data.archResourceType)).toEqual([
+      'cdn',
+      'firewall',
+      'load_balancer',
+      'service',
+      'service',
+    ]);
+    expect(template?.edges.map((edge) => edge.label)).toContain('allows 443');
   });
 });

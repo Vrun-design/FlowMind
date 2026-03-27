@@ -4,12 +4,14 @@ import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import type { LegacyEdgeProps } from '@/lib/reactflowCompat';
 import type { EdgeData } from '@/lib/types';
 import type { FlowEdge } from '@/lib/types';
+import { useCinematicExportState } from '@/context/CinematicExportContext';
 import { CustomEdgeWrapper } from './custom-edge/CustomEdgeWrapper';
 import { buildEdgePath } from './custom-edge/pathUtils';
 import { shouldUseOrthogonalRelationRouting } from './custom-edge/relationRoutingSemantics';
 
 function createEdgeRenderer(variant: 'bezier' | 'smoothstep' | 'step' | 'straight') {
     return function RenderEdge(props: LegacyEdgeProps<EdgeData>): React.ReactElement {
+        const cinematicExportState = useCinematicExportState();
         const { getEdges, getNodes } = useReactFlow();
         const allEdges = getEdges() as FlowEdge[];
         const allNodes = getNodes();
@@ -69,6 +71,7 @@ function createEdgeRenderer(variant: 'bezier' | 'smoothstep' | 'step' | 'straigh
                 markerStartConfig={currentEdge?.markerStart as FlowEdge['markerStart']}
                 selected={props.selected}
                 edgeAnimated={Boolean(currentEdge?.animated)}
+                cinematicExportState={cinematicExportState}
             />
         );
     };

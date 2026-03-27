@@ -30,6 +30,7 @@ const NODE_TYPE_PANEL_MAP: Partial<Record<NodeType, DiagramType>> = {
   [NodeType.ER_ENTITY]: 'erDiagram',
   [NodeType.JOURNEY]: 'journey',
   [NodeType.MINDMAP]: 'mindmap',
+  [NodeType.SEQUENCE_PARTICIPANT]: 'sequence',
 };
 
 export function resolveNodePropertiesPanelDiagramType(

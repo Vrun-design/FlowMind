@@ -15,6 +15,8 @@ export interface HomeFlowCard {
 interface HomeDashboardProps {
     flows: HomeFlowCard[];
     onCreateNew: () => void;
+    onOpenTemplates: () => void;
+    onPromptWithAI: () => void;
     onImportJSON: () => void;
     onOpenFlow: (flowId: string) => void;
     onRenameFlow: (flowId: string) => void;
@@ -25,6 +27,8 @@ interface HomeDashboardProps {
 export function HomeDashboard({
     flows,
     onCreateNew,
+    onOpenTemplates,
+    onPromptWithAI,
     onImportJSON,
     onOpenFlow,
     onRenameFlow,
@@ -68,37 +72,52 @@ export function HomeDashboard({
                         </div>
                         <h3 className="mb-1 text-sm font-medium text-slate-900">{t('home.createFirstFlow', 'Create your first flow')}</h3>
                         <p className="mx-auto max-w-md text-xs leading-6 text-[var(--brand-secondary)]">
-                            {t('home.startFromScratch', 'Start from scratch or import an existing diagram.')}
+                            Build a useful diagram fast: start from a template, import Mermaid or SQL, or open Flowpilot on a blank canvas.
                         </p>
-                        <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                        <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
+                            <Button
+                                onClick={onOpenTemplates}
+                                variant="primary"
+                                size="sm"
+                                data-testid="home-open-templates"
+                            >
+                                Browse Templates
+                            </Button>
                             <Button
                                 onClick={onImportJSON}
                                 variant="secondary"
                                 size="sm"
                                 data-testid="home-open-file"
                             >
-                                {t('common.openFile', 'Open File')}
+                                Import Diagram
+                            </Button>
+                            <Button
+                                onClick={onPromptWithAI}
+                                variant="secondary"
+                                size="sm"
+                            >
+                                Generate with Flowpilot
                             </Button>
                             <Button
                                 onClick={onCreateNew}
-                                variant="primary"
+                                variant="ghost"
                                 size="sm"
                             >
-                                {t('common.createNew', 'Create New')}
+                                Blank Canvas
                             </Button>
                         </div>
                         <div className="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-3 text-left sm:grid-cols-3">
                             <div className="rounded-[var(--radius-lg)] border border-slate-200/80 bg-white/70 px-4 py-3">
-                                <p className="text-xs font-semibold text-slate-900">Start blank</p>
-                                <p className="mt-1 text-[11px] leading-5 text-slate-500">Open a new workspace and sketch the flow from scratch.</p>
+                                <p className="text-xs font-semibold text-slate-900">Use builder templates</p>
+                                <p className="mt-1 text-[11px] leading-5 text-slate-500">Start from release trains, cloud architectures, mind maps, and technical workflows.</p>
                             </div>
                             <div className="rounded-[var(--radius-lg)] border border-slate-200/80 bg-white/70 px-4 py-3">
-                                <p className="text-xs font-semibold text-slate-900">Import existing work</p>
-                                <p className="mt-1 text-[11px] leading-5 text-slate-500">Bring in a saved JSON flow when you want to keep iterating.</p>
+                                <p className="text-xs font-semibold text-slate-900">Import real source material</p>
+                                <p className="mt-1 text-[11px] leading-5 text-slate-500">Bring in Mermaid, SQL, OpenAPI, JSON, or OpenFlow sources and keep editing visually.</p>
                             </div>
                             <div className="rounded-[var(--radius-lg)] border border-slate-200/80 bg-white/70 px-4 py-3">
-                                <p className="text-xs font-semibold text-slate-900">Autosave by default</p>
-                                <p className="mt-1 text-[11px] leading-5 text-slate-500">Diagram data stays local in this browser unless you export or open a collaboration room.</p>
+                                <p className="text-xs font-semibold text-slate-900">Local-first by default</p>
+                                <p className="mt-1 text-[11px] leading-5 text-slate-500">Diagram data stays in this browser unless you explicitly export or share it.</p>
                             </div>
                         </div>
                     </div>

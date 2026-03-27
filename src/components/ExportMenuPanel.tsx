@@ -1,95 +1,271 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import type { ComponentType } from 'react';
-import { BookOpen, Figma, FileCode, FileJson, Film, FileText, GitBranch, Image, Link, Wand2 } from 'lucide-react';
+import {
+    Copy,
+    Download,
+    Figma,
+    FileCode,
+    FileJson,
+    FileText,
+    Film,
+    GitBranch,
+    Image,
+    Wand2,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { APP_NAME } from '@/lib/brand';
+import { SidebarSegmentedTabs } from './SidebarShell';
+import { Button } from './ui/Button';
+import { Select, type SelectOption } from './ui/Select';
 
 interface ExportMenuPanelProps {
-    onSelect: (key: string) => void;
+    onSelect: (key: string, action: ExportActionKey) => void;
 }
+
+type ExportCategoryKey = 'image' | 'video' | 'code';
+type ExportActionKey = 'download' | 'copy';
 
 interface ExportOption {
     key: string;
     label: string;
     hint: string;
     Icon: ComponentType<{ className?: string }>;
+    actions: ExportActionKey[];
 }
 
 interface ExportSection {
+    key: ExportCategoryKey;
     title: string;
     items: ExportOption[];
 }
 
-function SectionRow({ item, onSelect }: { item: ExportOption; onSelect: (key: string) => void }): React.ReactElement {
-    return (
-        <button
-            onClick={() => onSelect(item.key)}
-            data-testid={`export-${item.key}`}
-            className="flex items-center gap-2.5 px-2.5 py-2 text-left rounded-[var(--radius-sm)] transition-colors hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] w-full group"
-        >
-            <item.Icon className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-[var(--brand-primary)]" />
-            <div className="min-w-0 flex-1">
-                <span className="text-[13px] font-medium text-slate-700 group-hover:text-[var(--brand-primary)]">{item.label}</span>
-                <span className="ml-1.5 text-[10px] text-slate-400">{item.hint}</span>
-            </div>
-        </button>
-    );
+function getSectionIcon(sectionKey: ExportCategoryKey): React.ReactElement {
+    if (sectionKey === 'image') {
+        return <Image className="h-3.5 w-3.5" />;
+    }
+
+    if (sectionKey === 'video') {
+        return <Film className="h-3.5 w-3.5" />;
+    }
+
+    if (sectionKey === 'code') {
+        return <FileCode className="h-3.5 w-3.5" />;
+    }
+
+    return <Image className="h-3.5 w-3.5" />;
+}
+
+function getDefaultOptionKey(section: ExportSection): string {
+    return section.items[0]?.key ?? '';
+}
+
+function getInitialSelectedKeys(sections: ExportSection[]): Record<ExportCategoryKey, string> {
+    return {
+        image: getDefaultOptionKey(sections.find((section) => section.key === 'image') ?? sections[0]),
+        video: getDefaultOptionKey(sections.find((section) => section.key === 'video') ?? sections[0]),
+        code: getDefaultOptionKey(sections.find((section) => section.key === 'code') ?? sections[0]),
+    };
+}
+
+function getActionIcon(actionKey: ExportActionKey): React.ReactElement {
+    if (actionKey === 'download') {
+        return <Download className="h-4 w-4" />;
+    }
+
+    return <Copy className="h-4 w-4" />;
 }
 
 export function ExportMenuPanel({ onSelect }: ExportMenuPanelProps): React.ReactElement {
     const { t } = useTranslation();
 
-    const sections: ExportSection[] = [
+    const sections = useMemo<ExportSection[]>(() => [
         {
+            key: 'image',
             title: t('export.sectionImage', 'Image'),
             items: [
-                { key: 'png', label: 'PNG', hint: t('export.hintTransparent4K', 'Transparent'), Icon: Image },
-                { key: 'jpeg', label: 'JPG', hint: t('export.hintWhiteBg4K', 'White bg'), Icon: Image },
-                { key: 'svg', label: 'SVG', hint: t('export.hintSvgScalable', 'Vector'), Icon: Image },
-                { key: 'pdf', label: 'PDF', hint: 'Document', Icon: FileText },
+                {
+                    key: 'png',
+                    label: 'PNG',
+                    hint: t('export.hintTransparent4K', 'Transparent (4K)'),
+                    Icon: Image,
+                    actions: ['download', 'copy'],
+                },
+                {
+                    key: 'jpeg',
+                    label: 'JPG',
+                    hint: t('export.hintWhiteBg4K', 'White Background (4K)'),
+                    Icon: Image,
+                    actions: ['download', 'copy'],
+                },
+                {
+                    key: 'svg',
+                    label: 'SVG',
+                    hint: t('export.hintSvgScalable', 'Scalable vector file'),
+                    Icon: Image,
+                    actions: ['download', 'copy'],
+                },
+                {
+                    key: 'pdf',
+                    label: 'PDF',
+                    hint: 'Document',
+                    Icon: FileText,
+                    actions: ['download'],
+                },
             ],
         },
         {
-            title: t('export.sectionVideo', 'Video & Animation'),
+            key: 'video',
+            title: 'Video',
             items: [
-                { key: 'video', label: t('export.video', 'Playback Video'), hint: 'WebM/MP4', Icon: Film },
-                { key: 'gif', label: t('export.gif', 'Playback GIF'), hint: 'Loop', Icon: Film },
-                { key: 'reveal-video', label: t('export.revealVideo', 'Reveal Video'), hint: 'Cinematic', Icon: Film },
-                { key: 'reveal-gif', label: t('export.revealGif', 'Reveal GIF'), hint: 'Cinematic', Icon: Film },
+                {
+                    key: 'cinematic-video',
+                    label: t('export.cinematicVideo', 'Cinematic Build Video'),
+                    hint: t('export.hintCinematicVideo', 'Polished animated build'),
+                    Icon: Film,
+                    actions: ['download'],
+                },
+                {
+                    key: 'cinematic-gif',
+                    label: t('export.cinematicGif', 'Cinematic Build GIF'),
+                    hint: t('export.hintCinematicGif', 'Animated loop for sharing'),
+                    Icon: Film,
+                    actions: ['download'],
+                },
             ],
         },
         {
-            title: t('export.sectionCode', 'Code & Data'),
+            key: 'code',
+            title: 'Code',
             items: [
-                { key: 'json', label: t('export.jsonLabel', 'JSON'), hint: t('export.hintDownload', 'Download'), Icon: FileJson },
-                { key: 'openflow', label: t('export.openflowdslLabel', { appName: APP_NAME, defaultValue: `${APP_NAME} DSL` }), hint: 'Clipboard', Icon: Wand2 },
-                { key: 'mermaid', label: t('export.mermaid', 'Mermaid'), hint: 'Clipboard', Icon: GitBranch },
-                { key: 'plantuml', label: t('export.plantuml', 'PlantUML'), hint: 'Clipboard', Icon: FileCode },
-                { key: 'figma', label: t('export.figmaEditable', 'Figma'), hint: 'Editable SVG', Icon: Figma },
-                { key: 'readme', label: t('export.readmeEmbed', 'README Embed'), hint: 'Markdown', Icon: BookOpen },
+                {
+                    key: 'json',
+                    label: t('export.jsonLabel', 'JSON File'),
+                    hint: t('export.hintDownload', 'Download'),
+                    Icon: FileJson,
+                    actions: ['download', 'copy'],
+                },
+                {
+                    key: 'openflow',
+                    label: t('export.openflowdslLabel', { appName: APP_NAME, defaultValue: `${APP_NAME} DSL` }),
+                    hint: t('export.hintClipboard', 'Copy to clipboard'),
+                    Icon: Wand2,
+                    actions: ['download', 'copy'],
+                },
+                {
+                    key: 'mermaid',
+                    label: t('export.mermaid', 'Mermaid'),
+                    hint: t('export.hintClipboard', 'Copy to clipboard'),
+                    Icon: GitBranch,
+                    actions: ['download', 'copy'],
+                },
+                {
+                    key: 'plantuml',
+                    label: t('export.plantuml', 'PlantUML'),
+                    hint: t('export.hintClipboard', 'Copy to clipboard'),
+                    Icon: FileCode,
+                    actions: ['download', 'copy'],
+                },
+                {
+                    key: 'figma',
+                    label: t('export.figmaEditable', 'Figma Editable'),
+                    hint: 'Editable SVG',
+                    Icon: Figma,
+                    actions: ['download', 'copy'],
+                },
             ],
         },
-        {
-            title: t('export.shareSection', 'Share'),
-            items: [
-                { key: 'share', label: t('export.share', 'Share live canvas'), hint: t('export.hintShareViewer', 'Invite link'), Icon: Link },
-            ],
-        },
-    ];
+    ], [t]);
+
+    const tabs = useMemo(() => sections.map((section) => ({
+        id: section.key,
+        label: section.title,
+        icon: <span className="hidden sm:inline-flex">{getSectionIcon(section.key)}</span>,
+    })), [sections]);
+
+    const [activeSectionKey, setActiveSectionKey] = useState<ExportCategoryKey>('image');
+    const [selectedKeys, setSelectedKeys] = useState<Record<ExportCategoryKey, string>>(() => getInitialSelectedKeys(sections));
+
+    const activeSection = sections.find((section) => section.key === activeSectionKey) ?? sections[0];
+    const selectedItem =
+        activeSection.items.find((item) => item.key === selectedKeys[activeSectionKey]) ?? activeSection.items[0];
+    const selectOptions: SelectOption[] = activeSection.items.map((item) => ({
+        value: item.key,
+        label: item.label,
+        hint: item.hint,
+    }));
+
+    function handleSectionChange(nextTab: string): void {
+        setActiveSectionKey(nextTab as ExportCategoryKey);
+    }
+
+    function handleOptionChange(nextKey: string): void {
+        setSelectedKeys((current) => ({
+            ...current,
+            [activeSectionKey]: nextKey,
+        }));
+    }
+
+    function getActionLabel(action: ExportActionKey): string {
+        if (action === 'download') {
+            return t('export.actionDownload', 'Download');
+        }
+
+        return 'Copy';
+    }
 
     return (
-        <div className="absolute top-full right-0 mt-2 w-64 bg-white/95 backdrop-blur-xl rounded-[var(--radius-lg)] shadow-[var(--shadow-md)] border border-white/20 ring-1 ring-black/5 p-2 animate-in fade-in zoom-in-95 duration-100 origin-top-right z-50">
-            {sections.map((section, sectionIndex) => (
-                <React.Fragment key={section.title}>
-                    {sectionIndex > 0 && <div className="my-1.5 border-t border-slate-100" />}
-                    <div className="px-2 py-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                        {section.title}
-                    </div>
-                    {section.items.map((item) => (
-                        <SectionRow key={item.key} item={item} onSelect={onSelect} />
+        <div className="absolute right-0 top-full z-50 mt-2 w-[24rem] origin-top-right rounded-[var(--radius-xl)] border border-slate-200/80 bg-white/95 p-3 shadow-[var(--shadow-overlay)] ring-1 ring-black/5 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-100">
+            <div className="rounded-[var(--radius-lg)] border border-slate-200/70 bg-[linear-gradient(180deg,rgba(248,250,252,0.98),rgba(255,255,255,0.92))] p-3">
+                <h3 className="text-sm font-semibold text-slate-900">
+                    {t('export.title', 'Export')}
+                </h3>
+                <p className="mt-1 text-xs leading-5 text-slate-500">
+                    Choose a format and action.
+                </p>
+            </div>
+
+            <div className="mt-3">
+                <SidebarSegmentedTabs
+                    tabs={tabs}
+                    activeTab={activeSectionKey}
+                    onTabChange={handleSectionChange}
+                    getTabTestId={(tab) => `export-section-${tab.id}`}
+                />
+            </div>
+
+            <div className="mt-3 rounded-[var(--radius-lg)] border border-slate-200/70 bg-slate-50/60 p-3">
+                <div className="mb-2 flex items-center gap-2">
+                    <selectedItem.Icon className="h-4 w-4 text-[var(--brand-primary)]" />
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+                        {activeSection.title}
+                    </p>
+                </div>
+
+                <div data-testid="export-format-select">
+                    <Select
+                        value={selectedItem.key}
+                        onChange={handleOptionChange}
+                        options={selectOptions}
+                        placeholder="Choose format"
+                    />
+                </div>
+
+                <div className={`mt-3 grid gap-2 ${selectedItem.actions.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                    {selectedItem.actions.map((action) => (
+                        <Button
+                            key={`${selectedItem.key}-${action}`}
+                            type="button"
+                            variant={action === 'download' ? 'primary' : 'secondary'}
+                            onClick={() => onSelect(selectedItem.key, action)}
+                            data-testid={`export-action-${selectedItem.key}-${action}`}
+                            className="h-11 w-full"
+                        >
+                            {getActionIcon(action)}
+                            {getActionLabel(action)}
+                        </Button>
                     ))}
-                </React.Fragment>
-            ))}
+                </div>
+            </div>
         </div>
     );
 }

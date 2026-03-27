@@ -18,7 +18,8 @@ import {
 } from './classRelationSemantics';
 import { resolveStandardEdgeMarkers } from './standardEdgeMarkers';
 import { resolveAnimatedEdgePresentation } from './animatedEdgePresentation';
-import { buildEdgeLabelUpdates, getEditableEdgeLabel, hasEditableEdgeLabel } from '@/components/properties/edge/edgeLabelModel';
+import { buildEdgeLabelUpdates, getEditableEdgeLabel } from '@/components/properties/edge/edgeLabelModel';
+import type { CinematicRenderState } from '@/services/export/cinematicRenderState';
 
 interface CustomEdgeWrapperProps {
     id: string;
@@ -38,6 +39,7 @@ interface CustomEdgeWrapperProps {
     markerStartConfig?: FlowEdge['markerStart'];
     selected?: boolean;
     edgeAnimated?: boolean;
+    cinematicExportState?: CinematicRenderState;
 }
 
 function toLabelTransform(x: number, y: number): string {
@@ -62,6 +64,7 @@ export function CustomEdgeWrapper({
     markerStartConfig,
     selected = false,
     edgeAnimated = false,
+    cinematicExportState,
 }: CustomEdgeWrapperProps): React.ReactElement {
     const { setEdges, screenToFlowPosition } = useReactFlow();
     const pathRef = useRef<SVGPathElement>(null);
@@ -97,6 +100,11 @@ export function CustomEdgeWrapper({
     }, []);
 
     const displayPath = path;
+    const cinematicActive = Boolean(cinematicExportState?.active);
+    const isBuiltCinematicEdge = Boolean(cinematicExportState?.builtEdgeIds.has(id));
+    const isActiveCinematicEdge = cinematicExportState?.activeEdgeId === id;
+    const cinematicEdgeProgress = isActiveCinematicEdge ? cinematicExportState?.activeEdgeProgress ?? 0 : 0;
+    const showCinematicLabel = isBuiltCinematicEdge || (isActiveCinematicEdge && cinematicEdgeProgress >= 0.85);
 
     const relationVisualSpec = resolveRelationVisualSpec(
         relationSemanticsV1Enabled,
@@ -253,13 +261,6 @@ export function CustomEdgeWrapper({
         data,
         label,
     } as FlowEdge);
-    hasEditableEdgeLabel({
-        id,
-        source: '',
-        target: '',
-        data,
-        label,
-    } as FlowEdge);
     const renderedLabel = hasArchitectureMeta
         ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700 border border-blue-200">
@@ -269,6 +270,23 @@ export function CustomEdgeWrapper({
             </span>
         )
         : edgeLabel;
+
+    const shouldRenderInteractiveChrome = !cinematicActive;
+    const shouldRenderBaseEdge = !cinematicActive || isBuiltCinematicEdge;
+    const cinematicEdgeStyle: React.CSSProperties = {
+        ...resolvedStyle,
+        strokeDasharray: 1,
+        strokeDashoffset: Math.max(0, 1 - cinematicEdgeProgress),
+        strokeOpacity: 0.98,
+    };
+    const cinematicMarkerVisible = cinematicEdgeProgress >= 0.995;
+    const cinematicGlowStyle: React.CSSProperties = {
+        ...resolvedStyle,
+        stroke: 'rgba(59,130,246,0.22)',
+        strokeWidth: Number(resolvedStyle.strokeWidth ?? designSystem.components.edge.strokeWidth) + 4,
+        strokeDasharray: 1,
+        strokeDashoffset: Math.max(0, 1 - cinematicEdgeProgress),
+    };
 
     return (
         <>
@@ -317,8 +335,33 @@ export function CustomEdgeWrapper({
                     ))}
                 </defs>
             </svg>
-            <BaseEdge path={displayPath} markerEnd={resolvedMarkerEnd} markerStart={resolvedMarkerStart} style={resolvedStyle} />
-            {animatedPresentation.shouldRenderOverlay && (
+            {shouldRenderBaseEdge ? (
+                <BaseEdge path={displayPath} markerEnd={resolvedMarkerEnd} markerStart={resolvedMarkerStart} style={resolvedStyle} />
+            ) : null}
+            {cinematicActive && isActiveCinematicEdge ? (
+                <>
+                    <path
+                        d={displayPath}
+                        pathLength={1}
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        pointerEvents="none"
+                        style={cinematicGlowStyle}
+                    />
+                    <path
+                        d={displayPath}
+                        pathLength={1}
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        markerEnd={cinematicMarkerVisible ? resolvedMarkerEnd : undefined}
+                        markerStart={cinematicMarkerVisible ? resolvedMarkerStart : undefined}
+                        style={cinematicEdgeStyle}
+                    />
+                </>
+            ) : null}
+            {animatedPresentation.shouldRenderOverlay && !cinematicActive && (
                 <path
                     d={displayPath}
                     fill="none"
@@ -329,25 +372,27 @@ export function CustomEdgeWrapper({
                     aria-hidden="true"
                 />
             )}
-            <path
-                d={displayPath}
-                fill="none"
-                stroke="rgba(15,23,42,0.001)"
-                strokeWidth={20}
-                pointerEvents="stroke"
-                onPointerEnter={() => setIsHovered(true)}
-                onPointerLeave={() => setIsHovered(false)}
-                onDoubleClick={(event) => {
-                    event.stopPropagation();
-                    beginLabelEdit();
-                }}
-                aria-hidden="true"
-            >
-                <title>Select edge</title>
-            </path>
+            {shouldRenderInteractiveChrome ? (
+                <path
+                    d={displayPath}
+                    fill="none"
+                    stroke="rgba(15,23,42,0.001)"
+                    strokeWidth={20}
+                    pointerEvents="stroke"
+                    onPointerEnter={() => setIsHovered(true)}
+                    onPointerLeave={() => setIsHovered(false)}
+                    onDoubleClick={(event) => {
+                        event.stopPropagation();
+                        beginLabelEdit();
+                    }}
+                    aria-hidden="true"
+                >
+                    <title>Select edge</title>
+                </path>
+            ) : null}
             <path ref={pathRef} d={displayPath} style={{ display: 'none' }} fill="none" stroke="none" aria-hidden="true" />
 
-            {(renderedLabel || (!hasArchitectureMeta && (selected || isHovered))) && (
+            {((renderedLabel && (!cinematicActive || showCinematicLabel)) || (!cinematicActive && !hasArchitectureMeta && (selected || isHovered))) && (
                 <EdgeLabelRenderer>
                     <div
                         ref={labelRef}
@@ -357,8 +402,8 @@ export function CustomEdgeWrapper({
                             fontSize: 12,
                             pointerEvents: 'all',
                         }}
-                        onPointerEnter={() => setIsHovered(true)}
-                        onPointerLeave={() => setIsHovered(false)}
+                        onPointerEnter={() => { if (!cinematicActive) setIsHovered(true); }}
+                        onPointerLeave={() => { if (!cinematicActive) setIsHovered(false); }}
                         className={`flow-edge-label nodrag nopan ${selected || isHovered ? 'flow-lod-preserve' : ''}`}
                     >
                         {isEditingLabel ? (
@@ -380,8 +425,8 @@ export function CustomEdgeWrapper({
                                 onDoubleClick={(e) => { e.stopPropagation(); beginLabelEdit(); }}
                                 className={
                                     visualQualityV2Enabled
-                                        ? 'bg-white/95 px-2.5 py-0.5 rounded-full border border-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.08)] text-[11px] font-medium text-slate-500 hover:border-indigo-300 hover:text-slate-700 hover:shadow-md active:ring-2 active:ring-indigo-400 select-none flow-lod-secondary flow-lod-shadow transition-all'
-                                        : 'bg-white px-2 py-1 rounded border border-slate-200 shadow-sm text-xs font-medium text-slate-600 hover:ring-2 hover:ring-indigo-500/20 active:ring-indigo-500 select-none flow-lod-secondary flow-lod-shadow'
+                                        ? `px-2 py-0.5 rounded-full border shadow-sm text-[11px] font-medium select-none flow-lod-secondary flow-lod-shadow transition-all ${cinematicActive ? 'bg-white/96 border-slate-200/90 text-slate-600 shadow-[0_6px_18px_rgba(15,23,42,0.08)]' : 'bg-white/90 border-slate-200 text-slate-500 hover:border-indigo-300 hover:text-slate-700 hover:shadow active:ring-2 active:ring-indigo-400'}`
+                                        : 'bg-white px-2 py-0.5 rounded border border-slate-200 shadow-sm text-[11px] font-medium text-slate-500 hover:ring-2 hover:ring-indigo-500/20 active:ring-indigo-500 select-none flow-lod-secondary flow-lod-shadow'
                                 }
                             >
                                 {renderedLabel}

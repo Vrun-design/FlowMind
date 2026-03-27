@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { FlowEdge, FlowNode, FlowTab } from '@/lib/types';
 import { useFlowStore } from './store';
+import { sanitizePersistedTab } from './store/persistence';
 
 function createNode(id: string, label: string): FlowNode {
     return {
@@ -205,7 +206,7 @@ describe('flow store tab actions', () => {
         expect(afterTab1?.nodes[0]?.id).toBe(beforeTab1NodeId);
     });
 
-    it('recovers tabs and active tab from persisted autosave snapshot', () => {
+    it('does not persist durable tab state in the main zustand slice', () => {
         const tab2 = createTab('tab-2', 'Tab 2', [createNode('n2', 'Recovered Tab 2')], [createEdge('e2', 'n2', 'n2')]);
 
         useFlowStore.setState((state) => ({
@@ -215,38 +216,12 @@ describe('flow store tab actions', () => {
             edges: tab2.edges,
         }));
 
-        const persistedSlice = useFlowStore.persist.getOptions().partialize(useFlowStore.getState());
-
-        // Simulate cold start before hydration.
-        useFlowStore.setState({
-            nodes: [],
-            edges: [],
-            tabs: [],
-            activeTabId: 'tab-1',
-        });
-
-        // Simulate hydration merge from persisted autosave payload.
-        useFlowStore.setState(persistedSlice as Partial<ReturnType<typeof useFlowStore.getState>>);
-
-        // Recovery path: pull active tab payload from hydrated tabs and rehydrate canvas.
-        const hydrated = useFlowStore.getState();
-        const activeTab = hydrated.tabs.find((tab) => tab.id === hydrated.activeTabId);
-        expect(activeTab).toBeDefined();
-
-        useFlowStore.setState({
-            nodes: activeTab?.nodes ?? [],
-            edges: activeTab?.edges ?? [],
-        });
-
-        const state = useFlowStore.getState();
-        expect(state.activeTabId).toBe('tab-2');
-        expect(state.tabs).toHaveLength(2);
-        expect(state.nodes[0].id).toBe('n2');
-        expect(state.nodes[0].data.label).toBe('Recovered Tab 2');
-        expect(state.edges[0].id).toBe('e2');
+        const persistedSlice = useFlowStore.persist.getOptions().partialize(useFlowStore.getState()) as Record<string, unknown>;
+        expect('tabs' in persistedSlice).toBe(false);
+        expect('activeTabId' in persistedSlice).toBe(false);
     });
 
-    it('strips transient canvas fields from persisted autosave tabs', () => {
+    it('strips transient canvas fields from sanitized tab payloads', () => {
         const tab2 = createTab(
             'tab-2',
             'Tab 2',
@@ -269,10 +244,7 @@ describe('flow store tab actions', () => {
             edges: tab2.edges,
         }));
 
-        const persistedSlice = useFlowStore.persist.getOptions().partialize(useFlowStore.getState()) as {
-            tabs: FlowTab[];
-        };
-        const persistedTab = persistedSlice.tabs.find((tab) => tab.id === 'tab-2');
+        const persistedTab = sanitizePersistedTab(tab2);
         const persistedNode = persistedTab?.nodes[0] as FlowNode & {
             measured?: unknown;
             positionAbsolute?: unknown;

@@ -1,451 +1,273 @@
-# OpenFlowKit — Competitive Analysis + Roadmap to #1
+# OpenFlowKit — Competitive Analysis + Launch Roadmap
 
 **Last updated:** 2026-03-26
 **Audience:** Founder. Unfiltered.
+**Status:** Rewritten against the current codebase, not old assumptions.
 
 ---
 
-## Who We're Building For
+## Who We Are Actually Building For
 
-Not just developers. **Builders** — anyone who creates things and needs to communicate them visually:
+Primary audience:
+- developers
+- technical builders
+- DevRel / technical writers
+- startup teams shipping technical products
 
-- **PMs** — user flows, product specs, decision trees, roadmaps
-- **Designers** — system architecture for handoff, design system docs, component relationships
-- **Engineers** — ER schemas, architecture diagrams, class models, system flows
-- **DevRel / Technical writers** — explainer diagrams for docs, README visuals, onboarding flows
-- **Founders / Startup teams** — pitch deck architecture, team workflows, process maps
+Secondary audience:
+- PMs and designers who work closely with technical systems
 
-The target XP: **FigJam's smoothness and feel + Lucidchart's depth + nobody's privacy model + AI that actually works**.
+This matters because our strongest wedge is not "general diagramming for everyone."
+It is:
+
+> **local-first diagramming for builders who need structure, portability, privacy, and AI-assisted workflows**
+
+The product can serve broader users, but the launch story is strongest when we lead with the technical builder use case.
 
 ---
 
-## Honest Current State
+## Verified Current State
 
-### What's Actually Shipped (confirmed by code inspection)
+### Clearly Shipped
 
-| Feature | Real? | Notes |
+These are real in the codebase today:
+
+- Welcome flow with template/import/blank entry points
+- Inline AI key setup in the studio panel
+- Cinematic animated export in the product UI as video and GIF
+- Sequence diagrams with plugin support, Mermaid import/export, property-panel support, and starter template coverage
+- `/view` route and share viewer flow
+- Template system with launch-priority metadata
+- SQL import, Terraform/Kubernetes/Docker Compose infrastructure parsing, Mermaid import/export, OpenFlow JSON document import/export
+- Architecture linting with rule library/templates
+- Playback/presentation system
+- Collaboration beta
+- Figma export and Figma style import
+
+### Shipped But Still Needs Polish
+
+- Welcome flow is better than before, but the builder-first path can still be more explicit.
+- AI setup works, but the local-first / BYOK explanation can still be clearer.
+- Template gallery has strong foundations, but the launch-facing set is still thin relative to the opportunity.
+- Share/embed exists, but the output and promotion surface are still not strong enough.
+- Cinematic export direction is strong, but visual polish and export performance still have room to improve.
+
+### Partially Shipped
+
+- Sequence is no longer missing. It is partially complete and already useful, but still deserves a completion audit before aggressive claims.
+- C4 and network support exist in meaningful form through architecture resource types, starter templates, asset categories, and lint templates, but the breadth is still below dedicated enterprise diagram suites.
+- Local-first persistence is real, but cold-start offline app-shell support is still not defensible.
+
+### Not Shipped Yet
+
+- true offline PWA/app-shell caching
+- larger enterprise-oriented shape breadth
+- scale/performance work specifically for very large diagrams
+- stronger embed preset system for README/card/full share formats
+
+---
+
+## Verified By Code Inspection
+
+### What is actually true right now
+
+| Feature | Status | Notes |
 |---|---|---|
-| 7 diagram families | ✅ | Flowchart, Architecture, ER, Class, Mindmap, Journey, State |
-| PNG / JPG / SVG / PDF export | ✅ | PDF is a real builder, not a stub (`pdfDocument.ts`) |
-| Mermaid + PlantUML export | ✅ | Full round-trip |
-| OpenFlow DSL export | ✅ | Custom format, parseable back in |
-| Figma editable SVG export | ✅ | Clipboard paste into Figma with live layers |
-| Video + GIF export (playback) | ✅ | Real frame capture + encoder pipeline |
-| AI generation (streaming) | ✅ | Multi-provider, BYOK, pending diff preview |
-| SQL → ER diagram | ✅ | Local parser, no server |
-| Terraform / K8s → Architecture | ✅ | Multi-format parser |
-| OpenAPI → Sequence (via AI) | ✅ | Full pipeline |
-| Mermaid import | ✅ | Parser + visual round-trip |
-| ELK auto-layout | ✅ | Multiple algorithms |
-| Smart edge routing (5 modes) | ✅ | Orthogonal, bezier, step, straight, ELK |
-| Architecture lint rules | ✅ | 15 rules, 5 templates (Clean Arch, Hexagonal, AWS, etc.) |
-| Playback / presentation mode | ✅ | Topology-aware ordering, step durations |
-| Real-time collaboration (beta) | ✅ | WebRTC + Yjs P2P, no server storage |
-| Keyboard shortcut suite | ✅ | Full coverage |
-| Multi-select + bulk operations | ✅ | |
-| Wireframe nodes (browser + mobile) | ✅ | Unique in this space |
-| Chat history per diagram | ✅ | Persistent per tab |
-| Figma style import | ✅ | Pulls color/font styles from Figma API |
+| Welcome onboarding | ✅ | Builder-oriented starter templates/import prompts are already configured in `src/services/onboarding/config.ts` |
+| Inline AI setup | ✅ | Present in `StudioAIPanel` and wired into the main studio flow |
+| Cinematic export | ✅ | Current animated export path is cinematic-only in the UI |
+| Sequence diagrams | ✅ | Visual node/edge types, property panels, Mermaid export, parser plugin, starter template |
+| C4 architecture support | ✅ partial | Resource types, templates, lint library support exist |
+| Network/infra support | ✅ partial | Network resource types, templates, provider catalogs, infra parsers exist |
+| README/share viewer | ✅ | `/view` route and share modal flow exist |
+| Local-first persistence | ✅ | Stored locally; no server account model required |
+| Full offline cold-start | ❌ | No defensible service-worker app-shell layer yet |
 
-**Nothing above is a stub. Everything listed works.**
+### Important corrections to old assumptions
+
+- Sequence is **not** a missing feature anymore.
+- Animated export is **not** "playback/reveal first" anymore in the product UI. The product now exposes cinematic export.
+- C4 and network support are **not** fully absent. They exist, but are still shallow compared with the eventual target.
+- The product is stronger for technical builders than the old "broad builders" framing admitted.
 
 ---
 
-## Competitor Map (Updated for Builders Audience)
+## Competitive Read
 
-| Tool | Best for | Price | AI | Local | OSS | Depth |
-|---|---|---|---|---|---|---|
-| **FigJam** | Design collab | $3–5/mo | Basic | ❌ | ❌ | Low |
-| **Miro** | Workshops, boards | $8–16/mo | Basic | ❌ | ❌ | Low |
-| **Whimsical** | Flowcharts, wireframes | $10/mo | ❌ | ❌ | ❌ | Medium |
-| **draw.io** | All diagramming | Free | ❌ | ✅ | ✅ | High |
-| **Lucidchart** | Enterprise diagrams | $9–15/mo | Basic | ❌ | ❌ | High |
-| **Excalidraw** | Quick sketches | Free | Partial | ✅ | ✅ | Low |
-| **Mermaid** | Code→diagram | Free | ❌ | ✅ | ✅ | Medium |
-| **Structurizr** | Architecture (C4) | Free–$14/mo | ❌ | Partial | Partial | Medium |
-| **Creately** | Diagrams + DB | $8–15/mo | Basic | ❌ | ❌ | Medium |
-| **OpenFlowKit** | **All of the above** | **Free** | **Deep** | **✅** | **✅** | **High** |
+### Where we are genuinely strong
 
----
+1. **AI breadth + privacy**
+We have a wider practical AI surface than most diagram tools, and we do it with a BYOK/local-first posture that is genuinely differentiated.
 
-## Feature Comparison vs Top 4
+2. **Export portability**
+PNG, SVG, PDF, Mermaid, PlantUML, JSON/OpenFlow, Figma, and cinematic animated output is an unusually strong export surface.
 
-### Diagram Depth
+3. **Structured technical diagram depth**
+ER, architecture, class, state, journey, mindmap, flowchart, and sequence give us a better technical-builder mix than the usual whiteboard-first tools.
 
-| Type | OF | draw.io | Lucidchart | FigJam | Excalidraw |
-|---|---|---|---|---|---|
-| Flowchart | ✅ | ✅ | ✅ | Basic | Freeform |
-| Architecture / Cloud | ✅ + lint | ✅ shapes | ✅ shapes | ❌ | ❌ |
-| ER Diagram | ✅ editable | ✅ shapes | ✅ shapes | ❌ | ❌ |
-| Class Diagram | ✅ editable | ✅ shapes | ✅ shapes | ❌ | ❌ |
-| Mindmap | ✅ | ✅ | ✅ | ✅ | ❌ |
-| User Journey | ✅ | ❌ | Partial | ❌ | ❌ |
-| State Diagram | ✅ | ✅ | ✅ | ❌ | ❌ |
-| **Sequence** | ❌ visual | ❌ | ✅ | ❌ | ❌ |
-| Wireframe (Browser/Mobile) | ✅ | ❌ | ❌ | ❌ | ❌ |
+4. **Local-first product story**
+No account, no default server storage, portable artifacts, and private workflows are a meaningful wedge.
 
-Gap: **Sequence diagram** — high demand for API/backend teams. Must build.
+### Where competitors still feel stronger
 
-### AI
+1. **Activation and immediate clarity**
+FigJam, Excalidraw, and even Lucidchart feel clearer in the first minute.
 
-| Capability | OF | draw.io | Lucidchart | FigJam | Miro |
-|---|---|---|---|---|---|
-| Generate from prompt | ✅ streaming | ❌ | ✅ cloud | ✅ basic | ✅ basic |
-| Edit selection with AI | ✅ | ❌ | ❌ | ❌ | ❌ |
-| SQL → ER | ✅ local | ❌ | ❌ | ❌ | ❌ |
-| Terraform/K8s → Arch | ✅ | ❌ | ❌ | ❌ | ❌ |
-| OpenAPI → Sequence | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Diff preview before apply | ✅ | ❌ | ❌ | ❌ | ❌ |
-| BYOK multi-provider | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Ollama (local model) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Keys never leave browser | ✅ | N/A | ❌ | ❌ | ❌ |
+2. **Template breadth**
+Lucidchart and draw.io win on sheer catalog volume.
 
-**This is our biggest moat.** No competitor is close on AI breadth + privacy.
+3. **Visual polish**
+We are better than before, but still not at the level where people immediately describe the product as premium or inevitable.
 
-### Export (we win convincingly)
-
-| Format | OF | draw.io | Lucidchart | FigJam | Excalidraw |
-|---|---|---|---|---|---|
-| PNG / SVG / PDF | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Mermaid code | ✅ | ❌ | ❌ | ❌ | ❌ |
-| PlantUML | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Figma editable | ✅ | ❌ | ❌ | N/A | ❌ |
-| Video (WebM/MP4) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Animated GIF | ✅ | ❌ | ❌ | ❌ | ❌ |
-
-### Overall Score (Builders Lens)
-
-| Category | OF | draw.io | Excalidraw | FigJam | Lucidchart |
-|---|---|---|---|---|---|
-| Feature depth | 9 | 8 | 4 | 5 | 9 |
-| AI | 10 | 1 | 3 | 4 | 5 |
-| Privacy / local-first | 10 | 8 | 8 | 2 | 3 |
-| Export versatility | 10 | 7 | 5 | 4 | 7 |
-| First-run / onboarding | 4 | 6 | 9 | 8 | 7 |
-| Visual polish | 6 | 6 | 9 | 9 | 7 |
-| Dark mode | ❌ | ✅ | ✅ | ✅ | ✅ |
-| Templates | 4 | 8 | 6 | 7 | 9 |
-| Collaboration | 6 | 6 | 8 | 9 | 8 |
-| Price | 10 | 10 | 10 | 5 | 4 |
-| **Total** | **7.9** | **7.0** | **7.2** | **6.3** | **6.9** |
-
-**We're already #1 on raw score for builders who care about depth + privacy.** The gap is first-run experience and polish — and that's entirely fixable.
+4. **Cold-start offline**
+We can honestly claim local-first persistence. We should not yet over-claim full offline web-app resilience.
 
 ---
 
-## Real Gaps (Honest)
+## Honest Gaps
 
-### Gap 1 — First-run experience (CRITICAL)
-Cold open = blank canvas. No demo. No "here's what this tool can do." Excalidraw and FigJam nail the first 60 seconds. We don't.
+### Gap 1 — Activation polish
 
-A first-time user who doesn't already know what to do will leave in under 60 seconds. This is the biggest conversion killer.
+Still the highest-priority product gap.
 
-**Fix:** Welcome flow with 3 starter options: "Start from template", "Import from Mermaid / SQL / OpenAPI", "Blank canvas". Takes 1–2 days.
+What remains:
+- make the fastest builder paths even more obvious
+- reduce any ambiguity between template, import, and AI-first starts
+- ensure the first useful artifact happens in under 2 minutes
 
-### Gap 2 — AI setup friction (CRITICAL for our biggest differentiator)
-BYOK is our best feature. It's also invisible to new users. If someone clicks an AI button and nothing happens, they assume the tool is broken. There's no guided "add your key in 30 seconds" flow.
+Why it matters:
+- this directly affects Product Hunt conversion
+- this directly affects Hacker News patience
+- this is more important than adding breadth right now
 
-**Fix:** When AI is unconfigured, show an inline guided setup — provider picker + key field + confirm — right in the AI panel. Skip the Settings modal entirely. 1 day.
+### Gap 2 — AI setup clarity
 
-### Gap 3 — No dark mode
-Every technical tool launched in the last 5 years has dark mode. Its absence reads as "this was made fast." Designers especially notice.
+The capability is real. The explanation can still be sharper.
 
-**Fix:** CSS custom property architecture already exists (`--brand-primary`, `--radius-*`, etc.). Add a dark palette, a theme toggle, persist to localStorage. 2–3 days.
+What remains:
+- clearer provider guidance
+- clearer local-first / key storage explanation
+- clearer “what to do next” immediately after a key is saved
 
-### Gap 4 — Sequence diagram visual editor
-Most searched diagram type. Currently no visual editor — only the OpenAPI→AI flow which produces an output but can't be hand-built or edited. draw.io and Lucidchart both have this.
+Why it matters:
+- AI is one of our biggest moats
+- if setup feels unclear, the moat is invisible
 
-Backend engineers and API teams won't stay without it.
+### Gap 3 — Sequence completion audit
 
-**Fix:** New diagram family. Actor lanes + message arrows. Mermaid sequence import/export already works. 3–4 days for v1.
+Sequence is already in the product, but it should be treated as a completion/polish project.
 
-### Gap 5 — Template gallery (thin)
-People search "flowchart template", "microservices architecture diagram", "ER diagram for user auth". Lucidchart wins this traffic. We have the template system built — we just have too few templates.
+What remains:
+- verify create/edit/export/re-import paths end to end
+- ensure discovery is strong enough from app entry points
+- tighten starter template and documentation support
 
-**Fix:** Write 20 curated templates. Not engineering work — content work. 1 day to draft, 1 day to build in-app.
+Why it matters:
+- sequence is highly searched by backend/API users
+- under-claiming a real feature is better than overstating a partial one
 
-### Gap 6 — GitHub README embed isn't promoted
-The `/view` route exists and works. A diagram can be embedded in a GitHub README right now. Almost nobody knows this. This is a viral loop: every embedded diagram is an impression.
+### Gap 4 — Share/embed quality
 
-**Fix:** Prominent "Embed in README" button in the export panel. Generates a one-liner badge. 0.5 days.
+The underlying share system exists. The output is not yet strong enough to become a distribution loop.
 
-### Gap 7 — Shape library breadth (non-critical for builders, matters for enterprise)
-draw.io has BPMN, network, floor plan, electrical shapes. We don't. For our target builder audience this matters less — but it blocks enterprise and ops teams entirely.
+What remains:
+- better viewer presets
+- better Markdown/embed snippets
+- more explicit promotion of shareable outputs
 
-**Fix:** Not urgent. Add when targeting enterprise.
+Why it matters:
+- this is the bridge from “good product” to “artifacts that spread”
 
----
+### Gap 5 — Template gallery depth
 
-## New Feature: Cinematic Reveal Animation Export
+The system exists. The catalog is the weak point.
 
-### What It Is
+What remains:
+- more curated technical-builder templates
+- stronger naming, descriptions, and launch-quality examples
+- a better “first page” of templates for common builder tasks
 
-A one-click export that produces a smooth animated video or GIF showing your diagram "revealing itself" — nodes fade in one by one, connectors draw themselves in, building up the full picture. Like those animated architecture diagrams you see in Apple WWDC keynotes.
+Why it matters:
+- this improves activation
+- this improves SEO/content capture
+- this reduces blank-canvas friction
 
-Users embed these in:
-- README files
-- Dev docs and architecture decision records
-- Engineering blog posts
-- Onboarding decks
-- Hacker News "Show HN" posts (this is genuinely viral content)
-- LinkedIn / Twitter / X posts for technical content
+### Gap 6 — Offline/PWA defensibility
 
-No competitor has this. It is a **demo-able, shareable, viral** feature for a ProductHunt launch.
+Current honest statement:
+- local-first persistence: yes
+- works without a backend for many flows: yes
+- guaranteed cold-start offline web app: no
 
-### Why It's Feasible Now
+What remains:
+- app-shell caching
+- service-worker strategy
+- removal of remaining cold-start external dependencies from the critical offline path
 
-All the hard parts already exist in the codebase:
+### Gap 7 — Performance at scale
 
-| Needed | Exists? | Location |
-|---|---|---|
-| Topological node ordering | ✅ | `src/services/playback/studio.ts` — `topologicalSortNodes()` |
-| Frame capture from React Flow | ✅ | `src/hooks/useFlowExport.ts` — `toPng()` loop |
-| GIF encoder | ✅ | `src/services/gifEncoder.ts` |
-| Video encoder (MediaRecorder) | ✅ | `src/hooks/useFlowExport.ts` |
-| Animated export preset system | ✅ | `src/services/animatedExport.ts` |
-| Animated edge presentation | ✅ | `src/components/custom-edge/animatedEdgePresentation.ts` |
-| Memory/size estimation | ✅ | `buildAnimatedExportPlan()` |
+Current work has improved structure and some export performance, but large-diagram behavior still needs direct profiling and targeted optimization.
 
-The current animated export (playback GIF/video) does: jump to step → wait → capture. It's mechanical, not cinematic.
-
-The new feature layers a smooth animation on top: **fade-in + slight scale-up per node group, edge path draw animation, smooth transitions between groups.**
-
-### Technical Design
-
-#### Architecture
-
-```
-CinematicRevealExport
-├── revealSequencer.ts        (pure fn: nodes+edges → RevealFrame[])
-├── RevealOverlay.tsx          (off-screen component: renders frame at time T)
-│   ├── Node opacity/scale CSS transitions
-│   └── Edge SVG strokeDashoffset draw animation
-└── cinematic reveal added to useFlowExport.ts
-    ├── Drives RevealOverlay through time T
-    ├── Captures frames at target FPS
-    └── Feeds to existing GIF/video encoder
-```
-
-#### `revealSequencer.ts`
-
-Pure function, easily tested. Input: nodes + edges. Output: `RevealFrame[]` — each frame has a timestamp and a set of visible node/edge IDs with their opacity (0–1).
-
-```ts
-interface RevealFrame {
-  timeMs: number;
-  nodes: Map<string, number>;  // id → opacity 0–1
-  edges: Map<string, number>;  // id → draw progress 0–1
-}
-
-function buildRevealSequence(
-  nodes: FlowNode[],
-  edges: FlowEdge[],
-  options: RevealOptions
-): RevealFrame[]
-```
-
-Reveal groups: each group = 1 node + its incoming edges from already-revealed nodes. Ordered by topological sort (reuse existing). Each group gets a configurable stagger (e.g. 200ms default).
-
-Within a group, the animation timeline:
-- `0ms`: node fades in (opacity 0→1 over 300ms) + slight scale (0.85→1)
-- `150ms`: incoming edges draw in (strokeDashoffset 1→0 over 250ms each)
-- `+staggerMs`: next group starts
-
-Total duration for 50 nodes at 200ms stagger = ~10 seconds. At 12fps = 120 frames for GIF, ~240 frames for video. Manageable.
-
-#### `RevealOverlay.tsx`
-
-A hidden React component mounted off-screen. Accepts a `RevealFrame` prop and renders the full diagram with the correct opacities applied. Uses inline styles on the existing node/edge wrappers — no new rendering layer needed.
-
-Edge draw animation: we already have `animatedEdgePresentation.ts` for edge animation. We extend it to accept a `drawProgress: number` prop (0–1) and render the edge as a partially drawn path using `strokeDashoffset`.
-
-This keeps all rendering using the existing React Flow components — we get visual consistency for free.
-
-#### Frame Capture Loop
-
-```ts
-for each target frame at time T:
-  1. Set RevealOverlay frame state
-  2. await nextAnimationFrame()    // let React render
-  3. await toPng(revealOverlay)    // capture
-  4. push to encoder
-  5. report progress
-```
-
-For GIF: feed frames to existing `encodeGif()`.
-For video: render to an off-screen canvas, use `canvas.captureStream(fps)` + `MediaRecorder` — streams to blob without holding all frames in memory simultaneously. More memory-efficient for long diagrams.
-
-#### Memory Budget
-
-50 nodes, 12fps GIF, 10s animation = 120 frames × 960×540 RGBA = ~250MB peak in the naive approach. That's too much.
-
-**Solution:** Process frames in batches of 10. Encode each batch into the GIF buffer progressively, then free the raw frame memory. The existing `encodeGif` returns a full Uint8Array — we need it to accept a streaming mode. This is the only meaningful new engineering work.
-
-For video (MediaRecorder approach): no frame memory issue. The browser handles compression in real-time. Video output will be 5–20MB for 50 nodes.
-
-**Recommendation:** Default to video (WebM). GIF as an option with a "this may be large" warning for 30+ nodes.
-
-#### Options / Settings
-
-```ts
-interface RevealOptions {
-  staggerMs: number;         // default 200 — time between groups
-  nodeFadeMs: number;        // default 300 — node fade-in duration
-  edgeDrawMs: number;        // default 250 — edge draw duration
-  holdMs: number;            // default 500 — pause on completed diagram
-  easing: 'ease-out' | 'linear';  // default ease-out
-  outputFps: number;         // default 12 for GIF, 24 for video
-}
-```
-
-Exposed as simple preset picker in export UI: "Fast (5s)" / "Balanced (10s)" / "Cinematic (20s)".
-
-#### Export UI Integration
-
-Add to `ExportMenuPanel.tsx`:
-- Section: "Animated" (below the existing formats)
-- Two options: "Reveal Video" and "Reveal GIF"
-- On click: progress toast + capture loop + download
-
-No modal needed. The whole flow is one click → toast shows progress → file downloads.
-
-#### What Makes It Viral
-
-A PM creates a 30-node microservices architecture. Exports "Reveal Video". Posts to Twitter/LinkedIn: "Here's how our new payment system works →". The GIF auto-plays in the feed, nodes appear one by one, people can follow the flow. Comments: "what tool did you use?" → "OpenFlowKit, free and local-first."
-
-This is the kind of shareable artifact that Figma built its early growth on (the shareable file link). We build the shareable animated architecture diagram.
+What remains:
+- large graph profiling
+- path/render cost reduction
+- export performance follow-up
 
 ---
 
-## Phased Plan to #1
+## Outdated Claims Removed
 
-### Phase 0 — Pre-ProductHunt (this week, 7 days)
+These were stale and should no longer guide planning:
 
-Goal: Ship the minimum that makes a strong first impression and gives journalists / HN something to write about. One week is not enough to fix everything — pick the things that matter for a launch.
+- "Sequence must build from scratch"
+- "Cinematic reveal export needs to be invented"
+- "C4/network are not started at all"
+- "Playback/reveal export menu is the current product surface"
 
-**Day 1–2: First-run experience**
-- On cold open, show a "Welcome to OpenFlowKit" overlay with 3 paths:
-  - "Start from a template" → opens template picker (10 starter templates)
-  - "Import" → opens command bar to import view
-  - "Blank canvas" → dismisses overlay
-- Add 10 starter templates: checkout flow, microservices arch, ER for users/orders, product roadmap, CI/CD pipeline, user journey for onboarding, class diagram starter, state machine starter, mindmap starter, system context C4.
-
-**Day 3: AI guided setup**
-- When AI panel opens and no provider is configured: show inline card "Add your AI key" with provider selector + key field + "Save and try" button.
-- Don't send people to Settings. Remove that friction entirely.
-
-**Day 4–5: Cinematic Reveal Animation (MVP)**
-- Build `revealSequencer.ts` (pure function, fast)
-- Build `RevealOverlay.tsx` (off-screen render with CSS transitions)
-- Wire into export as "Reveal Video" (WebM, video path, no GIF memory issue)
-- Export UI: single button in export panel
-- This is the demo feature for the PH launch. Every GIF posted from OpenFlowKit drives brand impressions.
-
-**Day 6: Polish pass**
-- Fix any rough edges in the above
-- Ensure mobile gate message is friendly not cold
-- README embed button in export panel
-- Verify all export formats actually work end-to-end in a fresh browser
-
-**Day 7: Freeze + prep launch assets**
-- Record a demo GIF of the cinematic reveal on a real architecture diagram
-- Write the PH tagline using the unique value props
-- Cut a clean release branch
-
-**Skip for launch:** dark mode, sequence diagram, BPMN. These are post-launch.
+These are no longer true enough to use as roadmap anchors.
 
 ---
 
-### Phase 1 — Post-Launch Sprint (weeks 2–4)
+## Recommended Execution Order
 
-**Dark mode**
-- CSS custom property system already in place
-- Add `data-theme="dark"` attribute to root
-- Define dark palette in `src/index.css`
-- Toggle stored in localStorage + viewSettings
-- 2–3 days
+### Next 2 Weeks
 
-**Sequence diagram visual editor**
-- New diagram family in `src/diagram-types/`
-- Participant lanes + message arrows as node/edge types
-- Mermaid sequence import already partially works
-- Full round-trip: draw in app → export Mermaid sequence → import back
-- 3–4 days for a usable v1
+1. Activation polish
+2. AI setup clarity
+3. Sequence completion audit
+4. Share/embed preset quality
+5. Template gallery expansion
 
-**Template gallery expansion**
-- 30 total templates across: architecture, flows, ER/class, journey, mindmap, wireframe
-- Searchable by use case, not just type
-- 1–2 days content + 1 day integration
+### After That
 
-**Cinematic Reveal GIF (streaming encoder)**
-- Implement streaming GIF encode to handle 30+ node diagrams in memory-safe way
-- Add GIF as output option alongside video
-- 1–2 days
+1. Offline/PWA hardening
+2. Performance-at-scale work
+3. Broader C4/network depth
+4. Additional enterprise-oriented shape breadth
 
 ---
 
-### Phase 2 — Growth Features (weeks 5–10)
+## What I Would Improve In This Doc Later
 
-**GitHub README embed flow (viral loop)**
-- "Share as README badge" button generates Markdown with the `/view` URL
-- Update `/view` route to render at multiple sizes (badge / card / full)
-- Every embedded diagram = brand impression + back-link
+This version is now a much better source of truth, but it could still improve by adding:
 
-**Shape library expansion**
-- BPMN basic shapes (no full BPMN semantics yet)
-- Network diagrams (routers, switches, firewalls)
-- C4 model shapes (system context, container, component)
-- Sourced from open icon packs
-
-**Collaboration polish**
-- Remove beta label when transport is stable
-- Room password protection (simple shared secret)
-- Presence avatars in top nav
-
-**AI chat per-diagram memory**
-- Conversation history already persists per tab
-- Surface it as "AI context" in the studio panel
-- Allow users to set "diagram context" that prefixes every AI request
-
-**Architecture diagram v2**
-- C4 model support (4 levels: system context → containers → components → code)
-- Auto-nest containers inside system boxes
-- Export as valid C4-PlantUML
+- a stricter scoring table per pending item
+- a launch-only subset versus a post-launch subset
+- explicit owner/scope per item
+- direct links from each roadmap bullet to the code surface that supports it
 
 ---
 
-### Phase 3 — Platform Features (months 3–6)
+## Bottom Line
 
-**Plugin / extension system**
-- Custom node types via a JSON schema + renderer spec
-- Custom AI prompts as named templates
-- Import adapters (e.g. AWS CloudFormation, Pulumi state files)
+The product is stronger than the older roadmap implied.
 
-**Diagram search and discovery**
-- Community template gallery with upvotes
-- Public "view" links that can be discovered (opt-in)
-- SEO-optimized landing pages for each template type
+The biggest remaining work is not "invent major new capability."
+It is:
 
-**Advanced collaboration**
-- Optional server-backed sync (self-hostable)
-- Diagram version history with named saves
-- Comment threads per node
+- finish and sharpen what already exists
+- make the best features easier to discover
+- make the resulting artifacts easier to share
+- only then broaden further
 
-**Enterprise features**
-- SSO / SAML
-- Org-level design system enforcement
-- Audit logs
-- On-premise deployment via Docker
-
----
-
-## What Makes Us Undeniably #1
-
-If we ship the Phase 0 + Phase 1 list, here's the honest claim we can make:
-
-> **OpenFlowKit is the best diagramming tool for builders.**
-> Free. Open source. Local-first. AI that works on your own keys. Exports everything including animated videos. The only tool where SQL creates an ER diagram and Terraform creates an architecture diagram in seconds.
-
-No competitor can say all of that. draw.io can't (no AI). Lucidchart can't (not free, not local). FigJam can't (no depth). Excalidraw can't (no structure). Mermaid can't (no visual editor).
-
-The product is already better than anything free on depth + AI. Close the first-run gap and the cinematic export makes it sharable. That's the launch.
+That is a much better position than being early on fundamentals.

@@ -23,10 +23,21 @@ function ArchitectureNode({ id, data, selected }: LegacyNodeProps<NodeData>): Re
   const activeColor = data.color || 'white';
   const activeColorMode = data.colorMode || 'subtle';
   const visualStyle = resolveNodeVisualStyle(activeColor, activeColorMode, data.customColor);
-  const resourceIcon = {
+  const resourceIcon: string = {
     group: '◼',
     junction: '◆',
     service: '▣',
+    person: '👤',
+    system: '⬜',
+    container: '⧉',
+    component: '⧈',
+    database_container: '⛁',
+    router: '⇄',
+    switch: '⬡',
+    firewall: '🛡',
+    load_balancer: '⇶',
+    cdn: '◉',
+    dns: '◎',
   }[resourceType] ?? '▣';
   const packId = typeof data.archIconPackId === 'string' ? data.archIconPackId : undefined;
   const shapeId = typeof data.archIconShapeId === 'string' ? data.archIconShapeId : undefined;

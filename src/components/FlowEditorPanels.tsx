@@ -58,6 +58,7 @@ export interface CommandBarPanelProps {
     onAddJourney?: () => void;
     onAddMindmap?: () => void;
     onAddArchitecture?: () => void;
+    onAddSequence?: () => void;
     onAddClassNode?: () => void;
     onAddEntityNode?: () => void;
     onAddImage: (imageUrl: string) => void;
@@ -254,6 +255,7 @@ export function FlowEditorPanels({
                             onAddJourney={commandBar.onAddJourney}
                             onAddMindmap={commandBar.onAddMindmap}
                             onAddArchitecture={commandBar.onAddArchitecture}
+                            onAddSequence={commandBar.onAddSequence}
                             onAddClassNode={commandBar.onAddClassNode}
                             onAddEntityNode={commandBar.onAddEntityNode}
                             onAddImage={commandBar.onAddImage}

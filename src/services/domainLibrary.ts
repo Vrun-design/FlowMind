@@ -1,7 +1,7 @@
 import type { Node } from '@/lib/reactflowCompat';
 import type { NodeData } from '@/lib/types';
 
-export type DomainLibraryCategory = 'aws' | 'azure' | 'gcp' | 'cncf' | 'network' | 'security' | 'icons';
+export type DomainLibraryCategory = 'aws' | 'azure' | 'gcp' | 'cncf' | 'network' | 'security' | 'c4' | 'icons';
 
 export interface DomainLibraryItem {
     id: string;
@@ -12,6 +12,7 @@ export interface DomainLibraryItem {
     color: string;
     shape?: NodeData['shape'];
     nodeType?: 'process' | 'architecture' | 'custom';
+    archResourceType?: string;
     previewUrl?: string;
     providerShapeCategory?: string;
     archIconPackId?: string;
@@ -41,19 +42,26 @@ export const DOMAIN_LIBRARY_ITEMS: DomainLibraryItem[] = [
     { id: 'k8s-ingress', category: 'cncf', label: 'Ingress', description: 'HTTP edge routing', icon: 'Route', color: 'cyan' },
     { id: 'k8s-configmap', category: 'cncf', label: 'ConfigMap', description: 'Runtime configuration', icon: 'SlidersHorizontal', color: 'cyan' },
 
-    { id: 'net-lb', category: 'network', label: 'Load Balancer', description: 'Traffic distribution', icon: 'Network', color: 'violet' },
-    { id: 'net-router', category: 'network', label: 'Router', description: 'Layer 3 routing', icon: 'Route', color: 'violet' },
-    { id: 'net-switch', category: 'network', label: 'Switch', description: 'Layer 2 switching', icon: 'GitFork', color: 'violet' },
-    { id: 'net-vpn', category: 'network', label: 'VPN Gateway', description: 'Private tunnel gateway', icon: 'Cable', color: 'violet' },
-    { id: 'net-cdn', category: 'network', label: 'CDN Edge', description: 'Content delivery edge', icon: 'Globe', color: 'violet' },
-    { id: 'net-dns', category: 'network', label: 'DNS Service', description: 'Domain name resolution', icon: 'Network', color: 'violet' },
+    { id: 'net-lb', category: 'network', label: 'Load Balancer', description: 'Traffic distribution', icon: 'Scale', color: 'orange', nodeType: 'architecture', archResourceType: 'load_balancer' },
+    { id: 'net-router', category: 'network', label: 'Router', description: 'Layer 3 routing', icon: 'Route', color: 'emerald', nodeType: 'architecture', archResourceType: 'router' },
+    { id: 'net-switch', category: 'network', label: 'Switch', description: 'Layer 2 switching', icon: 'Network', color: 'sky', nodeType: 'architecture', archResourceType: 'switch' },
+    { id: 'net-cdn', category: 'network', label: 'CDN Edge', description: 'Content delivery edge', icon: 'Globe', color: 'purple', nodeType: 'architecture', archResourceType: 'cdn' },
+    { id: 'net-dns', category: 'network', label: 'DNS Service', description: 'Domain name resolution', icon: 'Globe2', color: 'lime', nodeType: 'architecture', archResourceType: 'dns' },
+    { id: 'net-vpn', category: 'network', label: 'VPN Gateway', description: 'Private tunnel gateway', icon: 'Cable', color: 'violet', nodeType: 'architecture', archResourceType: 'service' },
 
-    { id: 'sec-firewall', category: 'security', label: 'Firewall', description: 'Ingress/egress filtering', icon: 'Shield', color: 'red' },
+    { id: 'sec-firewall', category: 'security', label: 'Firewall', description: 'Ingress/egress filtering', icon: 'Shield', color: 'red', nodeType: 'architecture', archResourceType: 'firewall' },
     { id: 'sec-waf', category: 'security', label: 'WAF', description: 'Web application firewall', icon: 'ShieldCheck', color: 'red' },
     { id: 'sec-iam', category: 'security', label: 'IAM Service', description: 'Identity and access control', icon: 'Users', color: 'red' },
     { id: 'sec-kms', category: 'security', label: 'KMS', description: 'Encryption key management', icon: 'KeyRound', color: 'red' },
     { id: 'sec-secrets', category: 'security', label: 'Secrets Manager', description: 'Secret storage and rotation', icon: 'LockKeyhole', color: 'red' },
     { id: 'sec-siem', category: 'security', label: 'SIEM', description: 'Security event analytics', icon: 'Radar', color: 'red' },
+
+    { id: 'c4-person', category: 'c4', label: 'Person', description: 'A user or role that interacts with the system', icon: 'User', color: 'blue', nodeType: 'architecture', archResourceType: 'person' },
+    { id: 'c4-system', category: 'c4', label: 'System', description: 'Top-level software system boundary', icon: 'Box', color: 'slate', nodeType: 'architecture', archResourceType: 'system' },
+    { id: 'c4-container', category: 'c4', label: 'Container', description: 'Deployable unit (app, microservice, DB)', icon: 'Package', color: 'indigo', nodeType: 'architecture', archResourceType: 'container' },
+    { id: 'c4-component', category: 'c4', label: 'Component', description: 'Logical grouping inside a container', icon: 'Puzzle', color: 'teal', nodeType: 'architecture', archResourceType: 'component' },
+    { id: 'c4-database', category: 'c4', label: 'Database', description: 'Persistent data store container', icon: 'Database', color: 'cyan', nodeType: 'architecture', archResourceType: 'database_container' },
+    { id: 'c4-group', category: 'c4', label: 'Boundary', description: 'System or enterprise boundary group', icon: 'Layers', color: 'violet', nodeType: 'architecture', archResourceType: 'group' },
 ];
 
 export function createDomainLibraryNode(
@@ -85,7 +93,7 @@ export function createDomainLibraryNode(
         };
     }
 
-    if (item.nodeType === 'architecture' && item.archIconPackId && item.archIconShapeId) {
+    if (item.nodeType === 'architecture') {
         return {
             id,
             type: 'architecture',
@@ -97,10 +105,10 @@ export function createDomainLibraryNode(
                 shape: item.shape || 'rectangle',
                 icon: item.icon,
                 archProvider: item.category,
-                archResourceType: 'service',
+                archResourceType: item.archResourceType || 'service',
                 archEnvironment: 'default',
-                archIconPackId: item.archIconPackId,
-                archIconShapeId: item.archIconShapeId,
+                ...(item.archIconPackId ? { archIconPackId: item.archIconPackId } : {}),
+                ...(item.archIconShapeId ? { archIconShapeId: item.archIconShapeId } : {}),
                 layerId,
             },
         };

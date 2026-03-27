@@ -3,17 +3,17 @@ import { useState } from 'react';
 interface UseTopNavStateResult {
     isMenuOpen: boolean;
     isSettingsOpen: boolean;
-    activeSettingsTab: 'general' | 'shortcuts';
+    activeSettingsTab: 'general' | 'shortcuts' | 'ai';
     toggleMenu: () => void;
     closeMenu: () => void;
-    openSettings: (tab: 'general' | 'shortcuts') => void;
+    openSettings: (tab: 'general' | 'shortcuts' | 'ai') => void;
     closeSettings: () => void;
 }
 
 export function useTopNavState(): UseTopNavStateResult {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const [activeSettingsTab, setActiveSettingsTab] = useState<'general' | 'shortcuts'>('general');
+    const [activeSettingsTab, setActiveSettingsTab] = useState<'general' | 'shortcuts' | 'ai'>('general');
 
     function toggleMenu(): void {
         setIsMenuOpen((value) => !value);
@@ -23,7 +23,7 @@ export function useTopNavState(): UseTopNavStateResult {
         setIsMenuOpen(false);
     }
 
-    function openSettings(tab: 'general' | 'shortcuts'): void {
+    function openSettings(tab: 'general' | 'shortcuts' | 'ai'): void {
         setActiveSettingsTab(tab);
         setIsSettingsOpen(true);
         setIsMenuOpen(false);

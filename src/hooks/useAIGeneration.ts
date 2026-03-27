@@ -74,10 +74,20 @@ export function useAIGeneration(
   const [retryCount, setRetryCount] = useState(0);
   const [pendingDiff, setPendingDiff] = useState<ImportDiff | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => loadChatHistory(activeTabId));
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
   useEffect(() => {
-    setChatMessages(loadChatHistory(activeTabId));
+    let isDisposed = false;
+
+    void loadChatHistory(activeTabId).then((messages) => {
+      if (!isDisposed) {
+        setChatMessages(messages);
+      }
+    });
+
+    return () => {
+      isDisposed = true;
+    };
   }, [activeTabId]);
   const [lastError, setLastError] = useState<string | null>(null);
   const readiness = getAIReadinessState(aiSettings);
@@ -87,7 +97,7 @@ export function useAIGeneration(
   }, []);
 
   const clearChat = useCallback(() => {
-    clearChatHistory(activeTabId);
+    void clearChatHistory(activeTabId);
     setChatMessages([]);
   }, [activeTabId]);
 
@@ -154,7 +164,7 @@ export function useAIGeneration(
       const isEditMode = nodes.length > 0;
       setChatMessages((previousMessages) => {
         const next = appendChatExchange(previousMessages, userMessage, dslText, isEditMode);
-        saveChatHistory(activeTabId, next);
+        void saveChatHistory(activeTabId, next);
         return next;
       });
 

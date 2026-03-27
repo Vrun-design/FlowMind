@@ -55,6 +55,7 @@ describe('buildFlowEditorPanelsProps', () => {
       handleAddJourneyNode: vi.fn(),
       handleAddMindmapNode: vi.fn(),
       handleAddArchitectureNode: vi.fn(),
+      handleAddSequenceParticipant: vi.fn(),
       handleAddClassNode: vi.fn(),
       handleAddEntityNode: vi.fn(),
       handleAddImage: vi.fn(),

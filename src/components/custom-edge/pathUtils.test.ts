@@ -78,6 +78,46 @@ describe('buildEdgePath', () => {
     }
   });
 
+  it('skips sibling fanout offsets for very large edge sets even outside interaction mode', () => {
+    const allEdges = Array.from({ length: 600 }, (_, index) => ({
+      id: `edge-${index + 1}`,
+      source: 'a',
+      target: `target-${index + 1}`,
+      sourceHandle: 'right',
+      targetHandle: 'left',
+    }));
+    const allNodes = [
+      NODE_A,
+      ...Array.from({ length: 600 }, (_, index) => ({
+        id: `target-${index + 1}`,
+        position: { x: 260, y: 40 + index * 8 },
+        width: 0,
+        height: 0,
+      })),
+    ];
+
+    const result = buildEdgePath(
+      {
+        id: 'edge-1',
+        source: 'a',
+        target: 'target-1',
+        sourceX: 100,
+        sourceY: 100,
+        targetX: 260,
+        targetY: 40,
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+        sourceHandleId: 'right',
+        targetHandleId: 'left',
+      },
+      allEdges,
+      allNodes,
+      'smoothstep'
+    );
+
+    expect(getMovePoint(result.edgePath)).toBe('100,100');
+  });
+
   it('routes edge through explicit waypoint when provided', () => {
     const result = buildEdgePath(
       {

@@ -21,6 +21,7 @@ export const DIAGRAM_TYPES = [
   'mindmap',
   'journey',
   'architecture',
+  'sequence',
 ] as const;
 
 export type DiagramType = (typeof DIAGRAM_TYPES)[number];
@@ -45,6 +46,8 @@ export enum NodeType {
   GROUP = 'group',
   SWIMLANE = 'swimlane',
   IMAGE = 'image',
+  SEQUENCE_PARTICIPANT = 'sequence_participant',
+  SEQUENCE_MESSAGE = 'sequence_message',
 }
 
 export interface NodeData {
@@ -96,6 +99,12 @@ export interface NodeData {
   assetPresentation?: 'icon';
   assetProvider?: string;
   assetCategory?: string;
+  seqParticipantKind?: 'participant' | 'actor';
+  seqParticipantAlias?: string;
+  seqMessageKind?: 'sync' | 'async' | 'return' | 'self' | 'create' | 'destroy';
+  seqMessageFrom?: string;
+  seqMessageTo?: string;
+  seqMessageOrder?: number;
 }
 
 export interface AIRequestParams {
@@ -129,6 +138,7 @@ export interface EdgeData {
     y: number;
   }[];
   mindmapBranchKind?: 'root' | 'branch';
+  seqMessageKind?: 'sync' | 'async' | 'return' | 'self' | 'create' | 'destroy';
   connectionType?: 'fixed' | 'dynamic';
   waypoint?: {
     x: number;

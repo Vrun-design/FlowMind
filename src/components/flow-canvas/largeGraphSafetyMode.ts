@@ -3,6 +3,8 @@ import type { ViewSettings } from '@/store/types';
 
 const PROFILE_THRESHOLDS: Record<ViewSettings['largeGraphSafetyProfile'], {
   nodeThreshold: number;
+  edgeThreshold: number;
+  complexityThreshold: number;
   lowDetailZoomThreshold: number;
   farZoomReductionThreshold: number;
   interactionCooldownMs: number;
@@ -10,6 +12,8 @@ const PROFILE_THRESHOLDS: Record<ViewSettings['largeGraphSafetyProfile'], {
 }> = {
   performance: {
     nodeThreshold: 100,
+    edgeThreshold: 180,
+    complexityThreshold: 170,
     lowDetailZoomThreshold: 0.6,
     farZoomReductionThreshold: 0.5,
     interactionCooldownMs: 240,
@@ -17,6 +21,8 @@ const PROFILE_THRESHOLDS: Record<ViewSettings['largeGraphSafetyProfile'], {
   },
   balanced: {
     nodeThreshold: 300,
+    edgeThreshold: 650,
+    complexityThreshold: 600,
     lowDetailZoomThreshold: 0.5,
     farZoomReductionThreshold: 0.4,
     interactionCooldownMs: 180,
@@ -24,12 +30,18 @@ const PROFILE_THRESHOLDS: Record<ViewSettings['largeGraphSafetyProfile'], {
   },
   quality: {
     nodeThreshold: 500,
+    edgeThreshold: 900,
+    complexityThreshold: 850,
     lowDetailZoomThreshold: 0.42,
     farZoomReductionThreshold: 0.34,
     interactionCooldownMs: 130,
     lodRecoveryBuffer: 0.04,
   },
 };
+
+export function getGraphComplexityScore(nodeCount: number, edgeCount: number): number {
+  return nodeCount + edgeCount * 0.6;
+}
 
 function resolveHysteresisState(
   safetyActive: boolean,
@@ -47,13 +59,17 @@ function resolveHysteresisState(
 
 export function isLargeGraphSafetyActive(
   nodeCount: number,
-  _edgeCount: number,
+  edgeCount: number,
   mode: ViewSettings['largeGraphSafetyMode'],
   profile: ViewSettings['largeGraphSafetyProfile'] = 'balanced'
 ): boolean {
   if (mode === 'on') return true;
   if (mode === 'off') return false;
-  return nodeCount >= PROFILE_THRESHOLDS[profile].nodeThreshold;
+
+  const thresholds = PROFILE_THRESHOLDS[profile];
+  return nodeCount >= thresholds.nodeThreshold
+    || edgeCount >= thresholds.edgeThreshold
+    || getGraphComplexityScore(nodeCount, edgeCount) >= thresholds.complexityThreshold;
 }
 
 export function getSafetyAdjustedEdges(edges: Edge[], safetyActive: boolean): Edge[] {

@@ -467,30 +467,31 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
         >
 
           {/* Icon Area */}
-          <div className={`flex items-center gap-1.5 shrink-0 flow-lod-far-target flow-lod-far-flex-target ${lodPreserveClass} ${hasIcon ? 'mb-0' : 'mb-2'}`}>
-            {resolvedAssetIconUrl && (
-              <div
-                className={`shrink-0 ${isCompactNode ? 'w-7 h-7' : 'w-8 h-8'} rounded-lg flex items-center justify-center border border-black/5 shadow-sm overflow-hidden flow-lod-shadow`}
-                style={{ backgroundColor: visualStyle.iconBg }}
-              >
-                <img src={resolvedAssetIconUrl} alt="icon" className={`${isCompactNode ? 'w-4 h-4' : 'w-5 h-5'} object-contain`} />
-              </div>
-            )}
-
-            {iconName && (
-              <div
-                className={`shrink-0 ${isCompactNode ? 'w-7 h-7' : 'w-8 h-8'} rounded-lg flex items-center justify-center border border-black/5 shadow-sm flow-lod-shadow`}
-                style={{ backgroundColor: visualStyle.iconBg }}
-              >
-                <NamedIcon
-                  name={iconName}
-                  fallbackName="Settings"
-                  className={`${isCompactNode ? 'w-3.5 h-3.5' : 'w-4 h-4'}`}
-                  style={{ color: visualStyle.iconColor }}
-                />
-              </div>
-            )}
-          </div>
+          {hasIcon && (
+            <div className={`flex items-center gap-1.5 shrink-0 flow-lod-far-target flow-lod-far-flex-target ${lodPreserveClass}`}>
+              {resolvedAssetIconUrl && (
+                <div
+                  className={`shrink-0 ${isCompactNode ? 'w-7 h-7' : 'w-8 h-8'} rounded-lg flex items-center justify-center border border-black/5 shadow-sm overflow-hidden flow-lod-shadow`}
+                  style={{ backgroundColor: visualStyle.iconBg }}
+                >
+                  <img src={resolvedAssetIconUrl} alt="icon" className={`${isCompactNode ? 'w-4 h-4' : 'w-5 h-5'} object-contain`} />
+                </div>
+              )}
+              {iconName && (
+                <div
+                  className={`shrink-0 ${isCompactNode ? 'w-7 h-7' : 'w-8 h-8'} rounded-lg flex items-center justify-center border border-black/5 shadow-sm flow-lod-shadow`}
+                  style={{ backgroundColor: visualStyle.iconBg }}
+                >
+                  <NamedIcon
+                    name={iconName}
+                    fallbackName="Settings"
+                    className={`${isCompactNode ? 'w-3.5 h-3.5' : 'w-4 h-4'}`}
+                    style={{ color: visualStyle.iconColor }}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Text Content */}
           <div className={`flex flex-col min-w-0 max-w-full w-full overflow-hidden ${fontFamilyClass}`} style={{ textAlign: data.align || 'center', ...fontFamilyStyle }}>

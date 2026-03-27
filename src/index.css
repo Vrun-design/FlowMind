@@ -1,6 +1,94 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter/inter-400-700-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans Flex';
+  src: url('/fonts/google-sans/google-sans-flex-400-700-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-stretch: 100%;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  src: url('/fonts/google-sans/google-sans-400-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  src: url('/fonts/google-sans/google-sans-500-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  src: url('/fonts/google-sans/google-sans-600-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  src: url('/fonts/google-sans/google-sans-700-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans Text';
+  src: url('/fonts/google-sans/google-sans-text-400-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans Text';
+  src: url('/fonts/google-sans/google-sans-text-500-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans Text';
+  src: url('/fonts/google-sans/google-sans-text-700-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans Code';
+  src: url('/fonts/google-sans/google-sans-code-400-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans Code';
+  src: url('/fonts/google-sans/google-sans-code-500-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
 
 html {
   scroll-behavior: smooth;
@@ -10,10 +98,10 @@ html {
   --animate-gradient-x: gradient-x 15s ease infinite;
 
   /* Typography */
-  --font-display: "Space Grotesk", sans-serif;
-  --font-serif: "Instrument Serif", serif;
-  --font-sans: "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-display: "Inter", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  --font-sans: "Inter", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "Google Sans Code", ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
   --color-brand-primary: var(--brand-primary);
   --color-brand-primary-600: var(--brand-primary-600);
@@ -229,7 +317,7 @@ html {
   --brand-border-width: 1px;
 
   /* Typography */
-  --brand-font-family: 'Inter', sans-serif;
+  --brand-font-family: var(--font-sans);
 
   /* UI Effects */
   --brand-glass-blur: 12px;
@@ -391,7 +479,7 @@ body {
 }
 
 .font-inter {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
 }
 
 /* Global Noise Texture */
@@ -412,19 +500,19 @@ body {
 }
 
 .font-roboto {
-  font-family: 'Roboto', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .font-playfair {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-serif);
 }
 
 .font-fira {
-  font-family: 'Fira Code', monospace;
+  font-family: var(--font-mono);
 }
 
 .font-outfit {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-sans);
 }
 
 
@@ -742,5 +830,12 @@ body {
 
   .btn-beveled:active {
     box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-beveled-primary:disabled,
+  .btn-beveled-secondary:disabled,
+  .btn-beveled:disabled {
+    box-shadow: none;
+    transform: none;
   }
 }

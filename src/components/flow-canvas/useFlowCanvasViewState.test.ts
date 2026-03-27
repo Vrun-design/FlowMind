@@ -67,4 +67,21 @@ describe('computeFlowCanvasViewState', () => {
         expect(result.viewportCullingEnabled).toBe(true);
         expect(result.effectiveShowGrid).toBe(false);
     });
+
+    it('activates safety mode for edge-dense graphs even when node count is modest', () => {
+        const nodes = Array.from({ length: 80 }, (_, index) => createNode(`node-${index}`));
+        const edges = Array.from({ length: 190 }, (_, index) => createEdge(`edge-${index}`, 'node-0', `node-${(index % 79) + 1}`));
+
+        const result = computeFlowCanvasViewState({
+            nodes,
+            edges,
+            layers: [{ id: 'default', name: 'Default', visible: true, locked: false }],
+            showGrid: true,
+            largeGraphSafetyMode: 'auto',
+            largeGraphSafetyProfile: 'performance',
+        });
+
+        expect(result.safetyModeActive).toBe(true);
+        expect(result.effectiveShowGrid).toBe(false);
+    });
 });

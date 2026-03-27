@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Edge } from '@/lib/reactflowCompat';
 import {
+  getGraphComplexityScore,
   getInteractionLodCooldownMs,
   getSafetyAdjustedEdges,
   isFarZoomReductionActive,
@@ -21,8 +22,15 @@ describe('largeGraphSafetyMode', () => {
     expect(isLargeGraphSafetyActive(120, 10, 'auto', 'performance')).toBe(true);
     expect(isLargeGraphSafetyActive(299, 500, 'auto', 'balanced')).toBe(false);
     expect(isLargeGraphSafetyActive(300, 500, 'auto', 'balanced')).toBe(true);
+    expect(isLargeGraphSafetyActive(80, 190, 'auto', 'performance')).toBe(true);
+    expect(isLargeGraphSafetyActive(120, 820, 'auto', 'quality')).toBe(false);
     expect(isLargeGraphSafetyActive(499, 10, 'auto', 'quality')).toBe(false);
     expect(isLargeGraphSafetyActive(500, 10, 'auto', 'quality')).toBe(true);
+  });
+
+  it('computes a weighted complexity score that accounts for dense edge counts', () => {
+    expect(getGraphComplexityScore(100, 200)).toBe(220);
+    expect(getGraphComplexityScore(280, 500)).toBe(580);
   });
 
   it('disables animated edges when safety mode is active', () => {

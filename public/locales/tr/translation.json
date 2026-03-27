@@ -142,7 +142,12 @@
     "revealVideo": "Reveal Video",
     "hintRevealVideo": "Nodes fade in sequentially (WebM/MP4)",
     "revealGif": "Reveal GIF",
-    "hintRevealGif": "Animated reveal for docs/social"
+    "hintRevealGif": "Animated reveal for docs/social",
+    "cinematicVideo": "Cinematic Build Video",
+    "hintCinematicVideo": "Dark launch-style build",
+    "cinematicGif": "Cinematic Build GIF",
+    "hintCinematicGif": "Dark social-ready loop",
+    "actionDownload": "Download"
   },
   "import": {
     "title": "İçe Aktar",
@@ -1150,6 +1155,7 @@
   "connectionPanel": {
     "architecture": "Architecture",
     "label": "Label",
+    "messagePlaceholder": "Mesaj",
     "route": "Route",
     "appearance": "Appearance",
     "condition": "Condition",

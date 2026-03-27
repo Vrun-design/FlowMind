@@ -1,13 +1,12 @@
 import React, { lazy, Suspense } from 'react';
-import { ArrowRight, Code2, Shield, WandSparkles, X } from 'lucide-react';
+import { ArrowRight, Code2, Shield, WandSparkles } from 'lucide-react';
 import { FLOWPILOT_NAME } from '@/lib/brand';
 import type { FlowEdge, FlowNode } from '@/lib/types';
 import type { ChatMessage } from '@/services/aiService';
 import type { StudioCodeMode, StudioTab } from '@/hooks/useFlowEditorUIState';
 import type { AIReadinessState } from '@/hooks/ai-generation/readiness';
 import type { ImportDiff } from '@/hooks/useAIGeneration';
-import { SidebarBody, SidebarShell } from './SidebarShell';
-import { SegmentedChoice } from './properties/SegmentedChoice';
+import { SidebarBody, SidebarHeader, SidebarSegmentedTabs, SidebarShell } from './SidebarShell';
 
 const LazyStudioAIPanel = lazy(async () => {
     const module = await import('./StudioAIPanel');
@@ -118,33 +117,18 @@ export function StudioPanel({
 
     return (
         <SidebarShell>
-            <div className="shrink-0 border-b border-slate-200/60 bg-[var(--brand-surface)] px-3 py-3">
-                <div className="flex items-start gap-3">
-                    <div className="min-w-0 flex-1">
-                        <SegmentedChoice
-                            items={STUDIO_TABS.map(({ id, icon: Icon, label }) => ({
-                                id,
-                                label: (
-                                    <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-                                        <Icon className="h-3.5 w-3.5" />
-                                        <span>{label}</span>
-                                    </span>
-                                ),
-                            }))}
-                            selectedId={effectiveTab}
-                            onSelect={(tab) => onTabChange(tab as StudioTab)}
-                            columns={3}
-                            size="md"
-                        />
-                    </div>
-                    <button
-                        onClick={onClose}
-                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
-                        aria-label="Close panel"
-                    >
-                        <X className="h-4 w-4" />
-                    </button>
-                </div>
+            <SidebarHeader title="Studio" onClose={onClose} />
+
+            <div className="border-b border-slate-100 bg-[var(--brand-surface)] px-4 py-2.5">
+                <SidebarSegmentedTabs
+                    tabs={STUDIO_TABS.map(({ id, icon: Icon, label }) => ({
+                        id,
+                        label,
+                        icon: <Icon className="h-3.5 w-3.5" />,
+                    }))}
+                    activeTab={effectiveTab}
+                    onTabChange={(tab) => onTabChange(tab as StudioTab)}
+                />
             </div>
 
             {selectedNode && (
@@ -161,7 +145,7 @@ export function StudioPanel({
                 </button>
             )}
 
-            <SidebarBody scrollable={false} className="px-4 py-4">
+            <SidebarBody scrollable={false} className="px-4 py-3">
                 {effectiveTab === 'ai' ? (
                     <Suspense fallback={null}>
                         <LazyStudioAIPanel

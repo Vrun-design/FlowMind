@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useCallback, useEffect } from 'react';
 import type { FlowTab } from '@/lib/types';
 import { FlowTabs } from './FlowTabs';
 import { TopNavMenu } from './top-nav/TopNavMenu';
@@ -6,6 +6,8 @@ import { TopNavBrand } from './top-nav/TopNavBrand';
 import { TopNavActions } from './top-nav/TopNavActions';
 import { useTopNavState } from './top-nav/useTopNavState';
 import { APP_NAME, IS_BEVELED } from '@/lib/brand';
+
+const OPEN_AI_SETTINGS_EVENT = 'open-ai-settings';
 
 const LazySettingsModal = lazy(async () => {
     const module = await import('./SettingsModal/SettingsModal');
@@ -22,15 +24,21 @@ interface TopNavProps {
 
     // Actions
     onExportPNG: (format?: 'png' | 'jpeg') => void;
+    onCopyImage: (format?: 'png' | 'jpeg') => void;
     onExportSVG: () => void;
+    onCopySVG: () => void;
     onExportPDF: () => void;
-    onExportAnimated: (format: 'video' | 'gif') => void;
-    onExportReveal: (format: 'reveal-video' | 'reveal-gif') => void;
+    onExportCinematic: (format: 'cinematic-video' | 'cinematic-gif') => void;
     onExportJSON: () => void;
+    onCopyJSON: () => void;
     onExportMermaid: () => void;
+    onDownloadMermaid: () => void;
     onExportPlantUML: () => void;
+    onDownloadPlantUML: () => void;
     onExportOpenFlowDSL: () => void;
+    onDownloadOpenFlowDSL: () => void;
     onExportFigma: () => void;
+    onDownloadFigma: () => void;
     onShare: () => void;
     onImportJSON: () => void;
     onHistory: () => void;
@@ -60,15 +68,21 @@ export function TopNav({
     onCloseTab,
     onRenameTab,
     onExportPNG,
+    onCopyImage,
     onExportSVG,
+    onCopySVG,
     onExportPDF,
-    onExportAnimated,
-    onExportReveal,
+    onExportCinematic,
     onExportJSON,
+    onCopyJSON,
     onExportMermaid,
+    onDownloadMermaid,
     onExportPlantUML,
+    onDownloadPlantUML,
     onExportOpenFlowDSL,
+    onDownloadOpenFlowDSL,
     onExportFigma,
+    onDownloadFigma,
     onShare,
     onImportJSON,
     onHistory,
@@ -86,6 +100,17 @@ export function TopNav({
         openSettings,
         closeSettings,
     } = useTopNavState();
+    const openGeneralSettings = useCallback(() => {
+        openSettings('general');
+    }, [openSettings]);
+    const openAISettings = useCallback(() => {
+        openSettings('ai');
+    }, [openSettings]);
+
+    useEffect(() => {
+        window.addEventListener(OPEN_AI_SETTINGS_EVENT, openAISettings);
+        return () => window.removeEventListener(OPEN_AI_SETTINGS_EVENT, openAISettings);
+    }, [openAISettings]);
 
     return (
         <div className="absolute top-0 left-0 right-0 z-50 flex h-14 items-center justify-between border-b border-white/20 bg-white/70 px-3 shadow-sm backdrop-blur-md transition-all sm:px-4">
@@ -97,7 +122,7 @@ export function TopNav({
                     onToggle={toggleMenu}
                     onClose={closeMenu}
                     onGoHome={onGoHome}
-                    onOpenSettings={() => openSettings('general')}
+                    onOpenSettings={openGeneralSettings}
                     onHistory={onHistory}
                     onImportJSON={onImportJSON}
                 />
@@ -125,15 +150,21 @@ export function TopNav({
                 <TopNavActions
                     onPlay={onPlay}
                     onExportPNG={onExportPNG}
+                    onCopyImage={onCopyImage}
                     onExportSVG={onExportSVG}
+                    onCopySVG={onCopySVG}
                     onExportPDF={onExportPDF}
-                    onExportAnimated={onExportAnimated}
-                    onExportReveal={onExportReveal}
+                    onExportCinematic={onExportCinematic}
                     onExportJSON={onExportJSON}
+                    onCopyJSON={onCopyJSON}
                     onExportMermaid={onExportMermaid}
+                    onDownloadMermaid={onDownloadMermaid}
                     onExportPlantUML={onExportPlantUML}
+                    onDownloadPlantUML={onDownloadPlantUML}
                     onExportOpenFlowDSL={onExportOpenFlowDSL}
+                    onDownloadOpenFlowDSL={onDownloadOpenFlowDSL}
                     onExportFigma={onExportFigma}
+                    onDownloadFigma={onDownloadFigma}
                     onShare={onShare}
                     collaboration={collaboration}
                     isBeveled={isBeveled}

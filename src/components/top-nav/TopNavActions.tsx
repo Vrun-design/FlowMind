@@ -29,15 +29,21 @@ interface CollaborationState {
 interface TopNavActionsProps {
     onPlay: () => void;
     onExportPNG: (format?: 'png' | 'jpeg') => void;
+    onCopyImage: (format?: 'png' | 'jpeg') => void;
     onExportSVG: () => void;
+    onCopySVG: () => void;
     onExportPDF: () => void;
-    onExportAnimated: (format: 'video' | 'gif') => void;
-    onExportReveal: (format: 'reveal-video' | 'reveal-gif') => void;
+    onExportCinematic: (format: 'cinematic-video' | 'cinematic-gif') => void;
     onExportJSON: () => void;
+    onCopyJSON: () => void;
     onExportMermaid: () => void;
+    onDownloadMermaid: () => void;
     onExportPlantUML: () => void;
+    onDownloadPlantUML: () => void;
     onExportOpenFlowDSL: () => void;
+    onDownloadOpenFlowDSL: () => void;
     onExportFigma: () => void;
+    onDownloadFigma: () => void;
     onShare: () => void;
     collaboration?: CollaborationState;
     isBeveled: boolean;
@@ -98,15 +104,21 @@ function getCollaborationStatusDotClass(status: CollaborationState['status']): s
 export function TopNavActions({
     onPlay,
     onExportPNG,
+    onCopyImage,
     onExportSVG,
+    onCopySVG,
     onExportPDF,
-    onExportAnimated,
-    onExportReveal,
+    onExportCinematic,
     onExportJSON,
+    onCopyJSON,
     onExportMermaid,
+    onDownloadMermaid,
     onExportPlantUML,
+    onDownloadPlantUML,
     onExportOpenFlowDSL,
+    onDownloadOpenFlowDSL,
     onExportFigma,
+    onDownloadFigma,
     onShare,
     collaboration,
     isBeveled,
@@ -181,15 +193,21 @@ export function TopNavActions({
 
                 <ExportMenu
                     onExportPNG={onExportPNG}
+                    onCopyImage={onCopyImage}
                     onExportSVG={onExportSVG}
+                    onCopySVG={onCopySVG}
                     onExportPDF={onExportPDF}
-                    onExportAnimated={onExportAnimated}
-                    onExportReveal={onExportReveal}
+                    onExportCinematic={onExportCinematic}
                     onExportJSON={onExportJSON}
+                    onCopyJSON={onCopyJSON}
                     onExportMermaid={onExportMermaid}
+                    onDownloadMermaid={onDownloadMermaid}
                     onExportPlantUML={onExportPlantUML}
+                    onDownloadPlantUML={onDownloadPlantUML}
                     onExportOpenFlowDSL={onExportOpenFlowDSL}
+                    onDownloadOpenFlowDSL={onDownloadOpenFlowDSL}
                     onExportFigma={onExportFigma}
+                    onDownloadFigma={onDownloadFigma}
                     onShare={onShare}
                 />
             </div>

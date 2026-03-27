@@ -15,7 +15,8 @@ async function createNewFlow(page: import('@playwright/test').Page) {
   await page.goto('/#/home');
   await page.getByTestId('home-create-new').click();
   await expect(page).toHaveURL(/#\/flow\/[^?]+(?:\?.*)?$/);
-  await expect(page.getByTestId('topnav-play')).toBeVisible();
+  await expect(page.getByTestId('toolbar-add-toggle')).toBeVisible({ timeout: 15000 });
+  await expect(page.getByTestId('flow-tab').first()).toBeVisible();
 }
 
 async function addRectangleNode(page: import('@playwright/test').Page) {
@@ -74,12 +75,12 @@ test('exports the diagram as JSON and download starts', async ({ page }) => {
   await createNewFlow(page);
   await addRectangleNode(page);
 
-  // Open export menu first, then listen for download
   await page.getByTestId('topnav-export').click();
-  await expect(page.getByTestId('export-json')).toBeVisible();
+  await page.getByTestId('export-section-code').click();
+  await expect(page.getByTestId('export-action-json-download')).toBeVisible();
 
   const downloadPromise = page.waitForEvent('download');
-  await page.getByTestId('export-json').click();
+  await page.getByTestId('export-action-json-download').click();
 
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toMatch(/\.json$/);
@@ -94,10 +95,10 @@ test('exports the diagram as PNG and download starts', async ({ page }) => {
   await addRectangleNode(page);
 
   await page.getByTestId('topnav-export').click();
-  await expect(page.getByTestId('export-png')).toBeVisible();
+  await expect(page.getByTestId('export-action-png-download')).toBeVisible();
 
   const downloadPromise = page.waitForEvent('download');
-  await page.getByTestId('export-png').click();
+  await page.getByTestId('export-action-png-download').click();
 
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toMatch(/\.png$/);

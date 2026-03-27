@@ -3,9 +3,11 @@ import type { DiagramPlugin } from '@/diagram-types/core';
 import { MarkerType } from '@/lib/reactflowCompat';
 import { setNodeParent } from '@/lib/nodeParent';
 
+type ArchNodeKind = 'group' | 'service' | 'junction' | 'person' | 'system' | 'container' | 'component' | 'database_container' | 'router' | 'switch' | 'firewall' | 'load_balancer' | 'cdn' | 'dns';
+
 interface ParsedArchNode {
   id: string;
-  kind: 'group' | 'service' | 'junction';
+  kind: ArchNodeKind;
   icon?: string;
   label: string;
   parentId?: string;
@@ -48,8 +50,11 @@ function stripQuotes(value: string): string {
   return trimmed;
 }
 
+const NODE_KEYWORDS = 'group|service|junction|person|system|container|component|database_container|router|switch|firewall|load_balancer|cdn|dns';
+
 function parseNodeLine(line: string): ParsedArchNode | null {
-  const match = line.match(/^(group|service|junction)\s+([A-Za-z_][\w.-]*)(?:\(([^)]+)\))?(?:\[(.+?)\])?(?:\s+in\s+([A-Za-z_][\w.-]*))?$/i);
+  const pattern = new RegExp(`^(${NODE_KEYWORDS})\\s+([A-Za-z_][\\w.-]*)(?:\\(([^)]+)\\))?(?:\\[(.+?)\\])?(?:\\s+in\\s+([A-Za-z_][\\w.-]*))?$`, 'i');
+  const match = line.match(pattern);
   if (!match) return null;
 
   const kind = match[1].toLowerCase() as ParsedArchNode['kind'];
@@ -157,6 +162,26 @@ function parseProtocolPort(label: string | undefined): { label?: string; protoco
   };
 }
 
+function resolveArchKindColor(kind: ArchNodeKind): string {
+  const colorMap: Record<string, string> = {
+    group: 'violet', junction: 'amber', person: 'blue', system: 'slate',
+    container: 'indigo', component: 'teal', database_container: 'cyan',
+    router: 'emerald', switch: 'sky', firewall: 'red', load_balancer: 'orange',
+    cdn: 'purple', dns: 'lime',
+  };
+  return colorMap[kind] ?? 'slate';
+}
+
+function resolveArchKindIcon(kind: ArchNodeKind): string {
+  const iconMap: Record<string, string> = {
+    group: 'Layers', junction: 'GitMerge', person: 'User', system: 'Box',
+    container: 'Package', component: 'Puzzle', database_container: 'Database',
+    router: 'Route', switch: 'Network', firewall: 'Shield', load_balancer: 'Scale',
+    cdn: 'Globe', dns: 'Globe2',
+  };
+  return iconMap[kind] ?? 'Server';
+}
+
 function parseArchitecture(input: string): { nodes: FlowNode[]; edges: FlowEdge[]; error?: string; diagnostics?: string[] } {
   const lines = input.replace(/\r\n/g, '\n').split('\n');
   const parsedNodes: ParsedArchNode[] = [];
@@ -203,7 +228,7 @@ function parseArchitecture(input: string): { nodes: FlowNode[]; edges: FlowEdge[
       diagnostics.push(`Invalid architecture edge syntax at line ${lineNumber}: "${line}"`);
       continue;
     }
-    if (/^(group|service|junction)\b/i.test(line)) {
+    if (new RegExp(`^(${NODE_KEYWORDS})\\b`, 'i').test(line)) {
       diagnostics.push(`Invalid architecture node syntax at line ${lineNumber}: "${line}"`);
       continue;
     }
@@ -242,9 +267,9 @@ function parseArchitecture(input: string): { nodes: FlowNode[]; edges: FlowEdge[
       },
       data: {
         label: node.label,
-        color: node.kind === 'group' ? 'violet' : node.kind === 'junction' ? 'amber' : 'slate',
+        color: resolveArchKindColor(node.kind),
         shape: node.kind === 'group' ? 'rounded' : 'rectangle',
-        icon: node.kind === 'group' ? 'Layers' : node.kind === 'junction' ? 'GitMerge' : 'Server',
+        icon: resolveArchKindIcon(node.kind),
         archProvider: node.icon || (node.kind === 'group' ? 'group' : 'custom'),
         archResourceType: node.kind,
         archBoundaryId: node.parentId,

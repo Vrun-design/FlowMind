@@ -13,6 +13,7 @@ type SetFlowEdges = (payload: FlowEdge[] | ((edges: FlowEdge[]) => FlowEdge[])) 
 interface UseFlowEditorRuntimeParams {
     collaborationEnabled: boolean;
     activeTabId: string;
+    activeTabName?: string;
     nodes: FlowNode[];
     edges: FlowEdge[];
     editorSurfaceRef: RefObject<HTMLDivElement | null>;
@@ -29,6 +30,7 @@ interface UseFlowEditorRuntimeParams {
 export function useFlowEditorRuntime({
     collaborationEnabled,
     activeTabId,
+    activeTabName,
     nodes,
     edges,
     editorSurfaceRef,
@@ -68,6 +70,7 @@ export function useFlowEditorRuntime({
     const actions = useFlowEditorActions({
         nodes,
         edges,
+        activeTabName,
         recordHistory,
         setNodes,
         setEdges,

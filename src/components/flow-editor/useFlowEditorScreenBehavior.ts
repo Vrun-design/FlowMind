@@ -1,0 +1,72 @@
+import { useMemo } from 'react';
+import { useFlowOperations } from '@/hooks/useFlowOperations';
+import { useFlowEditorCallbacks } from '@/hooks/useFlowEditorCallbacks';
+import { useFlowEditorInteractionBindings } from './useFlowEditorInteractionBindings';
+import type { TFunction } from 'i18next';
+import type { useFlowEditorScreenState } from './useFlowEditorScreenState';
+
+type ScreenState = ReturnType<typeof useFlowEditorScreenState>;
+
+export function useFlowEditorScreenBehavior(params: {
+  screenState: ScreenState;
+  t: TFunction;
+}) {
+  const { screenState, t } = params;
+  const operations = useFlowOperations(screenState.recordHistory);
+  const selectedNodeType = useMemo(
+    () => screenState.nodes.find((node) => node.id === screenState.selectedNodeId)?.type ?? null,
+    [screenState.nodes, screenState.selectedNodeId],
+  );
+
+  const callbacks = useFlowEditorCallbacks({
+    addTab: screenState.addTab,
+    closeTab: screenState.closeTab,
+    updateTab: screenState.updateTab,
+    navigate: screenState.navigate,
+    tabsLength: screenState.tabs.length,
+    cannotCloseLastTabMessage: t('flowEditor.cannotCloseLastTab'),
+    setNodes: screenState.setNodes,
+    setEdges: screenState.setEdges,
+    restoreSnapshot: screenState.restoreSnapshot,
+    recordHistory: screenState.recordHistory,
+    fitView: screenState.fitView,
+    screenToFlowPosition: screenState.screenToFlowPosition,
+  });
+
+  useFlowEditorInteractionBindings({
+    selectedNodeId: screenState.selectedNodeId,
+    selectedEdgeId: screenState.selectedEdgeId,
+    selectedNodeType,
+    deleteNode: operations.deleteNode,
+    deleteEdge: operations.deleteEdge,
+    undo: screenState.undo,
+    redo: screenState.redo,
+    duplicateNode: operations.duplicateNode,
+    selectAll: callbacks.selectAll,
+    handleAddMindmapChild: operations.handleAddMindmapChild,
+    handleAddMindmapSibling: operations.handleAddMindmapSibling,
+    openCommandBar: screenState.openCommandBar,
+    setShortcutsHelpOpen: screenState.setShortcutsHelpOpen,
+    enableSelectMode: screenState.enableSelectMode,
+    enablePanMode: screenState.enablePanMode,
+    fitView: screenState.fitView,
+    zoomIn: screenState.zoomIn,
+    zoomOut: screenState.zoomOut,
+    copySelection: operations.copySelection,
+    pasteSelection: operations.pasteSelection,
+    copyStyleSelection: operations.copyStyleSelection,
+    pasteStyleSelection: operations.pasteStyleSelection,
+    createConnectedNodeInDirection: operations.createConnectedNodeInDirection,
+    updateNodeData: operations.updateNodeData,
+    setSelectedNodeId: screenState.setSelectedNodeId,
+    setSelectedEdgeId: screenState.setSelectedEdgeId,
+    setNodes: screenState.setNodes,
+    setEdges: screenState.setEdges,
+  });
+
+  return {
+    operations,
+    selectedNodeType,
+    callbacks,
+  };
+}

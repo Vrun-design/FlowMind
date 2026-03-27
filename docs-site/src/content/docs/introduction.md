@@ -1,16 +1,17 @@
 ---
 draft: false
 title: Introduction
-description: OpenFlowKit is a local-first diagramming workspace for technical flows, architecture maps, code-backed diagrams, and AI-assisted editing.
+description: OpenFlowKit is a local-first diagramming workspace for developers and builders working on technical flows, architecture maps, code-backed diagrams, and AI-assisted editing.
 ---
 
-OpenFlowKit is a local-first diagramming workspace for technical teams. It combines a visual canvas, code-friendly representations, deterministic imports, AI-assisted generation, and share/export workflows in one browser-based tool.
+OpenFlowKit is a local-first diagramming workspace for developers and builders. It combines a visual canvas, code-friendly representations, deterministic imports, AI-assisted generation, and share/export workflows in one browser-based tool.
 
 ## What OpenFlowKit is good at
 
 OpenFlowKit works best when a diagram needs to evolve instead of staying static:
 
 - start from a blank canvas, template, AI prompt, code representation, or imported source artifact
+- move quickly from Mermaid, SQL, OpenAPI, infrastructure files, or a builder-oriented starter template
 - refine the result visually instead of treating generation as a one-shot output
 - keep a text representation close to the editor model when needed
 - export or share the same diagram across docs, design, and collaboration workflows

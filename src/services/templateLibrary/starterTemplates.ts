@@ -3,7 +3,16 @@ import { NodeType, type FlowNode, type NodeData } from '@/lib/types';
 import { createTemplateRegistry, type TemplateRegistry } from './registry';
 import type { TemplateManifest } from './types';
 
-type TemplateCategory = 'flowchart' | 'aws' | 'azure' | 'cncf' | 'mindmap' | 'journey' | 'wireframe';
+type TemplateCategory =
+    | 'flowchart'
+    | 'architecture'
+    | 'aws'
+    | 'azure'
+    | 'cncf'
+    | 'mindmap'
+    | 'journey'
+    | 'wireframe'
+    | 'sequence';
 type ProviderKey = 'aws' | 'azure' | 'cncf';
 
 const PROVIDER_PACK_IDS: Record<ProviderKey, string> = {
@@ -55,6 +64,32 @@ function createAssetNode(
             assetCategory: category,
             archIconPackId: PROVIDER_PACK_IDS[provider],
             archIconShapeId: shapeId,
+        },
+    };
+}
+
+function createArchitectureNode(
+    id: string,
+    label: string,
+    resourceType: string,
+    icon: string,
+    color: string,
+    x: number,
+    y: number,
+    subLabel: string,
+): FlowNode {
+    return {
+        id,
+        type: NodeType.ARCHITECTURE,
+        position: { x, y },
+        data: {
+            label,
+            subLabel,
+            icon,
+            color,
+            archProvider: 'custom',
+            archEnvironment: 'default',
+            archResourceType: resourceType,
         },
     };
 }
@@ -133,6 +168,7 @@ function createTemplate(
     tags: string[],
     nodes: FlowNode[],
     edges = [] as ReturnType<typeof createDefaultEdge>[],
+    metadata: Pick<TemplateManifest, 'audience' | 'useCase' | 'launchPriority'> = {},
 ): TemplateManifest {
     return {
         id,
@@ -140,6 +176,7 @@ function createTemplate(
         description,
         category,
         tags,
+        ...metadata,
         graph: { nodes, edges },
     };
 }
@@ -217,6 +254,7 @@ export const STARTER_TEMPLATE_MANIFESTS: TemplateManifest[] = [
             createDefaultEdge('rel-4', 'rel-5'),
             createDefaultEdge('rel-5', 'rel-6'),
         ],
+        { audience: 'developers', useCase: 'Ship software safely', launchPriority: 10 },
     ),
     createTemplate(
         'flow-payment-recovery',
@@ -271,6 +309,50 @@ export const STARTER_TEMPLATE_MANIFESTS: TemplateManifest[] = [
         ],
     ),
     createTemplate(
+        'architecture-c4-context',
+        'C4 System Context',
+        'A developer-facing system context with users, platform boundaries, and adjacent systems.',
+        'architecture',
+        ['c4', 'architecture', 'docs'],
+        [
+            createArchitectureNode('c4-user', 'Developer', 'person', 'User', 'blue', -260, 180, 'Uses the platform'),
+            createArchitectureNode('c4-system', 'OpenFlowKit', 'system', 'Box', 'slate', 80, 180, 'Primary system'),
+            createArchitectureNode('c4-docs', 'Docs Site', 'container', 'BookOpen', 'violet', 420, 40, 'Embeds diagrams'),
+            createArchitectureNode('c4-repo', 'Source Repo', 'container', 'GitBranch', 'emerald', 420, 180, 'Versioned definitions'),
+            createArchitectureNode('c4-db', 'Project Data', 'database_container', 'Database', 'cyan', 420, 320, 'Snapshots and exports'),
+        ],
+        [
+            createDefaultEdge('c4-user', 'c4-system', 'creates'),
+            createDefaultEdge('c4-system', 'c4-docs', 'publishes views'),
+            createDefaultEdge('c4-system', 'c4-repo', 'exports JSON / Mermaid'),
+            createDefaultEdge('c4-repo', 'c4-db', 'stores artifacts'),
+        ],
+        { audience: 'developers', useCase: 'Communicate C4 context without redrawing from scratch', launchPriority: 10 },
+    ),
+    createTemplate(
+        'architecture-network-edge',
+        'Network Edge Security',
+        'A perimeter flow with DNS, CDN, firewall, load balancing, and private service access.',
+        'architecture',
+        ['network', 'security', 'infra'],
+        [
+            createArchitectureNode('net-dns', 'Public DNS', 'dns', 'Globe2', 'lime', 0, 180, 'Traffic entrypoint'),
+            createArchitectureNode('net-cdn', 'CDN Edge', 'cdn', 'Globe', 'violet', 260, 180, 'Caching and TLS'),
+            createArchitectureNode('net-firewall', 'WAF / Firewall', 'firewall', 'Shield', 'red', 520, 180, 'Ingress filtering'),
+            createArchitectureNode('net-lb', 'Load Balancer', 'load_balancer', 'Scale', 'orange', 780, 180, 'Traffic distribution'),
+            createArchitectureNode('net-services', 'Application Services', 'service', 'ServerCog', 'blue', 1040, 90, 'Private app tier'),
+            createArchitectureNode('net-vpn', 'VPN Access', 'service', 'Cable', 'violet', 1040, 270, 'Operator access'),
+        ],
+        [
+            createDefaultEdge('net-dns', 'net-cdn', 'resolves'),
+            createDefaultEdge('net-cdn', 'net-firewall', 'forwards'),
+            createDefaultEdge('net-firewall', 'net-lb', 'allows 443'),
+            createDefaultEdge('net-lb', 'net-services', 'routes HTTPS'),
+            createDefaultEdge('net-vpn', 'net-services', 'private ops'),
+        ],
+        { audience: 'builders', useCase: 'Explain ingress, perimeter, and private access clearly', launchPriority: 9 },
+    ),
+    createTemplate(
         'aws-event-api',
         'AWS Event-Driven API',
         'API Gateway, Lambda, queues, and storage for an async platform entrypoint.',
@@ -293,6 +375,93 @@ export const STARTER_TEMPLATE_MANIFESTS: TemplateManifest[] = [
             createDefaultEdge('aws-api-4', 'aws-api-6'),
             createDefaultEdge('aws-api-6', 'aws-api-7'),
         ],
+        { audience: 'developers', useCase: 'Map event-driven cloud architecture', launchPriority: 10 },
+    ),
+    createTemplate(
+        'sequence-api-handoff',
+        'API Request Handoff',
+        'Sequence starter for authentication, worker dispatch, persistence, and response.',
+        'sequence',
+        ['sequence', 'api', 'backend'],
+        [
+            {
+                id: 'seq-client',
+                type: NodeType.SEQUENCE_PARTICIPANT,
+                position: { x: 0, y: 0 },
+                data: { label: 'Client', seqParticipantKind: 'actor' },
+            },
+            {
+                id: 'seq-api',
+                type: NodeType.SEQUENCE_PARTICIPANT,
+                position: { x: 220, y: 0 },
+                data: { label: 'API', seqParticipantKind: 'participant' },
+            },
+            {
+                id: 'seq-worker',
+                type: NodeType.SEQUENCE_PARTICIPANT,
+                position: { x: 440, y: 0 },
+                data: { label: 'Worker', seqParticipantKind: 'participant' },
+            },
+            {
+                id: 'seq-db',
+                type: NodeType.SEQUENCE_PARTICIPANT,
+                position: { x: 660, y: 0 },
+                data: { label: 'Postgres', seqParticipantKind: 'participant' },
+            },
+        ],
+        [
+            {
+                id: 'seq-edge-1',
+                source: 'seq-client',
+                target: 'seq-api',
+                sourceHandle: 'top',
+                targetHandle: 'top',
+                label: 'POST /checkout',
+                type: 'sequence_message',
+                data: { seqMessageKind: 'sync', seqMessageOrder: 0 },
+            },
+            {
+                id: 'seq-edge-2',
+                source: 'seq-api',
+                target: 'seq-worker',
+                sourceHandle: 'top',
+                targetHandle: 'top',
+                label: 'enqueue job',
+                type: 'sequence_message',
+                data: { seqMessageKind: 'async', seqMessageOrder: 1 },
+            },
+            {
+                id: 'seq-edge-3',
+                source: 'seq-worker',
+                target: 'seq-db',
+                sourceHandle: 'top',
+                targetHandle: 'top',
+                label: 'persist order',
+                type: 'sequence_message',
+                data: { seqMessageKind: 'sync', seqMessageOrder: 2 },
+            },
+            {
+                id: 'seq-edge-4',
+                source: 'seq-db',
+                target: 'seq-worker',
+                sourceHandle: 'top',
+                targetHandle: 'top',
+                label: 'ok',
+                type: 'sequence_message',
+                data: { seqMessageKind: 'return', seqMessageOrder: 3 },
+            },
+            {
+                id: 'seq-edge-5',
+                source: 'seq-api',
+                target: 'seq-client',
+                sourceHandle: 'top',
+                targetHandle: 'top',
+                label: '202 Accepted',
+                type: 'sequence_message',
+                data: { seqMessageKind: 'return', seqMessageOrder: 4 },
+            },
+        ],
+        { audience: 'developers', useCase: 'Communicate backend request flow', launchPriority: 9 },
     ),
     createTemplate(
         'aws-data-lake',

@@ -12,44 +12,62 @@ const LazyExportMenuPanel = lazy(async () => {
 
 interface ExportMenuProps {
     onExportPNG: (format: 'png' | 'jpeg') => void;
+    onCopyImage: (format: 'png' | 'jpeg') => void;
     onExportSVG: () => void;
+    onCopySVG: () => void;
     onExportPDF: () => void;
-    onExportAnimated: (format: 'video' | 'gif') => void;
-    onExportReveal: (format: 'reveal-video' | 'reveal-gif') => void;
+    onExportCinematic: (format: 'cinematic-video' | 'cinematic-gif') => void;
     onExportJSON: () => void;
+    onCopyJSON: () => void;
     onExportMermaid: () => void;
+    onDownloadMermaid: () => void;
     onExportPlantUML: () => void;
+    onDownloadPlantUML: () => void;
     onExportOpenFlowDSL: () => void;
+    onDownloadOpenFlowDSL: () => void;
     onExportFigma: () => void;
+    onDownloadFigma: () => void;
     onShare: () => void;
 }
 
 export const ExportMenu: React.FC<ExportMenuProps> = ({
     onExportPNG,
+    onCopyImage,
     onExportSVG,
+    onCopySVG,
     onExportPDF,
-    onExportAnimated,
-    onExportReveal,
+    onExportCinematic,
     onExportJSON,
+    onCopyJSON,
     onExportMermaid,
+    onDownloadMermaid,
     onExportPlantUML,
+    onDownloadPlantUML,
     onExportOpenFlowDSL,
+    onDownloadOpenFlowDSL,
     onExportFigma,
+    onDownloadFigma,
     onShare,
 }) => {
     const { t } = useTranslation();
     const exportLabel = t('export.title', 'Export');
     const { isOpen, menuRef, toggleMenu, handleSelect } = useExportMenu({
         onExportPNG,
+        onCopyImage,
         onExportSVG,
+        onCopySVG,
         onExportPDF,
-        onExportAnimated,
-        onExportReveal,
+        onExportCinematic,
         onExportJSON,
+        onCopyJSON,
         onExportMermaid,
+        onDownloadMermaid,
         onExportPlantUML,
+        onDownloadPlantUML,
         onExportOpenFlowDSL,
+        onDownloadOpenFlowDSL,
         onExportFigma,
+        onDownloadFigma,
         onShare,
     });
 

@@ -1,29 +1,17 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useShallow } from 'zustand/react/shallow';
-import { useReactFlow } from '@/lib/reactflowCompat';
-import { useFlowStore } from '@/store';
-import { useSnapshots } from '@/hooks/useSnapshots';
-import { useFlowHistory } from '@/hooks/useFlowHistory';
-import { useFlowOperations } from '@/hooks/useFlowOperations';
 import { useAIGeneration } from '@/hooks/useAIGeneration';
 import { useFlowExport } from '@/hooks/useFlowExport';
 import { useToast } from '@/components/ui/ToastContext';
 import { usePlayback } from '@/hooks/usePlayback';
-import { useFlowEditorUIState } from '@/hooks/useFlowEditorUIState';
-import { useFlowEditorCallbacks } from '@/hooks/useFlowEditorCallbacks';
 import {
     buildFlowEditorScreenControllerParams,
 } from './buildFlowEditorScreenControllerParams';
 import { useFlowEditorController } from './useFlowEditorController';
-import { useFlowEditorInteractionBindings } from './useFlowEditorInteractionBindings';
 import { useFlowEditorPanelActions } from './useFlowEditorPanelActions';
 import { useFlowEditorRuntime } from './useFlowEditorRuntime';
-import { useShortcutHelpActions, useViewSettings } from '@/store/viewHooks';
-import { useSelectionActions, useSelectionState } from '@/store/selectionHooks';
-import type { FlowSnapshot } from '@/lib/types';
-import { isRolloutFlagEnabled } from '@/config/rolloutFlags';
+import { useFlowEditorScreenState } from './useFlowEditorScreenState';
+import { useFlowEditorScreenBehavior } from './useFlowEditorScreenBehavior';
 
 interface UseFlowEditorScreenModelParams {
     onGoHome: () => void;
@@ -32,142 +20,10 @@ interface UseFlowEditorScreenModelParams {
 export function useFlowEditorScreenModel({ onGoHome }: UseFlowEditorScreenModelParams) {
     const { t } = useTranslation();
     const { addToast } = useToast();
-    const location = useLocation();
-    const navigate = useNavigate();
-    const collaborationEnabled = isRolloutFlagEnabled('collaborationEnabled');
-
-    const {
-        nodes,
-        edges,
-        setNodes,
-        setEdges,
-        tabs,
-        activeTabId,
-        addTab,
-        closeTab,
-        updateTab,
-        toggleGrid,
-        toggleSnap,
-    } = useFlowStore(useShallow((state) => ({
-        nodes: state.nodes,
-        edges: state.edges,
-        setNodes: state.setNodes,
-        setEdges: state.setEdges,
-        tabs: state.tabs,
-        activeTabId: state.activeTabId,
-        addTab: state.addTab,
-        closeTab: state.closeTab,
-        updateTab: state.updateTab,
-        toggleGrid: state.toggleGrid,
-        toggleSnap: state.toggleSnap,
-    })));
-    const viewSettings = useViewSettings();
-    const { setShortcutsHelpOpen } = useShortcutHelpActions();
-    const [diffBaseline, setDiffBaseline] = useState<FlowSnapshot | null>(null);
-    const { selectedNodeId, selectedEdgeId } = useSelectionState();
-    const { setSelectedNodeId, setSelectedEdgeId } = useSelectionActions();
-    const { showGrid, snapToGrid } = viewSettings;
-
-    const {
-        snapshots,
-        manualSnapshots,
-        autoSnapshots,
-        saveSnapshot,
-        deleteSnapshot,
-        queueAutoSnapshot,
-        restoreSnapshot,
-    } = useSnapshots();
-    const {
-        isHistoryOpen,
-        isCommandBarOpen,
-        commandBarView,
-        editorMode,
-        studioTab,
-        studioCodeMode,
-        isSelectMode,
-        openHistory,
-        closeHistory,
-        openCommandBar,
-        closeCommandBar,
-        setCanvasMode,
-        setStudioMode,
-        setStudioTab,
-        setStudioCodeMode,
-        enableSelectMode,
-        enablePanMode,
-    } = useFlowEditorUIState();
-
-    const reactFlowWrapper = useRef<HTMLDivElement>(null);
-    const { fitView, screenToFlowPosition, zoomIn, zoomOut } = useReactFlow();
-    const { recordHistory, undo, redo, canUndo, canRedo } = useFlowHistory();
-
-    const {
-        updateNodeData, applyBulkNodeData, updateNodeType, updateNodeZIndex, updateEdge,
-        deleteNode, deleteEdge, duplicateNode,
-        handleAddNode, handleAddShape, handleAddJourneyNode, handleAddMindmapNode, handleAddArchitectureNode, handleAddClassNode, handleAddEntityNode, handleAddAnnotation, handleAddSection, handleAddTextNode, handleAddImage, handleAddWireframe, handleAddDomainLibraryItem, handleAddMindmapChild, handleAddMindmapSibling, handleAddArchitectureService, handleCreateArchitectureBoundary,
-        handleApplyArchitectureTemplate, handleConvertEntitySelectionToClassDiagram,
-        copySelection, pasteSelection, copyStyleSelection, pasteStyleSelection,
-        createConnectedNodeInDirection,
-    } = useFlowOperations(recordHistory);
-
-    const selectedNodeType = useMemo(
-        () => nodes.find((node) => node.id === selectedNodeId)?.type ?? null,
-        [nodes, selectedNodeId]
-    );
-
-    const {
-        getCenter,
-        handleSwitchTab,
-        handleAddTab,
-        handleCloseTab,
-        handleRenameTab,
-        selectAll,
-        handleRestoreSnapshot,
-        handleCommandBarApply,
-    } = useFlowEditorCallbacks({
-        addTab,
-        closeTab,
-        updateTab,
-        navigate,
-        tabsLength: tabs.length,
-        cannotCloseLastTabMessage: t('flowEditor.cannotCloseLastTab'),
-        setNodes,
-        setEdges,
-        restoreSnapshot,
-        recordHistory,
-        fitView,
-        screenToFlowPosition,
-    });
-
-    useFlowEditorInteractionBindings({
-        selectedNodeId,
-        selectedEdgeId,
-        selectedNodeType,
-        deleteNode,
-        deleteEdge,
-        undo,
-        redo,
-        duplicateNode,
-        selectAll,
-        handleAddMindmapChild,
-        handleAddMindmapSibling,
-        openCommandBar,
-        setShortcutsHelpOpen,
-        enableSelectMode,
-        enablePanMode,
-        fitView,
-        zoomIn,
-        zoomOut,
-        copySelection,
-        pasteSelection,
-        copyStyleSelection,
-        pasteStyleSelection,
-        createConnectedNodeInDirection,
-        updateNodeData,
-        setSelectedNodeId,
-        setSelectedEdgeId,
-        setNodes,
-        setEdges,
+    const screenState = useFlowEditorScreenState();
+    const { operations, callbacks } = useFlowEditorScreenBehavior({
+        screenState,
+        t,
     });
 
     const [pendingAIPrompt, setPendingAIPrompt] = useState<string | undefined>();
@@ -191,7 +47,7 @@ export function useFlowEditorScreenModel({ onGoHome }: UseFlowEditorScreenModelP
         chatMessages,
         clearChat,
         clearLastError,
-    } = useAIGeneration(recordHistory, handleCommandBarApply);
+    } = useAIGeneration(screenState.recordHistory, callbacks.handleCommandBarApply);
 
     const {
         handleGenerateEntityFields,
@@ -200,10 +56,10 @@ export function useFlowEditorScreenModel({ onGoHome }: UseFlowEditorScreenModelP
         applyArchitectureTemplate,
     } = useFlowEditorPanelActions({
         handleFocusedAIRequest,
-        setStudioTab,
-        setStudioCodeMode,
-        setStudioMode,
-        handleApplyArchitectureTemplate,
+        setStudioTab: screenState.setStudioTab,
+        setStudioCodeMode: screenState.setStudioCodeMode,
+        setStudioMode: screenState.setStudioMode,
+        handleApplyArchitectureTemplate: operations.handleApplyArchitectureTemplate,
     });
 
     const {
@@ -223,18 +79,18 @@ export function useFlowEditorScreenModel({ onGoHome }: UseFlowEditorScreenModelP
     const {
         fileInputRef,
         handleExport,
+        handleCopyImage,
         handleSvgExport,
+        handleCopySvg,
         handlePdfExport,
-        handleAnimatedExport,
-        handleRevealExport,
+        handleCinematicExport,
         handleExportJSON,
+        handleCopyJSON,
         handleImportJSON,
         onFileImport,
-    } = useFlowExport(recordHistory, reactFlowWrapper, {
-        jumpToStep,
+    } = useFlowExport(screenState.recordHistory, screenState.reactFlowWrapper, {
         stopPlayback,
-        playbackSpeed,
-    });
+    }, screenState.cinematicExportSurfaceRef);
 
     const {
         collaborationTopNavState,
@@ -244,104 +100,109 @@ export function useFlowEditorScreenModel({ onGoHome }: UseFlowEditorScreenModelP
         onLayout,
         handleInsertTemplate,
         handleExportMermaid,
+        handleDownloadMermaid,
         handleExportPlantUML,
+        handleDownloadPlantUML,
         handleExportOpenFlowDSL,
+        handleDownloadOpenFlowDSL,
         handleExportFigma,
+        handleDownloadFigma,
         handleShare,
         shareViewerUrl,
         clearShareViewerUrl,
     } = useFlowEditorRuntime({
-        collaborationEnabled,
-        activeTabId,
-        nodes,
-        edges,
-        editorSurfaceRef: reactFlowWrapper,
-        setNodes,
-        setEdges,
+        collaborationEnabled: screenState.collaborationEnabled,
+        activeTabId: screenState.activeTabId,
+        activeTabName: screenState.activeTabName,
+        nodes: screenState.nodes,
+        edges: screenState.edges,
+        editorSurfaceRef: screenState.reactFlowWrapper,
+        setNodes: screenState.setNodes,
+        setEdges: screenState.setEdges,
         addToast,
-        recordHistory,
-        fitView,
+        recordHistory: screenState.recordHistory,
+        fitView: screenState.fitView,
         t,
-        exportSerializationMode: viewSettings.exportSerializationMode,
-        queueAutoSnapshot,
+        exportSerializationMode: screenState.viewSettings.exportSerializationMode,
+        queueAutoSnapshot: screenState.queueAutoSnapshot,
     });
 
     const flowEditorControllerConfig = buildFlowEditorScreenControllerParams({
         shell: {
-            location,
-            navigate,
-            tabs,
-            activeTabId,
-            snapshots,
-            nodes,
-            edges,
-            selectedNodeId,
-            selectedEdgeId,
-            isCommandBarOpen,
-            isHistoryOpen,
-            editorMode,
+            location: screenState.location,
+            navigate: screenState.navigate,
+            tabs: screenState.tabs,
+            activeTabId: screenState.activeTabId,
+            snapshots: screenState.snapshots,
+            nodes: screenState.nodes,
+            edges: screenState.edges,
+            selectedNodeId: screenState.selectedNodeId,
+            selectedEdgeId: screenState.selectedEdgeId,
+            isCommandBarOpen: screenState.isCommandBarOpen,
+            isHistoryOpen: screenState.isHistoryOpen,
+            editorMode: screenState.editorMode,
             handleExportJSON,
             onLayout,
             fileInputRef,
         },
         studio: {
-            editorMode,
-            studioTab,
-            selectedNodeId,
-            selectedEdgeId,
-            setStudioTab,
-            setStudioCodeMode,
-            setStudioMode,
-            closeCommandBar,
-            setCanvasMode,
-            setSelectedNodeId,
-            setSelectedEdgeId,
+            editorMode: screenState.editorMode,
+            studioTab: screenState.studioTab,
+            selectedNodeId: screenState.selectedNodeId,
+            selectedEdgeId: screenState.selectedEdgeId,
+            setStudioTab: screenState.setStudioTab,
+            setStudioCodeMode: screenState.setStudioCodeMode,
+            setStudioMode: screenState.setStudioMode,
+            closeCommandBar: screenState.closeCommandBar,
+            setCanvasMode: screenState.setCanvasMode,
+            setSelectedNodeId: screenState.setSelectedNodeId,
+            setSelectedEdgeId: screenState.setSelectedEdgeId,
         },
         panels: {
             commandBar: {
-                commandBarView,
-                undo,
-                redo,
+                commandBarView: screenState.commandBarView,
+                undo: screenState.undo,
+                redo: screenState.redo,
                 handleInsertTemplate,
-                showGrid,
-                toggleGrid,
-                snapToGrid,
-                toggleSnap,
+                showGrid: screenState.viewSettings.showGrid,
+                toggleGrid: screenState.toggleGrid,
+                snapToGrid: screenState.viewSettings.snapToGrid,
+                toggleSnap: screenState.toggleSnap,
                 handleCodeAnalysis,
                 handleSqlAnalysis,
                 handleTerraformAnalysis,
                 handleOpenApiAnalysis,
             },
             snapshots: {
-                closeHistory,
-                manualSnapshots,
-                autoSnapshots,
-                saveSnapshot,
-                handleRestoreSnapshot,
-                deleteSnapshot,
-                setDiffBaseline,
+                closeHistory: screenState.closeHistory,
+                manualSnapshots: screenState.manualSnapshots,
+                autoSnapshots: screenState.autoSnapshots,
+                saveSnapshot: screenState.saveSnapshot,
+                handleRestoreSnapshot: callbacks.handleRestoreSnapshot,
+                deleteSnapshot: screenState.deleteSnapshot,
+                setDiffBaseline: screenState.setDiffBaseline,
             },
             properties: {
-                updateNodeData,
-                applyBulkNodeData,
-                updateNodeType,
-                updateEdge,
-                deleteNode,
-                duplicateNode,
-                deleteEdge,
-                updateNodeZIndex,
-                handleAddMindmapChild,
-                handleAddMindmapSibling,
-                handleAddArchitectureService,
-                handleCreateArchitectureBoundary,
+                updateNodeData: operations.updateNodeData,
+                applyBulkNodeData: operations.applyBulkNodeData,
+                updateNodeType: operations.updateNodeType,
+                updateEdge: operations.updateEdge,
+                deleteNode: operations.deleteNode,
+                duplicateNode: operations.duplicateNode,
+                deleteEdge: operations.deleteEdge,
+                updateNodeZIndex: operations.updateNodeZIndex,
+                handleAddMindmapChild: operations.handleAddMindmapChild,
+                handleAddMindmapSibling: operations.handleAddMindmapSibling,
+                handleAddArchitectureService: operations.handleAddArchitectureService,
+                handleCreateArchitectureBoundary: operations.handleCreateArchitectureBoundary,
                 handleApplyArchitectureTemplate: applyArchitectureTemplate,
                 handleGenerateEntityFields,
                 handleSuggestArchitectureNode,
-                handleConvertEntitySelectionToClassDiagram,
+                handleConvertEntitySelectionToClassDiagram: operations.handleConvertEntitySelectionToClassDiagram,
                 handleOpenMermaidCodeEditor,
             },
             studio: {
-                handleCommandBarApply,
+                handleCommandBarApply: callbacks.handleCommandBarApply,
                 handleAIRequest,
                 isGenerating,
                 streamingText,
@@ -355,7 +216,7 @@ export function useFlowEditorScreenModel({ onGoHome }: UseFlowEditorScreenModelP
                 onClearAIError: clearLastError,
                 chatMessages,
                 clearChat,
-                studioCodeMode,
+                studioCodeMode: screenState.studioCodeMode,
                 playback: {
                     currentStepIndex,
                     totalSteps,
@@ -372,40 +233,47 @@ export function useFlowEditorScreenModel({ onGoHome }: UseFlowEditorScreenModelP
                 pendingAIPrompt,
                 clearPendingAIPrompt,
             },
-            isHistoryOpen,
-            editorMode,
+            isHistoryOpen: screenState.isHistoryOpen,
+            editorMode: screenState.editorMode,
         },
         chrome: {
-            handleSwitchTab,
-            handleAddTab,
-            handleCloseTab,
-            handleRenameTab,
+            handleSwitchTab: callbacks.handleSwitchTab,
+            handleAddTab: callbacks.handleAddTab,
+            handleCloseTab: callbacks.handleCloseTab,
+            handleRenameTab: callbacks.handleRenameTab,
             handleExport,
+            handleCopyImage,
             handleSvgExport,
+            handleCopySvg,
             handlePdfExport,
-            handleAnimatedExport,
-            handleRevealExport,
+            handleCinematicExport,
+            handleExportJSON,
+            handleCopyJSON,
             handleExportMermaid,
+            handleDownloadMermaid,
             handleExportPlantUML,
+            handleDownloadPlantUML,
             handleExportOpenFlowDSL,
+            handleDownloadOpenFlowDSL,
             handleExportFigma,
+            handleDownloadFigma,
             handleShare,
             handleImportJSON,
-            openHistory,
+            openHistory: screenState.openHistory,
             onGoHome,
             collaborationTopNavState,
-            openCommandBar,
-            handleAddShape,
-            undo,
-            redo,
-            canUndo,
-            canRedo,
-            isSelectMode,
-            enableSelectMode,
-            enablePanMode,
-            getCenter,
+            openCommandBar: screenState.openCommandBar,
+            handleAddShape: operations.handleAddShape,
+            undo: screenState.undo,
+            redo: screenState.redo,
+            canUndo: screenState.canUndo,
+            canRedo: screenState.canRedo,
+            isSelectMode: screenState.isSelectMode,
+            enableSelectMode: screenState.enableSelectMode,
+            enablePanMode: screenState.enablePanMode,
+            getCenter: callbacks.getCenter,
             t,
-            handleAddNode,
+            handleAddNode: operations.handleAddNode,
             setPendingAIPrompt,
             startPlayback,
             totalSteps,
@@ -414,37 +282,39 @@ export function useFlowEditorScreenModel({ onGoHome }: UseFlowEditorScreenModelP
             nextStep,
             prevStep,
             stopPlayback,
-            handleAddAnnotation,
-            handleAddSection,
-            handleAddTextNode,
-            handleAddJourneyNode,
-            handleAddMindmapNode,
-            handleAddArchitectureNode,
-            handleAddClassNode,
-            handleAddEntityNode,
-            handleAddImage,
-            handleAddWireframe,
-            handleAddDomainLibraryItem,
+            handleAddAnnotation: operations.handleAddAnnotation,
+            handleAddSection: operations.handleAddSection,
+            handleAddTextNode: operations.handleAddTextNode,
+            handleAddJourneyNode: operations.handleAddJourneyNode,
+            handleAddMindmapNode: operations.handleAddMindmapNode,
+            handleAddArchitectureNode: operations.handleAddArchitectureNode,
+            handleAddSequenceParticipant: operations.handleAddSequenceParticipant,
+            handleAddClassNode: operations.handleAddClassNode,
+            handleAddEntityNode: operations.handleAddEntityNode,
+            handleAddImage: operations.handleAddImage,
+            handleAddWireframe: operations.handleAddWireframe,
+            handleAddDomainLibraryItem: operations.handleAddDomainLibraryItem,
         },
     });
     const flowEditorController = useFlowEditorController(flowEditorControllerConfig);
 
     return {
-        nodes,
-        edges,
-        tabs,
-        activeTabId,
-        viewSettings,
-        diffBaseline,
-        setDiffBaseline,
-        recordHistory,
-        isSelectMode,
-        reactFlowWrapper,
+        nodes: screenState.nodes,
+        edges: screenState.edges,
+        tabs: screenState.tabs,
+        activeTabId: screenState.activeTabId,
+        viewSettings: screenState.viewSettings,
+        diffBaseline: screenState.diffBaseline,
+        setDiffBaseline: screenState.setDiffBaseline,
+        recordHistory: screenState.recordHistory,
+        isSelectMode: screenState.isSelectMode,
+        reactFlowWrapper: screenState.reactFlowWrapper,
+        cinematicExportSurfaceRef: screenState.cinematicExportSurfaceRef,
         fileInputRef,
         onFileImport,
         shareViewerUrl,
         clearShareViewerUrl,
-        collaborationEnabled,
+        collaborationEnabled: screenState.collaborationEnabled,
         remotePresence,
         collaborationNodePositions,
         isLayouting,

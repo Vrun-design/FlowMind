@@ -1,6 +1,11 @@
 import type { EdgeData, FlowEdge, FlowNode, NodeData } from './types';
 
-export type ArchitectureTemplateId = 'three-tier-web' | 'microservices' | 'event-driven';
+export type ArchitectureTemplateId =
+  | 'three-tier-web'
+  | 'microservices'
+  | 'event-driven'
+  | 'c4-system-context'
+  | 'network-edge-security';
 
 interface TemplateNodeSpec {
   key: string;
@@ -24,6 +29,11 @@ interface ArchitectureTemplateDefinition {
   nodes: TemplateNodeSpec[];
   edges: TemplateEdgeSpec[];
 }
+
+type InheritedArchitectureData = Pick<
+  NodeData,
+  'archProvider' | 'archEnvironment' | 'archBoundaryId' | 'archZone' | 'archTrustDomain'
+>;
 
 export interface ArchitectureTemplateOption {
   id: ArchitectureTemplateId;
@@ -232,10 +242,174 @@ const TEMPLATE_DEFINITIONS: ArchitectureTemplateDefinition[] = [
       { source: 'broker', target: 'storage', label: 'persist' },
     ],
   },
+  {
+    id: 'c4-system-context',
+    label: 'C4 system context',
+    description: 'People, platform boundary, and supporting systems.',
+    anchor: {
+      label: 'OpenFlowKit Platform',
+      subLabel: 'Primary software system',
+      archProvider: 'custom',
+      archResourceType: 'system',
+      icon: 'Box',
+      color: 'slate',
+    },
+    nodes: [
+      {
+        key: 'developer',
+        offsetX: -280,
+        offsetY: 0,
+        data: {
+          label: 'Developer',
+          subLabel: 'Creates and updates diagrams',
+          icon: 'User',
+          color: 'blue',
+          archResourceType: 'person',
+        },
+      },
+      {
+        key: 'docs',
+        offsetX: 280,
+        offsetY: -120,
+        data: {
+          label: 'Docs Site',
+          subLabel: 'Embeds published diagrams',
+          icon: 'BookOpen',
+          color: 'violet',
+          archResourceType: 'container',
+        },
+      },
+      {
+        key: 'repo',
+        offsetX: 280,
+        offsetY: 120,
+        data: {
+          label: 'Source Repo',
+          subLabel: 'Versioned diagram definitions',
+          icon: 'GitBranch',
+          color: 'emerald',
+          archResourceType: 'container',
+        },
+      },
+      {
+        key: 'database',
+        offsetX: 540,
+        offsetY: 120,
+        data: {
+          label: 'Project Data',
+          subLabel: 'Snapshots and exports',
+          icon: 'Database',
+          color: 'cyan',
+          archResourceType: 'database_container',
+        },
+      },
+    ],
+    edges: [
+      { source: 'developer', target: 'source', label: 'edits' },
+      { source: 'source', target: 'docs', label: 'publishes views' },
+      { source: 'source', target: 'repo', label: 'exports JSON / Mermaid' },
+      { source: 'repo', target: 'database', label: 'stores artifacts' },
+    ],
+  },
+  {
+    id: 'network-edge-security',
+    label: 'Network edge security',
+    description: 'DNS, CDN, firewall, and private service tiers.',
+    anchor: {
+      label: 'Public DNS',
+      subLabel: 'Traffic entrypoint',
+      archProvider: 'custom',
+      archResourceType: 'dns',
+      icon: 'Globe2',
+      color: 'lime',
+    },
+    nodes: [
+      {
+        key: 'cdn',
+        offsetX: 240,
+        offsetY: 0,
+        data: {
+          label: 'CDN Edge',
+          subLabel: 'Cache and TLS termination',
+          icon: 'Globe',
+          color: 'violet',
+          archResourceType: 'cdn',
+        },
+      },
+      {
+        key: 'firewall',
+        offsetX: 500,
+        offsetY: 0,
+        data: {
+          label: 'WAF / Firewall',
+          subLabel: 'Ingress filtering',
+          icon: 'Shield',
+          color: 'red',
+          archResourceType: 'firewall',
+        },
+      },
+      {
+        key: 'load-balancer',
+        offsetX: 760,
+        offsetY: 0,
+        data: {
+          label: 'Load Balancer',
+          subLabel: 'Traffic distribution',
+          icon: 'Scale',
+          color: 'orange',
+          archResourceType: 'load_balancer',
+        },
+      },
+      {
+        key: 'services',
+        offsetX: 1020,
+        offsetY: -100,
+        data: {
+          label: 'Application Services',
+          subLabel: 'Private app tier',
+          icon: 'ServerCog',
+          color: 'blue',
+          archResourceType: 'service',
+        },
+      },
+      {
+        key: 'vpn',
+        offsetX: 1020,
+        offsetY: 100,
+        data: {
+          label: 'VPN Access',
+          subLabel: 'Operator private path',
+          icon: 'Cable',
+          color: 'violet',
+          archResourceType: 'service',
+        },
+      },
+    ],
+    edges: [
+      { source: 'source', target: 'cdn', label: 'resolves' },
+      { source: 'cdn', target: 'firewall', label: 'forwards' },
+      { source: 'firewall', target: 'load-balancer', label: 'allows 443' },
+      { source: 'load-balancer', target: 'services', label: 'routes HTTPS' },
+      { source: 'vpn', target: 'services', label: 'private ops' },
+    ],
+  },
 ];
 
 export function getArchitectureTemplateOptions(): ArchitectureTemplateOption[] {
   return TEMPLATE_DEFINITIONS.map(({ id, label, description }) => ({ id, label, description }));
+}
+
+function resolveInheritedArchitectureData(
+  sourceNode: FlowNode,
+  anchor: Partial<NodeData>,
+): InheritedArchitectureData {
+  return {
+    archProvider: sourceNode.data.archProvider || anchor.archProvider || 'custom',
+    archEnvironment: sourceNode.data.archEnvironment || 'default',
+    archBoundaryId: sourceNode.data.archBoundaryId,
+    archZone: sourceNode.data.archZone,
+    archTrustDomain: sourceNode.data.archTrustDomain,
+  };
 }
 
 function createTemplateEdge(
@@ -267,6 +441,7 @@ export function buildArchitectureTemplate(
     return null;
   }
 
+  const inheritedData = resolveInheritedArchitectureData(sourceNode, template.anchor);
   const nodeIdByKey = new Map<string, string>([['source', sourceNode.id]]);
   const nodes = template.nodes.map((definition) => {
     const id = createNodeId(definition.key);
@@ -282,11 +457,7 @@ export function buildArchitectureTemplate(
       data: {
         ...sourceNode.data,
         ...definition.data,
-        archProvider: sourceNode.data.archProvider || template.anchor.archProvider || 'custom',
-        archEnvironment: sourceNode.data.archEnvironment || 'default',
-        archBoundaryId: sourceNode.data.archBoundaryId,
-        archZone: sourceNode.data.archZone,
-        archTrustDomain: sourceNode.data.archTrustDomain,
+        ...inheritedData,
       },
       selected: false,
     } satisfies FlowNode;
@@ -311,11 +482,7 @@ export function buildArchitectureTemplate(
   return {
     sourceData: {
       ...template.anchor,
-      archProvider: sourceNode.data.archProvider || template.anchor.archProvider || 'custom',
-      archEnvironment: sourceNode.data.archEnvironment || 'default',
-      archBoundaryId: sourceNode.data.archBoundaryId,
-      archZone: sourceNode.data.archZone,
-      archTrustDomain: sourceNode.data.archTrustDomain,
+      ...inheritedData,
     },
     nodes,
     edges,

@@ -4,6 +4,7 @@ import {
     createInitialFlowState,
     migratePersistedFlowState,
     partializePersistedFlowState,
+    sanitizePersistedTab,
 } from './persistence';
 import * as aiSettingsPersistence from './aiSettingsPersistence';
 
@@ -53,7 +54,7 @@ describe('store persistence helpers', () => {
         loadPersistedAISettingsSpy.mockRestore();
     });
 
-    it('partializes store state while stripping transient canvas fields from tabs', () => {
+    it('sanitizes tab content while stripping transient canvas fields', () => {
         const tab = createTab(
             'tab-2',
             'Tab 2',
@@ -68,21 +69,12 @@ describe('store persistence helpers', () => {
             ],
             [{ ...createEdge('e2', 'n2', 'n2'), selected: true }]
         );
-        const state = {
-            ...createInitialFlowState(),
-            tabs: [createInitialFlowState().tabs[0], tab],
-            activeTabId: 'tab-2',
-            nodes: tab.nodes,
-            edges: tab.edges,
-        };
-
-        const persistedSlice = partializePersistedFlowState(state as never);
-        const persistedTab = persistedSlice.tabs.find((entry) => entry.id === 'tab-2');
-        const persistedNode = persistedTab?.nodes[0] as FlowNode & {
+        const persistedTab = sanitizePersistedTab(tab);
+        const persistedNode = persistedTab.nodes[0] as FlowNode & {
             measured?: unknown;
             positionAbsolute?: unknown;
         };
-        const persistedEdge = persistedTab?.edges[0];
+        const persistedEdge = persistedTab.edges[0];
 
         expect(persistedNode.selected).toBeUndefined();
         expect(persistedNode.dragging).toBeUndefined();
@@ -101,18 +93,12 @@ describe('store persistence helpers', () => {
             defaultStepDurationMs: 1500,
         };
 
-        const persistedSlice = partializePersistedFlowState({
-            ...createInitialFlowState(),
-            tabs: [tab],
-            activeTabId: 'tab-2',
-            nodes: tab.nodes,
-            edges: tab.edges,
-        } as never);
+        const persistedTab = sanitizePersistedTab(tab);
 
-        expect(persistedSlice.tabs[0].playback?.timeline[0]?.nodeId).toBe('n2');
+        expect(persistedTab.playback?.timeline[0]?.nodeId).toBe('n2');
 
         const migrated = migratePersistedFlowState({
-            tabs: [persistedSlice.tabs[0]],
+            tabs: [persistedTab],
             activeTabId: 'tab-2',
         }) as {
             tabs: FlowTab[];
@@ -223,5 +209,12 @@ describe('store persistence helpers', () => {
         const persistedSlice = partializePersistedFlowState(createInitialFlowState() as never);
 
         expect('aiSettings' in persistedSlice).toBe(false);
+    });
+
+    it('does not include durable document state in the main persisted flow slice', () => {
+        const persistedSlice = partializePersistedFlowState(createInitialFlowState() as never);
+
+        expect('tabs' in persistedSlice).toBe(false);
+        expect('activeTabId' in persistedSlice).toBe(false);
     });
 });

@@ -1,7 +1,7 @@
 import type React from 'react';
 import type { DomainLibraryCategory } from '@/services/domainLibrary';
 
-export type AssetTab = 'general' | 'icons' | 'aws' | 'azure' | 'gcp' | 'cncf';
+export type AssetTab = 'general' | 'icons' | 'network' | 'c4' | 'aws' | 'azure' | 'gcp' | 'cncf';
 
 export interface GeneralAssetItem {
     id: string;
@@ -12,15 +12,17 @@ export interface GeneralAssetItem {
 }
 
 export interface CloudTabDefinition {
-    id: Extract<AssetTab, 'icons' | 'aws' | 'azure' | 'gcp' | 'cncf'>;
+    id: Extract<AssetTab, 'icons' | 'network' | 'c4' | 'aws' | 'azure' | 'gcp' | 'cncf'>;
     label: string;
     category: DomainLibraryCategory;
 }
 
-export const TAB_ORDER: AssetTab[] = ['general', 'icons', 'aws', 'azure', 'gcp', 'cncf'];
+export const TAB_ORDER: AssetTab[] = ['general', 'icons', 'network', 'c4', 'aws', 'azure', 'gcp', 'cncf'];
 
 export const CLOUD_TABS: CloudTabDefinition[] = [
     { id: 'icons', label: 'Icons', category: 'icons' },
+    { id: 'network', label: 'Network', category: 'network' },
+    { id: 'c4', label: 'C4', category: 'c4' },
     { id: 'aws', label: 'AWS', category: 'aws' },
     { id: 'azure', label: 'Azure', category: 'azure' },
     { id: 'gcp', label: 'GCP', category: 'gcp' },

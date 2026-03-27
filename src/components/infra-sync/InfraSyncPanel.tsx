@@ -27,6 +27,12 @@ const FORMAT_HINTS: Record<InfraFormat, string> = {
     'terraform-hcl': 'Paste your main.tf — uses AI to interpret',
 };
 
+function getFormatTabClassName(selected: boolean): string {
+    return selected
+        ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white shadow-sm shadow-[var(--brand-primary-200)]'
+        : 'border-slate-200 bg-white text-slate-500 hover:border-[var(--brand-primary-200)] hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)]';
+}
+
 function formatFileSize(bytes: number): string {
     if (bytes < 1024) return `${bytes}B`;
     return `${Math.round(bytes / 1024)}KB`;
@@ -99,16 +105,14 @@ export function InfraSyncPanel({ onApplyDsl, onTerraformAnalysis }: InfraSyncPan
                 </p>
             </div>
 
-            <div className="flex gap-1 flex-wrap">
+            <div className="flex flex-wrap gap-1.5 rounded-[var(--radius-md)] border border-slate-200 bg-slate-50 p-1">
                 {FORMAT_TABS.map((tab) => (
                     <button
                         key={tab.id}
+                        type="button"
                         onClick={() => { setFormat(tab.id); setInput(''); setFileInfo(null); }}
-                        className={`rounded-full border px-3 py-1 text-[11px] font-medium transition-colors ${
-                            format === tab.id
-                                ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)] text-[var(--brand-primary)]'
-                                : 'border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700'
-                        }`}
+                        aria-pressed={format === tab.id}
+                        className={`rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary-200)] focus-visible:ring-offset-1 ${getFormatTabClassName(format === tab.id)}`}
                     >
                         {tab.label}
                     </button>
@@ -131,13 +135,13 @@ export function InfraSyncPanel({ onApplyDsl, onTerraformAnalysis }: InfraSyncPan
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
                 placeholder={FORMAT_PLACEHOLDERS[format]}
-                className="min-h-[200px] flex-1 resize-none rounded-[var(--radius-md)] border border-slate-200 bg-white px-3 py-3 font-mono text-xs text-slate-700 outline-none placeholder-slate-300 focus:border-[var(--brand-primary)] focus:ring-1 focus:ring-[var(--brand-primary-100)] custom-scrollbar"
+                className="min-h-[200px] flex-1 resize-none rounded-[var(--radius-md)] border border-slate-200 bg-white px-3 py-3 font-mono text-xs text-slate-700 shadow-sm outline-none transition-all placeholder-slate-300 focus:border-[var(--brand-primary)] focus:ring-2 focus:ring-[var(--brand-primary-100)] custom-scrollbar"
             />
 
             <button
                 onClick={handleGenerate}
                 disabled={!input.trim() || isParsing}
-                className={`flex h-9 w-full items-center justify-center gap-2 rounded-[var(--brand-radius)] bg-[var(--brand-primary)] text-sm font-medium text-white transition-all hover:bg-[var(--brand-primary-600)] disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98] ${isBeveled ? 'btn-beveled' : ''}`}
+                className={`flex h-10 w-full items-center justify-center gap-2 rounded-[var(--brand-radius)] bg-[var(--brand-primary)] text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-[var(--brand-primary-600)] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98] ${isBeveled ? 'btn-beveled' : ''}`}
             >
                 {isParsing ? (
                     <><Loader2 className="h-4 w-4 animate-spin" /> Parsing infrastructure...</>
@@ -171,10 +175,10 @@ export function InfraSyncPanel({ onApplyDsl, onTerraformAnalysis }: InfraSyncPan
                 <div className="flex gap-2">
                     <button
                         onClick={handleApply}
-                        className={`flex h-9 flex-1 items-center justify-center gap-2 rounded-[var(--brand-radius)] text-sm font-medium text-white transition-all active:scale-[0.98] ${
+                        className={`flex h-10 flex-1 items-center justify-center gap-2 rounded-[var(--brand-radius)] text-sm font-semibold text-white shadow-sm transition-all duration-200 active:scale-[0.98] ${
                             applyFeedback
                                 ? 'bg-emerald-500'
-                                : `bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-600)] ${isBeveled ? 'btn-beveled' : ''}`
+                                : `bg-[var(--brand-primary)] hover:-translate-y-px hover:bg-[var(--brand-primary-600)] hover:shadow-md ${isBeveled ? 'btn-beveled' : ''}`
                         }`}
                     >
                         {applyFeedback ? (
@@ -187,7 +191,7 @@ export function InfraSyncPanel({ onApplyDsl, onTerraformAnalysis }: InfraSyncPan
                         onClick={() => void refresh()}
                         disabled={isParsing}
                         title="Refresh"
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--brand-radius)] border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 disabled:opacity-40"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--brand-radius)] border border-slate-200 bg-white text-slate-500 shadow-sm transition-all duration-200 hover:-translate-y-px hover:border-slate-300 hover:bg-slate-50 hover:text-slate-700 hover:shadow-md disabled:opacity-40"
                     >
                         <RefreshCw className={`h-4 w-4 ${isParsing ? 'animate-spin' : ''}`} />
                     </button>

@@ -1,7 +1,7 @@
 ---
 draft: false
 title: Exporting
-description: Export diagrams from OpenFlowKit as images, playback media, JSON, code formats, design-tool handoff, or share/embed links.
+description: Export diagrams from OpenFlowKit as images, cinematic media, JSON, code formats, design-tool handoff, or share/embed links.
 ---
 
 Export lives in the top-right menu of the editor and covers both downloadable files and clipboard-oriented formats.
@@ -36,9 +36,11 @@ This is the most faithful archival format for re-import into OpenFlowKit. Use it
 
 If you are unsure what to save as the master file, choose JSON.
 
-### Playback video and GIF
+### Cinematic video and GIF
 
-Use animated exports when the diagram is meant to communicate change over time rather than a single static state. These are useful for demos, changelogs, social posts, and process walkthroughs.
+Use cinematic exports when the diagram is meant to communicate change over time rather than a single static state. These are useful for demos, changelogs, social posts, and process walkthroughs.
+
+These exports are presentation-oriented. Keep JSON as the editable master if you may need to revise the underlying diagram later.
 
 ## Clipboard-oriented exports
 

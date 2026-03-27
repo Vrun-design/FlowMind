@@ -153,6 +153,7 @@ export function Select({ value, onChange, options, placeholder = 'Select...', cl
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{ duration: 0.15, ease: "easeOut" }}
                         role="listbox"
+                        data-floating-select-root="true"
                         className="fixed z-[1000] max-h-64 overflow-y-auto rounded-[var(--radius-lg)] border border-slate-200 bg-white shadow-[var(--shadow-md)] no-scrollbar focus:outline-none"
                         style={{
                             top: `${menuPosition.top}px`,

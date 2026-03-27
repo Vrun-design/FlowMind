@@ -63,6 +63,7 @@ function OpenCommandBarContent({
     onAddJourney,
     onAddMindmap,
     onAddArchitecture,
+    onAddSequence,
     onAddClassNode,
     onAddEntityNode,
     onAddImage,
@@ -209,6 +210,7 @@ function OpenCommandBarContent({
                             onAddJourney={() => onAddJourney?.()}
                             onAddMindmap={() => onAddMindmap?.()}
                             onAddArchitecture={() => onAddArchitecture?.()}
+                            onAddSequence={() => onAddSequence?.()}
                             onAddClassNode={() => onAddClassNode?.()}
                             onAddEntityNode={() => onAddEntityNode?.()}
                             onAddImage={(imageUrl) => onAddImage?.(imageUrl)}

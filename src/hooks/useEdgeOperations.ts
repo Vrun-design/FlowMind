@@ -15,6 +15,10 @@ import { queueNodeLabelEditRequest } from './nodeLabelEditRequest';
 import { isMindmapConnectorSource } from '@/lib/connectCreationPolicy';
 import { resolveMindmapBranchStyleForNode, syncMindmapEdges } from '@/lib/mindmapLayout';
 import {
+    buildSequenceMessageEdge,
+    isSequenceConnection,
+} from '@/services/sequence/sequenceMessage';
+import {
     buildConnectedEdge,
     buildConnectedMindmapTopic,
     buildConnectedNode,
@@ -106,6 +110,17 @@ export const useEdgeOperations = (
                 );
                 return eds.concat(mindmapEdge);
             }
+
+            if (isSequenceConnection(sourceNode, targetNode, resolvedConnection)) {
+                return eds.concat(buildSequenceMessageEdge(
+                    resolvedConnection,
+                    sourceNode,
+                    targetNode,
+                    eds,
+                    t('connectionPanel.messagePlaceholder', 'Message')
+                ));
+            }
+
             const inserted = addEdge({
                 ...resolvedConnection,
                 data: {
@@ -127,7 +142,7 @@ export const useEdgeOperations = (
                 getSmartRoutingOptionsFromViewSettings(viewSettings)
             );
         });
-    }, [edges, nodes, setEdges, recordHistory]);
+    }, [edges, nodes, recordHistory, setEdges, t]);
 
     const onConnectStart = useCallback((_, { nodeId, handleId }: { nodeId: string | null; handleId: string | null }) => {
         connectingNodeId.current = nodeId;

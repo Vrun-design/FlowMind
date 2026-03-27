@@ -11,9 +11,12 @@ Local-first means your diagram work starts in the browser, not on a required hos
 In practical terms:
 
 - your diagram state lives in the browser by default
+- refreshes and browser restarts should restore your saved documents instead of resetting to a blank canvas
 - AI usage can follow a BYOK model instead of mandatory platform credits
 - collaboration can fall back to local-only behavior instead of blocking all work
 - export is explicit, so you decide when a diagram leaves the current device
+
+OpenFlowKit now treats the browser database as the durable source of truth for saved document state. The live editor is rebuilt from that local data after reload rather than assuming the in-memory canvas is still available.
 
 ## Why it matters
 
@@ -23,6 +26,17 @@ Local-first workflows are useful when:
 - you do not want to depend on account creation for first use
 - you need a browser-native tool that still works well as a solo editor
 - you want control over when artifacts become shared assets
+
+## What stays on the current device
+
+By default, OpenFlowKit keeps these things in browser-local storage on the current device:
+
+- saved diagrams and tabs
+- document-oriented chat history for Flowpilot sessions
+- persistent AI settings when you choose persistent storage
+- local workspace preferences
+
+Session-only secrets can still be kept for just the current browser session when you prefer that behavior.
 
 ## What it does not mean
 

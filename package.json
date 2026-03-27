@@ -23,7 +23,7 @@
     "test:s4-handle-safety": "npx tsc -b --pretty false && npm run test -- --run src/components/handleInteraction.test.ts src/components/handleInteractionUsage.test.ts src/components/CustomNode.handleInteraction.test.tsx src/components/custom-nodes/ArchitectureNode.handleInteraction.test.tsx src/components/custom-nodes/ClassEntityNode.handleInteraction.test.tsx src/components/lightweight-nodes.handleInteraction.test.tsx src/components/custom-nodes/VisualNodes.handleInteraction.test.tsx src/components/container-nodes.handleInteraction.test.tsx src/components/flow-canvas/flowCanvasTypes.test.ts src/components/DesignSystem.integration.test.tsx src/components/HomePage.integration.test.tsx",
     "e2e": "playwright test",
     "e2e:headed": "playwright test --headed",
-    "e2e:ci": "playwright test --project=chromium",
+    "e2e:ci": "CI=1 playwright test --project=chromium",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "preview": "vite preview",

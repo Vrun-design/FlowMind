@@ -1,7 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
+  AI_SETTINGS_PERSISTENT_STORE_NAME,
+  ASSETS_STORE_NAME,
+  CHAT_MESSAGES_STORE_NAME,
+  CHAT_THREADS_STORE_NAME,
+  DOCUMENT_SESSIONS_STORE_NAME,
   FLOW_DOCUMENT_STORE_NAME,
   FLOW_METADATA_STORE_NAME,
+  PERSISTED_DOCUMENTS_STORE_NAME,
+  PREFERENCES_STORE_NAME,
+  WORKSPACE_META_STORE_NAME,
   ensureFlowPersistenceSchema,
 } from './indexedDbSchema';
 
@@ -60,11 +68,30 @@ describe('indexedDbSchema', () => {
 
     expect(mock.createObjectStore).toHaveBeenCalledWith(FLOW_DOCUMENT_STORE_NAME, { keyPath: 'id' });
     expect(mock.createObjectStore).toHaveBeenCalledWith(FLOW_METADATA_STORE_NAME, { keyPath: 'id' });
+    expect(mock.createObjectStore).toHaveBeenCalledWith(PERSISTED_DOCUMENTS_STORE_NAME, { keyPath: 'id' });
+    expect(mock.createObjectStore).toHaveBeenCalledWith(DOCUMENT_SESSIONS_STORE_NAME, { keyPath: 'id' });
+    expect(mock.createObjectStore).toHaveBeenCalledWith(CHAT_THREADS_STORE_NAME, { keyPath: 'id' });
+    expect(mock.createObjectStore).toHaveBeenCalledWith(CHAT_MESSAGES_STORE_NAME, { keyPath: 'id' });
+    expect(mock.createObjectStore).toHaveBeenCalledWith(WORKSPACE_META_STORE_NAME, { keyPath: 'id' });
+    expect(mock.createObjectStore).toHaveBeenCalledWith(AI_SETTINGS_PERSISTENT_STORE_NAME, { keyPath: 'id' });
+    expect(mock.createObjectStore).toHaveBeenCalledWith(PREFERENCES_STORE_NAME, { keyPath: 'id' });
+    expect(mock.createObjectStore).toHaveBeenCalledWith(ASSETS_STORE_NAME, { keyPath: 'id' });
     expect(mock.close).toHaveBeenCalledTimes(1);
   });
 
   it('does not recreate stores that already exist', async () => {
-    const mock = createMockIndexedDbFactory([FLOW_DOCUMENT_STORE_NAME, FLOW_METADATA_STORE_NAME]);
+    const mock = createMockIndexedDbFactory([
+      FLOW_DOCUMENT_STORE_NAME,
+      FLOW_METADATA_STORE_NAME,
+      PERSISTED_DOCUMENTS_STORE_NAME,
+      DOCUMENT_SESSIONS_STORE_NAME,
+      CHAT_THREADS_STORE_NAME,
+      CHAT_MESSAGES_STORE_NAME,
+      WORKSPACE_META_STORE_NAME,
+      AI_SETTINGS_PERSISTENT_STORE_NAME,
+      PREFERENCES_STORE_NAME,
+      ASSETS_STORE_NAME,
+    ]);
 
     await ensureFlowPersistenceSchema(mock.factory);
 

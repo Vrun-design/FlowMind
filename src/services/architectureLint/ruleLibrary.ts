@@ -159,4 +159,56 @@ export const RULE_LIBRARY: RuleTemplate[] = [
             },
         ],
     },
+    {
+        id: 'c4-model',
+        name: 'C4 Model',
+        description: 'Enforce C4 layering: Person → System → Container → Component',
+        rules: [
+            {
+                id: 'no-component-to-system',
+                description: 'Components must not bypass containers to reach systems directly',
+                severity: 'error',
+                type: 'cannot-connect',
+                from: { labelContains: 'component' },
+                to: { labelContains: 'system' },
+            },
+            {
+                id: 'no-person-to-component',
+                description: 'People should interact with systems or containers, not components directly',
+                severity: 'warning',
+                type: 'cannot-connect',
+                from: { labelContains: 'person' },
+                to: { labelContains: 'component' },
+            },
+            {
+                id: 'system-must-exist',
+                description: 'C4 diagram should have at least one system boundary',
+                severity: 'info',
+                type: 'must-have-node',
+                from: { labelContains: 'system' },
+            },
+        ],
+    },
+    {
+        id: 'network-security',
+        name: 'Network Security',
+        description: 'Basic network security: traffic must flow through firewall/load balancer',
+        rules: [
+            {
+                id: 'no-direct-to-server',
+                description: 'External traffic must go through a load balancer or firewall',
+                severity: 'warning',
+                type: 'cannot-connect',
+                from: { labelContains: 'internet' },
+                to: { labelContains: 'server' },
+            },
+            {
+                id: 'firewall-must-exist',
+                description: 'Network should include a firewall',
+                severity: 'info',
+                type: 'must-have-node',
+                from: { labelContains: 'firewall' },
+            },
+        ],
+    },
 ];

@@ -1,10 +1,12 @@
 import React, { lazy, Suspense, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { ReactFlowProvider } from '@/lib/reactflowCompat';
-import { createFlowEditorImportRouteState, createFlowEditorTemplatesRouteState } from '@/app/routeState';
+import { createFlowEditorAIRouteState, createFlowEditorImportRouteState, createFlowEditorTemplatesRouteState } from '@/app/routeState';
 import { DocsSiteRedirect } from '@/components/app/DocsSiteRedirect';
 import { RouteLoadingFallback } from '@/components/app/RouteLoadingFallback';
 import { MobileWorkspaceGate } from '@/components/app/MobileWorkspaceGate';
+import { CinematicExportProvider } from '@/context/CinematicExportContext';
+import { HomePage } from '@/components/HomePage';
 
 import { useFlowStore } from './store';
 import { useTabActions } from '@/store/tabHooks';
@@ -14,15 +16,12 @@ import { useShortcutHelpOpen } from '@/store/viewHooks';
 import './i18n/config';
 
 
-const FlowEditor = lazy(async () => {
+async function loadFlowEditorModule() {
   const module = await import('./components/FlowEditor');
   return { default: module.FlowEditor };
-});
+}
 
-const HomePage = lazy(async () => {
-  const module = await import('./components/HomePage');
-  return { default: module.HomePage };
-});
+const FlowEditor = lazy(loadFlowEditorModule);
 
 const LazyKeyboardShortcutsModal = lazy(async () => {
   const module = await import('./components/KeyboardShortcutsModal');
@@ -48,7 +47,9 @@ function FlowCanvasRoute(): React.JSX.Element {
   return (
     <Suspense fallback={<RouteLoadingFallback />}>
       <ReactFlowProvider>
-        <FlowEditor onGoHome={() => navigate('/home')} />
+        <CinematicExportProvider>
+          <FlowEditor onGoHome={() => navigate('/home')} />
+        </CinematicExportProvider>
       </ReactFlowProvider>
     </Suspense>
   );
@@ -61,6 +62,10 @@ function HomePageRoute(): React.JSX.Element {
 
   const activeTab = location.pathname === '/settings' ? 'settings' : 'home';
 
+  useEffect(() => {
+    void loadFlowEditorModule();
+  }, []);
+
   const handleLaunch = () => {
     const newTabId = addTab();
     navigate(`/flow/${newTabId}`);
@@ -71,21 +76,25 @@ function HomePageRoute(): React.JSX.Element {
     navigate(`/flow/${newTabId}`, { state: createFlowEditorTemplatesRouteState() });
   };
 
+  const handleLaunchWithAI = () => {
+    const newTabId = addTab();
+    navigate(`/flow/${newTabId}`, { state: createFlowEditorAIRouteState() });
+  };
+
   return (
-    <Suspense fallback={<RouteLoadingFallback />}>
-                    <HomePage
-                        onLaunch={handleLaunch}
-                        onLaunchWithTemplates={handleLaunchWithTemplates}
-                        onImportJSON={() => {
-                            navigate('/canvas', {
-                              state: createFlowEditorImportRouteState(),
-                            });
-                        }}
-                        onOpenFlow={(flowId) => navigate(`/flow/${flowId}`)}
-                        activeTab={activeTab}
-                        onSwitchTab={(tab) => navigate(tab === 'settings' ? '/settings' : '/home')}
-                    />
-    </Suspense>
+    <HomePage
+      onLaunch={handleLaunch}
+      onLaunchWithTemplates={handleLaunchWithTemplates}
+      onLaunchWithAI={handleLaunchWithAI}
+      onImportJSON={() => {
+        navigate('/canvas', {
+          state: createFlowEditorImportRouteState(),
+        });
+      }}
+      onOpenFlow={(flowId) => navigate(`/flow/${flowId}`)}
+      activeTab={activeTab}
+      onSwitchTab={(tab) => navigate(tab === 'settings' ? '/settings' : '/home')}
+    />
   );
 }
 

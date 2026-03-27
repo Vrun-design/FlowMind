@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
     AppWindow,
+    ArrowRightLeft,
     Boxes,
     Component,
     GitBranch,
@@ -48,6 +49,7 @@ interface AssetsViewProps {
     onAddJourney: () => void;
     onAddMindmap: () => void;
     onAddArchitecture: () => void;
+    onAddSequence: () => void;
     onAddImage: (imageUrl: string) => void;
     onAddBrowserWireframe: () => void;
     onAddMobileWireframe: () => void;
@@ -65,6 +67,7 @@ export function AssetsView({
     onAddJourney,
     onAddMindmap,
     onAddArchitecture,
+    onAddSequence,
     onAddImage,
     onAddBrowserWireframe,
     onAddMobileWireframe,
@@ -159,9 +162,19 @@ export function AssetsView({
             id: 'architecture',
             label: 'Architecture',
             icon: <Boxes className="h-5 w-5" />,
-            keywords: ['architecture', 'service', 'system'],
+            keywords: ['architecture', 'service', 'system', 'cloud', 'c4'],
             action: () => {
                 onAddArchitecture();
+                onClose();
+            },
+        },
+        {
+            id: 'sequence',
+            label: 'Sequence',
+            icon: <ArrowRightLeft className="h-5 w-5" />,
+            keywords: ['sequence', 'diagram', 'participant', 'message', 'uml', 'flow'],
+            action: () => {
+                onAddSequence();
                 onClose();
             },
         },
@@ -246,6 +259,8 @@ export function AssetsView({
             azure: [],
             gcp: [],
             cncf: [],
+            network: [],
+            c4: [],
             icons: [],
         });
     }, [categoryFilters, normalizedQuery, providerItems]);
@@ -269,6 +284,8 @@ export function AssetsView({
             ? {
                 general: filteredGeneralItems.length,
                 icons: filteredIconItems.length,
+                network: filteredCloudItems.network.length,
+                c4: filteredCloudItems.c4.length,
                 aws: filteredCloudItems.aws.length,
                 azure: filteredCloudItems.azure.length,
                 gcp: filteredCloudItems.gcp.length,
@@ -277,6 +294,8 @@ export function AssetsView({
             : {
                 general: generalItems.length,
                 icons: iconItems.length,
+                network: DOMAIN_LIBRARY_ITEMS.filter((item) => item.category === 'network').length,
+                c4: DOMAIN_LIBRARY_ITEMS.filter((item) => item.category === 'c4').length,
                 aws: getProviderCatalogCount('aws'),
                 azure: getProviderCatalogCount('azure'),
                 gcp: getProviderCatalogCount('gcp'),

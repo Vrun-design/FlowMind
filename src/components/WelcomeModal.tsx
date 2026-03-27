@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { ArrowRight, FileInput, LayoutTemplate, PenSquare } from 'lucide-react';
+import { ArrowRight, FileInput, LayoutTemplate, PenSquare, WandSparkles } from 'lucide-react';
 import { OpenFlowLogo } from './icons/OpenFlowLogo';
 import { writeLocalStorageString } from '@/services/storage/uiLocalStorage';
 import { shouldShowWelcomeModal, WELCOME_SEEN_STORAGE_KEY } from './home/welcomeModalState';
+import { RECOMMENDED_BUILDER_PROMPTS, RECOMMENDED_IMPORT_OPTIONS, RECOMMENDED_STARTER_TEMPLATE_LABELS } from '@/services/onboarding/config';
+import { recordOnboardingEvent } from '@/services/onboarding/events';
 
 export interface WelcomeModalProps {
     onOpenTemplates: () => void;
+    onPromptWithAI: () => void;
     onImport: () => void;
     onBlankCanvas: () => void;
 }
@@ -44,7 +47,7 @@ function PathCard({ icon, title, description, onClick, primary }: PathOption): R
     );
 }
 
-export function WelcomeModal({ onOpenTemplates, onImport, onBlankCanvas }: WelcomeModalProps): React.JSX.Element | null {
+export function WelcomeModal({ onOpenTemplates, onPromptWithAI, onImport, onBlankCanvas }: WelcomeModalProps): React.JSX.Element | null {
     const [isOpen, setIsOpen] = useState(() => shouldShowWelcomeModal());
 
     const dismiss = () => {
@@ -60,27 +63,45 @@ export function WelcomeModal({ onOpenTemplates, onImport, onBlankCanvas }: Welco
         {
             icon: <LayoutTemplate className="h-5 w-5" />,
             title: 'Start from a template',
-            description: 'Pick a starter diagram and customize it',
-            onClick: handle(onOpenTemplates),
+            description: `Jump into ${RECOMMENDED_STARTER_TEMPLATE_LABELS.slice(0, 3).join(', ')}.`,
+            onClick: handle(() => {
+                recordOnboardingEvent('welcome_template_selected', { surface: 'welcome-modal' });
+                onOpenTemplates();
+            }),
             primary: true,
+        },
+        {
+            icon: <WandSparkles className="h-5 w-5" />,
+            title: 'Prompt with Flowpilot',
+            description: `Start from a builder prompt like "${RECOMMENDED_BUILDER_PROMPTS[0]}"`,
+            onClick: handle(() => {
+                recordOnboardingEvent('welcome_prompt_selected', { surface: 'welcome-modal' });
+                onPromptWithAI();
+            }),
         },
         {
             icon: <FileInput className="h-5 w-5" />,
             title: 'Import a diagram',
-            description: 'Open a JSON, Mermaid, or OpenFlow file',
-            onClick: handle(onImport),
+            description: `Bring in ${RECOMMENDED_IMPORT_OPTIONS.map((option) => option.label).join(', ')} sources.`,
+            onClick: handle(() => {
+                recordOnboardingEvent('welcome_import_selected', { surface: 'welcome-modal' });
+                onImport();
+            }),
         },
         {
             icon: <PenSquare className="h-5 w-5" />,
             title: 'Blank canvas',
-            description: 'Start with an empty diagram',
-            onClick: handle(onBlankCanvas),
+            description: 'Start clean, then branch into templates, imports, or guided AI edits.',
+            onClick: handle(() => {
+                recordOnboardingEvent('welcome_blank_selected', { surface: 'welcome-modal' });
+                onBlankCanvas();
+            }),
         },
     ];
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/10 p-4 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="w-full max-w-sm overflow-hidden rounded-[var(--radius-xl)] border border-slate-200/50 bg-white shadow-[var(--shadow-overlay)] animate-in zoom-in-95 duration-300">
+            <div className="w-full max-w-xl overflow-hidden rounded-[var(--radius-xl)] border border-slate-200/50 bg-white shadow-[var(--shadow-overlay)] animate-in zoom-in-95 duration-300">
                 <div className="p-8">
                     <div className="mb-6 flex flex-col items-center text-center">
                         <div
@@ -94,13 +115,30 @@ export function WelcomeModal({ onOpenTemplates, onImport, onBlankCanvas }: Welco
                             <OpenFlowLogo className="h-6 w-6" />
                         </div>
                         <h2 className="text-xl font-bold tracking-tight text-slate-900">Welcome to OpenFlowKit</h2>
-                        <p className="mt-1 text-sm text-slate-500">How do you want to get started?</p>
+                        <p className="mt-1 max-w-md text-sm text-slate-500">
+                            Pick the fastest way to get to a real developer diagram: template, import, prompt, or blank canvas.
+                        </p>
                     </div>
 
-                    <div className="flex flex-col gap-3">
+                    <div className="grid gap-3 md:grid-cols-2">
                         {paths.map((path) => (
                             <PathCard key={path.title} {...path} />
                         ))}
+                    </div>
+
+                    <div className="mt-6 grid gap-3 rounded-[var(--radius-lg)] border border-slate-200 bg-slate-50/80 p-4 text-left md:grid-cols-2">
+                        <div>
+                            <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Best First Templates</p>
+                            <p className="mt-2 text-xs leading-5 text-slate-600">
+                                {RECOMMENDED_STARTER_TEMPLATE_LABELS.join(' • ')}
+                            </p>
+                        </div>
+                        <div>
+                            <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Supported Imports</p>
+                            <p className="mt-2 text-xs leading-5 text-slate-600">
+                                {RECOMMENDED_IMPORT_OPTIONS.map((option) => option.label).join(' • ')}
+                            </p>
+                        </div>
                     </div>
 
                     <p className="mt-6 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400">

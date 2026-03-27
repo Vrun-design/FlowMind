@@ -15,8 +15,6 @@ import type { FlowState } from './types';
 
 export type PersistedFlowStateSlice = Pick<
     FlowState,
-    | 'tabs'
-    | 'activeTabId'
     | 'designSystems'
     | 'activeDesignSystemId'
     | 'viewSettings'
@@ -178,8 +176,6 @@ export function migratePersistedFlowState(persistedState: unknown): unknown {
 
 export function partializePersistedFlowState(state: FlowState): PersistedFlowStateSlice {
     return {
-        tabs: state.tabs.map(sanitizePersistedTab),
-        activeTabId: state.activeTabId,
         designSystems: state.designSystems,
         activeDesignSystemId: state.activeDesignSystemId,
         viewSettings: state.viewSettings,

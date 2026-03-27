@@ -10,7 +10,6 @@ import { useToast } from './ui/ToastContext';
 import type { FlowEdge, FlowNode } from '@/lib/types';
 import type { StudioCodeMode } from '@/hooks/useFlowEditorUIState';
 import { useStudioCodePanelController, type DraftPreviewState } from './studio-code-panel/useStudioCodePanelController';
-import { SegmentedChoice } from './properties/SegmentedChoice';
 import { Tooltip } from './Tooltip';
 
 interface CodeModeOption {
@@ -44,14 +43,30 @@ function getDraftPreviewToneClass(state: DraftPreviewState): string {
 
 function getDraftPreviewBadgeClass(state: DraftPreviewState): string {
     if (state === 'ready') {
-        return 'border-emerald-200 bg-emerald-50 text-emerald-700';
+        return 'bg-emerald-50 text-emerald-700';
     }
 
     if (state === 'error') {
-        return 'border-amber-200 bg-amber-50 text-amber-700';
+        return 'bg-amber-50 text-amber-700';
     }
 
-    return 'border-slate-200 bg-white text-slate-600';
+    return 'bg-slate-100 text-slate-600';
+}
+
+function getModeButtonClassName(isActive: boolean): string {
+    if (isActive) {
+        return 'border-[var(--brand-primary)] text-[var(--brand-primary)]';
+    }
+
+    return 'border-transparent text-slate-500 hover:text-[var(--brand-text)]';
+}
+
+function getLivePreviewButtonClassName(isActive: boolean): string {
+    if (isActive) {
+        return 'border-[var(--brand-primary-200)] bg-[var(--brand-primary-50)] text-[var(--brand-primary)]';
+    }
+
+    return 'border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700';
 }
 
 interface StudioCodePanelProps {
@@ -111,12 +126,41 @@ export function StudioCodePanel({
         }
     };
 
+    const canApplyChanges = draftPreview.state === 'ready' && hasDraftChanges && !isApplying;
+    const applyButtonClassName = `h-8 ${mode === 'mermaid' ? 'flex-1' : 'min-w-[148px]'} justify-center px-3 py-1.5 text-xs ${canApplyChanges ? `border-transparent bg-[var(--brand-primary)] text-white hover:bg-[var(--brand-primary-600)] ${IS_BEVELED ? 'btn-beveled' : ''}` : ''}`;
+    const livePreviewTitle = liveSync
+        ? 'Live preview is on and auto-applies valid Mermaid changes.'
+        : 'Enable live preview for Mermaid changes.';
+    const draftPreviewDetail = draftPreview.state === 'error'
+        ? friendlyDslError(draftPreview.detail)
+        : draftPreview.detail;
+
     return (
         <div className="flex h-full min-h-0 flex-col">
-            <div className="mb-4 space-y-3">
+            <div className="mb-3 border-b border-slate-200/80 pb-0.5">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Diagram as code</p>
+                    <div className="flex items-center gap-5">
+                        {MODE_OPTIONS.map(({ id, label }) => (
+                            <button
+                                key={id}
+                                type="button"
+                                onClick={() => handleModeSelect(id)}
+                                className={`relative -mb-px border-b-2 px-0 pb-2 pt-1 text-sm font-semibold transition-colors ${getModeButtonClassName(mode === id)}`}
+                            >
+                                {label}
+                            </button>
+                        ))}
+                    </div>
+                    {mode === 'mermaid' ? (
+                        <button
+                            onClick={() => setLiveSync(!liveSync)}
+                            title={livePreviewTitle}
+                            className={`flex h-6 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-medium transition-all ${getLivePreviewButtonClassName(liveSync)}`}
+                        >
+                            <Zap className="h-3 w-3" />
+                            Live preview
+                        </button>
+                    ) : (
                         <Tooltip text="Edit the full diagram source, validate the draft, then apply the changes back to the canvas.">
                             <button
                                 type="button"
@@ -126,38 +170,8 @@ export function StudioCodePanel({
                                 <CircleHelp className="h-3.5 w-3.5" />
                             </button>
                         </Tooltip>
-                    </div>
-                    {mode === 'mermaid' ? (
-                        <button
-                            onClick={() => setLiveSync(!liveSync)}
-                            title={liveSync ? 'Live preview is on and auto-applies valid Mermaid changes.' : 'Enable live preview for Mermaid changes.'}
-                            className={`flex h-6 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-medium transition-all ${liveSync
-                                ? 'border-[var(--brand-primary-200)] bg-[var(--brand-primary-50)] text-[var(--brand-primary)]'
-                                : 'border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700'
-                                }`}
-                        >
-                            <Zap className="h-3 w-3" />
-                            Live preview
-                        </button>
-                    ) : (
-                        <a
-                            href="https://docs.openflowkit.com"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-[10px] font-medium text-[var(--brand-primary)] transition-colors hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary-700)]"
-                        >
-                            <BookOpen className="h-3 w-3" />
-                            {t('commandBar.code.syntaxGuide')}
-                        </a>
                     )}
                 </div>
-                <SegmentedChoice
-                    items={MODE_OPTIONS}
-                    selectedId={mode}
-                    onSelect={(nextMode) => handleModeSelect(nextMode as StudioCodeMode)}
-                    columns={2}
-                    size="sm"
-                />
             </div>
 
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[var(--radius-md)] border border-slate-200 bg-slate-50/55 shadow-[0_1px_2px_rgba(15,23,42,0.06)] transition-colors focus-within:border-[var(--brand-primary-300)] focus-within:ring-1 focus-within:ring-[var(--brand-primary-100)]">
@@ -211,41 +225,55 @@ export function StudioCodePanel({
 
                 <div className="border-t border-slate-200/80 bg-slate-50/80 px-4 py-3">
                     <div className="space-y-3">
-                        <div className="min-w-0">
-                            <div className="flex flex-wrap items-center gap-2 text-[11px]">
-                                <div className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-semibold ${getDraftPreviewBadgeClass(draftPreview.state)}`}>
-                                    {draftPreview.state === 'ready' ? <CheckCircle2 className="h-3.5 w-3.5" /> : null}
+                        <div className="flex items-center justify-between gap-3 text-[11px]">
+                            <div className="flex min-w-0 items-center gap-2">
+                                <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-semibold ${getDraftPreviewBadgeClass(draftPreview.state)}`}>
                                     {draftPreview.label}
                                 </div>
                                 {hasDraftChanges ? (
-                                    <div className="inline-flex items-center gap-1.5 rounded-full border border-[var(--brand-primary-200)] bg-[var(--brand-primary-50)] px-2.5 py-1 text-[10px] font-semibold text-[var(--brand-primary)]">
+                                    <span className="inline-flex items-center gap-1 text-[var(--brand-primary)]">
                                         <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand-primary)]" />
-                                        Changed
-                                    </div>
+                                        <span className="font-medium">Unsaved</span>
+                                    </span>
                                 ) : null}
                             </div>
-                            <div className={`mt-2 text-[11px] leading-5 ${getDraftPreviewToneClass(draftPreview.state)}`}>
-                                {draftPreview.state === 'error' ? friendlyDslError(draftPreview.detail) : draftPreview.detail}
-                            </div>
+                            {mode === 'openflow' ? (
+                                <a
+                                    href="https://docs.openflowkit.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center justify-self-end gap-1 font-medium text-[var(--brand-primary)] transition-colors hover:text-[var(--brand-primary-700)]"
+                                >
+                                    <BookOpen className="h-3.5 w-3.5" />
+                                    {t('commandBar.code.syntaxGuide')}
+                                </a>
+                            ) : (
+                                <div className="shrink-0" />
+                            )}
                         </div>
 
-                        <div className="flex items-center justify-end gap-2">
+                        <div className={`flex min-w-0 items-center gap-1.5 text-[11px] ${getDraftPreviewToneClass(draftPreview.state)}`} aria-live="polite">
+                            {draftPreview.state === 'ready' && <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />}
+                            <span className="truncate font-medium">
+                                {draftPreviewDetail}
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
                             <Button
                                 onClick={handleReset}
                                 disabled={!hasDraftChanges && !error}
                                 variant="ghost"
-                                size="sm"
-                                className="text-slate-600 hover:text-slate-900"
+                                className="h-8 px-3 py-1.5 text-xs text-slate-600 hover:text-slate-900"
                                 icon={<RotateCcw className="w-3.5 h-3.5" />}
                             >
                                 Reset
                             </Button>
                             <Button
                                 onClick={() => void handleApply()}
-                                disabled={isApplying || draftPreview.state !== 'ready' || !hasDraftChanges}
-                                variant="primary"
-                                size="sm"
-                                className={`min-w-[130px] whitespace-nowrap border-transparent bg-[var(--brand-primary)] text-white hover:bg-[var(--brand-primary-600)] ${IS_BEVELED ? 'btn-beveled' : ''}`}
+                                disabled={!canApplyChanges}
+                                variant={canApplyChanges ? 'primary' : 'secondary'}
+                                className={applyButtonClassName}
                                 isLoading={isApplying}
                                 icon={!isApplying && <Play className="w-3.5 h-3.5" />}
                             >

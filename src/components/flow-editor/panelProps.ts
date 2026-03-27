@@ -32,6 +32,7 @@ export interface CommandBarPanelBuilderParams {
     handleAddJourneyNode: () => void;
     handleAddMindmapNode: () => void;
     handleAddArchitectureNode: () => void;
+    handleAddSequenceParticipant: () => void;
     handleAddClassNode: () => void;
     handleAddEntityNode: () => void;
     handleAddImage: (imageUrl: string) => void;
@@ -153,6 +154,7 @@ export function buildCommandBarPanelProps({
     handleAddJourneyNode,
     handleAddMindmapNode,
     handleAddArchitectureNode,
+    handleAddSequenceParticipant,
     handleAddClassNode,
     handleAddEntityNode,
     handleAddImage,
@@ -187,6 +189,7 @@ export function buildCommandBarPanelProps({
         onAddJourney: handleAddJourneyNode,
         onAddMindmap: handleAddMindmapNode,
         onAddArchitecture: handleAddArchitectureNode,
+        onAddSequence: handleAddSequenceParticipant,
         onAddClassNode: handleAddClassNode,
         onAddEntityNode: handleAddEntityNode,
         onAddImage: handleAddImage,

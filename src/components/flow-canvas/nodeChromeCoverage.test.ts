@@ -19,6 +19,7 @@ const NODE_COMPONENT_FILES = [
   'src/components/custom-nodes/MindmapNode.tsx',
   'src/components/custom-nodes/JourneyNode.tsx',
   'src/components/custom-nodes/ArchitectureNode.tsx',
+  'src/components/custom-nodes/SequenceParticipantNode.tsx',
 ] as const;
 
 function readSource(path: string): string {

@@ -4,6 +4,7 @@ import { ERDiagramNodeProperties } from '@/components/properties/families/ERDiag
 import { MindmapNodeProperties } from '@/components/properties/families/MindmapNodeProperties';
 import { JourneyNodeProperties } from '@/components/properties/families/JourneyNodeProperties';
 import { ArchitectureNodeProperties } from '@/components/properties/families/ArchitectureNodeProperties';
+import { SequenceNodeProperties } from '@/components/properties/families/SequenceNodeProperties';
 
 let didRegisterBuiltInPropertyPanels = false;
 
@@ -17,5 +18,6 @@ export function registerBuiltInPropertyPanels(): void {
   registerDiagramNodeProperties('mindmap', MindmapNodeProperties);
   registerDiagramNodeProperties('journey', JourneyNodeProperties);
   registerDiagramNodeProperties('architecture', ArchitectureNodeProperties);
+  registerDiagramNodeProperties('sequence', SequenceNodeProperties);
   didRegisterBuiltInPropertyPanels = true;
 }

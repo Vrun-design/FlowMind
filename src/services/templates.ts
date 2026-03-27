@@ -12,6 +12,9 @@ export interface FlowTemplate {
   msg: string;
   category: string;
   tags: string[];
+  audience?: 'developers' | 'builders';
+  useCase?: string;
+  launchPriority?: number;
   nodes: FlowNode[];
   edges: FlowEdge[];
 }
@@ -21,9 +24,12 @@ function getTemplateIcon(category: string): LucideIcon {
     case 'aws':
     case 'azure':
       return Cloud;
+    case 'architecture':
+      return Layout;
     case 'cncf':
       return ShipWheel;
     case 'mindmap':
+    case 'sequence':
       return GitBranch;
     case 'journey':
       return Route;
@@ -44,14 +50,26 @@ function mapTemplateManifestToFlowTemplate(template: TemplateManifest): FlowTemp
     msg: template.category,
     category: template.category,
     tags: [...template.tags],
+    audience: template.audience,
+    useCase: template.useCase,
+    launchPriority: template.launchPriority,
     nodes: template.graph.nodes,
     edges: template.graph.edges,
   };
 }
 
+function compareTemplates(left: FlowTemplate, right: FlowTemplate): number {
+  const priorityDelta = (right.launchPriority ?? 0) - (left.launchPriority ?? 0);
+  if (priorityDelta !== 0) {
+    return priorityDelta;
+  }
+
+  return left.name.localeCompare(right.name);
+}
+
 function listRegistryTemplates(): FlowTemplate[] {
   const registry = createStarterTemplateRegistry();
-  return registry.listTemplates().map(mapTemplateManifestToFlowTemplate);
+  return registry.listTemplates().map(mapTemplateManifestToFlowTemplate).sort(compareTemplates);
 }
 
 export const FLOW_TEMPLATES: FlowTemplate[] = listRegistryTemplates();

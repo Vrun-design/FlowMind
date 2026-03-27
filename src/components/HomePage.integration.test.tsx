@@ -31,6 +31,7 @@ describe('HomePage integration flows', () => {
                     <HomePage
                         onLaunch={vi.fn()}
                         onLaunchWithTemplates={vi.fn()}
+                        onLaunchWithAI={vi.fn()}
                         onImportJSON={vi.fn()}
                         onOpenFlow={vi.fn()}
                         {...props}
@@ -46,6 +47,25 @@ describe('HomePage integration flows', () => {
         fireEvent.click(screen.getByText('Settings'));
         expect(screen.getByRole('heading', { name: 'Settings' })).toBeTruthy();
         expect(screen.getByText('Flowpilot')).toBeTruthy();
+    });
+
+    it('exposes template and flowpilot entry points in the empty dashboard state', async () => {
+        const onLaunchWithTemplates = vi.fn();
+        const onLaunchWithAI = vi.fn();
+        useFlowStore.setState({
+            tabs: [],
+            activeTabId: null,
+            nodes: [],
+            edges: [],
+        });
+
+        await renderHomePage({ onLaunchWithTemplates, onLaunchWithAI });
+
+        fireEvent.click(screen.getByTestId('home-open-templates'));
+        fireEvent.click(screen.getByRole('button', { name: 'Generate with Flowpilot' }));
+
+        expect(onLaunchWithTemplates).toHaveBeenCalledTimes(1);
+        expect(onLaunchWithAI).toHaveBeenCalledTimes(1);
     });
 
     it('opens persisted flows from the dashboard list', async () => {

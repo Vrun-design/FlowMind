@@ -1,6 +1,7 @@
 import React from 'react';
 import { Handle, Position } from '@/lib/reactflowCompat';
 import { getConnectorHandleStyle, getHandlePointerEvents, getV2HandleVisibilityClass } from './handleInteraction';
+import { useCinematicExportState } from '@/context/CinematicExportContext';
 import { NodeTransformControls } from './NodeTransformControls';
 import { useActiveNodeSelection } from './useActiveNodeSelection';
 import { NodeQuickCreateButtons } from './NodeQuickCreateButtons';
@@ -36,6 +37,42 @@ const DEFAULT_HANDLES: HandleConfig[] = [
   { id: 'left', position: Position.Left, side: 'left' },
 ];
 
+function getCinematicNodePresentation(params: {
+  active: boolean;
+  isVisible: boolean;
+  isActive: boolean;
+  progress: number;
+}): Pick<React.CSSProperties, 'opacity' | 'transform' | 'filter'> {
+  const { active, isVisible, isActive, progress } = params;
+
+  if (!active) {
+    return {
+      opacity: 1,
+      transform: 'translateY(0px) scale(1)',
+      filter: undefined,
+    };
+  }
+
+  if (!isActive) {
+    return {
+      opacity: isVisible ? 1 : 0,
+      transform: 'translateY(0px) scale(1)',
+      filter: undefined,
+    };
+  }
+
+  const translateY = 8 * (1 - progress);
+  const scale = 0.985 + (0.015 * progress);
+  const glowRadius = 14 + Math.round(progress * 12);
+  const bloomRadius = 5 + Math.round(progress * 7);
+
+  return {
+    opacity: Math.max(0, progress),
+    transform: `translateY(${translateY}px) scale(${scale})`,
+    filter: `drop-shadow(0 10px ${glowRadius}px rgba(59,130,246,0.18)) drop-shadow(0 0 ${bloomRadius}px rgba(96,165,250,0.24))`,
+  };
+}
+
 export function NodeChrome({
   nodeId,
   selected,
@@ -48,6 +85,7 @@ export function NodeChrome({
   handles = DEFAULT_HANDLES,
   children,
 }: NodeChromeProps): React.ReactElement {
+  const cinematicExportState = useCinematicExportState();
   const visualQualityV2Enabled = true;
   const isActiveSelected = useActiveNodeSelection(selected);
   const handlePointerEvents = getHandlePointerEvents(visualQualityV2Enabled, isActiveSelected);
@@ -57,8 +95,26 @@ export function NodeChrome({
       ? 'opacity-100'
       : 'opacity-0 group-hover:opacity-100 [.is-connecting_&]:opacity-100';
 
+  const isCinematicNodeVisible = !nodeId || !cinematicExportState.active || cinematicExportState.visibleNodeIds.has(nodeId);
+  const isActiveCinematicNode = Boolean(nodeId) && cinematicExportState.active && cinematicExportState.activeNodeId === nodeId;
+  const activeNodeProgress = isActiveCinematicNode ? cinematicExportState.activeNodeProgress : 0;
+  const cinematicPresentation = getCinematicNodePresentation({
+    active: cinematicExportState.active,
+    isVisible: isCinematicNodeVisible,
+    isActive: isActiveCinematicNode,
+    progress: activeNodeProgress,
+  });
+
   return (
-    <div className="group relative h-full w-full">
+    <div
+      className="group relative h-full w-full"
+      style={{
+        opacity: cinematicPresentation.opacity,
+        transform: cinematicPresentation.transform,
+        transformOrigin: 'center center',
+        filter: cinematicPresentation.filter,
+      }}
+    >
       <NodeTransformControls
         isVisible={selected}
         minWidth={minWidth}

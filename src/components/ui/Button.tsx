@@ -23,19 +23,19 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 }, ref) => {
     const isBeveled = IS_BEVELED;
 
-    const baseStyles = "inline-flex items-center justify-center font-medium transition-all focus:outline-none disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
+    const baseStyles = "inline-flex items-center justify-center font-medium transition-all focus:outline-none disabled:pointer-events-none disabled:shadow-none active:scale-[0.98] disabled:active:scale-100";
 
     const variants = {
         primary: `
             bg-[var(--brand-primary)] text-white 
             ${isBeveled ? 'btn-beveled-primary' : 'shadow-sm hover:shadow-md'}
-            hover:brightness-110
+            hover:brightness-110 disabled:border-[color-mix(in_srgb,var(--brand-primary),white_50%)] disabled:bg-[color-mix(in_srgb,var(--brand-primary),white_72%)] disabled:text-white
         `.replace(/\s+/g, ' ').trim(),
 
         secondary: `
             bg-white text-slate-700 border border-slate-200 
             ${isBeveled ? 'btn-beveled-secondary' : 'shadow-sm hover:shadow-md'}
-            hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] hover:border-[var(--brand-primary-200)]
+            hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] hover:border-[var(--brand-primary-200)] disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400
         `.replace(/\s+/g, ' ').trim(),
 
         ghost: "text-slate-500 hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] transition-colors",

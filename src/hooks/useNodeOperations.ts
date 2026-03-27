@@ -11,6 +11,7 @@ import { useNodeOperationAdders } from './node-operations/useNodeOperationAdders
 import { useMindmapNodeOperations } from './node-operations/useMindmapNodeOperations';
 import { useArchitectureNodeOperations } from './node-operations/useArchitectureNodeOperations';
 import { useNodeDragOperations } from './node-operations/useNodeDragOperations';
+import { syncSequenceEdgeParticipantKinds } from '@/services/sequence/sequenceMessage';
 
 export const useNodeOperations = (recordHistory: () => void) => {
     useTranslation();
@@ -61,6 +62,10 @@ export const useNodeOperations = (recordHistory: () => void) => {
             return;
         }
 
+        const updatesSequenceParticipantKind = existingNode.type === 'sequence_participant'
+            && typeof data.seqParticipantKind === 'string'
+            && data.seqParticipantKind !== existingNode.data.seqParticipantKind;
+
         setNodes((nds) => {
             return reassignArchitectureNodeBoundary({
                 nodes: nds,
@@ -68,6 +73,17 @@ export const useNodeOperations = (recordHistory: () => void) => {
                 data,
             });
         });
+
+        if (updatesSequenceParticipantKind) {
+            setEdges((existingEdges) => {
+                const nextNodes = state.nodes.map((node) => (
+                    node.id === id
+                        ? { ...node, data: { ...node.data, ...data } }
+                        : node
+                ));
+                return syncSequenceEdgeParticipantKinds(nextNodes, existingEdges);
+            });
+        }
     }, [applyMindmapBranchColor, setEdges, setNodes]);
 
     const applyBulkNodeData = useCallback((updates: Partial<NodeData>, labelPrefix = '', labelSuffix = '') => {
@@ -153,6 +169,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         handleAddJourneyNode,
         handleAddMindmapNode,
         handleAddArchitectureNode,
+        handleAddSequenceParticipant,
         handleAddClassNode,
         handleAddEntityNode,
         handleAddSection,
@@ -180,6 +197,7 @@ export const useNodeOperations = (recordHistory: () => void) => {
         handleAddJourneyNode,
         handleAddMindmapNode,
         handleAddArchitectureNode,
+        handleAddSequenceParticipant,
         handleAddClassNode,
         handleAddEntityNode,
         handleAddSection,

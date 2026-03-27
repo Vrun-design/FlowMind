@@ -15,6 +15,7 @@ const LazyWelcomeModal = lazy(async () => {
 interface HomePageProps {
     onLaunch: () => void;
     onLaunchWithTemplates: () => void;
+    onLaunchWithAI: () => void;
     onImportJSON: () => void;
     onOpenFlow: (flowId: string) => void;
     activeTab?: 'home' | 'settings';
@@ -24,6 +25,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({
     onLaunch,
     onLaunchWithTemplates,
+    onLaunchWithAI,
     onImportJSON,
     onOpenFlow,
     activeTab: propActiveTab,
@@ -124,6 +126,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <HomeDashboard
                         flows={flows}
                         onCreateNew={onLaunch}
+                        onOpenTemplates={onLaunchWithTemplates}
+                        onPromptWithAI={onLaunchWithAI}
                         onImportJSON={onImportJSON}
                         onOpenFlow={onOpenFlow}
                         onRenameFlow={handleRenameFlow}
@@ -162,6 +166,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <Suspense fallback={null}>
                     <LazyWelcomeModal
                         onOpenTemplates={onLaunchWithTemplates}
+                        onPromptWithAI={onLaunchWithAI}
                         onImport={onImportJSON}
                         onBlankCanvas={onLaunch}
                     />

@@ -20,16 +20,16 @@ const GRID_COLUMNS: Record<number, string> = {
 };
 
 function getContainerPaddingClass(size: SegmentedChoiceProps['size']): string {
-    return size === 'sm' ? 'p-0.5' : 'p-1';
+    return size === 'sm' ? 'p-0.5' : 'p-0.75';
 }
 
 function getItemClassName(selected: boolean, size: SegmentedChoiceProps['size']): string {
-    const spacingClass = size === 'sm' ? 'px-2 py-1 text-[11px]' : 'px-3 py-1.5 text-xs';
+    const spacingClass = size === 'sm' ? 'min-h-8 px-2.5 py-1 text-[11px]' : 'min-h-10 px-3.5 py-2 text-[13px]';
 
-    return `flex items-center justify-center rounded-[var(--radius-xs)] font-medium transition-all duration-200 ${spacingClass} ${
+    return `flex items-center justify-center rounded-[var(--radius-xs)] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary-200)] focus-visible:ring-offset-1 ${spacingClass} ${
         selected
-            ? 'bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/50'
-            : 'text-slate-500 hover:bg-slate-200/50 hover:text-slate-700'
+            ? 'bg-white text-[var(--brand-primary)] shadow-sm ring-1 ring-[var(--brand-primary-200)]'
+            : 'text-slate-500 hover:bg-white/85 hover:text-slate-700'
     }`;
 }
 
@@ -44,7 +44,7 @@ export function SegmentedChoice({
     const paddingClass = getContainerPaddingClass(size);
 
     return (
-        <div className={`grid ${gridClass} gap-1 rounded-[var(--radius-sm)] bg-slate-100/80 ${paddingClass}`}>
+        <div className={`grid ${gridClass} gap-1 rounded-[var(--radius-sm)] border border-slate-200/80 bg-slate-100/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] ${paddingClass}`}>
             {items.map((item) => {
                 const selected = item.id === selectedId;
                 return (
@@ -53,6 +53,7 @@ export function SegmentedChoice({
                         type="button"
                         onClick={() => onSelect(item.id)}
                         className={getItemClassName(selected, size)}
+                        aria-pressed={selected}
                     >
                         {item.label}
                     </button>

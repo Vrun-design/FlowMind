@@ -1,11 +1,11 @@
 <div align="center">
 
-<img src="public/favicon.svg" width="80" alt="OpenFlowKit logo" />
+<img src="public/favicon.svg" width="90" alt="OpenFlowKit logo" />
 
-# OpenFlowKit
+<h1>OpenFlowKit</h1>
 
-**The open-source diagramming studio with AI generation, diagram-as-code, and Figma export.**  
-Local-first. No account. No cloud. No cost. MIT licensed.
+<p><strong>The open-source diagramming studio for developers and builders.</strong><br/>
+Prompt · Import · Edit · Export as animated video · Collaborate — entirely in your browser, no account required.</p>
 
 <p>
   <a href="https://github.com/Vrun-design/openflowkit/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-orange.svg" alt="MIT License" /></a>
@@ -19,21 +19,21 @@ Local-first. No account. No cloud. No cost. MIT licensed.
 
 <p>
   <a href="https://www.producthunt.com/products/openflowkit?utm_source=badge-top-post-topic-badge&utm_medium=badge&utm_campaign=badge-openflowkit" target="_blank">
-    <img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-topic-badge.svg?post_id=1081019&theme=light&period=weekly&topic_id=44" alt="OpenFlowKit - Open-source diagramming studio with AI, diagram-as-code &amp; Figma export | Product Hunt" width="200" height="43" />
+    <img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-topic-badge.svg?post_id=1081019&theme=light&period=weekly&topic_id=44" alt="OpenFlowKit on Product Hunt" width="200" height="43" />
   </a>
 </p>
 
-<p>
-  <a href="https://app.openflowkit.com"><strong>→ Open the App</strong></a>
+<h3>
+  <a href="https://app.openflowkit.com">→ Launch the App</a>
   &nbsp;·&nbsp;
   <a href="https://openflowkit.com">Website</a>
   &nbsp;·&nbsp;
-  <a href="https://docs.openflowkit.com">Docs</a>
+  <a href="https://docs.openflowkit.com">Documentation</a>
   &nbsp;·&nbsp;
   <a href="https://github.com/Vrun-design/openflowkit/issues/new?template=bug_report.md">Report a Bug</a>
   &nbsp;·&nbsp;
   <a href="https://github.com/Vrun-design/openflowkit/issues/new?template=feature_request.md">Request a Feature</a>
-</p>
+</h3>
 
 </div>
 
@@ -41,38 +41,64 @@ Local-first. No account. No cloud. No cost. MIT licensed.
 
 ## What is OpenFlowKit?
 
-A **browser-based diagramming studio** for engineers and designers — structured canvas, bidirectional diagram-as-code, multi-provider AI generation, and multi-format export, all running in your browser with no account required.
+OpenFlowKit is a **local-first, developer-grade diagramming workspace** that lives entirely in your browser. It is built for the engineers, architects, and builders who create system diagrams for a living — and who are tired of paying for cloud tools, surrendering their data, or fighting with drag-and-drop tools that produce static images instead of living, version-controllable artifacts.
 
-- 🤖 **AI generation with your own key** — 8 providers (Gemini, OpenAI, Claude, Groq, Ollama + more), keys stay in your browser
-- 📐 **8 structured diagram types** — flowcharts, AWS/Azure/CNCF architecture, class, ER, mind maps, state, wireframes
-- `{}` **Diagram-as-code, bidirectionally** — edit visually or in the OpenFlow DSL, always in sync
-- 📤 **Export everything** — SVG, PNG, Figma, Mermaid, PlantUML, animated GIF/MP4, cinematic reveal videos
-- 🔒 **Fully local-first** — no account, no telemetry, offline-capable, MIT licensed
+**The core loop is simple:**
 
-**Built for** engineers, architects, and technical PMs who want a fast, structured diagramming tool that doesn't require a cloud account or a credit card.
+```
+Prompt / Import → Edit visually or in code → Export anywhere
+```
+
+Start from a plain-English prompt, a Mermaid file, SQL schema, OpenAPI spec, Terraform config, or one of 20 built-in templates. Refine on a polished canvas. Export to Mermaid, PlantUML, Figma, PNG, PDF, or a cinematic reveal video. Your diagrams stay in your browser by default, and your API keys never leave your device.
 
 ---
 
-
 ## Why OpenFlowKit?
+
+Every existing tool misses something critical for developers. OpenFlowKit fills those gaps.
 
 | Tool | The gap | How OpenFlowKit fills it |
 |---|---|---|
-| **Excalidraw** | Freeform only, no structured diagram types, no DSL | 8 structured families, bidirectional diagram-as-code, Figma export |
-| **Draw.io / diagrams.net** | Dated UX, no AI, no code representation | Modern React 19 canvas, AI generation, OpenFlow DSL |
+| **Excalidraw** | Freeform only, no structured diagram types, no DSL | 8 structured diagram families, bidirectional diagram-as-code, Figma export |
+| **Draw.io / diagrams.net** | Dated UX, no AI, no code representation | Modern React 19 canvas, 9 AI providers, OpenFlow DSL |
 | **Mermaid.js** | Code-only, no visual editor | Full visual editor on top of Mermaid — edit visually or in code, bidirectionally |
 | **tldraw** | Whiteboard-first, no structured diagram types | Cloud architecture (AWS/Azure/CNCF icons), class, ER, state, and more |
-| **Lucidchart / Miro** | Paid, cloud-only, account required | 100% free, MIT licensed, local-first, offline-capable, no account |
+| **Lucidchart / Miro** | Paid, cloud-only, account required | MIT licensed, local-first, and usable without an account |
+
+**OpenFlowKit combines** a visual canvas editor, a diagram-as-code environment, an AI-powered generator, a developer import pipeline, and a Figma / docs export workflow in one open-source, local-first app.
+
+---
+
+## ✨ Spotlight: Cinematic Export
+
+<p align="center">
+<strong>Turn a finished diagram into a polished animated walkthrough without leaving the editor.</strong>
+</p>
+
+Most diagramming tools stop at static images. OpenFlowKit can export a **cinematic build video or GIF** so a diagram can be presented as a lightweight animated walkthrough. This is especially useful for:
+
+- 📣 **Conference talks & demos** — walk the audience through your system live
+- 📖 **Docs & wikis** — embed an animated GIF that loads without a video player
+- 🐦 **Social posts & Product Hunt launches** — eye-catching previews that stop the scroll
+- 🎓 **Engineering onboarding** — show new hires how a system connects, step by step
+
+**How it works:**
+1. Build and refine the diagram on the canvas
+2. Open **Export**
+3. Choose a cinematic video or cinematic GIF output
+4. Generate a shareable artifact directly in the browser
+
+No account. No upload. No third-party video service. Rendered entirely in your browser.
 
 ---
 
 ## Features
 
-### 🤖 Flowpilot — AI Generation
+### 🤖 Flowpilot — AI Generation & Editing
 
-Describe a system in plain English. Flowpilot generates a fully laid-out, editable diagram. Bring your own key — keys are stored in your browser and never leave your device.
+Describe a system in natural language. Flowpilot generates a fully laid-out, editable diagram in seconds. Bring your own key from any supported provider — keys are stored in your browser and never transmitted to OpenFlowKit servers.
 
-**Supported providers:**
+**9 supported AI providers:**
 
 | Provider | Default model |
 |---|---|
@@ -87,84 +113,103 @@ Describe a system in plain English. Flowpilot generates a fully laid-out, editab
 | **Custom endpoint** | Any OpenAI-compatible API (Ollama, LM Studio, Together AI…) |
 
 **Flowpilot capabilities:**
-- Generate a new diagram from a text prompt
-- Iteratively edit the existing canvas with targeted instructions
-- Scope edits to the current selection only
-- Attach an image alongside your prompt for visual context
-- Stream responses in real time with a cancel button
-- Multi-turn conversation with persistent chat history
-- Diff preview (added / updated / removed node count) before applying — confirm or discard
-- **Inline key setup** — add your API key directly in the AI panel, no Settings detour
 
-### 📥 AI Import Pipelines
+- ✦ Generate a new diagram from a text prompt
+- ✦ Iteratively edit the existing canvas with targeted instructions
+- ✦ Scope edits to the current selection only
+- ✦ Attach an image alongside your prompt for visual context
+- ✦ Stream responses in real time with a cancel button
+- ✦ Multi-turn conversation with browser-local chat history
+- ✦ **Diff preview** — see added / updated / removed node count before applying; confirm or discard
+- ✦ **Shared AI settings modal** — open provider and key setup from Flowpilot when AI is not configured
 
-Generate diagrams directly from structured source artifacts:
+---
 
-| Source | Output |
+### 📥 Developer Import Pipelines
+
+Feed any structured artifact into OpenFlowKit and get a ready-to-edit diagram:
+
+| Source | Generated diagram |
 |---|---|
-| **SQL DDL** (`CREATE TABLE` statements) | Entity-relationship diagram |
-| **Terraform / Kubernetes YAML / Docker Compose** | Cloud architecture diagram |
-| **OpenAPI / Swagger spec** | API sequence diagram |
-| **Source code** (TS, JS, Python, Go, Java, Ruby, C#, C++, Rust) | Architecture draft |
+| **SQL DDL** (`CREATE TABLE` statements) | Entity-relationship diagram with typed fields and cardinalities |
+| **Terraform / Kubernetes YAML / Docker Compose** | Cloud architecture diagram with provider icons |
+| **OpenAPI / Swagger spec** | API sequence diagram with operations and responses |
+| **Source code** (TS, JS, Python, Go, Java, Ruby, C#, C++, Rust) | Architecture draft from module structure |
+| **Mermaid** | Native import, fully editable |
 
-File upload supported with automatic language detection from extension, or paste raw text.
+File upload with automatic language detection, or paste raw text.
 
-### 📐 Diagram Types
+---
 
-| Diagram | Node types | Mermaid export |
+### 📐 8 Structured Diagram Types
+
+| Diagram | What it includes | Mermaid export |
 |---|---|---|
-| **Flowchart** | Start/end, process, decision, custom, annotation, section, swimlane | `flowchart TD` |
-| **Architecture** | Cloud service tiles (AWS, Azure, CNCF icons), zones, trust domains, boundaries | `architecture-beta` |
-| **Class Diagram** | UML classes with attributes, methods, stereotypes, relations | `classDiagram` |
-| **ER Diagram** | Entities with typed fields (PK, FK, NN, UNIQUE) and cardinality edges | `erDiagram` |
-| **Mind Map** | Hierarchical topics with curved branch styles and depth-aware layout | `mindmap` |
-| **User Journey** | Scored tasks grouped into named sections with actor annotations | `journey` |
-| **State Diagram** | States with composite containers and start-node markers | `stateDiagram-v2` |
-| **Wireframe** | Browser shells, mobile device frames, UI component blocks | — |
+| **Flowchart** | Start/end, process, decision, annotation, swimlane, section | `flowchart TD` |
+| **Architecture** | AWS, Azure, CNCF icons; zones, trust domains, service boundaries | `architecture-beta` |
+| **Class Diagram** | UML classes, attributes, methods, stereotypes, all relation types | `classDiagram` |
+| **ER Diagram** | Entities with typed fields (PK, FK, NN, UNIQUE), cardinality edges | `erDiagram` |
+| **Mind Map** | Hierarchical topics, curved branches, depth-aware auto-layout | `mindmap` |
+| **User Journey** | Scored tasks, named sections, actor annotations | `journey` |
+| **State Diagram** | States, composite containers, start-node markers | `stateDiagram-v2` |
+| **Wireframe** | Browser shells, mobile frames, UI component blocks | — |
 
-### 📤 Export
+---
 
-**Image:** SVG · PNG (transparent, hi-res) · JPG · PDF
+### 📤 Export Everywhere
 
-**Animation / Video:** Playback WebM/MP4 · Playback GIF · **Cinematic Reveal Video** · **Cinematic Reveal GIF** (nodes fade in wave-by-wave with smooth opacity transitions — white background, ready for social/docs)
+**🖼 Images:** SVG · PNG (transparent, hi-res) · JPG · PDF
 
-**Code / Data:** JSON (native, fully reopenable) · OpenFlow DSL · Mermaid · PlantUML · **README Embed** (copy a Markdown badge snippet)
+**🎬 Animation & Video** *(unique to OpenFlowKit)*
 
-**Design Handoff:** Figma — paste directly into Figma as editable SVG with text layers
+| Format | Description |
+|---|---|
+| Playback MP4 / WebM | Simple video replay of your diagram |
+| Playback GIF | Looping animation for embedding anywhere |
+| **Cinematic Video** ⭐ | Presentation-friendly animated diagram export for talks, demos, and walkthroughs |
+| **Cinematic GIF** ⭐ | Lightweight looping animated export for embeds and social sharing |
 
-**Sharing:** Read-only viewer link (diagram encoded in URL, zero server required)
+**`{}` Code & Data:** JSON · OpenFlow DSL · Mermaid · PlantUML
+
+**🎨 Design Handoff:** Paste directly into **Figma** as editable SVG with intact text layers
+
+**🔗 Sharing:** Read-only viewer link — diagram encoded in the URL, zero server required
+
+---
 
 ### `{}` OpenFlow DSL — Diagram as Code
 
-Every diagram has a live text representation in the Studio Code Panel. Edits sync bidirectionally — change the canvas, the code updates; change the code, the canvas updates.
+Every diagram has a live text representation. Edits sync **bidirectionally** — change the canvas, the code updates; change the code, the canvas updates. The AI reads and writes this format, making it ideal for version-controlled documentation and automated diagram generation.
 
 ```yaml
 # Example: AWS architecture as code
-Auth Service [architecture] provider=aws resource=security
-API Gateway  [architecture] provider=aws resource=api
-Redis Cache  [architecture] provider=aws resource=database
-Postgres DB  [architecture] provider=aws resource=database
+Auth Service   [architecture] provider=aws resource=security
+API Gateway    [architecture] provider=aws resource=api
+Redis Cache    [architecture] provider=aws resource=database
+Postgres DB    [architecture] provider=aws resource=database
 
 Auth Service -> API Gateway
 API Gateway  -> Redis Cache
 API Gateway  -> Postgres DB
 ```
 
-The AI reads and writes this format. Useful for version-controlled diagrams, reproducible systems documentation, and AI editing loops.
+The DSL supports explicit node IDs, typed attributes, edge styles, labeled connections, and group containers — all in a concise, human-readable format. See [DSL_MANUAL.md](DSL_MANUAL.md) for the full reference.
 
-### 🎬 Playback & Presentation Mode
+---
 
-Build animated walkthroughs of diagrams without leaving the app.
+### 🎬 Playback & Presentation
 
-- **Auto-order presets:** Smart (topology-first), Top-to-Bottom, Left-to-Right, Reverse
-- **Scene management:** multiple named scenes, each with its own step order
-- **Timeline editor:** per-step durations, drag reorder, toggle steps in/out of scenes
-- **Preview mode:** renders the diagram progressively in the canvas
-- **Export:** WebM/MP4 video or animated GIF
+OpenFlowKit includes presentation-oriented animated export for sharing a diagram as motion instead of a single static frame.
 
-### 📦 Templates
+- **Cinematic export:** generate a browser-rendered video or GIF from the current diagram
+- **Presentation-ready output:** useful for demos, onboarding, social posts, and docs walkthroughs
+- **Shareable artifacts:** export motion without a separate video editor
 
-20 built-in starter templates across 7 categories — searchable, one-click loadable:
+---
+
+### 📦 20 Built-in Templates
+
+One-click starters across 7 categories, fully searchable.
 
 <details>
 <summary>View all templates</summary>
@@ -201,6 +246,8 @@ Build animated walkthroughs of diagrams without leaving the app.
 
 </details>
 
+---
+
 ### 🔀 Smart Auto-Layout
 
 One-click ELK.js layout with four presets:
@@ -208,31 +255,32 @@ One-click ELK.js layout with four presets:
 | Preset | Algorithm | Best for |
 |---|---|---|
 | Tree | `mrtree`, top-down | Org charts, dependency trees |
-| Hierarchical | `layered`, top-down | Most flows |
-| Compact | `layered`, left-right, tight spacing | Dense diagrams |
-| Spacious | `layered`, left-right, loose spacing | Presentations |
+| Hierarchical | `layered`, top-down | Most flows and sequences |
+| Compact | `layered`, left-right, tight | Dense diagrams |
+| Spacious | `layered`, left-right, loose | Presentations and handoffs |
 
-### 👥 Collaboration *(beta)*
+---
 
-Real-time peer-to-peer collaboration via WebRTC + Yjs. Share a room link — participants see live cursors, presence indicators, and synchronized canvas state.
+### 👥 Real-Time Collaboration *(beta)*
 
-### 🚀 First-Run Experience
+Peer-to-peer collaboration via **WebRTC + Yjs**. Share a room link — participants see live cursors, presence indicators, and a fully synchronized canvas state. No server-side diagram storage, ever.
 
-New users see a **Welcome overlay** with three paths: start from a template, import a diagram, or jump to a blank canvas. No blank-screen confusion.
+---
 
-### ⌨️ Canvas & Keyboard
+### ⌨️ Canvas, Keyboard & Multi-Tab Workspace
 
 - **Multi-tab workspace** — multiple diagrams open simultaneously
-- **Undo / redo** — per-tab history
+- **Undo / redo** — per-tab history with full undo stack
 - **Snapshots** — named point-in-time save states
 - **Inline label editing** — double-click or `F2`
 - **Bulk properties** — edit multiple selected nodes at once
-- **Style clipboard** — `Cmd+Alt+C` / `Cmd+Alt+V` copy/paste visual styles between nodes
+- **Style clipboard** — `Cmd+Alt+C` / `Cmd+Alt+V` to copy/paste styles between nodes
 - **Node quick-create** — `Alt+Arrow` to spawn and connect a new node in any direction
 - **Node search** — `Cmd+F` to find nodes by label
+- **Architecture lint** — automatic validation rules for cloud diagrams
 - **Design systems** — full color/typography theming with white-label support
 
-**Key shortcuts:**
+**Essential shortcuts:**
 
 | Shortcut | Action |
 |---|---|
@@ -246,9 +294,21 @@ New users see a **Welcome overlay** with three paths: start from a template, imp
 | `F2` | Edit label inline |
 | `Cmd+Alt+C` / `Cmd+Alt+V` | Copy / Paste style |
 
+---
+
 ### 🌐 Internationalization
 
 Available in 7 languages: **English · German · Spanish · French · Japanese · Turkish · Chinese**
+
+---
+
+### 🔒 Privacy & Security
+
+- **No account, ever.** No sign-up, no login, no user tracking.
+- **Keys stay in your browser.** API keys are never transmitted to OpenFlowKit. Persistent storage and session-only storage are both supported.
+- **Local-first persistence.** Diagrams are saved in browser-local storage by default and restored on refresh and browser restart unless you delete them.
+- **No telemetry.** We don't collect usage data.
+- **MIT licensed.** No lock-in, no strings attached.
 
 ---
 
@@ -258,10 +318,11 @@ Available in 7 languages: **English · German · Spanish · French · Japanese �
 |---|---|
 | UI framework | React 19 + TypeScript 5 |
 | Canvas engine | React Flow / XYFlow 12 |
-| Layout | ELK.js |
-| State | Zustand 5 |
+| Graph layout | ELK.js |
+| State management | Zustand 5 |
 | Styling | Tailwind CSS 4 |
 | Animation | Framer Motion |
+| Collaboration | Yjs + y-webrtc + y-indexeddb |
 | Build | Vite 6 |
 | Unit / integration tests | Vitest 4 + Testing Library |
 | E2E tests | Playwright |
@@ -274,10 +335,10 @@ Available in 7 languages: **English · German · Spanish · French · Japanese �
 
 ### Prerequisites
 
-- Node.js ≥ 18
-- npm ≥ 9
+- **Node.js** ≥ 18
+- **npm** ≥ 9
 
-### Run locally
+### Run locally in 30 seconds
 
 ```bash
 git clone https://github.com/Vrun-design/openflowkit.git
@@ -289,13 +350,13 @@ npm run dev
 
 ### Add an AI provider
 
-Open the AI panel — if no key is configured, an inline setup card lets you pick a provider and paste your key without leaving the canvas. Alternatively, go to **Settings → AI** for full configuration. Keys are stored in your browser via `localStorage` and never leave your device. Session-only mode (no persistence) is also available.
+Open the AI panel in the sidebar. If no key is configured, the **Add key** action opens the shared AI settings modal, where you can choose a provider, enter your API key, and decide whether it should persist on the current device or only for the current session.
 
 ---
 
 ## Commands
 
-### App
+### Development
 
 ```bash
 npm run dev           # Start dev server (localhost:5173)
@@ -359,16 +420,16 @@ openflowkit/
 
 ### Editor architecture
 
-The editor follows a four-layer composition model:
+The editor follows a strict four-layer composition model that separates concerns cleanly:
 
 ```
-FlowEditor.tsx                        ← render shell only
-  └─ useFlowEditorScreenModel.ts      ← compose store state + domain hooks + refs
-       └─ buildFlowEditorScreenControllerParams.ts  ← pure mapping (no side effects)
-            └─ useFlowEditorController.ts  ← adapts to shell/studio/panel/chrome props
+FlowEditor.tsx                                    ← render shell only
+  └─ useFlowEditorScreenModel.ts                  ← compose store state + domain hooks + refs
+       └─ buildFlowEditorScreenControllerParams.ts ← pure mapping (no side effects)
+            └─ useFlowEditorController.ts          ← adapts to shell/studio/panel/chrome props
 ```
 
-Domain services own logic. Hooks compose state and side effects. Components render and delegate.
+Domain services own logic. Hooks compose state and side effects. Components render and delegate. See [ARCHITECTURE.md](ARCHITECTURE.md) for the full breakdown.
 
 ---
 
@@ -386,16 +447,18 @@ All three surfaces deploy to Cloudflare Pages. See [`docs/cloudflare-pages-setup
 
 ## Contributing
 
-Contributions of all kinds are welcome — bug reports, features, docs, translations. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
+Contributions of all kinds are welcome — bug reports, features, docs, translations, and design feedback. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 
-**Key constraints for contributors:**
+**Key constraints to know before contributing:**
 
-1. **Do not rename persisted storage keys** without an explicit migration path — renaming silently erases existing user browser data.
-2. **Gate new features** behind a rollout flag in `src/config/rolloutFlags.ts`; remove the flag once fully promoted.
-3. **Keep lint, test, and build checks green.** CI is a strict gate (zero ESLint warnings).
-4. **Prefer small, reversible change-sets.**
-5. **No new runtime dependencies** without opening an issue and getting agreement first.
-6. **Component size:** aim for ≤ 250 lines per component file.
+| Constraint | Why it matters |
+|---|---|
+| **Do not rename persisted storage keys** without a migration path | Renaming silently erases existing user browser data |
+| **Gate new features** behind a rollout flag in `src/config/rolloutFlags.ts` | Allows safe promotion and easy rollback |
+| **Keep lint, test, and build green** | CI is a strict gate — zero ESLint warnings |
+| **Prefer small, reversible change-sets** | Easier to review, safer to merge |
+| **No new runtime dependencies** without opening an issue first | Keeps the bundle lean and deliberate |
+| **Component size ≤ 250 lines** | Maintains readability and testability |
 
 ### Quick contributor setup
 
@@ -419,14 +482,14 @@ Pre-commit hooks run `lint-staged` → ESLint on all changed `.ts`/`.tsx` files.
 
 <div align="center">
 
-### If OpenFlowKit saves you time, a ⭐ on GitHub goes a long way.
+### Built something with OpenFlowKit? A ⭐ on GitHub helps more developers find it.
 
 [![Star on GitHub](https://img.shields.io/github/stars/Vrun-design/openflowkit?style=social)](https://github.com/Vrun-design/openflowkit/stargazers)
 
-**[→ Open the App](https://app.openflowkit.com)** &nbsp;·&nbsp; **[Read the Docs](https://docs.openflowkit.com)** &nbsp;·&nbsp; **[Contribute](CONTRIBUTING.md)** &nbsp;·&nbsp; **[Report a Bug](https://github.com/Vrun-design/openflowkit/issues)**
+**[→ Launch the App](https://app.openflowkit.com)** &nbsp;·&nbsp; **[Read the Docs](https://docs.openflowkit.com)** &nbsp;·&nbsp; **[Contribute](CONTRIBUTING.md)** &nbsp;·&nbsp; **[Report a Bug](https://github.com/Vrun-design/openflowkit/issues)**
 
-<sub>Built with React 19 · TypeScript · Vite · ELK.js · Yjs · Cloudflare Pages</sub>
+<sub>React 19 · TypeScript 5 · Vite 6 · ELK.js · Yjs · Cloudflare Pages</sub>
 
-<sub>MIT Licensed · Local-first · No telemetry · No account required</sub>
+<sub>MIT Licensed · Local-first · No telemetry · No account required · No lock-in</sub>
 
 </div>

@@ -6,6 +6,7 @@ import { MINDMAP_PLUGIN } from '@/diagram-types/mindmap/plugin';
 import { JOURNEY_PLUGIN } from '@/diagram-types/journey/plugin';
 import { ARCHITECTURE_PLUGIN } from '@/diagram-types/architecture/plugin';
 import { STATE_DIAGRAM_PLUGIN } from '@/diagram-types/stateDiagram/plugin';
+import { SEQUENCE_PLUGIN } from '@/diagram-types/sequence/plugin';
 
 let didRegisterBuiltIns = false;
 
@@ -21,5 +22,6 @@ export function registerBuiltInDiagramPlugins(): void {
   registerDiagramPlugin(MINDMAP_PLUGIN);
   registerDiagramPlugin(JOURNEY_PLUGIN);
   registerDiagramPlugin(ARCHITECTURE_PLUGIN);
+  registerDiagramPlugin(SEQUENCE_PLUGIN);
   didRegisterBuiltIns = true;
 }

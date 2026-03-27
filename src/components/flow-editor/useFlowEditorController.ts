@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { shouldOpenFlowEditorTemplates } from '@/app/routeState';
+import { shouldOpenFlowEditorAI, shouldOpenFlowEditorTemplates } from '@/app/routeState';
 import type { FlowEdge, FlowNode, FlowSnapshot } from '@/lib/types';
 import type { FlowEditorMode, StudioCodeMode, StudioTab } from '@/hooks/useFlowEditorUIState';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
@@ -71,6 +71,7 @@ type FlowEditorCommandBarConfig = Omit<
     | 'handleAddJourneyNode'
     | 'handleAddMindmapNode'
     | 'handleAddArchitectureNode'
+    | 'handleAddSequenceParticipant'
     | 'handleAddClassNode'
     | 'handleAddEntityNode'
     | 'handleAddImage'
@@ -135,14 +136,21 @@ export interface UseFlowEditorChromeParams {
     handleCloseTab: (tabId: string) => void;
     handleRenameTab: (tabId: string, newName: string) => void;
     handleExport: (format?: 'png' | 'jpeg') => void;
+    handleCopyImage: (format?: 'png' | 'jpeg') => void;
     handleSvgExport: () => void;
+    handleCopySvg: () => void;
     handlePdfExport: () => void;
-    handleAnimatedExport: (format: 'video' | 'gif') => void;
-    handleRevealExport: (format: 'reveal-video' | 'reveal-gif') => void;
+    handleCinematicExport: (format: 'cinematic-video' | 'cinematic-gif') => void;
+    handleExportJSON: () => void;
+    handleCopyJSON: () => void;
     handleExportMermaid: () => void;
+    handleDownloadMermaid: () => void;
     handleExportPlantUML: () => void;
+    handleDownloadPlantUML: () => void;
     handleExportOpenFlowDSL: () => void;
+    handleDownloadOpenFlowDSL: () => void;
     handleExportFigma: () => void;
+    handleDownloadFigma: () => void;
     handleShare: () => void;
     handleImportJSON: () => void;
     openHistory: () => void;
@@ -174,6 +182,7 @@ export interface UseFlowEditorChromeParams {
     handleAddJourneyNode: () => void;
     handleAddMindmapNode: () => void;
     handleAddArchitectureNode: () => void;
+    handleAddSequenceParticipant: () => void;
     handleAddClassNode: () => void;
     handleAddEntityNode: () => void;
     handleAddImage: (imageUrl: string) => void;
@@ -234,6 +243,7 @@ export function useFlowEditorController({
             handleAddJourneyNode: chromeParams.handleAddJourneyNode,
             handleAddMindmapNode: chromeParams.handleAddMindmapNode,
             handleAddArchitectureNode: chromeParams.handleAddArchitectureNode,
+            handleAddSequenceParticipant: chromeParams.handleAddSequenceParticipant,
             handleAddClassNode: chromeParams.handleAddClassNode,
             handleAddEntityNode: chromeParams.handleAddEntityNode,
             handleAddImage: chromeParams.handleAddImage,
@@ -301,6 +311,16 @@ export function useFlowEditorController({
     useEffect(() => {
         if (!shouldOpenFlowEditorTemplates(shell.location.state)) return;
         chromeParams.openCommandBar('templates');
+        shell.navigate(
+            { pathname: shell.location.pathname, search: shell.location.search, hash: shell.location.hash },
+            { replace: true, state: null }
+        );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (!shouldOpenFlowEditorAI(shell.location.state)) return;
+        openStudioAI();
         shell.navigate(
             { pathname: shell.location.pathname, search: shell.location.search, hash: shell.location.hash },
             { replace: true, state: null }

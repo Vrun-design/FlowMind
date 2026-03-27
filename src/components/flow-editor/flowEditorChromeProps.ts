@@ -9,15 +9,21 @@ interface BuildTopNavParams {
     handleCloseTab: (tabId: string) => void;
     handleRenameTab: (tabId: string, newName: string) => void;
     handleExport: (format?: 'png' | 'jpeg') => void;
+    handleCopyImage: (format?: 'png' | 'jpeg') => void;
     handleSvgExport: () => void;
+    handleCopySvg: () => void;
     handlePdfExport: () => void;
-    handleAnimatedExport: (format: 'video' | 'gif') => void;
-    handleRevealExport: (format: 'reveal-video' | 'reveal-gif') => void;
+    handleCinematicExport: (format: 'cinematic-video' | 'cinematic-gif') => void;
     handleExportJSON: () => void;
+    handleCopyJSON: () => void;
     handleExportMermaid: () => void;
+    handleDownloadMermaid: () => void;
     handleExportPlantUML: () => void;
+    handleDownloadPlantUML: () => void;
     handleExportOpenFlowDSL: () => void;
+    handleDownloadOpenFlowDSL: () => void;
     handleExportFigma: () => void;
+    handleDownloadFigma: () => void;
     handleShare: () => void;
     handleImportJSON: () => void;
     openHistory: () => void;
@@ -69,15 +75,21 @@ export function buildFlowEditorTopNavProps({
     handleCloseTab,
     handleRenameTab,
     handleExport,
+    handleCopyImage,
     handleSvgExport,
+    handleCopySvg,
     handlePdfExport,
-    handleAnimatedExport,
-    handleRevealExport,
+    handleCinematicExport,
     handleExportJSON,
+    handleCopyJSON,
     handleExportMermaid,
+    handleDownloadMermaid,
     handleExportPlantUML,
+    handleDownloadPlantUML,
     handleExportOpenFlowDSL,
+    handleDownloadOpenFlowDSL,
     handleExportFigma,
+    handleDownloadFigma,
     handleShare,
     handleImportJSON,
     openHistory,
@@ -91,15 +103,21 @@ export function buildFlowEditorTopNavProps({
         onCloseTab: handleCloseTab,
         onRenameTab: handleRenameTab,
         onExportPNG: handleExport,
+        onCopyImage: handleCopyImage,
         onExportSVG: handleSvgExport,
+        onCopySVG: handleCopySvg,
         onExportPDF: handlePdfExport,
-        onExportAnimated: handleAnimatedExport,
-        onExportReveal: handleRevealExport,
+        onExportCinematic: handleCinematicExport,
         onExportJSON: handleExportJSON,
+        onCopyJSON: handleCopyJSON,
         onExportMermaid: handleExportMermaid,
+        onDownloadMermaid: handleDownloadMermaid,
         onExportPlantUML: handleExportPlantUML,
+        onDownloadPlantUML: handleDownloadPlantUML,
         onExportOpenFlowDSL: handleExportOpenFlowDSL,
+        onDownloadOpenFlowDSL: handleDownloadOpenFlowDSL,
         onExportFigma: handleExportFigma,
+        onDownloadFigma: handleDownloadFigma,
         onShare: handleShare,
         onImportJSON: handleImportJSON,
         onHistory: openHistory,
@@ -203,15 +221,21 @@ export function useFlowEditorChromeProps(params: UseFlowEditorChromePropsParams)
         handleCloseTab,
         handleRenameTab,
         handleExport,
+        handleCopyImage,
         handleSvgExport,
+        handleCopySvg,
         handlePdfExport,
-        handleAnimatedExport,
-        handleRevealExport,
+        handleCinematicExport,
         handleExportJSON,
+        handleCopyJSON,
         handleExportMermaid,
+        handleDownloadMermaid,
         handleExportPlantUML,
+        handleDownloadPlantUML,
         handleExportOpenFlowDSL,
+        handleDownloadOpenFlowDSL,
         handleExportFigma,
+        handleDownloadFigma,
         handleShare,
         handleImportJSON,
         openHistory,
@@ -252,15 +276,21 @@ export function useFlowEditorChromeProps(params: UseFlowEditorChromePropsParams)
         handleCloseTab,
         handleRenameTab,
         handleExport,
+        handleCopyImage,
         handleSvgExport,
+        handleCopySvg,
         handlePdfExport,
-        handleAnimatedExport,
-        handleRevealExport,
+        handleCinematicExport,
         handleExportJSON,
+        handleCopyJSON,
         handleExportMermaid,
+        handleDownloadMermaid,
         handleExportPlantUML,
+        handleDownloadPlantUML,
         handleExportOpenFlowDSL,
+        handleDownloadOpenFlowDSL,
         handleExportFigma,
+        handleDownloadFigma,
         handleShare,
         handleImportJSON,
         openHistory,
@@ -273,15 +303,21 @@ export function useFlowEditorChromeProps(params: UseFlowEditorChromePropsParams)
         handleCloseTab,
         handleRenameTab,
         handleExport,
+        handleCopyImage,
         handleSvgExport,
+        handleCopySvg,
         handlePdfExport,
-        handleAnimatedExport,
-        handleRevealExport,
+        handleCinematicExport,
         handleExportJSON,
+        handleCopyJSON,
         handleExportMermaid,
+        handleDownloadMermaid,
         handleExportPlantUML,
+        handleDownloadPlantUML,
         handleExportOpenFlowDSL,
+        handleDownloadOpenFlowDSL,
         handleExportFigma,
+        handleDownloadFigma,
         handleShare,
         handleImportJSON,
         openHistory,

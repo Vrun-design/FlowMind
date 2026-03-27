@@ -8,6 +8,15 @@ OpenFlowKit includes AI-assisted diagram generation through the Studio rail. Flo
 
 AI generation is most valuable when you need to go from ambiguity to structure quickly. It is not the only way to create diagrams in OpenFlowKit, and it is usually not the final step. Think of it as a draft accelerator.
 
+## Access and setup
+
+Flowpilot lives inside Studio. If an API key is not configured yet, OpenFlowKit prompts you to open the shared AI settings modal instead of keeping setup inline inside the panel.
+
+That matters for two reasons:
+
+- the same AI settings surface is used across the product
+- provider choice, model choice, and key storage behavior stay consistent whether you open AI from Home, Studio, or Settings
+
 ## Where AI lives in the product
 
 AI is available in the Studio panel under **Flowpilot** and through the **Open Flowpilot** command in the Command Center. Common sub-flows include:
@@ -42,6 +51,8 @@ The app supports multiple BYOK providers, including:
 - Custom OpenAI-compatible endpoint
 
 This matters because you are not locked to one hosted AI vendor or one billing model.
+
+API keys stay browser-local. Persistent keys can be stored for reuse on the current device, and session-only mode is available when you do not want the key to survive the browser session.
 
 ## When AI is the right tool
 

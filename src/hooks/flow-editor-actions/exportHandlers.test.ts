@@ -43,7 +43,6 @@ function createTranslator(fn: (key: string, options?: Record<string, unknown>) =
 describe('exportHandlers', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
-    vi.stubGlobal('alert', vi.fn());
     Object.assign(navigator, {
       clipboard: {
         writeText: vi.fn().mockResolvedValue(undefined),
@@ -51,18 +50,21 @@ describe('exportHandlers', () => {
     });
   });
 
-  it('copies Mermaid and PlantUML exports and alerts success', async () => {
+  it('copies Mermaid and PlantUML exports and shows toast feedback', async () => {
     const t = createTranslator((key: string) => key);
     const nodes = [createNode('n1')];
     const edges = [createEdge('e1', 'n1', 'n1')];
+    const addToast = vi.fn();
 
-    await exportMermaidToClipboard({ nodes, edges, t });
-    await exportPlantUMLToClipboard({ nodes, edges, t });
+    await exportMermaidToClipboard({ nodes, edges, t, addToast });
+    await exportPlantUMLToClipboard({ nodes, edges, t, addToast });
 
     expect(navigator.clipboard.writeText).toHaveBeenNthCalledWith(1, 'mermaid-export');
     expect(navigator.clipboard.writeText).toHaveBeenNthCalledWith(2, 'plantuml-export');
-    expect(alert).toHaveBeenCalledWith('flowEditor.mermaidCopied');
-    expect(alert).toHaveBeenCalledWith('flowEditor.plantUMLCopied');
+    expect(addToast).toHaveBeenCalledWith('Copying Mermaid…', 'info');
+    expect(addToast).toHaveBeenCalledWith('flowEditor.mermaidCopied', 'success');
+    expect(addToast).toHaveBeenCalledWith('Copying PlantUML…', 'info');
+    expect(addToast).toHaveBeenCalledWith('flowEditor.plantUMLCopied', 'success');
   });
 
   it('copies OpenFlow DSL and emits warning toast for skipped edges', async () => {

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Check, Code2, Copy, ExternalLink, Link, X } from 'lucide-react';
+import { Check, Code2, Copy, ExternalLink, FileCode2, Link, X } from 'lucide-react';
 
 interface ShareEmbedModalProps {
     viewerUrl: string;
@@ -41,8 +41,20 @@ function CopyRow({ label, value, icon: Icon }: { label: string; value: string; i
 }
 
 export function ShareEmbedModal({ viewerUrl, onClose }: ShareEmbedModalProps): React.ReactElement {
-    const readmeBadge = `[![View diagram](${viewerUrl})](${viewerUrl})`;
-    const markdownLink = `[View diagram on OpenFlowKit](${viewerUrl})`;
+    const viewer = new URL(viewerUrl);
+    const cardViewerUrl = (() => {
+        const next = new URL(viewer.toString());
+        next.searchParams.set('size', 'card');
+        return next.toString();
+    })();
+    const badgeViewerUrl = (() => {
+        const next = new URL(viewer.toString());
+        next.searchParams.set('size', 'badge');
+        return next.toString();
+    })();
+    const markdownLink = `[Open interactive diagram on OpenFlowKit](${viewerUrl})`;
+    const readmeLink = `[View architecture diagram](${badgeViewerUrl})`;
+    const iframeSnippet = `<iframe src="${cardViewerUrl}" width="720" height="420" style="border:0;border-radius:16px;overflow:hidden;" loading="lazy" title="OpenFlowKit diagram"></iframe>`;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={onClose}>
@@ -56,8 +68,8 @@ export function ShareEmbedModal({ viewerUrl, onClose }: ShareEmbedModalProps): R
             >
                 <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
                     <div>
-                        <h2 id="share-embed-title" className="text-sm font-semibold text-slate-800">Share diagram</h2>
-                        <p id="share-embed-description" className="mt-0.5 text-[11px] text-slate-400">Anyone with the link can view the diagram (read-only).</p>
+                        <h2 id="share-embed-title" className="text-sm font-semibold text-slate-800">Share and embed diagram</h2>
+                        <p id="share-embed-description" className="mt-0.5 text-[11px] text-slate-400">Viewer links are read-only and encode the diagram directly in the URL.</p>
                     </div>
                     <button type="button" onClick={onClose} className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors" aria-label="Close share dialog">
                         <X className="h-4 w-4" />
@@ -67,22 +79,23 @@ export function ShareEmbedModal({ viewerUrl, onClose }: ShareEmbedModalProps): R
                 <div className="space-y-3 p-5">
                     <CopyRow label="Viewer link" value={viewerUrl} icon={Link} />
                     <CopyRow label="Markdown link" value={markdownLink} icon={Code2} />
-                    <CopyRow label="README badge" value={readmeBadge} icon={Code2} />
+                    <CopyRow label="README link" value={readmeLink} icon={Code2} />
+                    <CopyRow label="Embed iframe" value={iframeSnippet} icon={FileCode2} />
 
                     <a
-                        href={viewerUrl}
+                        href={cardViewerUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-slate-200 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-[var(--brand-primary)] transition-colors"
                     >
                         <ExternalLink className="h-3.5 w-3.5" />
-                        Open viewer
+                        Open card viewer
                     </a>
                 </div>
 
                 <div className="border-t border-slate-100 px-5 py-3">
                     <p className="text-[10px] text-slate-400 leading-relaxed">
-                        The diagram is encoded in the URL — no server, no account. The link stays valid as long as you keep it.
+                        GitHub README usage should prefer the Markdown link. Blog posts and docs can use the iframe snippet with `size=card` or `size=badge`.
                     </p>
                 </div>
             </div>

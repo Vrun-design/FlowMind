@@ -1,39 +1,55 @@
 import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
+import { recordOnboardingEvent } from '@/services/onboarding/events';
 
 interface UseExportMenuParams {
     onExportPNG: (format: 'png' | 'jpeg') => void;
+    onCopyImage: (format: 'png' | 'jpeg') => void;
     onExportSVG: () => void;
+    onCopySVG: () => void;
     onExportPDF: () => void;
-    onExportAnimated: (format: 'video' | 'gif') => void;
-    onExportReveal: (format: 'reveal-video' | 'reveal-gif') => void;
+    onExportCinematic: (format: 'cinematic-video' | 'cinematic-gif') => void;
     onExportJSON: () => void;
+    onCopyJSON: () => void;
     onExportMermaid: () => void;
+    onDownloadMermaid: () => void;
     onExportPlantUML: () => void;
+    onDownloadPlantUML: () => void;
     onExportOpenFlowDSL: () => void;
+    onDownloadOpenFlowDSL: () => void;
     onExportFigma: () => void;
-    onShare: () => void;
+    onDownloadFigma: () => void;
+    onShare?: () => void;
 }
+
+type ExportActionKey = 'download' | 'copy';
+type ExportActionHandlers = Record<ExportActionKey, () => void>;
 
 interface UseExportMenuResult {
     isOpen: boolean;
     menuRef: RefObject<HTMLDivElement>;
     toggleMenu: () => void;
-    handleSelect: (key: string) => void;
+    handleSelect: (key: string, action: ExportActionKey) => void;
 }
 
 export function useExportMenu({
     onExportPNG,
+    onCopyImage,
     onExportSVG,
+    onCopySVG,
     onExportPDF,
-    onExportAnimated,
-    onExportReveal,
+    onExportCinematic,
     onExportJSON,
+    onCopyJSON,
     onExportMermaid,
+    onDownloadMermaid,
     onExportPlantUML,
+    onDownloadPlantUML,
     onExportOpenFlowDSL,
+    onDownloadOpenFlowDSL,
     onExportFigma,
-    onShare,
+    onDownloadFigma,
+    onShare: _onShare,
 }: UseExportMenuParams): UseExportMenuResult {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -42,7 +58,15 @@ export function useExportMenu({
         if (!isOpen) return;
 
         const handleClickOutside = (event: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+            const target = event.target;
+            const isSelectPortalTarget = target instanceof Element
+                && target.closest('[data-floating-select-root="true"]');
+
+            if (isSelectPortalTarget) {
+                return;
+            }
+
+            if (menuRef.current && !menuRef.current.contains(target as Node)) {
                 setIsOpen(false);
             }
         };
@@ -51,36 +75,36 @@ export function useExportMenu({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isOpen]);
 
-    const handlers: Record<string, () => void> = {
-        png: () => onExportPNG('png'),
-        jpeg: () => onExportPNG('jpeg'),
-        svg: onExportSVG,
-        pdf: onExportPDF,
-        video: () => onExportAnimated('video'),
-        gif: () => onExportAnimated('gif'),
-        'reveal-video': () => onExportReveal('reveal-video'),
-        'reveal-gif': () => onExportReveal('reveal-gif'),
-        json: onExportJSON,
-        openflow: onExportOpenFlowDSL,
-        mermaid: onExportMermaid,
-        plantuml: onExportPlantUML,
-        figma: onExportFigma,
-        share: onShare,
-        readme: () => {
-            const snippet = [
-                '<!-- Diagram built with OpenFlowKit — https://openflowkit.com -->',
-                '[![Diagram](./diagram.png)](https://openflowkit.com)',
-            ].join('\n');
-            void navigator.clipboard.writeText(snippet);
-        },
+    const handlers: Record<string, ExportActionHandlers> = {
+        png: { download: () => onExportPNG('png'), copy: () => onCopyImage('png') },
+        jpeg: { download: () => onExportPNG('jpeg'), copy: () => onCopyImage('jpeg') },
+        svg: { download: onExportSVG, copy: onCopySVG },
+        pdf: { download: onExportPDF, copy: onExportPDF },
+        'cinematic-video': { download: () => onExportCinematic('cinematic-video'), copy: () => onExportCinematic('cinematic-video') },
+        'cinematic-gif': { download: () => onExportCinematic('cinematic-gif'), copy: () => onExportCinematic('cinematic-gif') },
+        json: { download: onExportJSON, copy: onCopyJSON },
+        openflow: { download: onDownloadOpenFlowDSL, copy: onExportOpenFlowDSL },
+        mermaid: { download: onDownloadMermaid, copy: onExportMermaid },
+        plantuml: { download: onDownloadPlantUML, copy: onExportPlantUML },
+        figma: { download: onDownloadFigma, copy: onExportFigma },
     };
 
     function toggleMenu(): void {
         setIsOpen((value) => !value);
     }
 
-    function handleSelect(key: string): void {
-        handlers[key]?.();
+    function recordSelection(key: string, action: ExportActionKey): void {
+        recordOnboardingEvent('first_export_completed', { format: `${key}:${action}` });
+    }
+
+    function handleSelect(key: string, action: ExportActionKey): void {
+        const actionHandler = handlers[key]?.[action];
+        if (!actionHandler) {
+            return;
+        }
+
+        actionHandler();
+        recordSelection(key, action);
         setIsOpen(false);
     }
 

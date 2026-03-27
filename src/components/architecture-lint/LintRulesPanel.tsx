@@ -6,7 +6,6 @@ import {
     CheckCircle2,
     ChevronDown,
     ChevronRight,
-    Code2,
     Download,
     Info,
     Plus,
@@ -15,8 +14,13 @@ import {
     Trash2,
     Globe,
 } from 'lucide-react';
+import { SegmentedChoice } from '@/components/properties/SegmentedChoice';
 import { useFlowStore } from '@/store';
 import { useCanvasState } from '@/store/canvasHooks';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select, type SelectOption } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
 import { useArchitectureLint } from '@/context/ArchitectureLintContext';
 import { EXAMPLE_LINT_RULES } from '@/services/architectureLint/defaultRules';
 import { RULE_LIBRARY } from '@/services/architectureLint/ruleLibrary';
@@ -46,6 +50,33 @@ function mergeRulesJson(existing: string, newRules: LintRule[]): string {
 // ─── NodeMatcher form ────────────────────────────────────────────────────────
 
 type MatcherField = 'labelContains' | 'labelEquals' | 'nodeType' | 'id' | 'none';
+
+const MATCHER_FIELD_OPTIONS: SelectOption[] = [
+    { value: 'none', label: 'Any node' },
+    { value: 'labelContains', label: 'Label contains' },
+    { value: 'labelEquals', label: 'Label equals' },
+    { value: 'nodeType', label: 'Node type' },
+    { value: 'id', label: 'Node ID' },
+];
+
+const RULE_TYPE_OPTIONS: SelectOption[] = [
+    { value: 'cannot-connect', label: 'Cannot connect' },
+    { value: 'must-connect', label: 'Must connect' },
+    { value: 'forbidden-cycle', label: 'Forbidden cycle' },
+    { value: 'must-have-node', label: 'Must have node' },
+    { value: 'node-count', label: 'Node count' },
+];
+
+const SEVERITY_OPTIONS: SelectOption[] = [
+    { value: 'error', label: 'Error' },
+    { value: 'warning', label: 'Warning' },
+    { value: 'info', label: 'Info' },
+];
+
+const EDITOR_MODE_ITEMS = [
+    { id: 'visual', label: 'Visual' },
+    { id: 'json', label: 'JSON' },
+] as const;
 
 function matcherToField(m: NodeMatcher | undefined): { field: MatcherField; value: string } {
     if (!m) return { field: 'none', value: '' };
@@ -82,24 +113,19 @@ function NodeMatcherForm({ label, value, onChange }: NodeMatcherFormProps): Reac
         <div className="space-y-1">
             <label className="text-[10px] font-medium uppercase tracking-wide text-slate-400">{label}</label>
             <div className="flex gap-1.5">
-                <select
+                <Select
                     value={field}
-                    onChange={(e) => onFieldChange(e.target.value as MatcherField)}
-                    className="h-7 rounded border border-slate-200 bg-white px-1.5 text-[11px] text-slate-700 outline-none focus:border-[var(--brand-primary)]"
-                >
-                    <option value="none">Any node</option>
-                    <option value="labelContains">Label contains</option>
-                    <option value="labelEquals">Label equals</option>
-                    <option value="nodeType">Node type</option>
-                    <option value="id">Node ID</option>
-                </select>
+                    onChange={(nextValue) => onFieldChange(nextValue as MatcherField)}
+                    options={MATCHER_FIELD_OPTIONS}
+                    className="min-w-[11rem]"
+                />
                 {field !== 'none' && (
-                    <input
+                    <Input
                         type="text"
                         value={val}
-                        onChange={(e) => onValueChange(e.target.value)}
+                        onChange={(event) => onValueChange(event.target.value)}
                         placeholder="value"
-                        className="h-7 min-w-0 flex-1 rounded border border-slate-200 bg-white px-2 text-[11px] text-slate-700 outline-none focus:border-[var(--brand-primary)]"
+                        className="h-9 min-w-0 flex-1 text-[11px]"
                     />
                 )}
             </div>
@@ -108,14 +134,6 @@ function NodeMatcherForm({ label, value, onChange }: NodeMatcherFormProps): Reac
 }
 
 // ─── Rule builder form ───────────────────────────────────────────────────────
-
-const RULE_TYPES: { value: LintRuleType; label: string }[] = [
-    { value: 'cannot-connect', label: 'Cannot connect' },
-    { value: 'must-connect', label: 'Must connect' },
-    { value: 'forbidden-cycle', label: 'Forbidden cycle' },
-    { value: 'must-have-node', label: 'Must have node' },
-    { value: 'node-count', label: 'Node count' },
-];
 
 function emptyRule(): LintRule {
     return { id: `rule-${Date.now()}`, severity: 'error', type: 'cannot-connect', description: '' };
@@ -140,51 +158,39 @@ function RuleForm({ initial, onSave, onCancel }: RuleFormProps): React.ReactElem
     return (
         <div className="space-y-3 rounded-[var(--radius-md)] border border-slate-200 bg-slate-50 p-3">
             <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                    <label className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Rule ID</label>
-                    <input
-                        type="text"
-                        value={rule.id}
-                        onChange={(e) => set('id', e.target.value)}
-                        className="h-7 w-full rounded border border-slate-200 bg-white px-2 text-[11px] text-slate-700 outline-none focus:border-[var(--brand-primary)]"
-                    />
-                </div>
+                <Input
+                    label="Rule ID"
+                    type="text"
+                    value={rule.id}
+                    onChange={(event) => set('id', event.target.value)}
+                    className="h-9 text-[11px]"
+                />
                 <div className="space-y-1">
                     <label className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Type</label>
-                    <select
+                    <Select
                         value={rule.type}
-                        onChange={(e) => set('type', e.target.value as LintRuleType)}
-                        className="h-7 w-full rounded border border-slate-200 bg-white px-1.5 text-[11px] text-slate-700 outline-none focus:border-[var(--brand-primary)]"
-                    >
-                        {RULE_TYPES.map((t) => (
-                            <option key={t.value} value={t.value}>{t.label}</option>
-                        ))}
-                    </select>
+                        onChange={(nextValue) => set('type', nextValue as LintRuleType)}
+                        options={RULE_TYPE_OPTIONS}
+                    />
                 </div>
             </div>
 
-            <div className="space-y-1">
-                <label className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Description (shown in violations)</label>
-                <input
-                    type="text"
-                    value={rule.description ?? ''}
-                    onChange={(e) => set('description', e.target.value)}
-                    placeholder="e.g. Services must not call databases directly"
-                    className="h-7 w-full rounded border border-slate-200 bg-white px-2 text-[11px] text-slate-700 outline-none focus:border-[var(--brand-primary)]"
-                />
-            </div>
+            <Input
+                label="Description (shown in violations)"
+                type="text"
+                value={rule.description ?? ''}
+                onChange={(event) => set('description', event.target.value)}
+                placeholder="e.g. Services must not call databases directly"
+                className="h-9 text-[11px]"
+            />
 
             <div className="space-y-1">
                 <label className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Severity</label>
-                <select
+                <Select
                     value={rule.severity}
-                    onChange={(e) => set('severity', e.target.value as LintSeverity)}
-                    className="h-7 w-full rounded border border-slate-200 bg-white px-1.5 text-[11px] text-slate-700 outline-none focus:border-[var(--brand-primary)]"
-                >
-                    <option value="error">Error</option>
-                    <option value="warning">Warning</option>
-                    <option value="info">Info</option>
-                </select>
+                    onChange={(nextValue) => set('severity', nextValue as LintSeverity)}
+                    options={SEVERITY_OPTIONS}
+                />
             </div>
 
             <NodeMatcherForm
@@ -201,42 +207,43 @@ function RuleForm({ initial, onSave, onCancel }: RuleFormProps): React.ReactElem
             )}
             {showCount && (
                 <div className="grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Min count</label>
-                        <input
-                            type="number"
-                            min={0}
-                            value={rule.min ?? ''}
-                            onChange={(e) => set('min', e.target.value ? Number(e.target.value) : undefined)}
-                            className="h-7 w-full rounded border border-slate-200 bg-white px-2 text-[11px] text-slate-700 outline-none focus:border-[var(--brand-primary)]"
-                        />
-                    </div>
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Max count</label>
-                        <input
-                            type="number"
-                            min={0}
-                            value={rule.max ?? ''}
-                            onChange={(e) => set('max', e.target.value ? Number(e.target.value) : undefined)}
-                            className="h-7 w-full rounded border border-slate-200 bg-white px-2 text-[11px] text-slate-700 outline-none focus:border-[var(--brand-primary)]"
-                        />
-                    </div>
+                    <Input
+                        label="Min count"
+                        type="number"
+                        min={0}
+                        value={rule.min ?? ''}
+                        onChange={(event) => set('min', event.target.value ? Number(event.target.value) : undefined)}
+                        className="h-9 text-[11px]"
+                    />
+                    <Input
+                        label="Max count"
+                        type="number"
+                        min={0}
+                        value={rule.max ?? ''}
+                        onChange={(event) => set('max', event.target.value ? Number(event.target.value) : undefined)}
+                        className="h-9 text-[11px]"
+                    />
                 </div>
             )}
 
             <div className="flex gap-2">
-                <button
+                <Button
+                    type="button"
                     onClick={onCancel}
-                    className="flex h-7 flex-1 items-center justify-center rounded border border-slate-200 text-[11px] font-medium text-slate-600 hover:bg-slate-100"
+                    variant="secondary"
+                    size="sm"
+                    className="h-8 flex-1"
                 >
                     Cancel
-                </button>
-                <button
+                </Button>
+                <Button
+                    type="button"
                     onClick={() => onSave(rule)}
-                    className="flex h-7 flex-1 items-center justify-center rounded bg-[var(--brand-primary)] text-[11px] font-medium text-white hover:bg-[var(--brand-primary-600)]"
+                    size="sm"
+                    className="h-8 flex-1"
                 >
                     {initial ? 'Update rule' : 'Add rule'}
-                </button>
+                </Button>
             </div>
         </div>
     );
@@ -258,10 +265,68 @@ function RuleRow({ rule, onEdit, onDelete }: RuleRowProps): React.ReactElement {
                 <p className="truncate text-[11px] font-medium text-slate-700">{rule.description || rule.id}</p>
                 <p className="text-[10px] font-mono text-slate-400">{rule.type}</p>
             </div>
-            <button onClick={onEdit} className="shrink-0 text-[10px] text-slate-400 hover:text-[var(--brand-primary)]">Edit</button>
-            <button onClick={onDelete} className="shrink-0 text-slate-300 hover:text-red-400">
+            <Button type="button" variant="ghost" size="sm" onClick={onEdit} className="h-7 shrink-0 px-2 text-[10px]">
+                Edit
+            </Button>
+            <Button type="button" variant="icon" size="icon" onClick={onDelete} className="h-7 w-7 shrink-0 text-slate-300 hover:text-red-400">
                 <Trash2 className="h-3.5 w-3.5" />
-            </button>
+            </Button>
+        </div>
+    );
+}
+
+interface RulesSectionProps {
+    title: string;
+    icon: React.ReactNode;
+    hasRules: boolean;
+    rules: LintRule[];
+    emptyMessage: string;
+    onOpenEditor: () => void;
+}
+
+function RulesSection({
+    title,
+    icon,
+    hasRules,
+    rules,
+    emptyMessage,
+    onOpenEditor,
+}: RulesSectionProps): React.ReactElement {
+    return (
+        <div className="rounded border border-slate-200 bg-white">
+            <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2">
+                <div className="flex items-center gap-1.5">
+                    {icon}
+                    <p className="text-[11px] font-medium text-slate-700">{title}</p>
+                    {hasRules ? (
+                        <span className="rounded-full bg-slate-100 px-1.5 py-0 text-[10px] text-slate-500">
+                            {rules.length}
+                        </span>
+                    ) : null}
+                </div>
+                <Button
+                    type="button"
+                    onClick={onOpenEditor}
+                    variant="secondary"
+                    size="sm"
+                    className="h-7 px-2 text-[10px]"
+                    icon={!hasRules ? <Plus className="h-3 w-3" /> : undefined}
+                >
+                    {hasRules ? 'Edit' : 'Add'}
+                </Button>
+            </div>
+            {!hasRules ? (
+                <p className="px-3 py-2 text-[11px] text-slate-400">{emptyMessage}</p>
+            ) : (
+                <div className="divide-y divide-slate-50 px-3">
+                    {rules.map((rule) => (
+                        <div key={rule.id} className="flex items-center gap-2 py-2">
+                            <SeverityIcon severity={rule.severity} />
+                            <p className="min-w-0 flex-1 truncate text-[11px] text-slate-600">{rule.description || rule.id}</p>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
@@ -281,7 +346,9 @@ function LibraryPicker({ onApply, existingJson, onClose }: LibraryPickerProps): 
         <div className="space-y-2">
             <div className="flex items-center justify-between">
                 <p className="text-xs font-medium text-slate-700">Rule Templates</p>
-                <button onClick={onClose} className="text-[11px] text-slate-400 hover:text-slate-600">Back</button>
+                <Button type="button" variant="ghost" size="sm" onClick={onClose} className="h-7 px-2 text-[11px]">
+                    Back
+                </Button>
             </div>
             <p className="text-[11px] text-slate-400">Pick a template to add to this diagram&apos;s rules.</p>
             {RULE_LIBRARY.map((tpl) => (
@@ -298,16 +365,18 @@ function LibraryPicker({ onApply, existingJson, onClose }: LibraryPickerProps): 
                             <p className="text-[11px] font-medium text-slate-700">{tpl.name}</p>
                             <p className="text-[10px] text-slate-400">{tpl.description}</p>
                         </div>
-                        <button
+                        <Button
+                            type="button"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onApply(mergeRulesJson(existingJson, tpl.rules));
                                 onClose();
                             }}
-                            className="shrink-0 rounded bg-[var(--brand-primary)] px-2 py-0.5 text-[10px] font-medium text-white hover:bg-[var(--brand-primary-600)]"
+                            size="sm"
+                            className="h-7 shrink-0 px-2 text-[10px]"
                         >
                             Add
-                        </button>
+                        </Button>
                     </button>
                     {expanded === tpl.id && (
                         <div className="border-t border-slate-100 px-3 py-2 space-y-1">
@@ -380,26 +449,33 @@ function VisualEditor({ rulesJson, onSave, onCancel, showLibrary, onToggleLibrar
         <div className="flex h-full min-h-0 flex-col gap-3 p-3">
             <div className="flex items-center gap-2">
                 <p className="flex-1 text-xs font-medium text-slate-700">Edit Rules</p>
-                <button
-                    onClick={() => setMode(mode === 'visual' ? 'json' : 'visual')}
-                    className="flex items-center gap-1 rounded border border-slate-200 px-2 py-0.5 text-[10px] text-slate-500 hover:bg-slate-50"
-                >
-                    <Code2 className="h-3 w-3" />{mode === 'visual' ? 'JSON' : 'Visual'}
-                </button>
-                <button
+                <div className="min-w-[10rem]">
+                    <SegmentedChoice
+                        items={[...EDITOR_MODE_ITEMS]}
+                        selectedId={mode}
+                        onSelect={(nextMode) => setMode(nextMode as EditorMode)}
+                        columns={2}
+                        size="sm"
+                    />
+                </div>
+                <Button
+                    type="button"
                     onClick={onToggleLibrary}
-                    className="flex items-center gap-1 rounded border border-slate-200 px-2 py-0.5 text-[10px] text-slate-500 hover:bg-slate-50"
+                    variant="secondary"
+                    size="sm"
+                    className="h-8 px-2 text-[10px]"
+                    icon={<BookOpen className="h-3 w-3" />}
                 >
-                    <BookOpen className="h-3 w-3" />Templates
-                </button>
+                    Templates
+                </Button>
             </div>
 
             {mode === 'json' ? (
-                <textarea
+                <Textarea
                     value={draft}
-                    onChange={(e) => setDraft(e.target.value)}
+                    onChange={(event) => setDraft(event.target.value)}
                     spellCheck={false}
-                    className="min-h-[200px] flex-1 resize-none rounded border border-slate-200 bg-white px-3 py-3 font-mono text-xs text-slate-700 outline-none placeholder-slate-300 focus:border-[var(--brand-primary)] custom-scrollbar"
+                    className="min-h-[200px] flex-1 resize-none font-mono text-xs text-slate-700 custom-scrollbar"
                     placeholder={EXAMPLE_LINT_RULES}
                 />
             ) : (
@@ -432,29 +508,38 @@ function VisualEditor({ rulesJson, onSave, onCancel, showLibrary, onToggleLibrar
                             onCancel={() => setAddingNew(false)}
                         />
                     ) : (
-                        <button
+                        <Button
+                            type="button"
                             onClick={() => setAddingNew(true)}
-                            className="flex w-full items-center justify-center gap-1.5 rounded border border-dashed border-slate-300 py-2 text-[11px] text-slate-400 hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]"
+                            variant="secondary"
+                            size="sm"
+                            className="h-9 w-full border-dashed text-[11px] text-slate-400 hover:text-[var(--brand-primary)]"
+                            icon={<Plus className="h-3.5 w-3.5" />}
                         >
-                            <Plus className="h-3.5 w-3.5" />Add rule
-                        </button>
+                            Add rule
+                        </Button>
                     )}
                 </div>
             )}
 
             <div className="flex gap-2">
-                <button
+                <Button
+                    type="button"
                     onClick={onCancel}
-                    className="flex h-8 flex-1 items-center justify-center rounded border border-slate-200 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                    variant="secondary"
+                    size="sm"
+                    className="h-8 flex-1"
                 >
                     Cancel
-                </button>
-                <button
+                </Button>
+                <Button
+                    type="button"
                     onClick={() => onSave(draft)}
-                    className="flex h-8 flex-1 items-center justify-center rounded bg-[var(--brand-primary)] text-xs font-medium text-white hover:bg-[var(--brand-primary-600)]"
+                    size="sm"
+                    className="h-8 flex-1"
                 >
                     Save rules
-                </button>
+                </Button>
             </div>
         </div>
     );
@@ -480,6 +565,18 @@ export function LintRulesPanel(): React.ReactElement {
 
     const errorCount = violations.filter((v) => v.severity === 'error').length;
     const warningCount = violations.filter((v) => v.severity === 'warning').length;
+    const handleDiagramRulesOpen = () => {
+        setShowLibrary(false);
+        setView('diagram-rules');
+    };
+    const handleWorkspaceRulesOpen = () => {
+        setShowLibrary(false);
+        setView('workspace-rules');
+    };
+    const handleBrowseTemplates = () => {
+        setShowLibrary(true);
+        setView('diagram-rules');
+    };
 
     const exportViolations = useCallback(() => {
         const data = JSON.stringify({ violations, exportedAt: new Date().toISOString() }, null, 2);
@@ -566,12 +663,16 @@ export function LintRulesPanel(): React.ReactElement {
                                             <AlertTriangle className="h-3 w-3" /> {warningCount}
                                         </span>
                                     )}
-                                    <button
+                                    <Button
+                                        type="button"
                                         onClick={exportViolations}
-                                        className="flex items-center gap-1 rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] text-slate-500 hover:bg-slate-50"
+                                        variant="secondary"
+                                        size="sm"
+                                        className="h-7 px-2 text-[10px]"
+                                        icon={<Download className="h-2.5 w-2.5" />}
                                     >
-                                        <Download className="h-2.5 w-2.5" />Export
-                                    </button>
+                                        Export
+                                    </Button>
                                 </div>
                             </div>
                             <div className="divide-y divide-red-100/60">
@@ -590,73 +691,23 @@ export function LintRulesPanel(): React.ReactElement {
                 </>
             )}
 
-            {/* Diagram-level rules */}
-            <div className="rounded border border-slate-200 bg-white">
-                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
-                    <div className="flex items-center gap-1.5">
-                        <Shield className="h-3.5 w-3.5 text-slate-400" />
-                        <p className="text-[11px] font-medium text-slate-700">Diagram rules</p>
-                        {hasRules && (
-                            <span className="rounded-full bg-slate-100 px-1.5 py-0 text-[10px] text-slate-500">
-                                {diagramRules.length}
-                            </span>
-                        )}
-                    </div>
-                    <button
-                        onClick={() => { setShowLibrary(false); setView('diagram-rules'); }}
-                        className="flex items-center gap-1 rounded border border-slate-200 px-2 py-0.5 text-[10px] text-slate-500 hover:bg-slate-50"
-                    >
-                        {hasRules ? 'Edit' : <><Plus className="h-3 w-3" />Add</>}
-                    </button>
-                </div>
-                {!hasRules ? (
-                    <p className="px-3 py-2 text-[11px] text-slate-400">No diagram-level rules yet.</p>
-                ) : (
-                    <div className="divide-y divide-slate-50 px-3">
-                        {diagramRules.map((r) => (
-                            <div key={r.id} className="flex items-center gap-2 py-2">
-                                <SeverityIcon severity={r.severity} />
-                                <p className="min-w-0 flex-1 truncate text-[11px] text-slate-600">{r.description || r.id}</p>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+            <RulesSection
+                title="Diagram rules"
+                icon={<Shield className="h-3.5 w-3.5 text-slate-400" />}
+                hasRules={hasRules}
+                rules={diagramRules}
+                emptyMessage="No diagram-level rules yet."
+                onOpenEditor={handleDiagramRulesOpen}
+            />
 
-            {/* Workspace-level rules */}
-            <div className="rounded border border-slate-200 bg-white">
-                <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
-                    <div className="flex items-center gap-1.5">
-                        <Globe className="h-3.5 w-3.5 text-slate-400" />
-                        <p className="text-[11px] font-medium text-slate-700">Workspace rules</p>
-                        {hasWorkspaceRules && (
-                            <span className="rounded-full bg-slate-100 px-1.5 py-0 text-[10px] text-slate-500">
-                                {workspaceRules.length}
-                            </span>
-                        )}
-                    </div>
-                    <button
-                        onClick={() => { setShowLibrary(false); setView('workspace-rules'); }}
-                        className="flex items-center gap-1 rounded border border-slate-200 px-2 py-0.5 text-[10px] text-slate-500 hover:bg-slate-50"
-                    >
-                        {hasWorkspaceRules ? 'Edit' : <><Plus className="h-3 w-3" />Add</>}
-                    </button>
-                </div>
-                {!hasWorkspaceRules ? (
-                    <p className="px-3 py-2 text-[11px] text-slate-400">
-                        Workspace rules apply to all diagrams. Good for org-wide standards.
-                    </p>
-                ) : (
-                    <div className="divide-y divide-slate-50 px-3">
-                        {workspaceRules.map((r) => (
-                            <div key={r.id} className="flex items-center gap-2 py-2">
-                                <SeverityIcon severity={r.severity} />
-                                <p className="min-w-0 flex-1 truncate text-[11px] text-slate-600">{r.description || r.id}</p>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+            <RulesSection
+                title="Workspace rules"
+                icon={<Globe className="h-3.5 w-3.5 text-slate-400" />}
+                hasRules={hasWorkspaceRules}
+                rules={workspaceRules}
+                emptyMessage="Workspace rules apply to all diagrams. Good for org-wide standards."
+                onOpenEditor={handleWorkspaceRulesOpen}
+            />
 
             {/* Empty state */}
             {!hasRules && !hasWorkspaceRules && (
@@ -668,13 +719,15 @@ export function LintRulesPanel(): React.ReactElement {
                             Add rules to automatically detect architecture violations as you draw.
                         </p>
                     </div>
-                    <button
-                        onClick={() => { setShowLibrary(true); setView('diagram-rules'); }}
-                        className="flex h-9 items-center gap-2 rounded-[var(--brand-radius)] border border-[var(--brand-primary)] px-4 text-sm font-medium text-[var(--brand-primary)] hover:bg-[var(--brand-primary-50)]"
+                    <Button
+                        type="button"
+                        onClick={handleBrowseTemplates}
+                        variant="secondary"
+                        className="h-9 border-[var(--brand-primary)] text-sm font-medium text-[var(--brand-primary)] hover:bg-[var(--brand-primary-50)]"
+                        icon={<BookOpen className="h-4 w-4" />}
                     >
-                        <BookOpen className="h-4 w-4" />
                         Browse templates
-                    </button>
+                    </Button>
                 </div>
             )}
         </div>

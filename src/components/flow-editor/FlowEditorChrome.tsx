@@ -63,15 +63,21 @@ export interface FlowEditorChromeProps {
         onCloseTab: (tabId: string) => void;
         onRenameTab: (tabId: string, newName: string) => void;
         onExportPNG: (format?: 'png' | 'jpeg') => void;
+        onCopyImage: (format?: 'png' | 'jpeg') => void;
         onExportSVG: () => void;
+        onCopySVG: () => void;
         onExportPDF: () => void;
-        onExportAnimated: (format: 'video' | 'gif') => void;
-        onExportReveal: (format: 'reveal-video' | 'reveal-gif') => void;
+        onExportCinematic: (format: 'cinematic-video' | 'cinematic-gif') => void;
         onExportJSON: () => void;
+        onCopyJSON: () => void;
         onExportMermaid: () => void;
+        onDownloadMermaid: () => void;
         onExportPlantUML: () => void;
+        onDownloadPlantUML: () => void;
         onExportOpenFlowDSL: () => void;
+        onDownloadOpenFlowDSL: () => void;
         onExportFigma: () => void;
+        onDownloadFigma: () => void;
         onShare: () => void;
         onImportJSON: () => void;
         onHistory: () => void;
@@ -143,36 +149,83 @@ export function FlowEditorChrome({
     toolbar,
     emptyState,
 }: FlowEditorChromeProps): React.ReactElement {
+    const topNavProps = {
+        tabs,
+        activeTabId,
+        collaboration: topNav.collaboration,
+        onSwitchTab: topNav.onSwitchTab,
+        onAddTab: topNav.onAddTab,
+        onCloseTab: topNav.onCloseTab,
+        onRenameTab: topNav.onRenameTab,
+        onExportPNG: topNav.onExportPNG,
+        onCopyImage: topNav.onCopyImage,
+        onExportSVG: topNav.onExportSVG,
+        onCopySVG: topNav.onCopySVG,
+        onExportPDF: topNav.onExportPDF,
+        onExportCinematic: topNav.onExportCinematic,
+        onExportJSON: topNav.onExportJSON,
+        onCopyJSON: topNav.onCopyJSON,
+        onExportMermaid: topNav.onExportMermaid,
+        onDownloadMermaid: topNav.onDownloadMermaid,
+        onExportPlantUML: topNav.onExportPlantUML,
+        onDownloadPlantUML: topNav.onDownloadPlantUML,
+        onExportOpenFlowDSL: topNav.onExportOpenFlowDSL,
+        onDownloadOpenFlowDSL: topNav.onDownloadOpenFlowDSL,
+        onExportFigma: topNav.onExportFigma,
+        onDownloadFigma: topNav.onDownloadFigma,
+        onShare: topNav.onShare,
+        onImportJSON: topNav.onImportJSON,
+        onHistory: topNav.onHistory,
+        onGoHome: topNav.onGoHome,
+        onPlay: topNav.onPlay,
+    };
+    const toolbarProps = {
+        onCommandBar: toolbar.onCommandBar,
+        onToggleStudio: toolbar.onToggleStudio,
+        isStudioOpen: toolbar.isStudioOpen,
+        onOpenAssets: toolbar.onOpenAssets,
+        onAddShape: toolbar.onAddShape,
+        onUndo: toolbar.onUndo,
+        onRedo: toolbar.onRedo,
+        onLayout: toolbar.onLayout,
+        canUndo: toolbar.canUndo,
+        canRedo: toolbar.canRedo,
+        isSelectMode: toolbar.isSelectMode,
+        onToggleSelectMode: toolbar.onToggleSelectMode,
+        isCommandBarOpen: toolbar.isCommandBarOpen,
+        onTogglePanMode: toolbar.onTogglePanMode,
+        getCenter: toolbar.getCenter,
+    };
+    const playbackProps = {
+        isPlaying: playback.isPlaying,
+        currentStepIndex: playback.currentStepIndex,
+        totalSteps: playback.totalSteps,
+        onPlayPause: playback.onPlayPause,
+        onNext: playback.onNext,
+        onPrev: playback.onPrev,
+        onStop: playback.onStop,
+    };
+    const emptyStateProps = emptyState
+        ? {
+            title: emptyState.title,
+            description: emptyState.description,
+            generateLabel: emptyState.generateLabel,
+            templatesLabel: emptyState.templatesLabel,
+            addNodeLabel: emptyState.addNodeLabel,
+            onGenerate: emptyState.onGenerate,
+            onTemplates: emptyState.onTemplates,
+            onAddNode: emptyState.onAddNode,
+            onSuggestionClick: emptyState.onSuggestionClick,
+        }
+        : null;
+
     return (
         <>
             <Suspense fallback={<TopNavFallback />}>
-                <LazyTopNav
-                    tabs={tabs}
-                    activeTabId={activeTabId}
-                    onSwitchTab={topNav.onSwitchTab}
-                    onAddTab={topNav.onAddTab}
-                    onCloseTab={topNav.onCloseTab}
-                    onRenameTab={topNav.onRenameTab}
-                    onExportPNG={topNav.onExportPNG}
-                    onExportSVG={topNav.onExportSVG}
-                    onExportPDF={topNav.onExportPDF}
-                    onExportAnimated={topNav.onExportAnimated}
-                    onExportReveal={topNav.onExportReveal}
-                    onExportJSON={topNav.onExportJSON}
-                    onExportMermaid={topNav.onExportMermaid}
-                    onExportPlantUML={topNav.onExportPlantUML}
-                    onExportOpenFlowDSL={topNav.onExportOpenFlowDSL}
-                    onExportFigma={topNav.onExportFigma}
-                    onShare={topNav.onShare}
-                    onImportJSON={topNav.onImportJSON}
-                    onHistory={topNav.onHistory}
-                    onGoHome={topNav.onGoHome}
-                    onPlay={topNav.onPlay}
-                    collaboration={topNav.collaboration}
-                />
+                <LazyTopNav {...topNavProps} />
             </Suspense>
 
-            <div className="flex min-h-0 flex-1 min-w-0 pt-16">
+            <div className="flex min-h-0 flex-1 min-w-0 pt-14">
                 <div className="relative min-w-0 flex-1">
                     <ErrorBoundary className="h-full">{canvas}</ErrorBoundary>
                     <Suspense fallback={null}>
@@ -203,51 +256,17 @@ export function FlowEditorChrome({
 
             {toolbar.isVisible ? (
                 <Suspense fallback={null}>
-                    <LazyToolbar
-                        onCommandBar={toolbar.onCommandBar}
-                        onToggleStudio={toolbar.onToggleStudio}
-                        isStudioOpen={toolbar.isStudioOpen}
-                        onOpenAssets={toolbar.onOpenAssets}
-                        onAddShape={toolbar.onAddShape}
-                        onUndo={toolbar.onUndo}
-                        onRedo={toolbar.onRedo}
-                        onLayout={toolbar.onLayout}
-                        canUndo={toolbar.canUndo}
-                        canRedo={toolbar.canRedo}
-                        isSelectMode={toolbar.isSelectMode}
-                        onToggleSelectMode={toolbar.onToggleSelectMode}
-                        isCommandBarOpen={toolbar.isCommandBarOpen}
-                        onTogglePanMode={toolbar.onTogglePanMode}
-                        getCenter={toolbar.getCenter}
-                    />
+                    <LazyToolbar {...toolbarProps} />
                 </Suspense>
             ) : (
                 <Suspense fallback={null}>
-                    <LazyPlaybackControls
-                        isPlaying={playback.isPlaying}
-                        currentStepIndex={playback.currentStepIndex}
-                        totalSteps={playback.totalSteps}
-                        onPlayPause={playback.onPlayPause}
-                        onNext={playback.onNext}
-                        onPrev={playback.onPrev}
-                        onStop={playback.onStop}
-                    />
+                    <LazyPlaybackControls {...playbackProps} />
                 </Suspense>
             )}
 
-            {emptyState ? (
+            {emptyStateProps ? (
                 <Suspense fallback={null}>
-                    <LazyFlowEditorEmptyState
-                        title={emptyState.title}
-                        description={emptyState.description}
-                        generateLabel={emptyState.generateLabel}
-                        templatesLabel={emptyState.templatesLabel}
-                        addNodeLabel={emptyState.addNodeLabel}
-                        onGenerate={emptyState.onGenerate}
-                        onTemplates={emptyState.onTemplates}
-                        onAddNode={emptyState.onAddNode}
-                        onSuggestionClick={emptyState.onSuggestionClick}
-                    />
+                    <LazyFlowEditorEmptyState {...emptyStateProps} />
                 </Suspense>
             ) : null}
         </>

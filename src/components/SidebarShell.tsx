@@ -28,6 +28,7 @@ interface SidebarSegmentedTabsProps {
     tabs: SidebarTabItem[];
     activeTab: string;
     onTabChange: (tab: string) => void;
+    getTabTestId?: (tab: SidebarTabItem) => string | undefined;
 }
 
 function getSidebarTabButtonClass(isActive: boolean): string {
@@ -98,6 +99,7 @@ export function SidebarSegmentedTabs({
     tabs,
     activeTab,
     onTabChange,
+    getTabTestId,
 }: SidebarSegmentedTabsProps): React.ReactElement {
     return (
         <div className="flex rounded-[var(--brand-radius)] border border-slate-200/60 bg-slate-50/70 p-1">
@@ -106,6 +108,7 @@ export function SidebarSegmentedTabs({
                     type="button"
                     key={id}
                     onClick={() => onTabChange(id)}
+                    data-testid={getTabTestId?.({ id, label, icon })}
                     className={`flex flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-xs)] px-3 py-1.5 text-xs font-semibold transition-colors ${getSidebarTabButtonClass(activeTab === id)}`}
                 >
                     {icon}

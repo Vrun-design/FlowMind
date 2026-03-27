@@ -45,8 +45,8 @@ export const FLOW_CANVAS_STYLE_PRESETS = {
         background: {
             variant: BackgroundVariant.Dots,
             gap: 24,
-            size: 1.9,
-            color: 'rgba(148,163,184,0.6)',
+            size: 1.5,
+            color: 'rgba(148,163,184,0.4)',
         },
     },
     standard: {
@@ -57,9 +57,9 @@ export const FLOW_CANVAS_STYLE_PRESETS = {
         },
         background: {
             variant: BackgroundVariant.Dots,
-            gap: 20,
-            size: 1.6,
-            color: 'rgba(148,163,184,0.75)',
+            gap: 24,
+            size: 1.5,
+            color: 'rgba(148,163,184,0.5)',
         },
     },
 } as const;

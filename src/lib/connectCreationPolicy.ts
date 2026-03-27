@@ -12,6 +12,7 @@ const SELF_PROPAGATING_TYPES: Record<string, ConnectedNodeSpec> = {
   class: { type: 'class' },
   er_entity: { type: 'er_entity' },
   journey: { type: 'journey' },
+  sequence_participant: { type: 'sequence_participant' },
   start: { type: 'process', shape: 'rounded' },
   end: { type: 'process', shape: 'rounded' },
   decision: { type: 'process', shape: 'rounded' },

@@ -4,14 +4,20 @@ import { FlowCanvas } from './FlowCanvas';
 import { FlowEditorChrome } from './flow-editor/FlowEditorChrome';
 import { useFlowEditorScreenModel } from './flow-editor/useFlowEditorScreenModel';
 import { ArchitectureLintProvider } from '@/context/ArchitectureLintContext';
+import { useCinematicExportState } from '@/context/CinematicExportContext';
 import { DiagramDiffProvider } from '@/context/DiagramDiffContext';
 import { ShareEmbedModal } from '@/components/ShareEmbedModal';
+import { CinematicExportSurface } from '@/components/export/CinematicExportSurface';
+
+const CINEMATIC_EXPORT_BACKGROUND =
+    'radial-gradient(circle at top, rgba(59,130,246,0.14), transparent 42%), linear-gradient(180deg, #f8fbff 0%, #eef5ff 52%, #f8fafc 100%)';
 
 interface FlowEditorProps {
     onGoHome: () => void;
 }
 
 export function FlowEditor({ onGoHome }: FlowEditorProps) {
+    const cinematicExportState = useCinematicExportState();
     const {
         nodes,
         edges,
@@ -23,6 +29,7 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
         recordHistory,
         isSelectMode,
         reactFlowWrapper,
+        cinematicExportSurfaceRef,
         fileInputRef,
         onFileImport,
         shareViewerUrl,
@@ -38,7 +45,15 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
     return (
         <DiagramDiffProvider nodes={nodes} edges={edges} baselineSnapshot={diffBaseline} onStopCompare={() => setDiffBaseline(null)}>
             <ArchitectureLintProvider nodes={nodes} edges={edges} rulesJson={viewSettings.lintRules}>
-                <div className="w-full h-screen bg-[var(--brand-background)] flex flex-col relative" ref={reactFlowWrapper}>
+                <div
+                    className="w-full h-screen flex flex-col relative transition-colors duration-150"
+                    ref={reactFlowWrapper}
+                    style={{
+                        background: cinematicExportState.active
+                            ? CINEMATIC_EXPORT_BACKGROUND
+                            : 'var(--brand-background)',
+                    }}
+                >
                     <FlowEditorChrome
                         tabs={tabs}
                         activeTabId={activeTabId}
@@ -73,6 +88,11 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
                     {shareViewerUrl && (
                         <ShareEmbedModal viewerUrl={shareViewerUrl} onClose={clearShareViewerUrl} />
                     )}
+                    <CinematicExportSurface
+                        ref={cinematicExportSurfaceRef}
+                        nodes={nodes}
+                        edges={edges}
+                    />
                 </div>
             </ArchitectureLintProvider>
         </DiagramDiffProvider>

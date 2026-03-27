@@ -1,6 +1,7 @@
 export interface FlowEditorRouteState {
   openImportDialog?: boolean;
   openTemplates?: boolean;
+  openStudioAI?: boolean;
 }
 
 export function createFlowEditorImportRouteState(): FlowEditorRouteState {
@@ -11,6 +12,10 @@ export function createFlowEditorTemplatesRouteState(): FlowEditorRouteState {
   return { openTemplates: true };
 }
 
+export function createFlowEditorAIRouteState(): FlowEditorRouteState {
+  return { openStudioAI: true };
+}
+
 export function shouldOpenFlowEditorImportDialog(state: unknown): boolean {
   if (!state || typeof state !== 'object') return false;
   return (state as FlowEditorRouteState).openImportDialog === true;
@@ -19,4 +24,9 @@ export function shouldOpenFlowEditorImportDialog(state: unknown): boolean {
 export function shouldOpenFlowEditorTemplates(state: unknown): boolean {
   if (!state || typeof state !== 'object') return false;
   return (state as FlowEditorRouteState).openTemplates === true;
+}
+
+export function shouldOpenFlowEditorAI(state: unknown): boolean {
+  if (!state || typeof state !== 'object') return false;
+  return (state as FlowEditorRouteState).openStudioAI === true;
 }

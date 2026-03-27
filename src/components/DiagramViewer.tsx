@@ -9,6 +9,7 @@ import { OpenFlowLogo } from './icons/OpenFlowLogo';
 import type { FlowNode, FlowEdge } from '@/lib/types';
 
 type ParsedGraph = ReturnType<typeof parseDslOrThrow>;
+type ViewerSize = 'badge' | 'card' | 'full';
 type LayoutState =
     | { status: 'loading' }
     | { status: 'error'; error: string }
@@ -34,7 +35,21 @@ function parseGraphFromSearch(search: string): ParsedGraph | { parseError: strin
     }
 }
 
-function ViewerCanvas({ nodes, edges }: { nodes: FlowNode[]; edges: FlowEdge[] }): React.ReactElement {
+function parseViewerSize(search: string): ViewerSize {
+    const size = new URLSearchParams(search).get('size');
+    if (size === 'badge' || size === 'card') return size;
+    return 'full';
+}
+
+function ViewerCanvas({
+    nodes,
+    edges,
+    size,
+}: {
+    nodes: FlowNode[];
+    edges: FlowEdge[];
+    size: ViewerSize;
+}): React.ReactElement {
     return (
         <ReactFlow
             nodes={nodes}
@@ -48,11 +63,11 @@ function ViewerCanvas({ nodes, edges }: { nodes: FlowNode[]; edges: FlowEdge[] }
             zoomOnScroll={false}
             zoomOnPinch
             fitView
-            fitViewOptions={{ padding: 0.15 }}
+            fitViewOptions={{ padding: size === 'badge' ? 0.08 : size === 'card' ? 0.12 : 0.15 }}
             className="bg-[var(--brand-background,#f8fafc)]"
         >
-            <Background variant={BackgroundVariant.Dots} gap={24} size={1.9} color="rgba(148,163,184,0.6)" />
-            <Controls showInteractive={false} />
+            <Background variant={BackgroundVariant.Dots} gap={24} size={size === 'badge' ? 1.3 : 1.9} color="rgba(148,163,184,0.6)" />
+            {size === 'full' ? <Controls showInteractive={false} /> : null}
         </ReactFlow>
     );
 }
@@ -60,6 +75,7 @@ function ViewerCanvas({ nodes, edges }: { nodes: FlowNode[]; edges: FlowEdge[] }
 function DiagramViewerInner(): React.ReactElement {
     const location = useLocation();
     const navigate = useNavigate();
+    const viewerSize = parseViewerSize(location.search);
 
     // Parse synchronously once on mount via lazy initializer — no effect needed.
     const [parsed] = useState<ParsedGraph | { parseError: string }>(() =>
@@ -86,10 +102,11 @@ function DiagramViewerInner(): React.ReactElement {
 
     return (
         <div className="flex h-screen w-screen flex-col overflow-hidden bg-slate-50">
-            <div className="flex h-10 shrink-0 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur">
+            {viewerSize !== 'badge' ? (
+            <div className={`flex shrink-0 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur ${viewerSize === 'card' ? 'h-9' : 'h-10'}`}>
                 <div className="flex items-center gap-2">
                     <OpenFlowLogo className="h-5 w-5 text-[var(--brand-primary,#e95420)]" />
-                    <span className="text-xs font-semibold text-slate-600">OpenFlowKit</span>
+                    <span className="text-xs font-semibold text-slate-600">{viewerSize === 'card' ? 'OpenFlowKit Viewer' : 'OpenFlowKit'}</span>
                 </div>
                 <button
                     onClick={() => navigate('/home')}
@@ -99,6 +116,12 @@ function DiagramViewerInner(): React.ReactElement {
                     Open in Editor
                 </button>
             </div>
+            ) : (
+            <div className="flex h-7 shrink-0 items-center justify-between border-b border-slate-200 bg-white/90 px-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                <span>OpenFlowKit</span>
+                <span>Badge Viewer</span>
+            </div>
+            )}
 
             <div className="relative min-h-0 flex-1">
                 {layoutState.status === 'loading' && (
@@ -116,7 +139,7 @@ function DiagramViewerInner(): React.ReactElement {
                     </div>
                 )}
                 {layoutState.status === 'ready' && (
-                    <ViewerCanvas nodes={layoutState.nodes} edges={layoutState.edges} />
+                    <ViewerCanvas nodes={layoutState.nodes} edges={layoutState.edges} size={viewerSize} />
                 )}
             </div>
         </div>

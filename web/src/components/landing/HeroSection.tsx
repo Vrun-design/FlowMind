@@ -65,7 +65,7 @@ export function HeroSection({ onLaunch }: HeroSectionProps): React.ReactElement 
 
         {/* Razor-Sharp Headline */}
         <h1 className="animate-slide-up opacity-0 [animation-delay:100ms] text-5xl sm:text-6xl md:text-[88px] font-bold tracking-[-0.04em] text-brand-dark mb-6 md:mb-8 max-w-[1000px] mx-auto leading-[1.05] text-balance">
-          The diagram engine <br />
+          The diagram studio <br />
           <span className="font-serif italic font-normal text-brand-primary inline-flex flex-wrap justify-center items-center gap-[0.2em]">
             that
             <span
@@ -108,7 +108,7 @@ export function HeroSection({ onLaunch }: HeroSectionProps): React.ReactElement 
         {/* Minimalist Trust Block */}
         <div className="animate-slide-up opacity-0 [animation-delay:400ms] w-full max-w-3xl mx-auto pt-10 border-t border-gray-200/60">
           <p className="text-xs font-mono text-gray-400 uppercase tracking-widest mb-6">
-            Built for local-first engineering
+            Built for developer workflows
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
             <div className="flex items-center gap-2 text-gray-500">
@@ -177,7 +177,7 @@ export function HeroSection({ onLaunch }: HeroSectionProps): React.ReactElement 
                 <line x1="2" x2="22" y1="12" y2="12" />
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
               </svg>
-              <span className="text-sm font-medium tracking-tight">Works Offline</span>
+              <span className="text-sm font-medium tracking-tight">Local-First Storage</span>
             </div>
           </div>
         </div>

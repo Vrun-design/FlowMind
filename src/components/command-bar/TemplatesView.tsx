@@ -57,7 +57,7 @@ export const TemplatesView = ({
             <ViewHeader
                 title={t('commandBar.templates.title')}
                 icon={<Layout className="w-4 h-4 text-[var(--brand-primary)]" />}
-                description="Start from a curated structure, then customize it on the canvas."
+                description="Start from a curated developer-builder diagram, then customize it on the canvas."
                 onBack={handleBack}
                 onClose={onClose}
             />
@@ -98,6 +98,11 @@ export const TemplatesView = ({
                                     <div className="text-xs font-semibold text-slate-700 group-hover:text-[var(--brand-primary-900)]">
                                         {template.name}
                                     </div>
+                                    {template.useCase ? (
+                                        <div className="line-clamp-2 text-[10px] leading-4 text-slate-500">
+                                            {template.useCase}
+                                        </div>
+                                    ) : null}
                                     <div className="text-[10px] font-medium text-slate-400 opacity-60 uppercase tracking-widest">
                                         {template.category}
                                     </div>

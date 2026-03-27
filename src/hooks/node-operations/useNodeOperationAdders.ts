@@ -218,6 +218,34 @@ export function useNodeOperationAdders({
     setSelectedNodeId(id);
   }, [nodesLength, recordHistory, setNodes, setSelectedNodeId]);
 
+  const handleAddSequenceParticipant = useCallback((position?: { x: number; y: number }) => {
+    recordHistory();
+    const id = createId('seq');
+    const { activeLayerId, nodes: currentNodes } = useFlowStore.getState();
+
+    // Align with the existing participant row — place to the right of the last participant.
+    const seqNodes = currentNodes.filter((n) => n.type === 'sequence_participant');
+    const rowY = seqNodes.length > 0 ? seqNodes[0].position.y : 0;
+    const rowX = seqNodes.length > 0
+      ? Math.max(...seqNodes.map((n) => n.position.x)) + 220
+      : 0;
+
+    const newNode: FlowNode = {
+      id,
+      type: 'sequence_participant',
+      position: position ? { ...position, y: rowY } : { x: rowX, y: rowY },
+      data: {
+        label: 'Participant',
+        seqParticipantKind: 'participant',
+        layerId: activeLayerId,
+      },
+      selected: true,
+    };
+    setNodes((nds) => nds.concat(newNode));
+    setSelectedNodeId(id);
+    queueNodeLabelEditRequest(id, { replaceExisting: true });
+  }, [recordHistory, setNodes, setSelectedNodeId]);
+
   const handleAddEntityNode = useCallback((position?: { x: number; y: number }) => {
     recordHistory();
     const id = createId('er');
@@ -281,6 +309,7 @@ export function useNodeOperationAdders({
     handleAddJourneyNode,
     handleAddMindmapNode,
     handleAddArchitectureNode,
+    handleAddSequenceParticipant,
     handleAddClassNode,
     handleAddEntityNode,
     handleAddSection,
