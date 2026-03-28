@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { ArrowRight, FileInput, LayoutTemplate, PenSquare, WandSparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useAnalyticsPreference } from '@/hooks/useAnalyticsPreference';
 import { OpenFlowLogo } from './icons/OpenFlowLogo';
+import { Switch } from './ui/Switch';
+import { Button } from './ui/Button';
 import { writeLocalStorageString } from '@/services/storage/uiLocalStorage';
 import { shouldShowWelcomeModal, WELCOME_SEEN_STORAGE_KEY } from './home/welcomeModalState';
-import { RECOMMENDED_BUILDER_PROMPTS, RECOMMENDED_IMPORT_OPTIONS, RECOMMENDED_STARTER_TEMPLATE_LABELS } from '@/services/onboarding/config';
-import { recordOnboardingEvent } from '@/services/onboarding/events';
+import { WandSparkles, FileCode2, MonitorPlay, Paintbrush } from 'lucide-react';
 
 export interface WelcomeModalProps {
     onOpenTemplates: () => void;
@@ -13,128 +14,95 @@ export interface WelcomeModalProps {
     onBlankCanvas: () => void;
 }
 
-interface PathOption {
-    icon: React.ReactNode;
-    title: string;
-    description: string;
-    onClick: () => void;
-    primary?: boolean;
-}
-
-function PathCard({ icon, title, description, onClick, primary }: PathOption): React.JSX.Element {
-    return (
-        <button
-            onClick={onClick}
-            className={`group flex w-full items-center gap-4 rounded-[var(--radius-md)] border p-4 text-left transition-all hover:-translate-y-0.5 active:scale-[0.98] ${
-                primary
-                    ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)] hover:bg-[var(--brand-primary)]'
-                    : 'border-slate-200 bg-white hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-50)]'
-            }`}
-        >
-            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-sm)] transition-colors ${
-                primary
-                    ? 'bg-[var(--brand-primary)] text-white group-hover:bg-white group-hover:text-[var(--brand-primary)]'
-                    : 'bg-[var(--brand-primary-50)] text-[var(--brand-primary)]'
-            }`}>
-                {icon}
-            </div>
-            <div className="min-w-0 flex-1">
-                <p className={`text-sm font-semibold ${primary ? 'text-[var(--brand-primary)] group-hover:text-white' : 'text-slate-900'}`}>{title}</p>
-                <p className={`text-xs ${primary ? 'text-[var(--brand-primary)]/70 group-hover:text-white/80' : 'text-slate-500'}`}>{description}</p>
-            </div>
-            <ArrowRight className="h-4 w-4 shrink-0 opacity-40 transition-opacity group-hover:opacity-100" />
-        </button>
-    );
-}
-
-export function WelcomeModal({ onOpenTemplates, onPromptWithAI, onImport, onBlankCanvas }: WelcomeModalProps): React.JSX.Element | null {
+export function WelcomeModal(_props: WelcomeModalProps): React.JSX.Element | null {
     const [isOpen, setIsOpen] = useState(() => shouldShowWelcomeModal());
+    const [analyticsEnabled, setAnalyticsEnabled] = useAnalyticsPreference();
 
     const dismiss = () => {
         setIsOpen(false);
         writeLocalStorageString(WELCOME_SEEN_STORAGE_KEY, 'true');
     };
 
-    const handle = (action: () => void) => () => { dismiss(); action(); };
+    useEffect(() => {
+        if (!isOpen) return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                dismiss();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
-    const paths: PathOption[] = [
+    const features = [
         {
-            icon: <LayoutTemplate className="h-5 w-5" />,
-            title: 'Start from a template',
-            description: `Jump into ${RECOMMENDED_STARTER_TEMPLATE_LABELS.slice(0, 3).join(', ')}.`,
-            onClick: handle(() => {
-                recordOnboardingEvent('welcome_template_selected', { surface: 'welcome-modal' });
-                onOpenTemplates();
-            }),
-            primary: true,
+            icon: <Paintbrush className="h-5 w-5 text-blue-500" />,
+            title: 'Create amazing diagrams',
+            description: 'Design beautiful, enterprise-grade architecture visually.'
         },
         {
-            icon: <WandSparkles className="h-5 w-5" />,
-            title: 'Prompt with Flowpilot',
-            description: `Start from a builder prompt like "${RECOMMENDED_BUILDER_PROMPTS[0]}"`,
-            onClick: handle(() => {
-                recordOnboardingEvent('welcome_prompt_selected', { surface: 'welcome-modal' });
-                onPromptWithAI();
-            }),
+            icon: <WandSparkles className="h-5 w-5 text-amber-500" />,
+            title: 'Use AI',
+            description: 'Generate complete architectures with a single intelligent prompt.'
         },
         {
-            icon: <FileInput className="h-5 w-5" />,
-            title: 'Import a diagram',
-            description: `Bring in ${RECOMMENDED_IMPORT_OPTIONS.map((option) => option.label).join(', ')} sources.`,
-            onClick: handle(() => {
-                recordOnboardingEvent('welcome_import_selected', { surface: 'welcome-modal' });
-                onImport();
-            }),
+            icon: <FileCode2 className="h-5 w-5 text-emerald-500" />,
+            title: 'Code to diagram',
+            description: 'Instantly construct stunning visual infrastructure from text.'
         },
         {
-            icon: <PenSquare className="h-5 w-5" />,
-            title: 'Blank canvas',
-            description: 'Start clean, then branch into templates, imports, or guided AI edits.',
-            onClick: handle(() => {
-                recordOnboardingEvent('welcome_blank_selected', { surface: 'welcome-modal' });
-                onBlankCanvas();
-            }),
-        },
+            icon: <MonitorPlay className="h-5 w-5 text-purple-500" />,
+            title: 'Export in many formats',
+            description: 'Export into beautiful, fully animated presentation diagrams.'
+        }
     ];
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/10 p-4 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="w-full max-w-xl overflow-hidden rounded-[var(--radius-xl)] border border-slate-200/50 bg-white shadow-[var(--shadow-overlay)] animate-in zoom-in-95 duration-300">
-                <div className="p-8">
-                    <div className="mb-6 flex flex-col items-center text-center">
-                        <OpenFlowLogo className="mb-4 h-12 w-12" />
-                        <h2 className="text-xl font-bold tracking-tight text-slate-900">Welcome to OpenFlowKit</h2>
-                        <p className="mt-1 max-w-md text-sm text-slate-500">
-                            Pick the fastest way to get to a real developer diagram: template, import, prompt, or blank canvas.
-                        </p>
-                    </div>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="w-full max-w-[440px] overflow-hidden rounded-[24px] border border-white/20 bg-white shadow-2xl animate-in zoom-in-95 duration-300">
+                <div className="px-8 pb-3 pt-10 text-center">
+                    <OpenFlowLogo className="mx-auto mb-5 h-12 w-12 text-[var(--brand-primary)]" />
+                    <h2 className="text-[24px] font-bold tracking-tight text-slate-900 mb-2">Welcome to OpenFlowKit</h2>
+                </div>
 
-                    <div className="grid gap-3 md:grid-cols-2">
-                        {paths.map((path) => (
-                            <PathCard key={path.title} {...path} />
+                <div className="px-8 py-4">
+                    <div className="flex flex-col gap-[22px]">
+                        {features.map((f, i) => (
+                            <div key={i} className="flex flex-row items-center gap-4">
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-slate-50 border border-slate-100/80 shadow-sm">
+                                    {f.icon}
+                                </div>
+                                <div className="flex-1 text-left line-clamp-2">
+                                    <h3 className="text-[15px] font-semibold text-slate-900 mb-[1px]">{f.title}</h3>
+                                    <p className="text-[13px] leading-snug text-slate-500">{f.description}</p>
+                                </div>
+                            </div>
                         ))}
                     </div>
+                </div>
 
-                    <div className="mt-6 grid gap-3 rounded-[var(--radius-lg)] border border-slate-200 bg-slate-50/80 p-4 text-left md:grid-cols-2">
-                        <div>
-                            <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Best First Templates</p>
-                            <p className="mt-2 text-xs leading-5 text-slate-600">
-                                {RECOMMENDED_STARTER_TEMPLATE_LABELS.join(' • ')}
-                            </p>
+                <div className="mt-6 border-t border-slate-100 bg-slate-50/40 px-8 py-6">
+                    <div className="mb-5 flex items-center justify-between rounded-xl border border-slate-200/60 bg-white px-4 py-3 shadow-sm">
+                        <div className="flex flex-col text-left mr-4">
+                            <span className="text-[12px] font-semibold text-slate-700">Anonymous Analytics</span>
+                            <span className="text-[11px] text-slate-500 mt-0.5 leading-snug">We collect diagnostic data. We never read your diagrams or prompts.</span>
                         </div>
-                        <div>
-                            <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Supported Imports</p>
-                            <p className="mt-2 text-xs leading-5 text-slate-600">
-                                {RECOMMENDED_IMPORT_OPTIONS.map((option) => option.label).join(' • ')}
-                            </p>
-                        </div>
+                        <Switch
+                            checked={analyticsEnabled}
+                            onCheckedChange={setAnalyticsEnabled}
+                            className="scale-90"
+                        />
                     </div>
-
-                    <p className="mt-6 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-                        Press <kbd className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-sans text-slate-500">?</kbd> for keyboard shortcuts
-                    </p>
+                    <Button
+                        size="xl"
+                        className="w-full font-semibold shadow-sm"
+                        onClick={dismiss}
+                    >
+                        Get Started
+                    </Button>
                 </div>
             </div>
         </div>

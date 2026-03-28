@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle2, Eye, Film, ListOrdered, MoveDown, MoveUp, Plus, RefreshCw, Trash2 } from 'lucide-react';
-import { useTabActions, useTabsState } from '@/store/tabHooks';
+import { useEditorPageActions, useEditorPagesState } from '@/store/editorPageHooks';
 import type { FlowEdge, FlowNode, PlaybackState } from '@/lib/types';
 import { createEmptyPlaybackState } from '@/services/playback/model';
 import {
@@ -75,13 +75,13 @@ export function StudioPlaybackPanel({
     playbackSpeed,
     onPlaybackSpeedChange,
 }: StudioPlaybackPanelProps): React.ReactElement {
-    const { tabs, activeTabId } = useTabsState();
-    const { updateTab } = useTabActions();
-    const activeTab = tabs.find((tab) => tab.id === activeTabId);
+    const { pages, activePageId } = useEditorPagesState();
+    const { updatePage } = useEditorPageActions();
+    const activePage = pages.find((page) => page.id === activePageId);
     // Keep the raw persisted value as a stable reference for memoization.
     // The fallback empty state is resolved inside consumers to avoid creating
     // a new object on every render (which would break React Compiler deps).
-    const persistedPlayback = activeTab?.playback;
+    const persistedPlayback = activePage?.playback;
     // Stable empty-state fallback — created once so React Compiler can track it as a
     // stable dependency alongside `persistedPlayback` without seeing an inline allocation.
     const playback = persistedPlayback ?? createEmptyPlaybackState();
@@ -93,7 +93,7 @@ export function StudioPlaybackPanel({
     const scrubValue = currentStepIndex >= 0 ? Math.min(currentStepIndex, scrubMax) : 0;
 
     function commitPlayback(nextPlayback: PlaybackState): void {
-        updateTab(activeTabId, { playback: nextPlayback });
+        updatePage(activePageId, { playback: nextPlayback });
     }
 
     function applyPreset(preset: PlaybackGenerationPreset): void {

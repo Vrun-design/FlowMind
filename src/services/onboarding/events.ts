@@ -1,3 +1,5 @@
+import { captureAnalyticsEvent } from '@/services/analytics/analytics';
+
 export type OnboardingEventName =
   | 'welcome_template_selected'
   | 'welcome_import_selected'
@@ -88,6 +90,11 @@ export function recordOnboardingEvent(
       })
     );
   }
+
+  captureAnalyticsEvent(name, {
+    first: event.first,
+    ...detail,
+  });
 
   return event;
 }

@@ -47,7 +47,7 @@ export type CollaborationRemotePresence = ReturnType<typeof buildCollaborationPr
 
 interface UseFlowEditorCollaborationParams {
     collaborationEnabled: boolean;
-    activeTabId: string;
+    activePageId: string;
     nodes: FlowNode[];
     edges: FlowEdge[];
     editorSurfaceRef: RefObject<HTMLElement | null>;
@@ -63,7 +63,7 @@ interface UseFlowEditorCollaborationResult {
 
 export function useFlowEditorCollaboration({
     collaborationEnabled,
-    activeTabId,
+    activePageId,
     nodes,
     edges,
     editorSurfaceRef,
@@ -93,8 +93,8 @@ export function useFlowEditorCollaboration({
     const collaborationFlushTimerRef = useRef<number | null>(null);
 
     const collaborationRoom = useMemo(
-        () => resolveCollaborationRoomId(location.search, activeTabId),
-        [location.search, activeTabId]
+        () => resolveCollaborationRoomId(location.search, activePageId),
+        [location.search, activePageId]
     );
     const collaborationRoomId = collaborationRoom.roomId;
     const collaborationRoomSecret = useMemo(

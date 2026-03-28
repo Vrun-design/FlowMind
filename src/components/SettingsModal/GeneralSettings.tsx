@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useFlowStore } from '../../store';
 import { Switch } from '../ui/Switch';
 import { Grid, Magnet, Network, Zap } from 'lucide-react';
+import { useAnalyticsPreference } from '@/hooks/useAnalyticsPreference';
 import type { GlobalEdgeOptions } from '@/lib/types';
 import { useViewSettings, useVisualSettingsActions } from '@/store/viewHooks';
 
@@ -10,6 +11,7 @@ export const GeneralSettings = () => {
     const { t } = useTranslation();
     const viewSettings = useViewSettings();
     const globalEdgeOptions = useFlowStore((state) => state.globalEdgeOptions);
+    const [analyticsEnabled, setAnalyticsEnabled] = useAnalyticsPreference();
     const {
         toggleGrid,
         toggleSnap,
@@ -48,6 +50,24 @@ export const GeneralSettings = () => {
                         description={t('settingsModal.canvas.alignmentGuidesDesc', 'Show smart guide lines while dragging nodes')}
                         checked={viewSettings.alignmentGuidesEnabled}
                         onChange={(checked) => setViewSettings({ alignmentGuidesEnabled: checked })}
+                    />
+                </div>
+            </div>
+
+            <div>
+                <h3 className="text-sm font-semibold text-[var(--brand-text)] mb-3">
+                    {t('settings.analytics', 'Analytics')}
+                </h3>
+                <div className="space-y-2">
+                    <SettingRow
+                        icon={<Zap className="w-4 h-4" />}
+                        label={t('settingsModal.analytics.enableTitle', 'Anonymous Launch Analytics')}
+                        description={t(
+                            'settingsModal.analytics.enableDescription',
+                            'Track coarse product events and reliability issues only. We do not send diagram content, prompts, file contents, or API keys.'
+                        )}
+                        checked={analyticsEnabled}
+                        onChange={setAnalyticsEnabled}
                     />
                 </div>
             </div>

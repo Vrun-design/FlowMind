@@ -1,6 +1,19 @@
 import type { FlowTab } from '@/lib/types';
 import type { ChatMessage } from '@/services/aiService';
 import {
+  createFlowTabsFromPersistedDocuments,
+  createPersistedDocumentFromFlowDocument,
+  createPersistedDocumentsFromTabs,
+} from './persistedDocumentAdapters';
+import type { FlowDocument } from './flowDocumentModel';
+import type {
+  LoadedDocument,
+  PersistedDocument,
+  PersistedDocumentContent,
+  PersistedDocumentSession,
+  WorkspaceMeta,
+} from './persistenceTypes';
+import {
   AI_SETTINGS_PERSISTENT_STORE_NAME,
   CHAT_MESSAGES_STORE_NAME,
   CHAT_THREADS_STORE_NAME,
@@ -19,32 +32,6 @@ const WORKSPACE_META_FALLBACK_KEY = 'openflowkit-workspace-meta-fallback';
 const CHAT_HISTORY_STORAGE_KEY_PREFIX = 'ofk_chat_history_';
 const PERSISTENT_AI_SETTINGS_RECORD_ID = 'default';
 
-export interface PersistedDocumentContent {
-  nodes: FlowTab['nodes'];
-  edges: FlowTab['edges'];
-  playback?: FlowTab['playback'];
-  history: FlowTab['history'];
-}
-
-export interface PersistedDocument {
-  id: string;
-  name: string;
-  diagramType?: FlowTab['diagramType'];
-  content: PersistedDocumentContent;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-}
-
-export interface PersistedDocumentSession {
-  id: string;
-  documentId: string;
-  camera?: unknown;
-  viewport?: unknown;
-  lastOpenedPanel?: string;
-  lastOpenedAt: string;
-}
-
 export interface PersistedChatThread {
   id: string;
   documentId: string;
@@ -59,27 +46,17 @@ export interface PersistedChatMessage {
   createdAt: string;
 }
 
-export interface WorkspaceMeta {
-  id: typeof WORKSPACE_META_ID;
-  activeDocumentId: string | null;
-  documentOrder: string[];
-  lastOpenedAt: string;
-}
-
 export interface PersistedAISettingsRecord {
   id: 'default';
   value: string;
 }
 
-export interface LoadedDocument {
-  document: PersistedDocument | null;
-  documents: PersistedDocument[];
-  workspaceMeta: WorkspaceMeta;
-}
-
 export interface PersistenceRepository {
+  loadWorkspaceSnapshot(): Promise<LoadedDocument>;
   loadActiveDocument(): Promise<LoadedDocument>;
   saveDocument(documentId: string, content: PersistedDocumentContent): Promise<void>;
+  saveFlowDocuments(documents: FlowDocument[], activeDocumentId: string | null): Promise<void>;
+  saveDocuments(documents: PersistedDocument[], activeDocumentId: string | null): Promise<void>;
   saveWorkspace(tabs: FlowTab[], activeDocumentId: string | null): Promise<void>;
   deleteDocument(documentId: string): Promise<void>;
   loadDocumentSession(documentId: string): Promise<PersistedDocumentSession | null>;
@@ -117,37 +94,6 @@ function createDefaultWorkspaceMeta(documentOrder: string[] = [], activeDocument
 
 function getNowIso(): string {
   return new Date().toISOString();
-}
-
-function toDocumentRecord(tab: FlowTab): PersistedDocument {
-  const nowIso = getNowIso();
-  return {
-    id: tab.id,
-    name: tab.name,
-    diagramType: tab.diagramType,
-    content: {
-      nodes: tab.nodes,
-      edges: tab.edges,
-      playback: tab.playback,
-      history: tab.history,
-    },
-    createdAt: tab.updatedAt ?? nowIso,
-    updatedAt: tab.updatedAt ?? nowIso,
-    deletedAt: null,
-  };
-}
-
-function toFlowTab(document: PersistedDocument): FlowTab {
-  return {
-    id: document.id,
-    name: document.name,
-    diagramType: document.diagramType,
-    updatedAt: document.updatedAt,
-    nodes: document.content.nodes,
-    edges: document.content.edges,
-    playback: document.content.playback,
-    history: document.content.history,
-  };
 }
 
 async function withDatabase<T>(handler: (database: IDBDatabase) => Promise<T>): Promise<T> {
@@ -258,7 +204,7 @@ async function migrateLegacyChatHistory(documentId: string): Promise<void> {
 }
 
 export const localFirstRepository: PersistenceRepository = {
-  async loadActiveDocument(): Promise<LoadedDocument> {
+  async loadWorkspaceSnapshot(): Promise<LoadedDocument> {
     try {
       const loaded = await withDatabase(async (database) => {
         const documents = (await getAllRecords<PersistedDocument>(database, PERSISTED_DOCUMENTS_STORE_NAME))
@@ -310,8 +256,12 @@ export const localFirstRepository: PersistenceRepository = {
     }
   },
 
+  async loadActiveDocument(): Promise<LoadedDocument> {
+    return this.loadWorkspaceSnapshot();
+  },
+
   async saveDocument(documentId: string, content: PersistedDocumentContent): Promise<void> {
-    const loaded = await this.loadActiveDocument();
+    const loaded = await this.loadWorkspaceSnapshot();
     const targetDocument = loaded.documents.find((document) => document.id === documentId);
     if (!targetDocument) {
       return;
@@ -320,6 +270,11 @@ export const localFirstRepository: PersistenceRepository = {
     const updatedDocument: PersistedDocument = {
       ...targetDocument,
       content,
+      pages: targetDocument.pages?.map((page) =>
+        page.id === targetDocument.activePageId
+          ? { ...page, content, updatedAt: getNowIso() }
+          : page,
+      ) ?? targetDocument.pages,
       updatedAt: getNowIso(),
     };
 
@@ -333,9 +288,8 @@ export const localFirstRepository: PersistenceRepository = {
     }
   },
 
-  async saveWorkspace(tabs: FlowTab[], activeDocumentId: string | null): Promise<void> {
+  async saveDocuments(documents: PersistedDocument[], activeDocumentId: string | null): Promise<void> {
     const nowIso = getNowIso();
-    const documents = tabs.map(toDocumentRecord);
     const workspaceMeta = createDefaultWorkspaceMeta(
       documents.map((document) => document.id),
       activeDocumentId ?? documents[0]?.id ?? null,
@@ -381,6 +335,17 @@ export const localFirstRepository: PersistenceRepository = {
       })));
       saveFallbackWorkspaceMeta(workspaceMeta);
     }
+  },
+
+  async saveWorkspace(tabs: FlowTab[], activeDocumentId: string | null): Promise<void> {
+    return this.saveDocuments(createPersistedDocumentsFromTabs(tabs), activeDocumentId);
+  },
+
+  async saveFlowDocuments(documents: FlowDocument[], activeDocumentId: string | null): Promise<void> {
+    return this.saveDocuments(
+      documents.map(createPersistedDocumentFromFlowDocument),
+      activeDocumentId,
+    );
   },
 
   async deleteDocument(documentId: string): Promise<void> {
@@ -529,6 +494,16 @@ export const localFirstRepository: PersistenceRepository = {
   },
 };
 
+export type {
+  LoadedDocument,
+  PersistedDocument,
+  PersistedDocumentContent,
+  PersistedDocumentSession,
+  WorkspaceMeta,
+} from './persistenceTypes';
+
+export { createFlowDocumentFromPersistedDocument, createFlowDocumentsFromPersistedDocuments, convertFlowDocumentsToTabs, createLoadedFlowWorkspace } from './flowDocumentModel';
+
 export function convertPersistedDocumentsToTabs(documents: PersistedDocument[]): FlowTab[] {
-  return documents.map(toFlowTab);
+  return createFlowTabsFromPersistedDocuments(documents);
 }

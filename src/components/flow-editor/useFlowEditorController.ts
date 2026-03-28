@@ -23,8 +23,8 @@ export interface UseFlowEditorShellParams {
     location: Location;
     navigate: NavigateFunction;
     fileInputRef: React.RefObject<HTMLInputElement | null>;
-    tabs: Array<{ id: string; name: string }>;
-    activeTabId: string | null;
+    pages: Array<{ id: string; name: string }>;
+    activePageId: string | null;
     snapshots: FlowSnapshot[];
     nodes: FlowNode[];
     edges: FlowEdge[];
@@ -131,10 +131,10 @@ export interface UseFlowEditorPanelsParams {
 }
 
 export interface UseFlowEditorChromeParams {
-    handleSwitchTab: (tabId: string) => void;
-    handleAddTab: () => void;
-    handleCloseTab: (tabId: string) => void;
-    handleRenameTab: (tabId: string, newName: string) => void;
+    handleSwitchPage: (pageId: string) => void;
+    handleAddPage: () => void;
+    handleClosePage: (pageId: string) => void;
+    handleRenamePage: (pageId: string, newName: string) => void;
     handleExport: (format?: 'png' | 'jpeg') => void;
     handleCopyImage: (format?: 'png' | 'jpeg') => void;
     handleSvgExport: () => void;

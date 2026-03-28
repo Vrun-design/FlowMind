@@ -4,10 +4,10 @@ import type { FlowNode } from '@/lib/types';
 import type { FlowEditorChromeProps } from './FlowEditorChrome';
 
 interface BuildTopNavParams {
-    handleSwitchTab: (tabId: string) => void;
-    handleAddTab: () => void;
-    handleCloseTab: (tabId: string) => void;
-    handleRenameTab: (tabId: string, newName: string) => void;
+    handleSwitchPage: (pageId: string) => void;
+    handleAddPage: () => void;
+    handleClosePage: (pageId: string) => void;
+    handleRenamePage: (pageId: string, newName: string) => void;
     handleExport: (format?: 'png' | 'jpeg') => void;
     handleCopyImage: (format?: 'png' | 'jpeg') => void;
     handleSvgExport: () => void;
@@ -70,10 +70,10 @@ interface BuildEmptyStateParams {
 }
 
 export function buildFlowEditorTopNavProps({
-    handleSwitchTab,
-    handleAddTab,
-    handleCloseTab,
-    handleRenameTab,
+    handleSwitchPage,
+    handleAddPage,
+    handleClosePage,
+    handleRenamePage,
     handleExport,
     handleCopyImage,
     handleSvgExport,
@@ -98,10 +98,10 @@ export function buildFlowEditorTopNavProps({
     collaborationTopNavState,
 }: BuildTopNavParams): FlowEditorChromeProps['topNav'] {
     return {
-        onSwitchTab: handleSwitchTab,
-        onAddTab: handleAddTab,
-        onCloseTab: handleCloseTab,
-        onRenameTab: handleRenameTab,
+        onSwitchPage: handleSwitchPage,
+        onAddPage: handleAddPage,
+        onClosePage: handleClosePage,
+        onRenamePage: handleRenamePage,
         onExportPNG: handleExport,
         onCopyImage: handleCopyImage,
         onExportSVG: handleSvgExport,
@@ -216,10 +216,10 @@ interface UseFlowEditorChromePropsParams extends BuildTopNavParams, BuildToolbar
 
 export function useFlowEditorChromeProps(params: UseFlowEditorChromePropsParams): Pick<FlowEditorChromeProps, 'topNav' | 'toolbar' | 'playback' | 'emptyState'> {
     const {
-        handleSwitchTab,
-        handleAddTab,
-        handleCloseTab,
-        handleRenameTab,
+        handleSwitchPage,
+        handleAddPage,
+        handleClosePage,
+        handleRenamePage,
         handleExport,
         handleCopyImage,
         handleSvgExport,
@@ -271,10 +271,10 @@ export function useFlowEditorChromeProps(params: UseFlowEditorChromePropsParams)
     } = params;
 
     const topNav = useMemo(() => buildFlowEditorTopNavProps({
-        handleSwitchTab,
-        handleAddTab,
-        handleCloseTab,
-        handleRenameTab,
+        handleSwitchPage,
+        handleAddPage,
+        handleClosePage,
+        handleRenamePage,
         handleExport,
         handleCopyImage,
         handleSvgExport,
@@ -298,10 +298,10 @@ export function useFlowEditorChromeProps(params: UseFlowEditorChromePropsParams)
         startPlayback,
         collaborationTopNavState,
     }), [
-        handleSwitchTab,
-        handleAddTab,
-        handleCloseTab,
-        handleRenameTab,
+        handleSwitchPage,
+        handleAddPage,
+        handleClosePage,
+        handleRenamePage,
         handleExport,
         handleCopyImage,
         handleSvgExport,

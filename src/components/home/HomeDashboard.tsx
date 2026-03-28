@@ -1,7 +1,8 @@
 import React from 'react';
-import { Copy, Layout, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Copy, Layout, Pencil, Plus, Trash2, LayoutTemplate, WandSparkles, FileInput, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
+import { Tooltip } from '../Tooltip';
 
 export interface HomeFlowCard {
     id: string;
@@ -59,65 +60,84 @@ export function HomeDashboard({
 
             <section>
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('home.recentFiles', 'Recent Files')}</h2>
+                    <div className="flex items-center gap-2">
+                        <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('home.recentFiles', 'Recent Files')}</h2>
+                        <Tooltip text={t('home.localStorageHint', 'Autosaved on this device. We do not upload your diagram data to our servers.')} side="right">
+                            <div className="flex cursor-default items-center justify-center text-slate-300 hover:text-[var(--brand-primary)] transition-colors duration-200">
+                                <ShieldCheck className="w-[13px] h-[13px]" fill="currentColor" stroke="white" strokeWidth={1.5} />
+                            </div>
+                        </Tooltip>
+                    </div>
                     {flows.length > 0 && (
                         <span className="text-xs text-slate-400">{flows.length} {t('home.files', 'files')}</span>
                     )}
                 </div>
 
                 {flows.length === 0 ? (
-                    <div className="rounded-[var(--radius-xl)] border border-dashed border-slate-200 bg-[linear-gradient(180deg,_rgba(255,255,255,0.96),_rgba(248,250,252,0.9))] px-6 py-16 text-center shadow-sm">
-                        <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-[var(--brand-surface)] shadow-sm">
-                            <Plus className="w-5 h-5 text-slate-400" />
-                        </div>
-                        <h3 className="mb-1 text-sm font-medium text-slate-900">{t('home.createFirstFlow', 'Create your first flow')}</h3>
-                        <p className="mx-auto max-w-md text-xs leading-6 text-[var(--brand-secondary)]">
-                            Build a useful diagram fast: start from a template, import Mermaid or SQL, or open Flowpilot on a blank canvas.
-                        </p>
-                        <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
-                            <Button
-                                onClick={onOpenTemplates}
-                                variant="primary"
-                                size="sm"
-                                data-testid="home-open-templates"
-                            >
-                                Browse Templates
-                            </Button>
-                            <Button
-                                onClick={onImportJSON}
-                                variant="secondary"
-                                size="sm"
-                                data-testid="home-open-file"
-                            >
-                                Import Diagram
-                            </Button>
-                            <Button
-                                onClick={onPromptWithAI}
-                                variant="secondary"
-                                size="sm"
-                            >
-                                Generate with Flowpilot
-                            </Button>
-                            <Button
-                                onClick={onCreateNew}
-                                variant="ghost"
-                                size="sm"
-                            >
-                                Blank Canvas
-                            </Button>
-                        </div>
-                        <div className="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-3 text-left sm:grid-cols-3">
-                            <div className="rounded-[var(--radius-lg)] border border-slate-200/80 bg-white/70 px-4 py-3">
-                                <p className="text-xs font-semibold text-slate-900">Use builder templates</p>
-                                <p className="mt-1 text-[11px] leading-5 text-slate-500">Start from release trains, cloud architectures, mind maps, and technical workflows.</p>
-                            </div>
-                            <div className="rounded-[var(--radius-lg)] border border-slate-200/80 bg-white/70 px-4 py-3">
-                                <p className="text-xs font-semibold text-slate-900">Import real source material</p>
-                                <p className="mt-1 text-[11px] leading-5 text-slate-500">Bring in Mermaid, SQL, OpenAPI, JSON, or OpenFlow sources and keep editing visually.</p>
-                            </div>
-                            <div className="rounded-[var(--radius-lg)] border border-slate-200/80 bg-white/70 px-4 py-3">
-                                <p className="text-xs font-semibold text-slate-900">Local-first by default</p>
-                                <p className="mt-1 text-[11px] leading-5 text-slate-500">Diagram data stays in this browser unless you explicitly export or share it.</p>
+                    <div
+                        className="flex w-full flex-col py-2 sm:py-6 animate-in fade-in zoom-in-[0.99] duration-700"
+                        data-testid="home-empty-state"
+                    >
+                        <div className="relative overflow-hidden w-full max-w-[840px] mx-auto rounded-[24px] bg-white border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.03)]">
+                            
+                            {/* Super-delicate background gradient inside card */}
+                            <div className="absolute top-0 left-0 w-full h-[140px] bg-gradient-to-b from-slate-50 to-white pointer-events-none"></div>
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[120px] bg-[var(--brand-primary)]/5 blur-[50px] rounded-full pointer-events-none"></div>
+
+                            <div className="relative z-10 flex flex-col items-center px-6 py-10 text-center">
+                                
+                                {/* Sleek Icon */}
+                                <div className="flex h-16 w-16 items-center justify-center rounded-[18px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.04)] border border-slate-200/60 mb-5 relative group cursor-default">
+                                    <div className="absolute inset-0 bg-[var(--brand-primary)]/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-[18px]"></div>
+                                    <Layout className="w-8 h-8 text-[var(--brand-primary)] transition-transform group-hover:scale-105 duration-500" strokeWidth={1.5} />
+                                </div>
+
+                                <h2 className="text-[24px] sm:text-[28px] font-bold tracking-tight text-slate-900 mb-2">
+                                    Create your first flow
+                                </h2>
+                                <p className="text-[14px] text-slate-500 max-w-[500px] mb-8 leading-relaxed">
+                                    Design enterprise-grade architectures instantly. Start from a blank canvas, describe your infrastructure with our AI builder, or use a tailored template.
+                                </p>
+
+                                {/* Action Grid strictly inside the card */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full max-w-[640px]">
+                                    <Button 
+                                        onClick={onCreateNew} 
+                                        data-testid="home-create-new-main" 
+                                        variant="primary"
+                                        size="lg"
+                                        className="w-full text-[14.5px]"
+                                    >
+                                        <Plus className="w-4 h-4" strokeWidth={2.5} /> Blank Canvas
+                                    </Button>
+
+                                    <Button 
+                                        onClick={onPromptWithAI} 
+                                        data-testid="home-generate-with-ai" 
+                                        variant="secondary"
+                                        size="lg"
+                                        className="w-full text-[14.5px]"
+                                    >
+                                        <WandSparkles className="w-4 h-4 text-amber-500" strokeWidth={2.5} /> Flowpilot AI
+                                    </Button>
+
+                                    <Button 
+                                        onClick={onOpenTemplates} 
+                                        data-testid="home-open-templates" 
+                                        variant="secondary"
+                                        size="lg"
+                                        className="w-full text-[14.5px]"
+                                    >
+                                        <LayoutTemplate className="w-4 h-4 text-slate-400" strokeWidth={2} /> Templates
+                                    </Button>
+                                </div>
+                                
+                                <div className="mt-8 flex items-center justify-center pt-6 border-t border-slate-100/60 w-full max-w-[640px]">
+                                    <button onClick={onImportJSON} className="text-[13px] font-medium text-slate-400 hover:text-slate-700 transition-colors flex items-center gap-1.5 focus:outline-none focus-visible:underline">
+                                        <FileInput className="w-[14px] h-[14px]" /> Or import an existing file
+                                    </button>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -138,14 +158,14 @@ export function HomeDashboard({
                                     <div className="w-8 h-8 rounded bg-[var(--brand-surface)] shadow-sm border border-slate-100 flex items-center justify-center text-slate-300 group-hover:text-[var(--brand-primary)] group-hover:border-[var(--brand-primary-200)] transition-colors z-10">
                                         <Layout className="w-4 h-4" />
                                     </div>
-                                    <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                                    <div className="absolute top-2 right-2 flex items-center gap-1 opacity-100 md:opacity-70 md:group-hover:opacity-100 transition-opacity z-20">
                                         <button
                                             type="button"
                                             onClick={(event) => {
                                                 event.stopPropagation();
                                                 onRenameFlow(flow.id);
                                             }}
-                                            className="rounded-[var(--radius-sm)] border border-slate-200 bg-white p-1.5 text-slate-400 hover:bg-slate-50 hover:text-slate-700"
+                                            className="rounded-[var(--radius-sm)] border border-slate-200 bg-white/95 p-1.5 text-slate-500 shadow-sm hover:bg-slate-50 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)]"
                                             aria-label={t('common.rename', 'Rename')}
                                         >
                                             <Pencil className="h-3 w-3" />
@@ -156,7 +176,7 @@ export function HomeDashboard({
                                                 event.stopPropagation();
                                                 onDuplicateFlow(flow.id);
                                             }}
-                                            className="rounded-[var(--radius-sm)] border border-slate-200 bg-white p-1.5 text-slate-400 hover:bg-slate-50 hover:text-slate-700"
+                                            className="rounded-[var(--radius-sm)] border border-slate-200 bg-white/95 p-1.5 text-slate-500 shadow-sm hover:bg-slate-50 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)]"
                                             aria-label={t('common.duplicate', 'Duplicate')}
                                         >
                                             <Copy className="h-3 w-3" />
@@ -167,7 +187,7 @@ export function HomeDashboard({
                                                 event.stopPropagation();
                                                 onDeleteFlow(flow.id);
                                             }}
-                                            className="rounded-[var(--radius-sm)] border border-slate-200 bg-white p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600"
+                                            className="rounded-[var(--radius-sm)] border border-slate-200 bg-white/95 p-1.5 text-slate-500 shadow-sm hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
                                             aria-label={t('common.delete', 'Delete')}
                                         >
                                             <Trash2 className="h-3 w-3" />
@@ -192,9 +212,7 @@ export function HomeDashboard({
                     </div>
                 )}
 
-                <p className="mt-6 text-xs text-slate-400">
-                    {t('home.localStorageHint', 'Autosaved on this device. We do not upload your diagram data to our servers.')}
-                </p>
+
             </section>
         </div>
     );

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createLogger } from '@/lib/logger';
 import type { FlowEdge, FlowNode } from '@/lib/types';
+import { captureAnalyticsEvent } from '@/services/analytics/analytics';
 import type { ChatMessage } from '@/services/aiService';
 import { useFlowStore } from '@/store';
 import { useToast } from '@/components/ui/ToastContext';
@@ -122,6 +123,7 @@ export function useAIGeneration(
     imageBase64?: string,
     focusedNodeIds?: string[],
     showPreview = false,
+    requestKind: 'prompt' | 'focused-edit' | 'code-import' | 'sql-import' | 'terraform-import' | 'openapi-import' = 'prompt',
   ): Promise<boolean> => {
     if (!readiness.canGenerate && readiness.blockingIssue) {
       setLastError(readiness.blockingIssue.detail);
@@ -141,6 +143,13 @@ export function useAIGeneration(
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
+    captureAnalyticsEvent('ai_generation_started', {
+      provider: aiSettings.provider || 'gemini',
+      has_image: Boolean(imageBase64),
+      is_preview: showPreview,
+      request_kind: requestKind,
+      selected_count: focusedNodeIds?.length ?? selectedNodeIds.length,
+    });
 
     try {
       const result = await generateAIFlowResult({
@@ -171,6 +180,10 @@ export function useAIGeneration(
       if (showPreview) {
         setPendingDiff(computeImportDiff(nodes, result));
         notifyOperationOutcome(addToast, { status: 'success', summary: 'Import ready — review changes before applying.' });
+        captureAnalyticsEvent('import_preview_ready', {
+          provider: aiSettings.provider || 'gemini',
+          request_kind: requestKind,
+        });
       } else {
         applyComposedGraph(layoutedNodes, layoutedEdges);
         notifyOperationOutcome(addToast, {
@@ -178,14 +191,32 @@ export function useAIGeneration(
           summary: getSuccessSummary(nodes.length, focusedNodeIds),
         });
       }
+      captureAnalyticsEvent('ai_generation_succeeded', {
+        provider: aiSettings.provider || 'gemini',
+        has_image: Boolean(imageBase64),
+        is_preview: showPreview,
+        request_kind: requestKind,
+        selected_count: focusedNodeIds?.length ?? selectedNodeIds.length,
+      });
       return true;
     } catch (error: unknown) {
       if (error instanceof DOMException && error.name === 'AbortError') {
+        captureAnalyticsEvent('ai_generation_cancelled', {
+          provider: aiSettings.provider || 'gemini',
+          is_preview: showPreview,
+          request_kind: requestKind,
+        });
         return false;
       }
       const errorMessage = toErrorMessage(error);
       logger.error('AI generation failed.', { error });
       setLastError(errorMessage);
+      captureAnalyticsEvent('ai_generation_failed', {
+        provider: aiSettings.provider || 'gemini',
+        is_preview: showPreview,
+        request_kind: requestKind,
+        error_name: error instanceof Error ? error.name : 'UnknownError',
+      });
       notifyOperationOutcome(addToast, {
         status: 'error',
         summary: getFailureSummary(nodes.length, focusedNodeIds),
@@ -213,27 +244,27 @@ export function useAIGeneration(
   ]);
 
   const handleAIRequest = useCallback(async (prompt: string, imageBase64?: string): Promise<boolean> => {
-    return runAIRequest(prompt, imageBase64);
+    return runAIRequest(prompt, imageBase64, undefined, false, 'prompt');
   }, [runAIRequest]);
 
   const handleFocusedAIRequest = useCallback(async (prompt: string, focusedNodeIds: string[], imageBase64?: string): Promise<boolean> => {
-    return runAIRequest(prompt, imageBase64, focusedNodeIds);
+    return runAIRequest(prompt, imageBase64, focusedNodeIds, false, 'focused-edit');
   }, [runAIRequest]);
 
   const handleCodeAnalysis = useCallback(async (code: string, language: SupportedLanguage): Promise<boolean> => {
-    return runAIRequest(buildCodeToArchitecturePrompt({ code, language }), undefined, undefined, true);
+    return runAIRequest(buildCodeToArchitecturePrompt({ code, language }), undefined, undefined, true, 'code-import');
   }, [runAIRequest]);
 
   const handleSqlAnalysis = useCallback(async (sql: string): Promise<boolean> => {
-    return runAIRequest(buildSqlToErdPrompt(sql), undefined, undefined, true);
+    return runAIRequest(buildSqlToErdPrompt(sql), undefined, undefined, true, 'sql-import');
   }, [runAIRequest]);
 
   const handleTerraformAnalysis = useCallback(async (input: string, format: TerraformInputFormat): Promise<boolean> => {
-    return runAIRequest(buildTerraformToCloudPrompt(input, format), undefined, undefined, true);
+    return runAIRequest(buildTerraformToCloudPrompt(input, format), undefined, undefined, true, 'terraform-import');
   }, [runAIRequest]);
 
   const handleOpenApiAnalysis = useCallback(async (spec: string): Promise<boolean> => {
-    return runAIRequest(buildOpenApiToSequencePrompt(spec), undefined, undefined, true);
+    return runAIRequest(buildOpenApiToSequencePrompt(spec), undefined, undefined, true, 'openapi-import');
   }, [runAIRequest]);
 
   return {

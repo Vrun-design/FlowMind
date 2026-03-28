@@ -74,6 +74,9 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
           <button
             type="button"
             onClick={onLaunch}
+            data-analytics-event="landing_open_app_clicked"
+            data-analytics-placement="navbar-logo"
+            data-analytics-target="app"
             className="flex items-center gap-2.5 cursor-pointer group select-none min-w-0"
             aria-label="Open OpenFlowKit"
           >
@@ -105,6 +108,9 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
                 size="sm"
                 className="h-9 px-3 gap-1.5"
                 onClick={openGithub}
+                data-analytics-event="landing_github_clicked"
+                data-analytics-placement="navbar"
+                data-analytics-target="github"
               >
                 <Github className="w-4 h-4 text-brand-secondary group-hover:text-brand-dark transition-colors" />
                 <span className="font-medium text-[13px] text-brand-dark">Star</span>
@@ -124,6 +130,9 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
                 variant="primary"
                 className="px-5 text-[13px] h-9 transform hover:-translate-y-0.5 transition-all"
                 onClick={onLaunch}
+                data-analytics-event="landing_open_app_clicked"
+                data-analytics-placement="navbar"
+                data-analytics-target="app"
               >
                 <span className="mr-1">Get Started</span>
               </Button>
@@ -164,6 +173,9 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
               size="lg"
               className="h-14 w-full text-base shadow-none"
               onClick={handleMobileLaunch}
+              data-analytics-event="landing_open_app_clicked"
+              data-analytics-placement="mobile-menu"
+              data-analytics-target="app"
             >
               Get Started
             </Button>
@@ -172,6 +184,9 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
               variant="secondary"
               className="h-14 w-full text-base"
               onClick={openGithub}
+              data-analytics-event="landing_github_clicked"
+              data-analytics-placement="mobile-menu"
+              data-analytics-target="github"
             >
               View on GitHub
             </Button>

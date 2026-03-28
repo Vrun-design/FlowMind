@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useCallback, useEffect } from 'react';
-import type { FlowTab } from '@/lib/types';
+import type { EditorPage } from '@/store/editorPageHooks';
 import { FlowTabs } from './FlowTabs';
 import { TopNavMenu } from './top-nav/TopNavMenu';
 import { TopNavBrand } from './top-nav/TopNavBrand';
@@ -15,12 +15,12 @@ const LazySettingsModal = lazy(async () => {
 });
 
 interface TopNavProps {
-    tabs: FlowTab[];
-    activeTabId: string;
-    onSwitchTab: (tabId: string) => void;
-    onAddTab: () => void;
-    onCloseTab: (tabId: string) => void;
-    onRenameTab: (tabId: string, newName: string) => void;
+    pages: EditorPage[];
+    activePageId: string;
+    onSwitchPage: (pageId: string) => void;
+    onAddPage: () => void;
+    onClosePage: (pageId: string) => void;
+    onRenamePage: (pageId: string, newName: string) => void;
 
     // Actions
     onExportPNG: (format?: 'png' | 'jpeg') => void;
@@ -61,12 +61,12 @@ interface TopNavProps {
 }
 
 export function TopNav({
-    tabs,
-    activeTabId,
-    onSwitchTab,
-    onAddTab,
-    onCloseTab,
-    onRenameTab,
+    pages,
+    activePageId,
+    onSwitchPage,
+    onAddPage,
+    onClosePage,
+    onRenamePage,
     onExportPNG,
     onCopyImage,
     onExportSVG,
@@ -137,12 +137,12 @@ export function TopNav({
             {/* Center: Tabs */}
             <div className="flex min-w-0 flex-[1.2] justify-center px-2 sm:px-3">
                 <FlowTabs
-                    tabs={tabs}
-                    activeTabId={activeTabId}
-                    onSwitchTab={onSwitchTab}
-                    onAddTab={onAddTab}
-                    onCloseTab={onCloseTab}
-                    onRenameTab={onRenameTab}
+                    pages={pages}
+                    activePageId={activePageId}
+                    onSwitchPage={onSwitchPage}
+                    onAddPage={onAddPage}
+                    onClosePage={onClosePage}
+                    onRenamePage={onRenamePage}
                 />
             </div>
 

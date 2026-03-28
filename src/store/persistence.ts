@@ -1,5 +1,6 @@
 import { INITIAL_EDGES, INITIAL_NODES } from '@/constants';
 import { DEFAULT_DIAGRAM_TYPE } from '@/services/diagramDocument';
+import type { FlowDocument } from '@/services/storage/flowDocumentModel';
 import { clonePlaybackState, sanitizePlaybackState } from '@/services/playback/model';
 import type { FlowTab } from '@/lib/types';
 import { isDiagramType } from '@/lib/types';
@@ -33,6 +34,18 @@ function createFallbackTab(): FlowTab {
         edges: INITIAL_EDGES,
         playback: undefined,
         history: { past: [], future: [] },
+    };
+}
+
+function createFallbackDocument(): FlowDocument {
+    const fallbackTab = createFallbackTab();
+    return {
+        id: 'doc-1',
+        name: fallbackTab.name,
+        createdAt: fallbackTab.updatedAt ?? new Date().toISOString(),
+        updatedAt: fallbackTab.updatedAt ?? new Date().toISOString(),
+        activePageId: fallbackTab.id,
+        pages: [fallbackTab],
     };
 }
 
@@ -156,6 +169,11 @@ export function migratePersistedFlowState(persistedState: unknown): unknown {
 
     return {
         ...state,
+        documents: Array.isArray(state.documents) ? state.documents : [createFallbackDocument()],
+        activeDocumentId:
+            typeof state.activeDocumentId === 'string'
+                ? state.activeDocumentId
+                : 'doc-1',
         tabs,
         activeTabId:
             typeof state.activeTabId === 'string' && tabs.some((tab) => tab.id === state.activeTabId)
@@ -189,6 +207,8 @@ export function createInitialFlowState(): Pick<
     FlowState,
     | 'nodes'
     | 'edges'
+    | 'documents'
+    | 'activeDocumentId'
     | 'tabs'
     | 'activeTabId'
     | 'designSystems'
@@ -206,6 +226,8 @@ export function createInitialFlowState(): Pick<
     return {
         nodes: INITIAL_NODES,
         edges: INITIAL_EDGES,
+        documents: [createFallbackDocument()],
+        activeDocumentId: 'doc-1',
         tabs: [createFallbackTab()],
         activeTabId: 'tab-1',
         designSystems: [DEFAULT_DESIGN_SYSTEM],

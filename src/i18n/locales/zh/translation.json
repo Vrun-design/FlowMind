@@ -331,7 +331,7 @@
     "press": "按下",
     "shortcuts": "查看快捷键",
     "privacy": "您的图表、API 密钥和数据均保存在本地设备上。",
-    "analytics": "我们只统计匿名访问量。",
+    "analytics": "目前我们不收集分析数据。",
     "features": {
       "beautifulByDefault": "默认美观",
       "automatedLayouts": "自动布局和专业主题。",
@@ -740,21 +740,6 @@
       "showBetaBadgeHint": "Display the BETA chip next to logo"
     },
     "shortcutsHint": "你也可以随时按下 ? 键来查看这些快捷键。",
-    "privacy": {
-      "manifesto": "我们的隐私宣言",
-      "manifestoText": "我们坚信基于设计的隐私保护。",
-      "localFirst": "本地优先存储",
-      "noAccounts": "没有用户账户",
-      "ownData": "你的数据你做主",
-      "anonymous": "仅限匿名使用",
-      "telemetry": "遥测与反馈",
-      "anonymousStats": "匿名统计",
-      "anonymousStatsDesc": "我们只跟踪访问量。",
-      "quote": "我们依靠您来告诉我们什么有效。",
-      "helpImprove": "帮助我们改进",
-      "shareFeedback": "分享反馈",
-      "shareFeedbackDesc": "提供反馈、报告错误"
-    },
     "settings": "设置",
     "canvasSettings": "画布设置",
     "description": "配置画布偏好设置和键盘快捷键。",

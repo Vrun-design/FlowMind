@@ -63,6 +63,9 @@ export function FinalCTASection({ onLaunch }: FinalCTASectionProps): React.React
               size="xl"
               className="transform hover:-translate-y-1 transition-all active:scale-95"
               onClick={onLaunch}
+              data-analytics-event="landing_open_app_clicked"
+              data-analytics-placement="final-cta"
+              data-analytics-target="app"
             >
               Get Started Now <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -117,6 +120,9 @@ export function FinalCTASection({ onLaunch }: FinalCTASectionProps): React.React
               <div className="absolute bottom-6 right-6 flex items-center gap-4">
                 <button
                   onClick={handleCopy}
+                  data-analytics-event="landing_repo_clone_copied"
+                  data-analytics-placement="final-terminal"
+                  data-analytics-target="github"
                   className="text-xs font-mono text-white/40 hover:text-white transition-colors flex items-center gap-2"
                 >
                   {copied ? (
@@ -132,7 +138,13 @@ export function FinalCTASection({ onLaunch }: FinalCTASectionProps): React.React
 
           {/* Footer Links - Light Mode */}
           <div className="mt-12 flex items-center gap-6 text-sm text-brand-secondary">
-            <a href={DOCS_URL} className="hover:text-brand-primary transition-colors">
+            <a
+              href={DOCS_URL}
+              className="hover:text-brand-primary transition-colors"
+              data-analytics-event="landing_docs_clicked"
+              data-analytics-placement="final-links"
+              data-analytics-target="docs"
+            >
               Documentation
             </a>
             <span className="opacity-30">•</span>
@@ -141,11 +153,20 @@ export function FinalCTASection({ onLaunch }: FinalCTASectionProps): React.React
               target="_blank"
               rel="noreferrer"
               className="hover:text-brand-primary transition-colors"
+              data-analytics-event="landing_github_clicked"
+              data-analytics-placement="final-links"
+              data-analytics-target="github"
             >
               GitHub
             </a>
             <span className="opacity-30">•</span>
-            <a href={ROADMAP_URL} className="hover:text-brand-primary transition-colors">
+            <a
+              href={ROADMAP_URL}
+              className="hover:text-brand-primary transition-colors"
+              data-analytics-event="landing_docs_clicked"
+              data-analytics-placement="final-links"
+              data-analytics-target="roadmap"
+            >
               Roadmap
             </a>
           </div>

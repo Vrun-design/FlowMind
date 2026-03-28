@@ -32,8 +32,8 @@ interface UseFlowEditorShellControllerParams {
     location: LocationLike;
     navigate: NavigateLike;
     fileInputRef: RefObject<HTMLInputElement | null>;
-    tabs: TabLike[];
-    activeTabId: string | null;
+    pages: TabLike[];
+    activePageId: string | null;
     snapshots: FlowSnapshot[];
     nodes: FlowNode[];
     edges: FlowEdge[];
@@ -64,8 +64,8 @@ export function useFlowEditorShellController({
     location,
     navigate,
     fileInputRef,
-    tabs,
-    activeTabId,
+    pages,
+    activePageId,
     snapshots,
     nodes,
     edges,
@@ -78,8 +78,8 @@ export function useFlowEditorShellController({
     onLayout,
 }: UseFlowEditorShellControllerParams): UseFlowEditorShellControllerResult {
     const storageGuardTrigger = useMemo(
-        () => `${tabs.length}:${snapshots.length}:${nodes.length}:${edges.length}`,
-        [tabs.length, snapshots.length, nodes.length, edges.length]
+        () => `${pages.length}:${snapshots.length}:${nodes.length}:${edges.length}`,
+        [pages.length, snapshots.length, nodes.length, edges.length]
     );
     useStoragePressureGuard({
         trigger: storageGuardTrigger,
@@ -107,8 +107,8 @@ export function useFlowEditorShellController({
     }, [fileInputRef, location.hash, location.pathname, location.search, location.state, navigate]);
 
     const activeTab = useMemo(
-        () => tabs.find((tab) => tab.id === activeTabId),
-        [tabs, activeTabId]
+        () => pages.find((tab) => tab.id === activePageId),
+        [pages, activePageId]
     );
 
     const handleLayoutWithContext = useCallback(() => {

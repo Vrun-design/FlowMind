@@ -20,8 +20,8 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
     const {
         nodes,
         edges,
-        tabs,
-        activeTabId,
+        pages,
+        activePageId,
         viewSettings,
         diffBaseline,
         setDiffBaseline,
@@ -53,8 +53,8 @@ export function FlowEditor({ onGoHome }: FlowEditorProps) {
                     }}
                 >
                     <FlowEditorChrome
-                        tabs={tabs}
-                        activeTabId={activeTabId}
+                        pages={pages}
+                        activePageId={activePageId}
                         topNav={flowEditorController.chrome.topNav}
                         canvas={(
                             <FlowCanvas

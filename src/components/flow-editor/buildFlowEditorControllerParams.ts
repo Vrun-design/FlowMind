@@ -15,8 +15,8 @@ import type { Location, NavigateFunction } from 'react-router-dom';
 interface BuildFlowEditorControllerShellParams {
     location: Location;
     navigate: NavigateFunction;
-    tabs: Array<{ id: string; name: string }>;
-    activeTabId: string | null;
+    pages: Array<{ id: string; name: string }>;
+    activePageId: string | null;
     snapshots: FlowSnapshot[];
     nodes: FlowNode[];
     edges: FlowEdge[];
@@ -50,10 +50,10 @@ interface BuildFlowEditorControllerStudioParams {
 type BuildFlowEditorControllerPanelsParams = UseFlowEditorPanelsParams;
 
 interface BuildFlowEditorControllerChromeParams {
-    handleSwitchTab: (tabId: string) => void;
-    handleAddTab: () => void;
-    handleCloseTab: (tabId: string) => void;
-    handleRenameTab: (tabId: string, newName: string) => void;
+    handleSwitchPage: (pageId: string) => void;
+    handleAddPage: () => void;
+    handleClosePage: (pageId: string) => void;
+    handleRenamePage: (pageId: string, newName: string) => void;
     handleExport: (format?: 'png' | 'jpeg') => void;
     handleCopyImage: (format?: 'png' | 'jpeg') => void;
     handleSvgExport: () => void;

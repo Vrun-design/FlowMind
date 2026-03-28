@@ -4,11 +4,19 @@ import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { RouteLoadingFallback } from './components/app/RouteLoadingFallback';
 import { ToastProvider } from './components/ui/ToastContext';
+import {
+  captureAppOpened,
+  captureSessionStarted,
+  initializeAnalytics,
+} from './services/analytics/analytics';
 import { ensureLocalFirstPersistenceReady } from './services/storage/localFirstRuntime';
 import { installStorageTelemetrySink } from './services/storage/storageTelemetrySink';
 import { registerAppShellServiceWorker } from './services/offline/registerAppShellServiceWorker';
 import './index.css';
 
+initializeAnalytics();
+captureAppOpened();
+captureSessionStarted();
 installStorageTelemetrySink();
 registerAppShellServiceWorker();
 

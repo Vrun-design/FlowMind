@@ -73,7 +73,7 @@ export function HomeFlowRenameDialog({
                                 {t('home.renameFlow.title', 'Rename flow')}
                             </h2>
                             <p id="home-flow-rename-description" className="text-sm text-slate-500">
-                                {t('home.renameFlow.description', 'Update the name shown on your dashboard and tabs.')}
+                                {t('home.renameFlow.description', 'Update the name shown on your dashboard and in the editor.')}
                             </p>
                         </div>
                     </div>

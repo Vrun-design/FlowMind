@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
+import { captureAnalyticsEvent } from '@/services/analytics/analytics';
 import { recordOnboardingEvent } from '@/services/onboarding/events';
 
 interface UseExportMenuParams {
@@ -95,6 +96,10 @@ export function useExportMenu({
 
     function recordSelection(key: string, action: ExportActionKey): void {
         recordOnboardingEvent('first_export_completed', { format: `${key}:${action}` });
+        captureAnalyticsEvent('export_used', {
+            format: key,
+            action,
+        });
     }
 
     function handleSelect(key: string, action: ExportActionKey): void {

@@ -264,7 +264,7 @@
     "localStorageHint": "Autosaved on this device. We do not upload your diagram data to our servers.",
     "renameFlow": {
       "title": "Rename flow",
-      "description": "Update the name shown on your dashboard and tabs.",
+      "description": "Update the name shown on your dashboard and in the editor.",
       "label": "Flow name",
       "placeholder": "Enter a flow name",
       "hint": "Names are local to this browser profile unless you export or sync them elsewhere.",
@@ -364,7 +364,7 @@
     "press": "Kısayollar için",
     "shortcuts": "tuşlara basın",
     "privacy": "Diyagramlarınız, API anahtarlarınız ve tüm verileriniz yalnızca cihazınızda saklanır.",
-    "analytics": "Yalnızca anonim sayfa ziyaretleri takip edilir.",
+    "analytics": "Şu anda analiz verisi toplamıyoruz.",
     "features": {
       "beautifulByDefault": "Varsayılan olarak güzel",
       "automatedLayouts": "Otomatik düzenler ve profesyonel temalar.",
@@ -997,21 +997,6 @@
       "showBetaBadgeHint": "Logo yanında BETA çipini göster"
     },
     "shortcutsHint": "İstediğiniz zaman ? tuşuna basarak bunları görüntüleyebilirsiniz.",
-    "privacy": {
-      "manifesto": "Gizlilik Manifestomuz",
-      "manifestoText": "Tasarım gereği gizlilik ve kullanıcı özerkliğine inanıyoruz. E-postanızı toplamıyoruz, giriş sistemimiz yok ve verilerinizi sunucularımızda saklamıyoruz.",
-      "localFirst": "Yerel Öncelikli Depolama",
-      "noAccounts": "Kullanıcı Hesabı Yok",
-      "ownData": "Veriniz Size Ait",
-      "anonymous": "Yalnızca Anonim Kullanım",
-      "telemetry": "Telemetri ve Geri Bildirim",
-      "anonymousStats": "Anonim İstatistikler",
-      "anonymousStatsDesc": "Aracı geliştirmek için yalnızca ziyaretleri ve sınırlı anonim özellik kullanımını (dışa aktarma gibi) takip ediyoruz. Adlarınızı, IP adreslerinizi, girişlerinizi veya diyagram içeriğinizi takip etmiyoruz.",
-      "quote": "Her hareketinizi takip etmek yerine, neyin işe yaradığını bize söylemenize güveniyoruz.",
-      "helpImprove": "Geliştirmemize Yardımcı Olun",
-      "shareFeedback": "Geri Bildirim Paylaş",
-      "shareFeedbackDesc": "Geri bildirim verin, hataları bildirin ve özellik isteyin"
-    },
     "settings": "Settings",
     "canvasSettings": "Canvas Settings",
     "description": "Configure canvas preferences and keyboard shortcuts.",
@@ -1128,8 +1113,8 @@
     "strictModePasteBlocked": "Mimari Katı Mod, Mermaid yapıştırmayı engelledi. Kod görünümünü açın, tanıları düzeltin ve tekrar deneyin."
   },
   "flowTabs": {
-    "closeTab": "Sekmeyi Kapat",
-    "newFlowTab": "Yeni Akış Sekmesi"
+    "closeTab": "Sayfayi Kapat",
+    "newFlowTab": "Yeni Sayfa"
   },
   "share": {
     "close": "Close",

@@ -4,11 +4,11 @@ import { useFlowStore } from '@/store';
 import { composeDiagramForDisplay } from '@/services/composeDiagramForDisplay';
 
 interface UseFlowEditorCallbacksParams {
-    addTab: () => string;
-    closeTab: (tabId: string) => void;
-    updateTab: (tabId: string, update: Partial<{ name: string }>) => void;
+    addPage: () => string;
+    closePage: (pageId: string) => void;
+    updatePage: (pageId: string, update: Partial<{ name: string }>) => void;
     navigate: (path: string) => void;
-    tabsLength: number;
+    pagesLength: number;
     cannotCloseLastTabMessage: string;
     setNodes: (nodes: FlowNode[] | ((nodes: FlowNode[]) => FlowNode[])) => void;
     setEdges: (edges: FlowEdge[] | ((edges: FlowEdge[]) => FlowEdge[])) => void;
@@ -20,21 +20,21 @@ interface UseFlowEditorCallbacksParams {
 
 interface UseFlowEditorCallbacksResult {
     getCenter: () => { x: number; y: number };
-    handleSwitchTab: (tabId: string) => void;
-    handleAddTab: () => void;
-    handleCloseTab: (tabId: string) => void;
-    handleRenameTab: (tabId: string, newName: string) => void;
+    handleSwitchPage: (pageId: string) => void;
+    handleAddPage: () => void;
+    handleClosePage: (pageId: string) => void;
+    handleRenamePage: (pageId: string, newName: string) => void;
     selectAll: () => void;
     handleRestoreSnapshot: (snapshot: FlowSnapshot) => void;
     handleCommandBarApply: (newNodes: FlowNode[], newEdges: FlowEdge[]) => void;
 }
 
 export function useFlowEditorCallbacks({
-    addTab,
-    closeTab,
-    updateTab,
+    addPage,
+    closePage,
+    updatePage,
     navigate,
-    tabsLength,
+    pagesLength,
     cannotCloseLastTabMessage,
     setNodes,
     setEdges,
@@ -51,26 +51,26 @@ export function useFlowEditorCallbacks({
         return screenToFlowPosition({ x: centerX, y: centerY });
     }, [screenToFlowPosition]);
 
-    const handleSwitchTab = useCallback((tabId: string) => {
-        navigate(`/flow/${tabId}`);
+    const handleSwitchPage = useCallback((pageId: string) => {
+        navigate(`/flow/${pageId}`);
     }, [navigate]);
 
-    const handleAddTab = useCallback(() => {
-        const newId = addTab();
+    const handleAddPage = useCallback(() => {
+        const newId = addPage();
         navigate(`/flow/${newId}`);
-    }, [addTab, navigate]);
+    }, [addPage, navigate]);
 
-    const handleCloseTab = useCallback((tabId: string) => {
-        if (tabsLength === 1) {
+    const handleClosePage = useCallback((pageId: string) => {
+        if (pagesLength === 1) {
             alert(cannotCloseLastTabMessage);
             return;
         }
-        closeTab(tabId);
-    }, [cannotCloseLastTabMessage, closeTab, tabsLength]);
+        closePage(pageId);
+    }, [cannotCloseLastTabMessage, closePage, pagesLength]);
 
-    const handleRenameTab = useCallback((tabId: string, newName: string) => {
-        updateTab(tabId, { name: newName });
-    }, [updateTab]);
+    const handleRenamePage = useCallback((pageId: string, newName: string) => {
+        updatePage(pageId, { name: newName });
+    }, [updatePage]);
 
     const selectAll = useCallback(() => {
         setNodes((nodes) => nodes.map((node) => ({ ...node, selected: true })));
@@ -134,10 +134,10 @@ export function useFlowEditorCallbacks({
 
     return {
         getCenter,
-        handleSwitchTab,
-        handleAddTab,
-        handleCloseTab,
-        handleRenameTab,
+        handleSwitchPage,
+        handleAddPage,
+        handleClosePage,
+        handleRenamePage,
         selectAll,
         handleRestoreSnapshot,
         handleCommandBarApply,

@@ -331,7 +331,7 @@
     "press": "Presione",
     "shortcuts": "para atajos",
     "privacy": "Sus diagramas, claves API y datos permanecen localmente en su dispositivo.",
-    "analytics": "Solo contamos visitas anónimas.",
+    "analytics": "Hoy no recopilamos analíticas.",
     "features": {
       "beautifulByDefault": "Hermoso por defecto",
       "automatedLayouts": "Diseños automatizados y temas profesionales.",
@@ -740,21 +740,6 @@
       "showBetaBadgeHint": "Display the BETA chip next to logo"
     },
     "shortcutsHint": "También puedes presionar ? para verlos en cualquier momento.",
-    "privacy": {
-      "manifesto": "Nuestro manifiesto de privacidad",
-      "manifestoText": "Creemos en la privacidad por diseño y la autonomía del usuario.",
-      "localFirst": "Almacenamiento local",
-      "noAccounts": "Sin cuentas de usuario",
-      "ownData": "Tus datos son tuyos",
-      "anonymous": "Solo uso anónimo",
-      "telemetry": "Telemetría & Comentarios",
-      "anonymousStats": "Estadísticas anónimas",
-      "anonymousStatsDesc": "Solo rastreamos visitas y uso anónimo limitado.",
-      "quote": "Confiamos en que nos digas qué funciona.",
-      "helpImprove": "Ayúdanos a mejorar",
-      "shareFeedback": "Compartir comentarios",
-      "shareFeedbackDesc": "Dar comentarios, reportar errores, pedir características"
-    },
     "settings": "Configuración",
     "canvasSettings": "Configuración del lienzo",
     "description": "Configura las preferencias del lienzo y los atajos de teclado.",

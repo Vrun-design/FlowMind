@@ -1,5 +1,4 @@
 import React, { Suspense, lazy } from 'react';
-import type { FlowTab } from '@/lib/types';
 import type { NodeData } from '@/lib/types';
 import type { FlowEditorPanelsProps } from '@/components/FlowEditorPanels';
 import type {
@@ -7,6 +6,7 @@ import type {
     FlowEditorCollaborationTopNavState,
 } from '@/hooks/useFlowEditorCollaboration';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import type { EditorPage } from '@/store/editorPageHooks';
 
 const LazyFlowEditorPanels = lazy(async () => {
     const module = await import('@/components/FlowEditorPanels');
@@ -55,13 +55,13 @@ function TopNavFallback(): React.ReactElement {
 }
 
 export interface FlowEditorChromeProps {
-    tabs: FlowTab[];
-    activeTabId: string;
+    pages: EditorPage[];
+    activePageId: string;
     topNav: {
-        onSwitchTab: (tabId: string) => void;
-        onAddTab: () => void;
-        onCloseTab: (tabId: string) => void;
-        onRenameTab: (tabId: string, newName: string) => void;
+        onSwitchPage: (pageId: string) => void;
+        onAddPage: () => void;
+        onClosePage: (pageId: string) => void;
+        onRenamePage: (pageId: string, newName: string) => void;
         onExportPNG: (format?: 'png' | 'jpeg') => void;
         onCopyImage: (format?: 'png' | 'jpeg') => void;
         onExportSVG: () => void;
@@ -134,8 +134,8 @@ export interface FlowEditorChromeProps {
 }
 
 export function FlowEditorChrome({
-    tabs,
-    activeTabId,
+    pages,
+    activePageId,
     topNav,
     canvas,
     shouldRenderPanels,
@@ -150,13 +150,13 @@ export function FlowEditorChrome({
     emptyState,
 }: FlowEditorChromeProps): React.ReactElement {
     const topNavProps = {
-        tabs,
-        activeTabId,
+        pages,
+        activePageId,
         collaboration: topNav.collaboration,
-        onSwitchTab: topNav.onSwitchTab,
-        onAddTab: topNav.onAddTab,
-        onCloseTab: topNav.onCloseTab,
-        onRenameTab: topNav.onRenameTab,
+        onSwitchPage: topNav.onSwitchPage,
+        onAddPage: topNav.onAddPage,
+        onClosePage: topNav.onClosePage,
+        onRenamePage: topNav.onRenamePage,
         onExportPNG: topNav.onExportPNG,
         onCopyImage: topNav.onCopyImage,
         onExportSVG: topNav.onExportSVG,

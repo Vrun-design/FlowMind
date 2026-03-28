@@ -331,7 +331,7 @@
     "press": "Drücken Sie",
     "shortcuts": "für Tastaturkürzel",
     "privacy": "Ihre Diagramme, API-Schlüssel und Daten bleiben lokal auf Ihrem Gerät.",
-    "analytics": "Wir zählen nur anonyme Seitenbesuche.",
+    "analytics": "Wir erfassen derzeit keine Analysedaten.",
     "features": {
       "beautifulByDefault": "Standardmäßig schön",
       "automatedLayouts": "Automatisierte Layouts und professionelle Designs.",
@@ -740,21 +740,6 @@
       "showBetaBadgeHint": "Display the BETA chip next to logo"
     },
     "shortcutsHint": "Sie können auch ? drücken, um diese anzuzeigen.",
-    "privacy": {
-      "manifesto": "Unser Datenschutz-Manifest",
-      "manifestoText": "Wir glauben an Datenschutz durch Design.",
-      "localFirst": "Lokale Speicherung",
-      "noAccounts": "Keine Benutzerkonten",
-      "ownData": "Eigene Daten",
-      "anonymous": "Nur anonyme Nutzung",
-      "telemetry": "Telemetrie & Feedback",
-      "anonymousStats": "Anonyme Statistiken",
-      "anonymousStatsDesc": "Nur Besuche und begrenzte Nutzung.",
-      "quote": "Wir verlassen uns darauf, dass Sie uns sagen, was funktioniert.",
-      "helpImprove": "Helfen Sie uns zu verbessern",
-      "shareFeedback": "Feedback teilen",
-      "shareFeedbackDesc": "Feedback geben, Fehler melden, Funktionen anfragen"
-    },
     "settings": "Einstellungen",
     "canvasSettings": "Canvas-Einstellungen",
     "description": "Canvas-Einstellungen und Tastaturkürzel konfigurieren.",

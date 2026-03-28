@@ -9,7 +9,7 @@ type GetFlowState = () => FlowState;
 
 export function createTabActions(set: SetFlowState, get: GetFlowState): Pick<
     FlowState,
-    'setActiveTabId' | 'setTabs' | 'addTab' | 'duplicateActiveTab' | 'duplicateTab' | 'closeTab' | 'updateTab' | 'copySelectedToTab' | 'moveSelectedToTab'
+    'setActiveTabId' | 'setTabs' | 'addTab' | 'duplicateActiveTab' | 'duplicateTab' | 'deleteTab' | 'closeTab' | 'updateTab' | 'copySelectedToTab' | 'moveSelectedToTab'
 > {
     function nowIso(): string {
         return new Date().toISOString();
@@ -41,6 +41,19 @@ export function createTabActions(set: SetFlowState, get: GetFlowState): Pick<
             playback: clonePlaybackState(tab.playback),
             history: { past: [], future: [] },
             updatedAt: nowIso(),
+        };
+    }
+
+    function createEmptyTab(name = 'New Flow'): FlowTab {
+        return {
+            id: createId('tab'),
+            name,
+            diagramType: DEFAULT_DIAGRAM_TYPE,
+            updatedAt: nowIso(),
+            nodes: [],
+            edges: [],
+            playback: undefined,
+            history: { past: [], future: [] },
         };
     }
 
@@ -76,17 +89,8 @@ export function createTabActions(set: SetFlowState, get: GetFlowState): Pick<
                 tab.id === activeTabId ? { ...tab, nodes: get().nodes, edges: get().edges } : tab
             );
 
-            const newTabId = createId('tab');
-            const newTab: FlowTab = {
-                id: newTabId,
-                name: 'New Flow',
-                diagramType: DEFAULT_DIAGRAM_TYPE,
-                updatedAt: nowIso(),
-                nodes: [],
-                edges: [],
-                playback: undefined,
-                history: { past: [], future: [] },
-            };
+            const newTab = createEmptyTab();
+            const newTabId = newTab.id;
 
             set({
                 tabs: [...updatedTabs, newTab],
@@ -144,9 +148,56 @@ export function createTabActions(set: SetFlowState, get: GetFlowState): Pick<
             return newTabId;
         },
 
+        deleteTab: (id) => {
+            const { tabs, activeTabId } = get();
+            const nextTabs = tabs.filter((tab) => tab.id !== id);
+
+            if (nextTabs.length === tabs.length) {
+                return;
+            }
+
+            if (nextTabs.length === 0) {
+                const fallbackTab = createEmptyTab('Page 1');
+                set({
+                    tabs: [fallbackTab],
+                    activeTabId: fallbackTab.id,
+                    nodes: fallbackTab.nodes,
+                    edges: fallbackTab.edges,
+                });
+                return;
+            }
+
+            if (id !== activeTabId) {
+                set({ tabs: nextTabs });
+                return;
+            }
+
+            const deletedIndex = tabs.findIndex((tab) => tab.id === id);
+            const nextActiveTab = nextTabs[deletedIndex] ?? nextTabs[deletedIndex - 1] ?? nextTabs[0];
+            if (!nextActiveTab) {
+                return;
+            }
+
+            set({
+                tabs: nextTabs,
+                activeTabId: nextActiveTab.id,
+                nodes: nextActiveTab.nodes,
+                edges: nextActiveTab.edges,
+            });
+        },
+
         closeTab: (id) => {
             const { tabs, activeTabId } = get();
-            if (tabs.length === 1) return;
+            if (tabs.length === 1) {
+                const fallbackTab = createEmptyTab();
+                set({
+                    tabs: [fallbackTab],
+                    activeTabId: fallbackTab.id,
+                    nodes: fallbackTab.nodes,
+                    edges: fallbackTab.edges,
+                });
+                return;
+            }
 
             let newActiveTabId = activeTabId;
 

@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useState } from 'react';
 import { useFlowStore } from '../store';
-import { useTabActions, useTabsState } from '@/store/tabHooks';
+import { useWorkspaceDocumentActions, useWorkspaceDocumentsState } from '@/store/documentHooks';
 import { HomeDashboard, type HomeFlowCard } from './home/HomeDashboard';
 import { HomeFlowDeleteDialog, HomeFlowRenameDialog } from './home/HomeFlowDialogs';
 import { HomeSettingsView } from './home/HomeSettingsView';
@@ -31,9 +31,9 @@ export const HomePage: React.FC<HomePageProps> = ({
     activeTab: propActiveTab,
     onSwitchTab
 }) => {
-    const { tabs, activeTabId } = useTabsState();
-    const { updateTab, closeTab, duplicateTab } = useTabActions();
-    const { nodes, edges } = useFlowStore();
+    const { documents } = useWorkspaceDocumentsState();
+    const { renameDocument, deleteDocument, duplicateDocument } = useWorkspaceDocumentActions();
+    const hasWorkspaceDocuments = useFlowStore((state) => state.documents.length > 0);
     const [internalActiveTab, setInternalActiveTab] = useState<'home' | 'settings'>('home');
     const [activeSettingsTab, setActiveSettingsTab] = useState<'general' | 'shortcuts' | 'ai'>('general');
     const [flowPendingRename, setFlowPendingRename] = useState<HomeFlowCard | null>(null);
@@ -41,25 +41,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     const showWelcomeModal = shouldShowWelcomeModal();
 
     const activeTab = propActiveTab || internalActiveTab;
-    const flows: HomeFlowCard[] = tabs.map((tab) => {
-        const liveNodes = tab.id === activeTabId ? nodes : tab.nodes;
-        const liveEdges = tab.id === activeTabId ? edges : tab.edges;
-
-        return {
-            id: tab.id,
-            name: tab.name,
-            nodeCount: liveNodes.length,
-            edgeCount: liveEdges.length,
-            updatedAt: tab.updatedAt,
-            isActive: tab.id === activeTabId,
-        };
-    }).sort((left, right) => {
-        if (left.isActive && !right.isActive) return -1;
-        if (!left.isActive && right.isActive) return 1;
-        const leftTime = Date.parse(left.updatedAt || '');
-        const rightTime = Date.parse(right.updatedAt || '');
-        return (Number.isNaN(rightTime) ? 0 : rightTime) - (Number.isNaN(leftTime) ? 0 : leftTime);
-    });
+    const flows: HomeFlowCard[] = hasWorkspaceDocuments ? documents : [];
 
     const handleTabChange = (tab: 'home' | 'settings'): void => {
         if (onSwitchTab) {
@@ -78,9 +60,6 @@ export const HomePage: React.FC<HomePageProps> = ({
     };
 
     const handleDeleteFlow = (flowId: string): void => {
-        if (tabs.length <= 1) {
-            return;
-        }
         const flow = flows.find((entry) => entry.id === flowId);
         if (!flow) {
             return;
@@ -99,7 +78,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             return;
         }
 
-        updateTab(flowPendingRename.id, { name: trimmedName });
+        renameDocument(flowPendingRename.id, trimmedName);
         setFlowPendingRename(null);
     };
 
@@ -108,7 +87,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             return;
         }
 
-        closeTab(flowPendingDelete.id);
+        deleteDocument(flowPendingDelete.id);
         setFlowPendingDelete(null);
     };
 
@@ -132,7 +111,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                         onOpenFlow={onOpenFlow}
                         onRenameFlow={handleRenameFlow}
                         onDuplicateFlow={(flowId) => {
-                            const newFlowId = duplicateTab(flowId);
+                            const newFlowId = duplicateDocument(flowId);
                             if (newFlowId) {
                                 onOpenFlow(newFlowId);
                             }

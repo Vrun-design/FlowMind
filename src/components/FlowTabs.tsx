@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
 import { Plus, X } from 'lucide-react';
-import { FlowTab } from '@/lib/types';
 import { IS_BEVELED } from '@/lib/brand';
 import { useTranslation } from 'react-i18next';
 import { getSegmentedTabButtonClass } from './ui/SegmentedTabs';
+import type { EditorPage } from '@/store/editorPageHooks';
 
 interface FlowTabsProps {
-  tabs: FlowTab[];
-  activeTabId: string;
-  onSwitchTab: (tabId: string) => void;
-  onAddTab: () => void;
-  onCloseTab: (tabId: string) => void;
-  onRenameTab: (tabId: string, newName: string) => void;
+  pages: EditorPage[];
+  activePageId: string;
+  onSwitchPage: (pageId: string) => void;
+  onAddPage: () => void;
+  onClosePage: (pageId: string) => void;
+  onRenamePage: (pageId: string, newName: string) => void;
 }
 
 export const FlowTabs: React.FC<FlowTabsProps> = ({
-  tabs,
-  activeTabId,
-  onSwitchTab,
-  onAddTab,
-  onCloseTab,
-  onRenameTab,
+  pages,
+  activePageId,
+  onSwitchPage,
+  onAddPage,
+  onClosePage,
+  onRenamePage,
 }) => {
   const { t } = useTranslation();
   const isBeveled = IS_BEVELED;
@@ -29,14 +29,14 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
   const activeTabClassName = `${getSegmentedTabButtonClass(true, 'sm')} h-10 sm:h-9 border-[var(--brand-primary-200)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-700)]`;
   const inactiveTabClassName = `${getSegmentedTabButtonClass(false, 'sm')} h-10 sm:h-9 border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-700`;
 
-  const handleStartEdit = (tab: FlowTab) => {
-    setEditingTabId(tab.id);
-    setEditName(tab.name);
+  const handleStartEdit = (page: EditorPage) => {
+    setEditingTabId(page.id);
+    setEditName(page.name);
   };
 
   const handleFinishEdit = () => {
     if (editingTabId && editName.trim()) {
-      onRenameTab(editingTabId, editName.trim());
+      onRenamePage(editingTabId, editName.trim());
     }
     setEditingTabId(null);
     setEditName('');
@@ -54,22 +54,22 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
   return (
     <div className="pointer-events-auto flex min-w-0 items-center justify-center px-2 sm:px-4">
       <div className="flex max-w-full min-w-0 items-center gap-1 overflow-x-auto no-scrollbar">
-        {tabs.map((tab) => (
+        {pages.map((page) => (
           <div
-            key={tab.id}
-            data-testid="flow-tab"
+            key={page.id}
+            data-testid="flow-page-tab"
             className={`
               group relative flex items-center gap-2 cursor-pointer select-none transition-all
-              ${activeTabId === tab.id
+              ${activePageId === page.id
                 ? activeTabClassName
                 : inactiveTabClassName
               }
             `}
-            onClick={() => onSwitchTab(tab.id)}
-            onDoubleClick={() => handleStartEdit(tab)}
-            title={tab.name}
+            onClick={() => onSwitchPage(page.id)}
+            onDoubleClick={() => handleStartEdit(page)}
+            title={page.name}
           >
-            {editingTabId === tab.id ? (
+            {editingTabId === page.id ? (
               <input
                 type="text"
                 value={editName}
@@ -81,18 +81,18 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
                 onClick={(e) => e.stopPropagation()}
               />
             ) : (
-              <span className="max-w-[96px] truncate text-xs sm:max-w-[120px]">{tab.name}</span>
+              <span className="max-w-[96px] truncate text-xs sm:max-w-[120px]">{page.name}</span>
             )}
 
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onCloseTab(tab.id);
+                onClosePage(page.id);
               }}
-              title={t('flowTabs.closeTab')}
+              title={t('flowTabs.closeTab', 'Close page')}
               className={`
                 rounded-full p-1 transition-colors opacity-0 group-hover:opacity-100 hover:bg-slate-200
-                ${activeTabId === tab.id ? 'text-[var(--brand-primary-400)] hover:text-[var(--brand-primary)]' : 'text-slate-400 hover:text-slate-600'}
+                ${activePageId === page.id ? 'text-[var(--brand-primary-400)] hover:text-[var(--brand-primary)]' : 'text-slate-400 hover:text-slate-600'}
               `}
             >
               <X className="w-3 h-3" />
@@ -101,10 +101,10 @@ export const FlowTabs: React.FC<FlowTabsProps> = ({
         ))}
 
         <button
-          onClick={onAddTab}
-          data-testid="flow-tab-add"
+          onClick={onAddPage}
+          data-testid="flow-page-add"
           className={`ml-1 flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-[var(--brand-primary-50)] hover:text-[var(--brand-primary)] sm:h-9 sm:w-9 ${isBeveled ? 'btn-beveled bg-white' : ''}`}
-          title={t('flowTabs.newFlowTab')}
+          title={t('flowTabs.newFlowTab', 'New page')}
         >
           <Plus className="w-4 h-4" />
         </button>

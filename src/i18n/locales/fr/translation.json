@@ -331,7 +331,7 @@
     "press": "Appuyez sur",
     "shortcuts": "pour les raccourcis",
     "privacy": "Vos diagrammes, clés API et données restent localement sur votre appareil.",
-    "analytics": "Nous ne comptons que les visites anonymes.",
+    "analytics": "Nous ne collectons pas d’analyses pour le moment.",
     "features": {
       "beautifulByDefault": "Beau par défaut",
       "automatedLayouts": "Mises en page automatisées et thèmes professionnels.",
@@ -740,21 +740,6 @@
       "showBetaBadgeHint": "Display the BETA chip next to logo"
     },
     "shortcutsHint": "Vous pouvez aussi appuyer sur ? pour les afficher.",
-    "privacy": {
-      "manifesto": "Notre manifeste de confidentialité",
-      "manifestoText": "Nous croyons en la protection des données et l'autonomie.",
-      "localFirst": "Stockage local",
-      "noAccounts": "Aucun compte utilisateur",
-      "ownData": "Vos données vous appartiennent",
-      "anonymous": "Usage anonyme uniquement",
-      "telemetry": "Télémétrie & Retours",
-      "anonymousStats": "Statistiques anonymes",
-      "anonymousStatsDesc": "Nous suivons uniquement les visites et l'usage anonyme.",
-      "quote": "Nous comptons sur vous pour nous dire ce qui marche.",
-      "helpImprove": "Aidez-nous à nous améliorer",
-      "shareFeedback": "Partager des retours",
-      "shareFeedbackDesc": "Donner des retours, signaler des bugs, demander des fonctionnalités"
-    },
     "settings": "Paramètres",
     "canvasSettings": "Paramètres du canevas",
     "description": "Configurer les préférences du canevas et les raccourcis clavier.",

@@ -12,8 +12,8 @@ type SetFlowEdges = (payload: FlowEdge[] | ((edges: FlowEdge[]) => FlowEdge[])) 
 
 interface UseFlowEditorRuntimeParams {
     collaborationEnabled: boolean;
-    activeTabId: string;
-    activeTabName?: string;
+    activePageId: string;
+    activePageName?: string;
     nodes: FlowNode[];
     edges: FlowEdge[];
     editorSurfaceRef: RefObject<HTMLDivElement | null>;
@@ -29,8 +29,8 @@ interface UseFlowEditorRuntimeParams {
 
 export function useFlowEditorRuntime({
     collaborationEnabled,
-    activeTabId,
-    activeTabName,
+    activePageId,
+    activePageName,
     nodes,
     edges,
     editorSurfaceRef,
@@ -52,7 +52,7 @@ export function useFlowEditorRuntime({
         remotePresence,
     } = useFlowEditorCollaboration({
         collaborationEnabled,
-        activeTabId,
+        activePageId,
         nodes,
         edges,
         editorSurfaceRef,
@@ -70,7 +70,7 @@ export function useFlowEditorRuntime({
     const actions = useFlowEditorActions({
         nodes,
         edges,
-        activeTabName,
+        activePageName,
         recordHistory,
         setNodes,
         setEdges,

@@ -262,7 +262,7 @@
     "localStorageHint": "Autosaved on this device. We do not upload your diagram data to our servers.",
     "renameFlow": {
       "title": "Rename flow",
-      "description": "Update the name shown on your dashboard and tabs.",
+      "description": "Update the name shown on your dashboard and in the editor.",
       "label": "Flow name",
       "placeholder": "Enter a flow name",
       "hint": "Names are local to this browser profile unless you export or sync them elsewhere.",
@@ -361,9 +361,7 @@
     "press": "Press",
     "shortcuts": "for shortcuts",
     "privacy": "Your diagrams, API keys, and data stay locally on your device.",
-    "analytics": "We only count anonymous page visits.",
-    "analyticsTitle": "Help improve OpenFlowKit",
-    "analyticsDesc": "Share anonymous basic usage data (optional)",
+    "analytics": "We collect basic anonymous usage and reliability data to improve the product. Never your diagram content, prompt text, file contents, or API keys.",
     "features": {
       "beautifulByDefault": "Beautiful by default",
       "automatedLayouts": "Automated layouts and professional themes.",
@@ -1076,22 +1074,7 @@
       "showBetaBadgeHint": "Display the BETA chip next to logo"
     },
     "shortcutsHint": "You can also press ? to view these anytime.",
-    "canvasSettings": "Canvas Settings",
-    "privacy": {
-      "manifesto": "Our Privacy Manifesto",
-      "manifestoText": "We believe in privacy by design and user autonomy. We don't collect your email, we don't have a login system, and we don't store your data on our servers.",
-      "localFirst": "Local-First Storage",
-      "noAccounts": "No User Accounts",
-      "ownData": "Own Your Data",
-      "anonymous": "Anonymous Usage Only",
-      "telemetry": "Telemetry & Feedback",
-      "anonymousStats": "Anonymous Stats",
-      "anonymousStatsDesc": "We only track visits and limited anonymous feature usage (like exports) to improve the tool. We do not track your names, IP addresses, inputs, or diagram content.",
-      "quote": "We rely on you to tell us what works, rather than tracking your every move.",
-      "helpImprove": "Help Us Improve",
-      "shareFeedback": "Share Feedback",
-      "shareFeedbackDesc": "Give feedback, report bugs, and ask for features"
-    }
+    "canvasSettings": "Canvas Settings"
   },
   "customNodes": {
     "browserContent": "Browser Content",
@@ -1214,7 +1197,7 @@
     "strictModePasteBlocked": "Architecture strict mode blocked Mermaid paste. Open Code view, fix diagnostics, then retry."
   },
   "flowTabs": {
-    "closeTab": "Close Tab",
-    "newFlowTab": "New Flow Tab"
+    "closeTab": "Close Page",
+    "newFlowTab": "New Page"
   }
 }

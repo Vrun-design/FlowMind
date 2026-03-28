@@ -9,7 +9,8 @@ import { CinematicExportProvider } from '@/context/CinematicExportContext';
 import { HomePage } from '@/components/HomePage';
 
 import { useFlowStore } from './store';
-import { useTabActions } from '@/store/tabHooks';
+import { useEditorPageActions } from '@/store/editorPageHooks';
+import { useWorkspaceDocumentActions, useWorkspaceRouteResolver } from '@/store/documentHooks';
 import { useShortcutHelpOpen } from '@/store/viewHooks';
 
 // Import i18n configuration
@@ -36,13 +37,21 @@ const LazyDiagramViewer = lazy(async () => {
 function FlowCanvasRoute(): React.JSX.Element {
   const { flowId } = useParams();
   const navigate = useNavigate();
-  const { setActiveTabId } = useTabActions();
+  const { setActiveDocumentId } = useWorkspaceDocumentActions();
+  const { setActivePageId } = useEditorPageActions();
+  const { resolveTarget } = useWorkspaceRouteResolver();
 
   useEffect(() => {
     if (flowId) {
-      setActiveTabId(flowId);
+      const target = resolveTarget(flowId);
+      if (!target) {
+        return;
+      }
+
+      setActiveDocumentId(target.documentId);
+      setActivePageId(target.pageId);
     }
-  }, [flowId, setActiveTabId]);
+  }, [flowId, resolveTarget, setActiveDocumentId, setActivePageId]);
 
   return (
     <Suspense fallback={<RouteLoadingFallback />}>
@@ -58,7 +67,7 @@ function FlowCanvasRoute(): React.JSX.Element {
 function HomePageRoute(): React.JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
-  const { addTab } = useTabActions();
+  const { createDocument } = useWorkspaceDocumentActions();
 
   const activeTab = location.pathname === '/settings' ? 'settings' : 'home';
 
@@ -67,18 +76,18 @@ function HomePageRoute(): React.JSX.Element {
   }, []);
 
   const handleLaunch = () => {
-    const newTabId = addTab();
-    navigate(`/flow/${newTabId}`);
+    const newDocumentId = createDocument();
+    navigate(`/flow/${newDocumentId}`);
   };
 
   const handleLaunchWithTemplates = () => {
-    const newTabId = addTab();
-    navigate(`/flow/${newTabId}`, { state: createFlowEditorTemplatesRouteState() });
+    const newDocumentId = createDocument();
+    navigate(`/flow/${newDocumentId}`, { state: createFlowEditorTemplatesRouteState() });
   };
 
   const handleLaunchWithAI = () => {
-    const newTabId = addTab();
-    navigate(`/flow/${newTabId}`, { state: createFlowEditorAIRouteState() });
+    const newDocumentId = createDocument();
+    navigate(`/flow/${newDocumentId}`, { state: createFlowEditorAIRouteState() });
   };
 
   return (

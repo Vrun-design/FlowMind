@@ -1,3 +1,5 @@
+import { captureAnalyticsEvent } from '@/services/analytics/analytics';
+
 export type StorageTelemetrySeverity = 'info' | 'warning' | 'error';
 
 export interface StorageTelemetryEvent {
@@ -16,10 +18,19 @@ export function setStorageTelemetryHandler(handler: StorageTelemetryHandler | nu
 }
 
 export function reportStorageTelemetry(event: StorageTelemetryEvent): void {
-  if (!telemetryHandler) return;
-  try {
-    telemetryHandler(event);
-  } catch {
-    // Telemetry is non-critical and must never break storage behavior.
+  if (telemetryHandler) {
+    try {
+      telemetryHandler(event);
+    } catch {
+      // Telemetry is non-critical and must never break storage behavior.
+    }
+  }
+
+  if (event.severity !== 'info') {
+    captureAnalyticsEvent('storage_issue_reported', {
+      area: event.area,
+      code: event.code,
+      severity: event.severity,
+    });
   }
 }

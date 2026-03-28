@@ -331,7 +331,7 @@
     "press": "押す",
     "shortcuts": "ショートカット表示",
     "privacy": "図、APIキー、データはすべてローカルデバイスに保存されます。",
-    "analytics": "匿名のページ訪問のみを集計します。",
+    "analytics": "現在、分析データは収集していません。",
     "features": {
       "beautifulByDefault": "デフォルトで美しい",
       "automatedLayouts": "自動レイアウトとプロのテーマ。",
@@ -740,21 +740,6 @@
       "showBetaBadgeHint": "Display the BETA chip next to logo"
     },
     "shortcutsHint": "いつでも ? を押して、これらのショートカットを表示できます。",
-    "privacy": {
-      "manifesto": "プライバシーマニフェスト",
-      "manifestoText": "私たちは設計によるプライバシーを信じています。",
-      "localFirst": "ローカル保存",
-      "noAccounts": "ユーザーアカウントなし",
-      "ownData": "自分のデータは自分で管理",
-      "anonymous": "匿名利用のみ",
-      "telemetry": "テレメトリとフィードバック",
-      "anonymousStats": "匿名統計",
-      "anonymousStatsDesc": "訪問数と限定的な機能の使用状況のみ追跡。",
-      "quote": "何がうまく機能しているかを知るには、あなたからのフィードバックが頼りです。",
-      "helpImprove": "改善にご協力ください",
-      "shareFeedback": "フィードバックを共有",
-      "shareFeedbackDesc": "フィードバック、バグ報告、機能リクエストの送信"
-    },
     "settings": "設定",
     "canvasSettings": "キャンバス設定",
     "description": "キャンバス設定とキーボードショートカットを構成します。",

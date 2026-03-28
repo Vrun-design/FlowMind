@@ -19,11 +19,11 @@ export function useFlowEditorScreenBehavior(params: {
   );
 
   const callbacks = useFlowEditorCallbacks({
-    addTab: screenState.addTab,
-    closeTab: screenState.closeTab,
-    updateTab: screenState.updateTab,
+    addPage: screenState.addPage,
+    closePage: screenState.closePage,
+    updatePage: screenState.updatePage,
     navigate: screenState.navigate,
-    tabsLength: screenState.tabs.length,
+    pagesLength: screenState.pages.length,
     cannotCloseLastTabMessage: t('flowEditor.cannotCloseLastTab'),
     setNodes: screenState.setNodes,
     setEdges: screenState.setEdges,

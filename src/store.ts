@@ -6,7 +6,9 @@ import { createDesignSystemActions } from './store/actions/createDesignSystemAct
 import { createHistoryActions } from './store/actions/createHistoryActions';
 import { createLayerActions } from './store/actions/createLayerActions';
 import { createTabActions } from './store/actions/createTabActions';
+import { createWorkspaceDocumentActions } from './store/actions/createWorkspaceDocumentActions';
 import { createViewActions } from './store/actions/createViewActions';
+import { installWorkspaceDocumentSync } from './store/documentStateSync';
 import {
     DEFAULT_AI_SETTINGS,
     DEFAULT_DESIGN_SYSTEM,
@@ -38,6 +40,7 @@ export const useFlowStore = create<FlowState>()(
             ...createInitialFlowState(),
             ...createCanvasActions(set, get),
             ...createHistoryActions(set, get),
+            ...createWorkspaceDocumentActions(set, get),
             ...createTabActions(set, get),
             ...createDesignSystemActions(set),
             ...createViewActions(set),
@@ -53,3 +56,5 @@ export const useFlowStore = create<FlowState>()(
         }
     )
 );
+
+installWorkspaceDocumentSync(useFlowStore);

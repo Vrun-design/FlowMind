@@ -90,6 +90,9 @@ export function HeroSection({ onLaunch }: HeroSectionProps): React.ReactElement 
             size="lg"
             className="w-full sm:w-auto h-14 px-10 transition-all active:scale-95 text-[15px]"
             onClick={onLaunch}
+            data-analytics-event="landing_open_app_clicked"
+            data-analytics-placement="hero-primary"
+            data-analytics-target="app"
           >
             Get Started
             <Play className="w-3.5 h-3.5 fill-current ml-2" />
@@ -99,6 +102,9 @@ export function HeroSection({ onLaunch }: HeroSectionProps): React.ReactElement 
             size="lg"
             className="w-full sm:w-auto h-14 px-10 transition-all active:scale-95 text-[15px]"
             onClick={openGithub}
+            data-analytics-event="landing_github_clicked"
+            data-analytics-placement="hero-secondary"
+            data-analytics-target="github"
           >
             <GitBranch className="w-4 h-4 mr-2" />
             Fork on GitHub
@@ -159,7 +165,7 @@ export function HeroSection({ onLaunch }: HeroSectionProps): React.ReactElement 
                 <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                 <circle cx="12" cy="10" r="3" />
               </svg>
-              <span className="text-sm font-medium tracking-tight">Zero Tracking</span>
+              <span className="text-sm font-medium tracking-tight">Privacy-First</span>
             </div>
             <div className="flex items-center gap-2 text-gray-500">
               <svg

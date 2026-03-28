@@ -2,6 +2,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCcw } from 'lucide-react';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { createLogger } from '@/lib/logger';
+import { captureAnalyticsException } from '@/services/analytics/analytics';
 
 const logger = createLogger({ scope: 'ErrorBoundary' });
 
@@ -27,6 +28,10 @@ class ErrorBoundaryComponent extends Component<Props, State> {
 
     public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
         logger.error('Uncaught error.', { error, componentStack: errorInfo.componentStack });
+        captureAnalyticsException(error, {
+            surface: 'react-error-boundary',
+            has_component_stack: Boolean(errorInfo.componentStack),
+        });
     }
 
     public render() {

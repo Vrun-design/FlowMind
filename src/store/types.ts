@@ -8,6 +8,7 @@ import type {
 import type { ParseDiagnostic } from '@/lib/openFlowDSLParser';
 import type { DesignSystem, DiagramType, FlowEdge, FlowNode, FlowTab, GlobalEdgeOptions } from '@/lib/types';
 import type { ExportSerializationMode } from '@/services/canonicalSerialization';
+import type { FlowDocument } from '@/services/storage/flowDocumentModel';
 
 export interface ViewSettings {
     showGrid: boolean;
@@ -90,6 +91,14 @@ export interface FlowState {
     // -------------------------------------------------------------------------
     // SLICE: Tabs — multi-diagram workspace
     // -------------------------------------------------------------------------
+    documents: FlowDocument[];
+    activeDocumentId: string;
+    setDocuments: (documents: FlowDocument[]) => void;
+    setActiveDocumentId: (id: string) => void;
+    createDocument: () => string;
+    renameDocument: (id: string, nextName: string) => void;
+    duplicateDocument: (id: string) => string | null;
+    deleteDocumentRecord: (id: string) => void;
     tabs: FlowTab[];
     activeTabId: string;
     setActiveTabId: (id: string) => void;
@@ -97,6 +106,7 @@ export interface FlowState {
     addTab: () => string;
     duplicateActiveTab: () => string | null;
     duplicateTab: (id: string) => string | null;
+    deleteTab: (id: string) => void;
     closeTab: (id: string) => void;
     updateTab: (id: string, updates: Partial<FlowTab>) => void;
     copySelectedToTab: (targetTabId: string) => number;
