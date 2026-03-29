@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Handle, Position } from '@/lib/reactflowCompat';
 import {
   getConnectorHandleStyle,
@@ -78,7 +78,7 @@ function getCinematicNodePresentation(params: {
   };
 }
 
-export function NodeChrome({
+export const NodeChrome = memo(function NodeChrome({
   nodeId,
   selected,
   minWidth,
@@ -150,4 +150,4 @@ export function NodeChrome({
       ))}
     </div>
   );
-}
+});

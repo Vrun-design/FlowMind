@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BaseEdge, EdgeLabelRenderer, useReactFlow } from '@/lib/reactflowCompat';
 import { ROLLOUT_FLAGS } from '@/config/rolloutFlags';
 import { MarkerType } from '@/lib/reactflowCompat';
@@ -49,7 +49,7 @@ function toLabelTransform(x: number, y: number): string {
   return `translate(-50%, -50%) translate(${x}px,${y}px)`;
 }
 
-export function CustomEdgeWrapper({
+export const CustomEdgeWrapper = memo(function CustomEdgeWrapper({
   id,
   path,
   sourceX: _sourceX,
@@ -136,7 +136,7 @@ export function CustomEdgeWrapper({
   const relationResolvedMarkerEnd = relationVisualSpec
     ? toMarkerUrl(relationVisualSpec.markerEndId)
     : markerEnd;
-  const standardMarkers = resolveStandardEdgeMarkers({
+  const standardMarkers = useMemo(() => resolveStandardEdgeMarkers({
     connectorModelEnabled: !relationVisualSpec,
     edgeId: id,
     markerStartUrl: relationResolvedMarkerStart,
@@ -160,7 +160,16 @@ export function CustomEdgeWrapper({
           })
         : undefined,
     stroke: String(resolvedStyle.stroke ?? designSystem.colors.edge),
-  });
+  }), [
+    relationVisualSpec,
+    id,
+    relationResolvedMarkerStart,
+    relationResolvedMarkerEnd,
+    markerStartConfig,
+    markerEndConfig,
+    resolvedStyle.stroke,
+    designSystem.colors.edge,
+  ]);
   const resolvedMarkerStart = standardMarkers.markerStartUrl;
   const resolvedMarkerEnd = standardMarkers.markerEndUrl;
   const animatedPresentation = useMemo(
@@ -569,4 +578,4 @@ export function CustomEdgeWrapper({
       )}
     </>
   );
-}
+});

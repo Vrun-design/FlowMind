@@ -4,7 +4,6 @@ import { useShallow } from 'zustand/react/shallow';
 import ReactFlow, {
   Background,
   useReactFlow,
-  useViewport,
   toFlowNode,
 } from '@/lib/reactflowCompat';
 import { useFlowStore } from '../store';
@@ -85,7 +84,6 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
   const connectMenuSetterRef = useRef<((value: ConnectMenuState | null) => void) | null>(null);
 
   const { screenToFlowPosition, fitView } = useReactFlow();
-  const { zoom, x: viewportX, y: viewportY } = useViewport();
   const clearPaneSelection = useCallback((): void => {
     setSelectedNodeId(null);
     setSelectedEdgeId(null);
@@ -167,7 +165,6 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
   const isEffectiveSelectMode = isSelectMode || isSelectionModifierPressed;
   const { lowDetailModeActive, farZoomReductionActive } = useFlowCanvasZoomLod({
     safetyModeActive,
-    zoom,
     largeGraphSafetyProfile,
   });
   const { interactionLowDetailModeActive, startInteractionLowDetail, endInteractionLowDetail } =
@@ -335,9 +332,6 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
         alignmentGuides={alignmentGuides}
         overlayNodes={layerAdjustedNodes}
         selectionDragPreview={selectionDragPreview}
-        zoom={zoom}
-        viewportX={viewportX}
-        viewportY={viewportY}
         connectMenu={connectMenu}
         setConnectMenu={setConnectMenu}
         screenToFlowPosition={screenToFlowPosition}

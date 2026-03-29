@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from 'react';
+import { useViewport } from '@/lib/reactflowCompat';
 import type { NodeData } from '@/lib/types';
 import type { ConnectMenuState, ContextMenuState } from './useFlowCanvasMenus';
 import type { UseFlowCanvasContextActionsResult } from './useFlowCanvasContextActions';
@@ -23,9 +24,6 @@ interface FlowCanvasOverlaysProps {
   alignmentGuides: AlignmentGuides;
   overlayNodes: FlowNode[];
   selectionDragPreview: SelectionDragPreview;
-  zoom: number;
-  viewportX: number;
-  viewportY: number;
   connectMenu: ConnectMenuState | null;
   setConnectMenu: (menu: ConnectMenuState | null) => void;
   screenToFlowPosition: (position: { x: number; y: number }) => { x: number; y: number };
@@ -54,9 +52,6 @@ export function FlowCanvasOverlays({
   alignmentGuides,
   overlayNodes,
   selectionDragPreview,
-  zoom,
-  viewportX,
-  viewportY,
   connectMenu,
   setConnectMenu,
   screenToFlowPosition,
@@ -67,6 +62,7 @@ export function FlowCanvasOverlays({
   copySelection,
   contextActions,
 }: FlowCanvasOverlaysProps): React.ReactElement {
+  const { zoom, x: viewportX, y: viewportY } = useViewport();
   return (
     <>
       <FlowCanvasAlignmentGuidesOverlay

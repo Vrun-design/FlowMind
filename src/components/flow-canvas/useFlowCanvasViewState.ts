@@ -1,9 +1,9 @@
+import { useMemo } from 'react';
 import type { FlowEdge, FlowNode } from '@/lib/types';
 import type { Layer, ViewSettings } from '@/store/types';
 import {
     getSafetyAdjustedEdges,
     isLargeGraphSafetyActive,
-    shouldEnableViewportCulling,
 } from './largeGraphSafetyMode';
 import { getNodeParentId } from '@/lib/nodeParent';
 
@@ -53,35 +53,50 @@ function applyLayerStateToNode(node: FlowNode, layerById: Map<string, Layer>): F
     };
 }
 
-function inheritSectionState(node: FlowNode, nodeById: Map<string, FlowNode>): {
-    hidden: boolean;
-    locked: boolean;
-} {
-    let hidden = node.data?.sectionHidden === true;
-    let locked = node.data?.sectionLocked === true;
-    let currentParentId = getNodeParentId(node);
+function buildSectionStateCache(
+    nodes: FlowNode[],
+    nodeById: Map<string, FlowNode>
+): Map<string, { hidden: boolean; locked: boolean }> {
+    const cache = new Map<string, { hidden: boolean; locked: boolean }>();
 
-    while (currentParentId) {
-        const parent = nodeById.get(currentParentId);
-        if (!parent) {
-            break;
+    function resolve(node: FlowNode): { hidden: boolean; locked: boolean } {
+        const cached = cache.get(node.id);
+        if (cached) return cached;
+
+        const own = {
+            hidden: node.data?.sectionHidden === true,
+            locked: node.data?.sectionLocked === true,
+        };
+
+        const parentId = getNodeParentId(node);
+        if (parentId) {
+            const parent = nodeById.get(parentId);
+            if (parent) {
+                const parentState = resolve(parent);
+                own.hidden = own.hidden || parentState.hidden;
+                own.locked = own.locked || parentState.locked;
+            }
         }
 
-        hidden = hidden || parent.data?.sectionHidden === true;
-        locked = locked || parent.data?.sectionLocked === true;
-        currentParentId = getNodeParentId(parent);
+        cache.set(node.id, own);
+        return own;
     }
 
-    return { hidden, locked };
+    for (const node of nodes) {
+        resolve(node);
+    }
+
+    return cache;
 }
 
 function getLayerAdjustedNodes(nodes: FlowNode[], layers: Layer[]): FlowNode[] {
     const layerById = buildLayerLookup(layers);
     const nodeById = new Map(nodes.map((node) => [node.id, node]));
+    const sectionStateCache = buildSectionStateCache(nodes, nodeById);
 
     return nodes.map((node) => {
         const layerAdjustedNode = applyLayerStateToNode(node, layerById);
-        const inheritedState = inheritSectionState(node, nodeById);
+        const inheritedState = sectionStateCache.get(node.id) ?? { hidden: false, locked: false };
         const nextHidden = layerAdjustedNode.hidden || inheritedState.hidden;
         const nextDraggable = Boolean(layerAdjustedNode.draggable) && !inheritedState.locked;
 
@@ -127,7 +142,7 @@ export function computeFlowCanvasViewState({
         largeGraphSafetyMode,
         largeGraphSafetyProfile
     );
-    const viewportCullingEnabled = shouldEnableViewportCulling(safetyModeActive);
+    const viewportCullingEnabled = true;
     const effectiveShowGrid = showGrid && !safetyModeActive;
     const layerAdjustedNodes = getLayerAdjustedNodes(nodes, layers);
     const visibleEdges = getVisibleEdges(layerAdjustedNodes, edges);
@@ -142,6 +157,16 @@ export function computeFlowCanvasViewState({
     };
 }
 
-export function useFlowCanvasViewState(params: FlowCanvasViewStateParams): FlowCanvasViewState {
-    return computeFlowCanvasViewState(params);
+export function useFlowCanvasViewState({
+    nodes,
+    edges,
+    layers,
+    showGrid,
+    largeGraphSafetyMode,
+    largeGraphSafetyProfile,
+}: FlowCanvasViewStateParams): FlowCanvasViewState {
+    return useMemo(
+        () => computeFlowCanvasViewState({ nodes, edges, layers, showGrid, largeGraphSafetyMode, largeGraphSafetyProfile }),
+        [nodes, edges, layers, showGrid, largeGraphSafetyMode, largeGraphSafetyProfile]
+    );
 }

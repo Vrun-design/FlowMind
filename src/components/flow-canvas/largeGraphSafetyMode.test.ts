@@ -12,7 +12,6 @@ import {
   isLargeGraphSafetyActive,
   resolveFarZoomReductionStateForProfile,
   resolveLowDetailModeStateForProfile,
-  shouldEnableViewportCulling,
 } from './largeGraphSafetyMode';
 
 describe('largeGraphSafetyMode', () => {
@@ -46,12 +45,7 @@ describe('largeGraphSafetyMode', () => {
     expect(getSafetyAdjustedEdges(edges, false)).toBe(edges);
   });
 
-  it('enables viewport culling only when safety mode is active', () => {
-    expect(shouldEnableViewportCulling(true)).toBe(true);
-    expect(shouldEnableViewportCulling(false)).toBe(false);
-  });
-
-  it('enables low-detail mode only for large-graph safety with far zoom', () => {
+it('enables low-detail mode only for large-graph safety with far zoom', () => {
     expect(isLowDetailModeActive(false, 0.4)).toBe(false);
     expect(isLowDetailModeActive(true, 0.55)).toBe(false);
     expect(isLowDetailModeActive(true, 0.5)).toBe(true);

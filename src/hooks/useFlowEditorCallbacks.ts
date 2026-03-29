@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { startTransition, useCallback, useRef } from 'react';
 import type { FlowEdge, FlowNode, FlowSnapshot } from '@/lib/types';
 import { useFlowStore } from '@/store';
 import { composeDiagramForDisplay } from '@/services/composeDiagramForDisplay';
@@ -84,11 +84,13 @@ export function useFlowEditorCallbacks({
 
     const handleCommandBarApply = useCallback((newNodes: FlowNode[], newEdges: FlowEdge[]) => {
         recordHistory();
-        setNodes(newNodes.map((node, index) => ({
-            ...node,
-            data: { ...node.data, freshlyAdded: true, animateDelay: Math.min(index * 20, 400) },
-        })));
-        setEdges(newEdges);
+        startTransition(() => {
+            setNodes(newNodes.map((node, index) => ({
+                ...node,
+                data: { ...node.data, freshlyAdded: true, animateDelay: Math.min(index * 20, 400) },
+            })));
+            setEdges(newEdges);
+        });
         setTimeout(() => fitView({ duration: 800, padding: 0.2 }), 100);
 
         const runId = stabilizationRunIdRef.current + 1;
