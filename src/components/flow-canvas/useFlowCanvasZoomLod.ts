@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useViewport } from '@/lib/reactflowCompat';
 import type { ViewSettings } from '@/store/types';
 import {
   isFarZoomReductionActiveForProfile,
@@ -7,7 +8,6 @@ import {
 
 interface UseFlowCanvasZoomLodParams {
   safetyModeActive: boolean;
-  zoom: number;
   largeGraphSafetyProfile: ViewSettings['largeGraphSafetyProfile'];
 }
 
@@ -18,9 +18,9 @@ interface FlowCanvasZoomLodState {
 
 export function useFlowCanvasZoomLod({
   safetyModeActive,
-  zoom,
   largeGraphSafetyProfile,
 }: UseFlowCanvasZoomLodParams): FlowCanvasZoomLodState {
+  const { zoom } = useViewport();
   const lowDetailModeActive = useMemo(() =>
     isLowDetailModeActiveForProfile(
       safetyModeActive,

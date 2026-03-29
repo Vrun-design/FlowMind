@@ -1,10 +1,18 @@
 import { DEFAULT_AI_SETTINGS } from '@/store';
+import { captureAnalyticsEvent } from '@/services/analytics/analytics';
 import { sanitizeAISettings } from '@/store/aiSettings';
 import { clearPersistedAISettings, loadPersistedAISettings } from '@/store/aiSettingsPersistence';
 import { sanitizePersistedTab } from '@/store/persistence';
+import { syncWorkspaceDocuments } from '@/store/documentStateSync';
+import { getEditorPagesForDocument } from '@/store/workspaceDocumentModel';
 import type { FlowStoreState } from '@/store';
 import { useFlowStore } from '@/store';
-import { convertPersistedDocumentsToTabs, localFirstRepository, type PersistedChatMessage } from './localFirstRepository';
+import { createPersistedDocumentsFromTabs } from './persistedDocumentAdapters';
+import {
+  createLoadedFlowWorkspace,
+  localFirstRepository,
+  type PersistedChatMessage,
+} from './localFirstRepository';
 
 const STORE_SUBSCRIPTION_DEBOUNCE_MS = 250;
 
@@ -63,7 +71,7 @@ function toPersistedChatMessages(documentId: string, serialized: string | null):
 
 async function migrateLegacyStoreIntoRepositoryIfNeeded(): Promise<void> {
   const currentState = useFlowStore.getState();
-  const loaded = await localFirstRepository.loadActiveDocument();
+  const loaded = await localFirstRepository.loadWorkspaceSnapshot();
   if (loaded.documents.length > 0) {
     return;
   }
@@ -73,7 +81,10 @@ async function migrateLegacyStoreIntoRepositoryIfNeeded(): Promise<void> {
     return;
   }
 
-  await localFirstRepository.saveWorkspace(tabs, currentState.activeTabId);
+  await localFirstRepository.saveDocuments(
+    createPersistedDocumentsFromTabs(tabs),
+    currentState.activeTabId,
+  );
 
   await Promise.all(
     tabs.map(async (tab) => {
@@ -93,14 +104,17 @@ async function migrateLegacyStoreIntoRepositoryIfNeeded(): Promise<void> {
 }
 
 async function hydrateStoreFromRepository(): Promise<void> {
-  const loaded = await localFirstRepository.loadActiveDocument();
-  const tabs = convertPersistedDocumentsToTabs(loaded.documents);
-  if (tabs.length === 0) {
+  const loaded = await localFirstRepository.loadWorkspaceSnapshot();
+  const workspace = createLoadedFlowWorkspace(loaded);
+  const activeDocument = getEditorPagesForDocument(workspace.documents, workspace.activeDocumentId);
+  if (!activeDocument) {
+    captureAnalyticsEvent('workspace_restored', {
+      document_count: 0,
+      has_active_document: false,
+    });
     return;
   }
 
-  const activeTabId = loaded.document?.id ?? loaded.workspaceMeta.activeDocumentId ?? tabs[0].id;
-  const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
   const persistentAiSettings = await localFirstRepository.loadPersistentAISettings();
   const aiSettings = persistentAiSettings
     ? sanitizeAISettings(JSON.parse(persistentAiSettings) as Partial<FlowStoreState['aiSettings']>, DEFAULT_AI_SETTINGS)
@@ -108,18 +122,36 @@ async function hydrateStoreFromRepository(): Promise<void> {
 
   useFlowStore.setState((currentState) => ({
     ...currentState,
-    tabs,
-    activeTabId: activeTab.id,
-    nodes: activeTab.nodes,
-    edges: activeTab.edges,
+    documents: workspace.documents,
+    activeDocumentId: activeDocument.activeDocumentId,
+    tabs: activeDocument.pages,
+    activeTabId: activeDocument.activePageId,
+    nodes: activeDocument.pages.find((page) => page.id === activeDocument.activePageId)?.nodes ?? [],
+    edges: activeDocument.pages.find((page) => page.id === activeDocument.activePageId)?.edges ?? [],
     aiSettings,
   }));
+
+  captureAnalyticsEvent('workspace_restored', {
+    document_count: workspace.documents.length,
+    has_active_document: Boolean(activeDocument.activeDocumentId),
+  });
 }
 
 function persistStoreSnapshot(): void {
   const nextState = useFlowStore.getState();
+  const documents = syncWorkspaceDocuments({
+    documents: nextState.documents,
+    activeDocumentId: nextState.activeDocumentId,
+    tabs: nextState.tabs.map(sanitizePersistedTab),
+    activeTabId: nextState.activeTabId,
+    nodes: nextState.nodes,
+    edges: nextState.edges,
+  });
 
-  void localFirstRepository.saveWorkspace(nextState.tabs.map(sanitizePersistedTab), nextState.activeTabId);
+  void localFirstRepository.saveFlowDocuments(
+    documents,
+    nextState.activeDocumentId,
+  );
 
   if (nextState.aiSettings.storageMode === 'local') {
     void localFirstRepository.savePersistentAISettings(JSON.stringify(nextState.aiSettings));
@@ -140,11 +172,13 @@ export async function initializeLocalFirstPersistence(): Promise<void> {
 
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
   syncStopper = useFlowStore.subscribe((state, previousState) => {
+    const documentsChanged = state.documents !== previousState.documents;
     const tabsChanged = state.tabs !== previousState.tabs;
-    const activeDocumentChanged = state.activeTabId !== previousState.activeTabId;
+    const activeDocumentChanged = state.activeDocumentId !== previousState.activeDocumentId;
+    const activePageChanged = state.activeTabId !== previousState.activeTabId;
     const aiSettingsChanged = state.aiSettings !== previousState.aiSettings;
 
-    if (!tabsChanged && !activeDocumentChanged && !aiSettingsChanged) {
+    if (!documentsChanged && !tabsChanged && !activeDocumentChanged && !activePageChanged && !aiSettingsChanged) {
       return;
     }
 

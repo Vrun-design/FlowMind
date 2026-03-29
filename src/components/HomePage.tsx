@@ -1,177 +1,169 @@
 import React, { Suspense, lazy, useState } from 'react';
 import { useFlowStore } from '../store';
-import { useTabActions, useTabsState } from '@/store/tabHooks';
+import { useWorkspaceDocumentActions, useWorkspaceDocumentsState } from '@/store/documentHooks';
 import { HomeDashboard, type HomeFlowCard } from './home/HomeDashboard';
 import { HomeFlowDeleteDialog, HomeFlowRenameDialog } from './home/HomeFlowDialogs';
 import { HomeSettingsView } from './home/HomeSettingsView';
 import { HomeSidebar } from './home/HomeSidebar';
+import { HomeTemplatesView } from './home/HomeTemplatesView';
 import { shouldShowWelcomeModal } from './home/welcomeModalState';
 
+type HomePageTab = 'home' | 'templates' | 'settings';
+type HomeSettingsTab = 'general' | 'canvas' | 'shortcuts' | 'ai';
+
 const LazyWelcomeModal = lazy(async () => {
-    const module = await import('./WelcomeModal');
-    return { default: module.WelcomeModal };
+  const module = await import('./WelcomeModal');
+  return { default: module.WelcomeModal };
 });
 
 interface HomePageProps {
-    onLaunch: () => void;
-    onLaunchWithTemplates: () => void;
-    onLaunchWithAI: () => void;
-    onImportJSON: () => void;
-    onOpenFlow: (flowId: string) => void;
-    activeTab?: 'home' | 'settings';
-    onSwitchTab?: (tab: 'home' | 'settings') => void;
+  onLaunch: () => void;
+  onLaunchWithTemplates: () => void;
+  onLaunchWithTemplate: (templateId: string) => void;
+  onLaunchWithAI: () => void;
+  onImportJSON: () => void;
+  onOpenFlow: (flowId: string) => void;
+  activeTab?: HomePageTab;
+  onSwitchTab?: (tab: HomePageTab) => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
-    onLaunch,
-    onLaunchWithTemplates,
-    onLaunchWithAI,
-    onImportJSON,
-    onOpenFlow,
-    activeTab: propActiveTab,
-    onSwitchTab
+  onLaunch,
+  onLaunchWithTemplates,
+  onLaunchWithTemplate,
+  onLaunchWithAI,
+  onImportJSON,
+  onOpenFlow,
+  activeTab: propActiveTab,
+  onSwitchTab,
 }) => {
-    const { tabs, activeTabId } = useTabsState();
-    const { updateTab, closeTab, duplicateTab } = useTabActions();
-    const { nodes, edges } = useFlowStore();
-    const [internalActiveTab, setInternalActiveTab] = useState<'home' | 'settings'>('home');
-    const [activeSettingsTab, setActiveSettingsTab] = useState<'general' | 'shortcuts' | 'ai'>('general');
-    const [flowPendingRename, setFlowPendingRename] = useState<HomeFlowCard | null>(null);
-    const [flowPendingDelete, setFlowPendingDelete] = useState<HomeFlowCard | null>(null);
-    const showWelcomeModal = shouldShowWelcomeModal();
+  const { documents } = useWorkspaceDocumentsState();
+  const { renameDocument, deleteDocument, duplicateDocument } = useWorkspaceDocumentActions();
+  const hasWorkspaceDocuments = useFlowStore((state) => state.documents.length > 0);
+  const [internalActiveTab, setInternalActiveTab] = useState<HomePageTab>('home');
+  const [activeSettingsTab, setActiveSettingsTab] = useState<HomeSettingsTab>('general');
+  const [flowPendingRename, setFlowPendingRename] = useState<HomeFlowCard | null>(null);
+  const [flowPendingDelete, setFlowPendingDelete] = useState<HomeFlowCard | null>(null);
+  const showWelcomeModal = shouldShowWelcomeModal();
 
-    const activeTab = propActiveTab || internalActiveTab;
-    const flows: HomeFlowCard[] = tabs.map((tab) => {
-        const liveNodes = tab.id === activeTabId ? nodes : tab.nodes;
-        const liveEdges = tab.id === activeTabId ? edges : tab.edges;
+  const activeTab = propActiveTab ?? internalActiveTab;
+  const flows: HomeFlowCard[] = hasWorkspaceDocuments ? documents : [];
 
-        return {
-            id: tab.id,
-            name: tab.name,
-            nodeCount: liveNodes.length,
-            edgeCount: liveEdges.length,
-            updatedAt: tab.updatedAt,
-            isActive: tab.id === activeTabId,
-        };
-    }).sort((left, right) => {
-        if (left.isActive && !right.isActive) return -1;
-        if (!left.isActive && right.isActive) return 1;
-        const leftTime = Date.parse(left.updatedAt || '');
-        const rightTime = Date.parse(right.updatedAt || '');
-        return (Number.isNaN(rightTime) ? 0 : rightTime) - (Number.isNaN(leftTime) ? 0 : leftTime);
-    });
+  function handleTabChange(tab: HomePageTab): void {
+    if (onSwitchTab) {
+      onSwitchTab(tab);
+    } else {
+      setInternalActiveTab(tab);
+    }
+  }
 
-    const handleTabChange = (tab: 'home' | 'settings'): void => {
-        if (onSwitchTab) {
-            onSwitchTab(tab);
-        } else {
-            setInternalActiveTab(tab);
-        }
-    };
+  function handleRenameFlow(flowId: string): void {
+    const flow = flows.find((entry) => entry.id === flowId);
+    if (!flow) {
+      return;
+    }
 
-    const handleRenameFlow = (flowId: string): void => {
-        const flow = flows.find((entry) => entry.id === flowId);
-        if (!flow) {
-            return;
-        }
-        setFlowPendingRename(flow);
-    };
+    setFlowPendingRename(flow);
+  }
 
-    const handleDeleteFlow = (flowId: string): void => {
-        if (tabs.length <= 1) {
-            return;
-        }
-        const flow = flows.find((entry) => entry.id === flowId);
-        if (!flow) {
-            return;
-        }
-        setFlowPendingDelete(flow);
-    };
+  function handleDeleteFlow(flowId: string): void {
+    const flow = flows.find((entry) => entry.id === flowId);
+    if (!flow) {
+      return;
+    }
 
-    const submitFlowRename = (nextName: string): void => {
-        if (!flowPendingRename) {
-            return;
-        }
+    setFlowPendingDelete(flow);
+  }
 
-        const trimmedName = nextName.trim();
-        if (!trimmedName || trimmedName === flowPendingRename.name) {
-            setFlowPendingRename(null);
-            return;
-        }
+  function submitFlowRename(nextName: string): void {
+    if (!flowPendingRename) {
+      return;
+    }
 
-        updateTab(flowPendingRename.id, { name: trimmedName });
-        setFlowPendingRename(null);
-    };
+    const trimmedName = nextName.trim();
+    if (!trimmedName || trimmedName === flowPendingRename.name) {
+      setFlowPendingRename(null);
+      return;
+    }
 
-    const confirmFlowDelete = (): void => {
-        if (!flowPendingDelete) {
-            return;
-        }
+    renameDocument(flowPendingRename.id, trimmedName);
+    setFlowPendingRename(null);
+  }
 
-        closeTab(flowPendingDelete.id);
-        setFlowPendingDelete(null);
-    };
+  function confirmFlowDelete(): void {
+    if (!flowPendingDelete) {
+      return;
+    }
 
-    return (
-        <div className="min-h-screen bg-[var(--brand-background)] flex flex-col text-[var(--brand-text)] md:flex-row">
-            <HomeSidebar
-                activeTab={activeTab}
-                onTabChange={handleTabChange}
-            />
+    deleteDocument(flowPendingDelete.id);
+    setFlowPendingDelete(null);
+  }
 
-            {/* Main Content */}
-            <main className="flex-1 flex min-w-0 flex-col bg-[var(--brand-surface)] md:ml-64">
+  function handleDuplicateFlow(flowId: string): void {
+    const newFlowId = duplicateDocument(flowId);
+    if (newFlowId) {
+      onOpenFlow(newFlowId);
+    }
+  }
 
-                {activeTab === 'home' && (
-                    <HomeDashboard
-                        flows={flows}
-                        onCreateNew={onLaunch}
-                        onOpenTemplates={onLaunchWithTemplates}
-                        onPromptWithAI={onLaunchWithAI}
-                        onImportJSON={onImportJSON}
-                        onOpenFlow={onOpenFlow}
-                        onRenameFlow={handleRenameFlow}
-                        onDuplicateFlow={(flowId) => {
-                            const newFlowId = duplicateTab(flowId);
-                            if (newFlowId) {
-                                onOpenFlow(newFlowId);
-                            }
-                        }}
-                        onDeleteFlow={handleDeleteFlow}
-                    />
-                )}
+  return (
+    <div className="min-h-screen bg-[var(--brand-background)] flex flex-col text-[var(--brand-text)] md:flex-row">
+      <HomeSidebar activeTab={activeTab} onTabChange={handleTabChange} />
 
-                {activeTab === 'settings' && (
-                    <HomeSettingsView
-                        activeSettingsTab={activeSettingsTab}
-                        onSettingsTabChange={setActiveSettingsTab}
-                    />
-                )}
-            </main>
-            <HomeFlowRenameDialog
-                key={flowPendingRename?.id ?? 'rename-closed'}
-                flowName={flowPendingRename?.name ?? ''}
-                isOpen={flowPendingRename !== null}
-                onClose={() => setFlowPendingRename(null)}
-                onSubmit={submitFlowRename}
-            />
-            <HomeFlowDeleteDialog
-                key={flowPendingDelete?.id ?? 'delete-closed'}
-                flowName={flowPendingDelete?.name ?? ''}
-                isOpen={flowPendingDelete !== null}
-                onClose={() => setFlowPendingDelete(null)}
-                onConfirm={confirmFlowDelete}
-            />
-            {showWelcomeModal ? (
-                <Suspense fallback={null}>
-                    <LazyWelcomeModal
-                        onOpenTemplates={onLaunchWithTemplates}
-                        onPromptWithAI={onLaunchWithAI}
-                        onImport={onImportJSON}
-                        onBlankCanvas={onLaunch}
-                    />
-                </Suspense>
-            ) : null}
-        </div>
-    );
+      {/* Main Content */}
+      <main
+        id="main-content"
+        className="flex-1 flex min-w-0 flex-col bg-[var(--brand-surface)] md:ml-64"
+      >
+        {activeTab === 'home' && (
+          <HomeDashboard
+            flows={flows}
+            onCreateNew={onLaunch}
+            onOpenTemplates={onLaunchWithTemplates}
+            onPromptWithAI={onLaunchWithAI}
+            onImportJSON={onImportJSON}
+            onOpenFlow={onOpenFlow}
+            onRenameFlow={handleRenameFlow}
+            onDuplicateFlow={handleDuplicateFlow}
+            onDeleteFlow={handleDeleteFlow}
+          />
+        )}
+
+        {activeTab === 'templates' && (
+          <HomeTemplatesView onUseTemplate={onLaunchWithTemplate} />
+        )}
+
+        {activeTab === 'settings' && (
+          <HomeSettingsView
+            activeSettingsTab={activeSettingsTab}
+            onSettingsTabChange={setActiveSettingsTab}
+          />
+        )}
+      </main>
+      <HomeFlowRenameDialog
+        key={flowPendingRename?.id ?? 'rename-closed'}
+        flowName={flowPendingRename?.name ?? ''}
+        isOpen={flowPendingRename !== null}
+        onClose={() => setFlowPendingRename(null)}
+        onSubmit={submitFlowRename}
+      />
+      <HomeFlowDeleteDialog
+        key={flowPendingDelete?.id ?? 'delete-closed'}
+        flowName={flowPendingDelete?.name ?? ''}
+        isOpen={flowPendingDelete !== null}
+        onClose={() => setFlowPendingDelete(null)}
+        onConfirm={confirmFlowDelete}
+      />
+      {showWelcomeModal ? (
+        <Suspense fallback={null}>
+          <LazyWelcomeModal
+            onOpenTemplates={onLaunchWithTemplates}
+            onPromptWithAI={onLaunchWithAI}
+            onImport={onImportJSON}
+            onBlankCanvas={onLaunch}
+          />
+        </Suspense>
+      ) : null}
+    </div>
+  );
 };

@@ -13,6 +13,10 @@ interface NavbarProps {
 export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const stars = useGithubStars();
+  const navContainerClasses = getNavContainerClasses(isMobileMenuOpen, isScrolled);
+  const mobileMenuClasses = isMobileMenuOpen
+    ? 'opacity-100 pointer-events-auto translate-y-0'
+    : 'opacity-0 pointer-events-none -translate-y-4';
 
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? 'hidden' : 'unset';
@@ -50,18 +54,8 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
   }
 
   function openGithub(): void {
-    window.open(GITHUB_REPO_URL, '_blank');
+    window.open(GITHUB_REPO_URL, '_blank', 'noopener,noreferrer');
   }
-
-  const navContainerClasses = isMobileMenuOpen
-    ? 'bg-white border-transparent shadow-none ring-0'
-    : isScrolled
-      ? 'bg-white/85 backdrop-blur-xl shadow-lg shadow-black/[0.03] border-brand-border/80 ring-1 ring-black/5'
-      : 'bg-white/50 backdrop-blur-md border-brand-border/60 shadow-sm shadow-black/[0.02] ring-1 ring-white/50';
-
-  const mobileMenuClasses = isMobileMenuOpen
-    ? 'opacity-100 pointer-events-auto translate-y-0'
-    : 'opacity-0 pointer-events-none -translate-y-4';
 
   return (
     <>
@@ -74,6 +68,9 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
           <button
             type="button"
             onClick={onLaunch}
+            data-analytics-event="landing_open_app_clicked"
+            data-analytics-placement="navbar-logo"
+            data-analytics-target="app"
             className="flex items-center gap-2.5 cursor-pointer group select-none min-w-0"
             aria-label="Open OpenFlowKit"
           >
@@ -105,6 +102,9 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
                 size="sm"
                 className="h-9 px-3 gap-1.5"
                 onClick={openGithub}
+                data-analytics-event="landing_github_clicked"
+                data-analytics-placement="navbar"
+                data-analytics-target="github"
               >
                 <Github className="w-4 h-4 text-brand-secondary group-hover:text-brand-dark transition-colors" />
                 <span className="font-medium text-[13px] text-brand-dark">Star</span>
@@ -124,6 +124,9 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
                 variant="primary"
                 className="px-5 text-[13px] h-9 transform hover:-translate-y-0.5 transition-all"
                 onClick={onLaunch}
+                data-analytics-event="landing_open_app_clicked"
+                data-analytics-placement="navbar"
+                data-analytics-target="app"
               >
                 <span className="mr-1">Get Started</span>
               </Button>
@@ -164,6 +167,9 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
               size="lg"
               className="h-14 w-full text-base shadow-none"
               onClick={handleMobileLaunch}
+              data-analytics-event="landing_open_app_clicked"
+              data-analytics-placement="mobile-menu"
+              data-analytics-target="app"
             >
               Get Started
             </Button>
@@ -172,6 +178,9 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
               variant="secondary"
               className="h-14 w-full text-base"
               onClick={openGithub}
+              data-analytics-event="landing_github_clicked"
+              data-analytics-placement="mobile-menu"
+              data-analytics-target="github"
             >
               View on GitHub
             </Button>
@@ -180,4 +189,16 @@ export function Navbar({ isScrolled, onLaunch }: NavbarProps): React.ReactElemen
       </div>
     </>
   );
+}
+
+function getNavContainerClasses(isMobileMenuOpen: boolean, isScrolled: boolean): string {
+  if (isMobileMenuOpen) {
+    return 'bg-white border-transparent shadow-none ring-0';
+  }
+
+  if (isScrolled) {
+    return 'bg-white/85 backdrop-blur-xl shadow-lg shadow-black/[0.03] border-brand-border/80 ring-1 ring-black/5';
+  }
+
+  return 'bg-white/50 backdrop-blur-md border-brand-border/60 shadow-sm shadow-black/[0.02] ring-1 ring-white/50';
 }

@@ -2,8 +2,10 @@ import React from 'react';
 import type { DiagramNodePropertiesComponentProps } from '@/diagram-types/core';
 import { NodeProperties } from '@/components/properties/NodeProperties';
 import { NodeActionButtons } from '@/components/properties/NodeActionButtons';
+import { toggleSection } from '@/components/properties/shared';
 import { ClassNodeSection } from './ClassNodeSection';
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection';
+import { ColorPicker } from '@/components/properties/ColorPicker';
 import {
   INSPECTOR_BUTTON_CLASSNAME,
   INSPECTOR_INPUT_COMPACT_CLASSNAME,
@@ -11,7 +13,7 @@ import {
   InspectorSectionDivider,
 } from '@/components/properties/InspectorPrimitives';
 import { createPropertyInputKeyDownHandler } from '@/components/properties/propertyInputBehavior';
-import { Braces, Code, Type } from 'lucide-react';
+import { Braces, Code, Palette, Type } from 'lucide-react';
 
 export function ClassDiagramNodeProperties({
   selectedNode,
@@ -35,10 +37,6 @@ export function ClassDiagramNodeProperties({
 
   const handleInputKeyDown = createPropertyInputKeyDownHandler({ blurOnEnter: true });
 
-  function toggleSection(section: string): void {
-    setActiveSection((currentSection) => (currentSection === section ? '' : section));
-  }
-
   return (
     <>
       <InspectorSectionDivider />
@@ -47,7 +45,7 @@ export function ClassDiagramNodeProperties({
         title="Class Name"
         icon={<Type className="w-3.5 h-3.5" />}
         isOpen={activeSection === 'name'}
-        onToggle={() => toggleSection('name')}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'name'))}
       >
         <InspectorField label="Name">
           <input
@@ -64,16 +62,41 @@ export function ClassDiagramNodeProperties({
         title="Definition"
         icon={<Braces className="w-3.5 h-3.5" />}
         isOpen={activeSection === 'definition'}
-        onToggle={() => toggleSection('definition')}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'definition'))}
       >
         <ClassNodeSection nodeId={selectedNode.id} data={selectedNode.data} onChange={onChange} />
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        title="Color"
+        icon={<Palette className="w-3.5 h-3.5" />}
+        isOpen={activeSection === 'color'}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'color'))}
+      >
+        <ColorPicker
+          selectedColor={selectedNode.data.color}
+          selectedColorMode={selectedNode.data.colorMode}
+          selectedCustomColor={selectedNode.data.customColor}
+          onChange={(color) =>
+            onChange(selectedNode.id, {
+              color,
+              ...(color === 'custom' ? {} : { customColor: undefined }),
+            })
+          }
+          onColorModeChange={(colorMode) => onChange(selectedNode.id, { colorMode })}
+          onCustomColorChange={(customColor) =>
+            onChange(selectedNode.id, { color: 'custom', customColor })
+          }
+          allowModes={true}
+          allowCustom={true}
+        />
       </CollapsibleSection>
 
       <CollapsibleSection
         title="Code"
         icon={<Code className="w-3.5 h-3.5" />}
         isOpen={activeSection === 'code'}
-        onToggle={() => toggleSection('code')}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'code'))}
       >
         <button
           type="button"

@@ -1,5 +1,10 @@
 import { useCallback, useEffect } from 'react';
-import { shouldOpenFlowEditorAI, shouldOpenFlowEditorTemplates } from '@/app/routeState';
+import {
+    getInitialFlowEditorTemplateId,
+    shouldOpenFlowEditorAI,
+    shouldOpenFlowEditorTemplates,
+} from '@/app/routeState';
+import { getFlowTemplates } from '@/services/templates';
 import type { FlowEdge, FlowNode, FlowSnapshot } from '@/lib/types';
 import type { FlowEditorMode, StudioCodeMode, StudioTab } from '@/hooks/useFlowEditorUIState';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
@@ -23,8 +28,8 @@ export interface UseFlowEditorShellParams {
     location: Location;
     navigate: NavigateFunction;
     fileInputRef: React.RefObject<HTMLInputElement | null>;
-    tabs: Array<{ id: string; name: string }>;
-    activeTabId: string | null;
+    pages: Array<{ id: string; name: string }>;
+    activePageId: string | null;
     snapshots: FlowSnapshot[];
     nodes: FlowNode[];
     edges: FlowEdge[];
@@ -131,10 +136,10 @@ export interface UseFlowEditorPanelsParams {
 }
 
 export interface UseFlowEditorChromeParams {
-    handleSwitchTab: (tabId: string) => void;
-    handleAddTab: () => void;
-    handleCloseTab: (tabId: string) => void;
-    handleRenameTab: (tabId: string, newName: string) => void;
+    handleSwitchPage: (pageId: string) => void;
+    handleAddPage: () => void;
+    handleClosePage: (pageId: string) => void;
+    handleRenamePage: (pageId: string, newName: string) => void;
     handleExport: (format?: 'png' | 'jpeg') => void;
     handleCopyImage: (format?: 'png' | 'jpeg') => void;
     handleSvgExport: () => void;
@@ -321,6 +326,27 @@ export function useFlowEditorController({
     useEffect(() => {
         if (!shouldOpenFlowEditorAI(shell.location.state)) return;
         openStudioAI();
+        shell.navigate(
+            { pathname: shell.location.pathname, search: shell.location.search, hash: shell.location.hash },
+            { replace: true, state: null }
+        );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        const initialTemplateId = getInitialFlowEditorTemplateId(shell.location.state);
+        if (!initialTemplateId) return;
+
+        const template = getFlowTemplates().find((candidate) => candidate.id === initialTemplateId);
+        if (!template) {
+            shell.navigate(
+                { pathname: shell.location.pathname, search: shell.location.search, hash: shell.location.hash },
+                { replace: true, state: null }
+            );
+            return;
+        }
+
+        panelParams.commandBar.handleInsertTemplate(template);
         shell.navigate(
             { pathname: shell.location.pathname, search: shell.location.search, hash: shell.location.hash },
             { replace: true, state: null }

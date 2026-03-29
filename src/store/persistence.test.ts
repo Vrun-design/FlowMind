@@ -44,8 +44,12 @@ describe('store persistence helpers', () => {
         });
         const state = createInitialFlowState();
 
-        expect(state.activeTabId).toBe('tab-1');
-        expect(state.tabs).toHaveLength(1);
+        expect(state.activeDocumentId).toBe('');
+        expect(state.activeTabId).toBe('');
+        expect(state.documents).toHaveLength(0);
+        expect(state.tabs).toHaveLength(0);
+        expect(state.nodes).toHaveLength(0);
+        expect(state.edges).toHaveLength(0);
         expect(state.layers[0]?.id).toBe('default');
         expect(state.designSystems[0]?.id).toBe('default');
         expect(state.aiSettings.provider).toBe('openai');
@@ -108,7 +112,7 @@ describe('store persistence helpers', () => {
         expect(migrated.tabs[0].playback?.selectedSceneId).toBe('scene-1');
     });
 
-    it('migrates malformed tabs and invalid active ids to a safe fallback', () => {
+    it('migrates malformed tabs and invalid active ids to a safe empty state', () => {
         const migrated = migratePersistedFlowState({
             tabs: [{ bogus: true }],
             activeTabId: 'missing-tab',
@@ -117,9 +121,8 @@ describe('store persistence helpers', () => {
             activeTabId: string;
         };
 
-        expect(migrated.tabs).toHaveLength(1);
-        expect(migrated.tabs[0].id).toBe('tab-1');
-        expect(migrated.activeTabId).toBe('tab-1');
+        expect(migrated.tabs).toHaveLength(0);
+        expect(migrated.activeTabId).toBe('');
     });
 
     it('rehydrates default layers and merged view settings from persisted state', () => {
@@ -146,6 +149,37 @@ describe('store persistence helpers', () => {
         expect(migrated.activeLayerId).toBe('default');
         expect(migrated.viewSettings.showGrid).toBe(false);
         expect(migrated.viewSettings.snapToGrid).toBe(true);
+    });
+
+    it('upgrades legacy section nodes with frame metadata defaults', () => {
+        const migrated = migratePersistedFlowState({
+            tabs: [
+                {
+                    id: 'tab-a',
+                    name: 'A',
+                    nodes: [
+                        {
+                            id: 'section-1',
+                            type: 'section',
+                            position: { x: 20, y: 30 },
+                            data: { label: 'Legacy Section' },
+                            style: { width: 500, height: 400 },
+                        },
+                    ],
+                    edges: [],
+                    history: { past: [], future: [] },
+                },
+            ],
+            activeTabId: 'tab-a',
+        }) as {
+            tabs: FlowTab[];
+        };
+
+        const migratedSection = migrated.tabs[0]?.nodes[0];
+        expect(migratedSection?.data.sectionSizingMode).toBe('manual');
+        expect(migratedSection?.data.sectionLayoutMode).toBe('freeform');
+        expect(migratedSection?.data.sectionLocked).toBe(false);
+        expect(migratedSection?.data.sectionHidden).toBe(false);
     });
 
     it('sanitizes persisted ai settings during migration', () => {

@@ -52,6 +52,7 @@
     "bringToFront": "移至顶层",
     "sendToBack": "移至底层",
     "reverseDirection": "反转方向",
+    "editLabel": "编辑标签",
     "deleteConnection": "删除连接",
     "itemsSelected": "已选 {{count}} 项",
     "align": "对齐",
@@ -65,7 +66,7 @@
     "distributeHorizontally": "水平分布",
     "distributeVertically": "垂直分布",
     "group": "分组",
-    "upload": "Upload",
+    "upload": "上传",
     "rename": "重命名"
   },
   "nav": {
@@ -83,11 +84,15 @@
     "canvasSettings": "画布设置",
     "wideLogo": "您的宽幅标志",
     "uploadWideLogo": "在品牌设置中上传宽幅标志",
+    "saveStatus": "本地保存状态",
+    "autoSaved": "已于 {{time}} 保存在本地。",
+    "privacyShort": "您的图表保留在此设备上，不会发送到我们的服务器。",
     "beta": "测试版",
     "versionHistory": "版本历史",
     "loadJSON": "加载 JSON",
     "playbackMode": "回放模式",
-    "privacyMessage": "您的图表只留在您这里，不会发送到我们的服务器。"
+    "privacyMessage": "您的图表只留在您这里，不会发送到我们的服务器。",
+    "templates": "模板"
   },
   "menu": {
     "file": "文件",
@@ -110,6 +115,7 @@
   },
   "export": {
     "title": "导出",
+    "subtitle": "选择一种格式和操作。",
     "png": "导出为 PNG",
     "jpeg": "导出为 JPEG",
     "json": "导出为 JSON",
@@ -122,10 +128,11 @@
     "jsonLabel": "JSON File",
     "hintDownload": "Download",
     "openflowdslLabel": "{{appName}} DSL",
-    "hintClipboard": "Copy to clipboard",
+    "hintClipboard": "复制",
     "figmaEditable": "Figma Editable",
     "exportDiagram": "Export Diagram",
     "exportAs": "Export As",
+    "actionCopy": "复制",
     "exportOrShare": "导出或分享此画布",
     "svg": "导出为 SVG",
     "hintSvgScalable": "可缩放矢量文件",
@@ -149,7 +156,13 @@
     "hintCinematicVideo": "Dark launch-style build",
     "cinematicGif": "Cinematic Build GIF",
     "hintCinematicGif": "Dark social-ready loop",
-    "actionDownload": "Download"
+    "actionDownload": "Download",
+    "hintDocument": "文档",
+    "hintEditableSvg": "可编辑 SVG",
+    "chooseFormat": "选择格式",
+    "speed": "速度",
+    "resolution": "分辨率",
+    "transparentBackground": "透明背景"
   },
   "import": {
     "title": "导入",
@@ -255,16 +268,21 @@
   "settings": {
     "title": "设置",
     "general": "通用",
+    "canvas": "画布",
     "shortcuts": "键盘快捷键",
     "theme": "主题",
     "language": "语言",
     "selectLanguage": "选择语言",
+    "languageDescription": "选择整个应用使用的界面语言。",
     "appearance": "外观",
     "ai": "AI 设置",
     "analytics": "分析",
     "about": "关于",
     "brand": "品牌设置",
-    "privacy": "隐私"
+    "privacy": "隐私",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System"
   },
   "shortcuts": {
     "title": "键盘快捷键",
@@ -291,10 +309,22 @@
     "labelTransform": "标签变换",
     "prefixOptional": "前缀（可选）",
     "suffixOptional": "后缀（可选）",
+    "findReplace": "查找和替换",
+    "findLabel": "查找",
+    "findPlaceholder": "要查找的文本",
+    "replaceLabel": "替换为",
+    "replacePlaceholder": "替换文本",
+    "useRegex": "使用正则表达式",
     "previewSummary": "预览摘要",
     "bulkApplySummary": "将更新已选择的 {{count}} 个项目",
     "selectFieldToApply": "请至少选择一个要应用的字段。",
-    "applyToSelectedNodes": "应用到所选项目"
+    "applyToSelectedNodes": "应用到所选项目",
+    "imageSettings": "图像设置",
+    "transparency": "透明度",
+    "rotation": "旋转"
+  },
+  "saveStatus": {
+    "saved": "已保存"
   },
   "ai": {
     "generate": "使用 AI 生成",
@@ -331,13 +361,24 @@
     "press": "按下",
     "shortcuts": "查看快捷键",
     "privacy": "您的图表、API 密钥和数据均保存在本地设备上。",
-    "analytics": "我们只统计匿名访问量。",
+    "analytics": "目前我们不收集分析数据。",
     "features": {
       "beautifulByDefault": "默认美观",
       "automatedLayouts": "自动布局和专业主题。",
       "privateSecure": "私密安全",
       "localFirst": "本地优先架构确保您的数据安全。"
-    }
+    },
+    "feature1Title": "Create amazing diagrams",
+    "feature1Desc": "Design beautiful, enterprise-grade architecture visually.",
+    "feature2Title": "Use AI",
+    "feature2Desc": "Generate complete architectures with a single intelligent prompt.",
+    "feature3Title": "Code to diagram",
+    "feature3Desc": "Instantly construct stunning visual infrastructure from text.",
+    "feature4Title": "Export in many formats",
+    "feature4Desc": "Export into beautiful, fully animated presentation diagrams.",
+    "analyticsTitle": "Anonymous Analytics",
+    "analyticsDesc": "We collect diagnostic data. We never read your diagrams or prompts.",
+    "getStarted": "Get Started"
   },
   "footer": {
     "mitLicensed": "MIT 开源协议"
@@ -560,8 +601,12 @@
       "algorithm": "算法",
       "layered": "分层",
       "layeredDesc": "层级结构",
+      "hierarchical": "层级式",
+      "hierarchicalDesc": "大多数流程图的最佳默认选项。在可读性和连线交叉之间取得良好平衡。",
       "tree": "树状",
       "treeDesc": "严格父子结构",
+      "treeOptimized": "树状",
+      "treeOptimizedDesc": "适用于组织结构图和依赖树的严格父子布局。",
       "force": "力导向",
       "forceDesc": "有机物理结构",
       "radial": "放射状",
@@ -575,6 +620,10 @@
       "compact": "紧凑",
       "normal": "正常",
       "loose": "宽松",
+      "orthogonalCompact": "紧凑",
+      "orthogonalCompactDesc": "适合中高密度图表的紧凑型从左到右结构。",
+      "orthogonalSpacious": "宽松",
+      "orthogonalSpaciousDesc": "为演示和评审提供更多留白，提升清晰度。",
       "applyLayout": "应用布局",
       "layoutStyle": "布局样式"
     },
@@ -609,6 +658,135 @@
       "exportModeDeterministic": "确定性",
       "exportModeLegacy": "旧版",
       "exportMode": "导出模式"
+    },
+    "aiStudio": {
+      "placeholders": {
+        "create": "请描述你想从零开始创建的图表...",
+        "selectedEdit": "请描述你想对这 {{count}} 个已选节点做哪些修改...",
+        "edit": "请描述一个修改，例如“在 API 和数据库之间添加 Redis”",
+        "empty": "请描述一个要从零生成的图表..."
+      },
+      "applyEdit": "应用 AI 编辑",
+      "generateDiagram": "生成图表",
+      "importReady": "导入已就绪 - 请检查更改",
+      "addedCount": "已添加 {{count}} 项",
+      "updatedCount": "已更新 {{count}} 项",
+      "removedCount": "已删除 {{count}} 项",
+      "discard": "丢弃",
+      "applyToCanvas": "应用到画布",
+      "emptyDescription": "描述你想要的图表，{{appName}} 会先为你起草第一版。",
+      "editDescription": "描述你想要的改动，{{appName}} 会为你更新图表。",
+      "addKeyCta": "添加 AI 密钥以开始生成",
+      "retrying": "正在重试（第 {{retryCount}} / 3 次）...",
+      "generating": "生成中...",
+      "editCurrent": "编辑当前内容",
+      "editCurrentHint": "修改你当前的画布",
+      "createNew": "新建",
+      "createNewHint": "从一个新图表重新开始",
+      "editingSelectedNodes": "正在编辑 {{count}} 个已选节点",
+      "uploadPreviewAlt": "上传预览",
+      "attachImage": "附加图片",
+      "cancelGeneration": "取消生成"
+    },
+    "figmaImport": {
+      "invalidUrl": "无效的 Figma URL。请使用 figma.com/file/... 或 figma.com/design/... 链接。",
+      "tokenRequired": "需要个人访问令牌。",
+      "unknownError": "未知错误",
+      "title": "从 Figma 导入",
+      "fileUrlLabel": "Figma 文件 URL",
+      "fileUrlPlaceholder": "https://www.figma.com/design/...",
+      "tokenLabel": "个人访问令牌",
+      "tokenHelpLink": "如何获取",
+      "tokenPlaceholder": "figd_...",
+      "tokenPrivacy": "该令牌仅在你的浏览器中使用，绝不会发送到我们的服务器。",
+      "foundSummary": "已从“{{name}}”中找到 {{colors}} 种颜色和 {{fonts}} 个文本样式",
+      "colors": "颜色",
+      "moreCount": "另外还有 +{{count}} 项",
+      "fonts": "字体",
+      "fetchingStyles": "正在获取样式...",
+      "fetchStyles": "获取样式",
+      "applyToDesignSystem": "应用到设计系统"
+    },
+    "import": {
+      "placeholders": {
+        "sql": "请在此粘贴 CREATE TABLE 语句...",
+        "infra": "请在此粘贴 Terraform state JSON、Kubernetes YAML、Docker Compose 或 Terraform HCL...",
+        "openapi": "请在此粘贴你的 OpenAPI / Swagger YAML 或 JSON...",
+        "code": "请在此粘贴你的源代码..."
+      },
+      "infraFormats": {
+        "terraformState": "Terraform State (.tfstate)",
+        "kubernetes": "Kubernetes YAML",
+        "dockerCompose": "Docker Compose",
+        "terraformHcl": "Terraform HCL (AI)"
+      },
+      "errors": {
+        "inputTooLarge": "输入大小为 {{size}}，粘贴上限为 {{max}}。",
+        "fileTooLarge": "文件大小为 {{size}}，上限为 {{max}}。",
+        "terraformHclRequiresAi": "Terraform HCL 需要 AI 分析。请使用 AI 按钮。",
+        "nativeNotAvailable": "此类型不支持原生解析。",
+        "parsingFailed": "解析失败。",
+        "aiUnavailable": "此类型不支持 AI 分析。",
+        "aiFailed": "AI 生成失败。",
+        "inputExceedsLimit": "输入超过了 {{max}} 的限制。请精简内容或使用更小的文件。"
+      },
+      "categories": {
+        "sql": "SQL",
+        "infra": "Infra",
+        "openapi": "OpenAPI",
+        "code": "Code",
+        "codebase": "仓库"
+      },
+      "title": "从数据导入",
+      "description": "将代码、基础设施、SQL 或 API 规格导入到你的图表中。",
+      "uploadFile": "上传文件",
+      "parsing": "解析中...",
+      "parse": "解析",
+      "analyzing": "分析中...",
+      "aiActions": {
+        "generateErd": "生成 ERD（AI）",
+        "generateDiagram": "生成图表（AI）",
+        "generateSequence": "生成时序图",
+        "analyzeArchitecture": "分析架构",
+        "analyzeProject": "分析项目"
+      },
+      "previewDsl": "预览 DSL",
+      "appliedToCanvas": "已应用到画布",
+      "applyToCanvas": "应用到画布"
+    },
+    "layers": {
+      "title": "图层",
+      "newLayerName": "新图层名称",
+      "add": "添加",
+      "active": "当前",
+      "visible": "可见",
+      "hidden": "隐藏",
+      "locked": "已锁定",
+      "unlocked": "未锁定",
+      "moveSelectedHere": "将所选内容移到这里",
+      "selectLayer": "选择图层",
+      "up": "上移",
+      "down": "下移",
+      "sections": "分区",
+      "previousSection": "上一个分区",
+      "nextSection": "下一个分区",
+      "noSections": "还没有分区。",
+      "sectionFallbackName": "分区",
+      "order": "顺序 {{order}}",
+      "focus": "聚焦",
+      "show": "显示",
+      "hide": "隐藏",
+      "unlock": "解锁",
+      "lock": "锁定",
+      "footerHint": "锁定图层后将无法拖动。隐藏图层不会参与画布渲染。"
+    },
+    "root": {
+      "searchAria": "搜索命令栏操作",
+      "searchPlaceholder": "搜索操作、{{appName}}、代码或画布工具...",
+      "resultsAria": "命令搜索结果",
+      "quickActionsAria": "命令快捷操作",
+      "results": "结果",
+      "noMatchingCommands": "没有与“{{query}}”匹配的命令"
     }
   },
   "settingsModal": {
@@ -630,8 +808,8 @@
       "miniMapDesc": "右下角显示小地图",
       "architectureStrictMode": "架构严格模式",
       "architectureStrictModeDesc": "当架构诊断包含恢复/校验问题时，阻止 Mermaid 导入",
-      "alignmentGuides": "Alignment Guides",
-      "alignmentGuidesDesc": "Show smart guide lines while dragging nodes",
+      "alignmentGuides": "对齐参考线",
+      "alignmentGuidesDesc": "拖动节点时显示智能参考线",
       "routingProfile": "路由配置",
       "routingProfileStandard": "标准",
       "routingProfileInfrastructure": "基础设施",
@@ -688,13 +866,13 @@
           "hint": "OpenAI 兼容"
         }
       },
-      "customModelHint": "Enter the exact model ID for your endpoint",
-      "howToGetKey": "How to get your API key",
-      "pasteKeyStep": "Paste it in the field above — never shared with us",
-      "customEndpointTitle": "What is a custom endpoint?",
+      "customModelHint": "输入此端点对应的准确模型 ID",
+      "howToGetKey": "如何获取 API 密钥",
+      "pasteKeyStep": "将其粘贴到上方字段中，我们绝不会与我们共享",
+      "customEndpointTitle": "什么是自定义端点？",
       "privacyTitle": "Privacy & Encryption",
-      "customEndpointText": "Any <1>OpenAI-compatible</1> API endpoint — local or remote. Great for:",
-      "customEndpointMustSupport": "Must support <1>POST /chat/completions</1> (OpenAI format)",
+      "customEndpointText": "任何 <1>兼容 OpenAI</1> 的 API 端点，本地或远程均可。非常适合：",
+      "customEndpointMustSupport": "必须支持 <1>POST /chat/completions</1>（OpenAI 格式）",
       "advancedEndpointOverride": "高级基础 URL 覆盖",
       "baseUrlHint": "留空以使用提供商默认端点。可用于您自己的代理/worker URL。",
       "resetEndpoint": "重置为默认值",
@@ -722,15 +900,15 @@
       "inactive": "未激活",
       "setActive": "设为当前使用",
       "resetToDefaults": "重置为默认",
-      "tabIdentity": "Identity",
-      "tabColors": "Colors",
+      "tabIdentity": "标识",
+      "tabColors": "颜色",
       "tabType": "Type",
       "tabUI": "UI & Shape",
-      "appName": "App Name",
+      "appName": "应用名称",
       "logo": "Logo",
       "favicon": "Favicon",
-      "logoStyle": "Logo Style",
-      "fontFamily": "Font Family",
+      "logoStyle": "Logo 样式",
+      "fontFamily": "字体系列",
       "googleFontsHint": "Dynamically loaded from Google Fonts",
       "cornerRadius": "Corner Radius",
       "glassmorphism": "Glassmorphism",
@@ -740,26 +918,15 @@
       "showBetaBadgeHint": "Display the BETA chip next to logo"
     },
     "shortcutsHint": "你也可以随时按下 ? 键来查看这些快捷键。",
-    "privacy": {
-      "manifesto": "我们的隐私宣言",
-      "manifestoText": "我们坚信基于设计的隐私保护。",
-      "localFirst": "本地优先存储",
-      "noAccounts": "没有用户账户",
-      "ownData": "你的数据你做主",
-      "anonymous": "仅限匿名使用",
-      "telemetry": "遥测与反馈",
-      "anonymousStats": "匿名统计",
-      "anonymousStatsDesc": "我们只跟踪访问量。",
-      "quote": "我们依靠您来告诉我们什么有效。",
-      "helpImprove": "帮助我们改进",
-      "shareFeedback": "分享反馈",
-      "shareFeedbackDesc": "提供反馈、报告错误"
-    },
     "settings": "设置",
     "canvasSettings": "画布设置",
     "description": "配置画布偏好设置和键盘快捷键。",
     "close": "关闭设置",
-    "closeDialog": "关闭设置对话框"
+    "closeDialog": "关闭设置对话框",
+    "analytics": {
+      "enableTitle": "匿名启动分析",
+      "enableDescription": "共享匿名的基础使用数据（可选）"
+    }
   },
   "customNodes": {
     "browserContent": "浏览器内容",
@@ -779,11 +946,13 @@
     "addItem": "添加元素",
     "addToCanvas": "添加到画布",
     "shapes": "形状",
+    "diagrams": "图表",
     "assets": "资源",
     "node": "形状",
     "stickyNote": "便利贴",
     "section": "分区",
     "text": "文本",
+    "other": "其他",
     "wireframes": "线框图",
     "image": "图片",
     "autoLayout": "自动布局",
@@ -852,20 +1021,61 @@
     "nodes": "{{count}} 个节点",
     "edges": "{{count}} 条边",
     "close": "关闭快照面板",
-    "namedVersions": "Named Versions",
-    "noNamedSnapshots": "No named versions yet.",
-    "autosavedVersions": "Autosaved Checkpoints",
-    "noAutoSnapshots": "No autosaved checkpoints yet."
+    "namedVersions": "命名版本",
+    "noNamedSnapshots": "还没有命名版本。",
+    "autosavedVersions": "自动保存检查点",
+    "noAutoSnapshots": "还没有自动保存检查点。"
   },
   "templatesPanel": {
     "title": "流程模板",
     "searchPlaceholder": "搜索模板...",
     "noTemplates": "未找到模板。"
   },
+  "homeTemplates": {
+    "description": "从现成流程开始，并在编辑器中进行自定义。",
+    "openPicker": "打开模板选择器",
+    "featured": "精选模板",
+    "count": "{{count}} 个模板",
+    "nodes": "{{count}} 个节点",
+    "edges": "{{count}} 条连接",
+    "starter": "入门",
+    "starterTemplate": "入门模板",
+    "bestFirstEdits": "建议优先修改",
+    "perfectFor": "适合用于",
+    "useTemplate": "使用模板",
+    "closePreview": "关闭模板预览"
+  },
   "propertiesPanel": {
     "stickyNote": "便利贴",
     "nodeSettings": "形状设置",
-    "connection": "连接"
+    "connection": "连接",
+    "noSelection": "未选择任何内容",
+    "selectHint": "点击节点或连线以编辑其属性"
+  },
+  "properties": {
+    "title": "Properties",
+    "shape": "Shape",
+    "color": "Color",
+    "icon": "Icon",
+    "rotation": "Rotation",
+    "transparency": "Transparency",
+    "imageSettings": "Image Settings",
+    "bulkShape": "Bulk Shape",
+    "bulkColor": "Bulk Color",
+    "bulkIcon": "Bulk Icon",
+    "labelTransform": "Label Transform",
+    "findReplace": "Find & Replace",
+    "findLabel": "Find",
+    "findPlaceholder": "Find text",
+    "replaceLabel": "Replace",
+    "replacePlaceholder": "Replace with",
+    "prefixOptional": "Prefix (optional)",
+    "suffixOptional": "Suffix (optional)",
+    "useRegex": "Use Regex",
+    "applyToSelectedNodes": "Apply to selected nodes",
+    "selectFieldToApply": "Select a field to apply",
+    "previewSummary": "Preview summary",
+    "selectionSummary": "选择摘要"
   },
   "flowCanvas": {
     "strictModePasteBlocked": "架构严格模式已阻止 Mermaid 粘贴。请打开代码视图，修复诊断后重试。"
@@ -875,61 +1085,65 @@
     "newFlowTab": "新建流程标签页"
   },
   "nodes": {
-    "note": "Note",
-    "database": "Database",
-    "inputOutput": "Input / Output",
-    "newNode": "New Node",
-    "branch": "Branch",
-    "processStep": "Process Step",
+    "note": "便签",
+    "database": "数据库",
+    "inputOutput": "输入 / 输出",
+    "newNode": "新节点",
+    "branch": "分支",
+    "processStep": "流程步骤",
     "addText": "添加文本",
     "group": "Group",
     "items": "items",
-    "addCommentsHere": "Add your comments here.",
-    "newSection": "New Section",
+    "addCommentsHere": "在这里添加你的评论。",
+    "newSection": "新分区",
+    "section": "部分",
     "text": "Text",
     "image": "Image",
     "mindmap": "主题"
   },
   "actions": {
-    "clearCanvasConfirm": "Are you sure you want to clear the canvas?"
+    "clearCanvasConfirm": "确定要清空画布吗？"
   },
   "share": {
     "close": "Close",
-    "title": "Share Design",
+    "title": "分享设计",
     "betaBadge": "测试版",
-    "description": "Invite collaborators to view and edit this flow with you in real-time.",
+    "description": "邀请协作者与你一起实时查看和编辑此流程。",
     "roomId": "房间 ID",
     "link": "分享链接",
     "copied": "Copied Link!",
-    "copyLink": "Copy Link",
-    "footerNote": "Your diagram stays local unless you share this room. If copy is blocked, copy the link above manually.",
-    "closeDialog": "Close share dialog",
+    "copyLink": "复制链接",
+    "footerNote": "除非你分享这个房间，否则图表会一直保存在本地。如果复制被阻止，请手动复制上方链接。",
+    "closeDialog": "关闭分享对话框",
     "status": {
       "cache": {
         "syncing": " local cache syncing",
         "ready": " local cache ready",
         "hydrated": " restored from local cache"
       },
-      "realtime": "Realtime peer sync",
-      "waiting": "Connecting to realtime sync",
-      "fallback": "Local-only mode"
+      "realtime": "实时点对点同步",
+      "waiting": "正在连接实时同步",
+      "fallback": "仅本地模式"
     },
     "openDialog": "Share dialog",
     "toast": {
       "fallbackMode": "实时同步不可用。将继续以仅本地模式运行。",
       "reconnected": "实时协作已恢复。",
-      "copyFailed": "Unable to copy share link.",
-      "linkCopied": "Collaboration link copied.",
+      "copyFailed": "无法复制分享链接。",
+      "linkCopied": "协作链接已复制。",
       "copyManual": "剪贴板访问被阻止。请从分享对话框中手动复制链接。"
     }
   },
   "connectionPanel": {
-    "architecture": "Architecture",
+    "architecture": "架构",
     "label": "Label",
     "messagePlaceholder": "消息",
     "route": "路由",
     "appearance": "外观",
-    "condition": "Condition",
-    "deleteConnection": "Delete Connection"
+    "condition": "条件",
+    "deleteConnection": "删除连接"
+  },
+  "sidebar": {
+    "close": "关闭侧边栏"
   }
 }

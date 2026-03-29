@@ -46,6 +46,9 @@ export enum NodeType {
   GROUP = 'group',
   SWIMLANE = 'swimlane',
   IMAGE = 'image',
+  TEXT = 'text',
+  BROWSER = 'browser',
+  MOBILE = 'mobile',
   SEQUENCE_PARTICIPANT = 'sequence_participant',
   SEQUENCE_MESSAGE = 'sequence_message',
 }
@@ -62,7 +65,16 @@ export interface NodeData {
   colorMode?: 'subtle' | 'filled';
   customColor?: string; // Hex color for the "custom" preset
   align?: 'left' | 'center' | 'right';
-  shape?: 'rectangle' | 'rounded' | 'capsule' | 'diamond' | 'hexagon' | 'cylinder' | 'ellipse' | 'parallelogram' | 'circle';
+  shape?:
+    | 'rectangle'
+    | 'rounded'
+    | 'capsule'
+    | 'diamond'
+    | 'hexagon'
+    | 'cylinder'
+    | 'ellipse'
+    | 'parallelogram'
+    | 'circle';
   rotation?: number;
   width?: number;
   height?: number;
@@ -70,6 +82,10 @@ export interface NodeData {
   fontFamily?: string;
   fontWeight?: string; // 'normal', 'bold', '100'-'900'
   fontStyle?: string; // 'normal', 'italic'
+  subLabelFontSize?: string;
+  subLabelFontFamily?: string;
+  subLabelFontWeight?: string; // 'normal', 'bold', '100'-'900'
+  subLabelFontStyle?: string; // 'normal', 'italic'
   backgroundColor?: string;
   transparency?: number; // 0-1
   variant?: string; // wireframe preset key (e.g. 'landing', 'modal')
@@ -105,6 +121,16 @@ export interface NodeData {
   seqMessageFrom?: string;
   seqMessageTo?: string;
   seqMessageOrder?: number;
+  seqActivations?: number[];
+  seqNoteTarget?: string;
+  seqNotePosition?: 'over' | 'left' | 'right';
+  seqFragmentId?: string;
+  sectionSizingMode?: 'manual' | 'fit';
+  sectionLayoutMode?: 'freeform';
+  sectionOrder?: number;
+  sectionLocked?: boolean;
+  sectionHidden?: boolean;
+  sectionCollapsed?: boolean;
 }
 
 export interface AIRequestParams {
@@ -140,6 +166,11 @@ export interface EdgeData {
   mindmapBranchKind?: 'root' | 'branch';
   seqMessageKind?: 'sync' | 'async' | 'return' | 'self' | 'create' | 'destroy';
   connectionType?: 'fixed' | 'dynamic';
+  seqFragment?: {
+    type: 'alt' | 'loop' | 'opt' | 'par' | 'break' | 'critical';
+    condition: string;
+    edgeIds: string[];
+  } | null;
   waypoint?: {
     x: number;
     y: number;

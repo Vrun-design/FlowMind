@@ -2,8 +2,10 @@ import React from 'react';
 import type { DiagramNodePropertiesComponentProps } from '@/diagram-types/core';
 import { NodeProperties } from '@/components/properties/NodeProperties';
 import { NodeActionButtons } from '@/components/properties/NodeActionButtons';
+import { toggleSection } from '@/components/properties/shared';
 import { EntityNodeSection } from './EntityNodeSection';
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection';
+import { ColorPicker } from '@/components/properties/ColorPicker';
 import {
   INSPECTOR_BUTTON_CLASSNAME,
   INSPECTOR_INPUT_COMPACT_CLASSNAME,
@@ -11,7 +13,7 @@ import {
   InspectorSectionDivider,
 } from '@/components/properties/InspectorPrimitives';
 import { createPropertyInputKeyDownHandler } from '@/components/properties/propertyInputBehavior';
-import { Code, Table, Type } from 'lucide-react';
+import { Code, Palette, Table, Type } from 'lucide-react';
 
 export function ERDiagramNodeProperties({
   selectedNode,
@@ -37,10 +39,6 @@ export function ERDiagramNodeProperties({
 
   const handleInputKeyDown = createPropertyInputKeyDownHandler({ blurOnEnter: true });
 
-  function toggleSection(section: string): void {
-    setActiveSection((currentSection) => (currentSection === section ? '' : section));
-  }
-
   return (
     <>
       <InspectorSectionDivider />
@@ -49,7 +47,7 @@ export function ERDiagramNodeProperties({
         title="Entity Name"
         icon={<Type className="w-3.5 h-3.5" />}
         isOpen={activeSection === 'name'}
-        onToggle={() => toggleSection('name')}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'name'))}
       >
         <InspectorField label="Name">
           <input
@@ -66,7 +64,7 @@ export function ERDiagramNodeProperties({
         title="Fields"
         icon={<Table className="w-3.5 h-3.5" />}
         isOpen={activeSection === 'fields'}
-        onToggle={() => toggleSection('fields')}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'fields'))}
       >
         <EntityNodeSection
           nodeId={selectedNode.id}
@@ -77,10 +75,35 @@ export function ERDiagramNodeProperties({
       </CollapsibleSection>
 
       <CollapsibleSection
+        title="Color"
+        icon={<Palette className="w-3.5 h-3.5" />}
+        isOpen={activeSection === 'color'}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'color'))}
+      >
+        <ColorPicker
+          selectedColor={selectedNode.data.color}
+          selectedColorMode={selectedNode.data.colorMode}
+          selectedCustomColor={selectedNode.data.customColor}
+          onChange={(color) =>
+            onChange(selectedNode.id, {
+              color,
+              ...(color === 'custom' ? {} : { customColor: undefined }),
+            })
+          }
+          onColorModeChange={(colorMode) => onChange(selectedNode.id, { colorMode })}
+          onCustomColorChange={(customColor) =>
+            onChange(selectedNode.id, { color: 'custom', customColor })
+          }
+          allowModes={true}
+          allowCustom={true}
+        />
+      </CollapsibleSection>
+
+      <CollapsibleSection
         title="Actions"
         icon={<Code className="w-3.5 h-3.5" />}
         isOpen={activeSection === 'actions'}
-        onToggle={() => toggleSection('actions')}
+        onToggle={() => setActiveSection((current) => toggleSection(current, 'actions'))}
       >
         <div className="space-y-2">
           <button

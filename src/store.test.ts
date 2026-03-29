@@ -258,6 +258,38 @@ describe('flow store tab actions', () => {
         expect(persistedEdge?.selected).toBeUndefined();
     });
 
+    it('setActiveDocumentId is a no-op when the active document is already loaded', () => {
+        const nodes = [createNode('n-doc', 'Loaded Document')];
+        const edges = [createEdge('e-doc', 'n-doc', 'n-doc')];
+        const page = createTab('doc-1:page:1', 'Page 1', nodes, edges);
+        const document = {
+            id: 'doc-1',
+            name: 'Doc 1',
+            createdAt: '2026-03-27T00:00:00.000Z',
+            updatedAt: '2026-03-27T00:00:00.000Z',
+            activePageId: page.id,
+            pages: [page],
+        };
+
+        useFlowStore.setState({
+            documents: [document],
+            activeDocumentId: 'doc-1',
+            tabs: document.pages,
+            activeTabId: page.id,
+            nodes,
+            edges,
+        });
+
+        const before = useFlowStore.getState();
+        useFlowStore.getState().setActiveDocumentId('doc-1');
+        const after = useFlowStore.getState();
+
+        expect(after.documents).toBe(before.documents);
+        expect(after.tabs).toBe(before.tabs);
+        expect(after.nodes).toBe(before.nodes);
+        expect(after.edges).toBe(before.edges);
+    });
+
     it('migrates legacy persisted tabs by adding missing history fields', async () => {
         const migrate = useFlowStore.persist.getOptions().migrate;
         expect(migrate).toBeDefined();
@@ -309,7 +341,7 @@ describe('flow store tab actions', () => {
             activeTabId: string;
         };
 
-        expect(state.activeTabId).toBe('tab-a');
+        expect(state.activeTabId).toBe('');
     });
 
     it('migrates malformed persisted tabs to a safe fallback tab', async () => {
@@ -327,11 +359,8 @@ describe('flow store tab actions', () => {
             activeTabId: string;
         };
 
-        expect(state.tabs).toHaveLength(1);
-        expect(state.tabs[0].id).toBe('tab-1');
-        expect(state.tabs[0].history.past).toEqual([]);
-        expect(state.tabs[0].history.future).toEqual([]);
-        expect(state.activeTabId).toBe('tab-1');
+        expect(state.tabs).toHaveLength(0);
+        expect(state.activeTabId).toBe('');
     });
 });
 

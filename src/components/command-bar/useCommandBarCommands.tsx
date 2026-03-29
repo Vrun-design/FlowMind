@@ -5,7 +5,6 @@ import {
     Compass,
     FileCode,
     Import,
-    Palette,
     Search,
     Settings,
     WandSparkles,
@@ -46,15 +45,6 @@ export function useCommandBarCommands({
                 description: `Open ${FLOWPILOT_NAME} in the right rail`,
                 action: onOpenStudioAI,
             },
-            {
-                id: 'templates',
-                label: 'Start from Template',
-                icon: <Compass className="w-4 h-4 text-blue-500" />,
-                tier: 'core',
-                type: 'navigation',
-                description: 'Browse pre-built flows and starter layouts',
-                view: 'templates',
-            },
             ...(hasImport ? [{
                 id: 'import',
                 label: 'Import from data',
@@ -64,6 +54,15 @@ export function useCommandBarCommands({
                 view: 'import' as const,
                 description: 'SQL -> ERD, Terraform -> Cloud, OpenAPI -> Sequence, Code -> Architecture',
             }] : []),
+            {
+                id: 'templates',
+                label: 'Start from Template',
+                icon: <Compass className="w-4 h-4 text-blue-500" />,
+                tier: 'core',
+                type: 'navigation',
+                description: 'Browse pre-built flows and starter layouts',
+                view: 'templates',
+            },
             {
                 id: 'assets',
                 label: 'Assets',
@@ -115,7 +114,7 @@ export function useCommandBarCommands({
                     {
                         id: 'toggle-grid',
                         label: 'Show Grid',
-                        icon: <Settings className="w-4 h-4 text-slate-500" />,
+                        icon: <Settings className="w-4 h-4 text-[var(--brand-secondary)]" />,
                         tier: 'advanced' as const,
                         type: 'toggle' as const,
                         value: settings.showGrid,
@@ -126,7 +125,7 @@ export function useCommandBarCommands({
                     {
                         id: 'toggle-snap',
                         label: 'Snap to Grid',
-                        icon: <Settings className="w-4 h-4 text-slate-500" />,
+                        icon: <Settings className="w-4 h-4 text-[var(--brand-secondary)]" />,
                         tier: 'advanced' as const,
                         type: 'toggle' as const,
                         value: settings.snapToGrid,
@@ -139,7 +138,7 @@ export function useCommandBarCommands({
             {
                 id: 'undo',
                 label: 'Undo',
-                icon: <ArrowRight className="w-4 h-4 rotate-180 text-slate-500" />,
+                icon: <ArrowRight className="w-4 h-4 rotate-180 text-[var(--brand-secondary)]" />,
                 tier: 'advanced',
                 shortcut: '⌘Z',
                 type: 'action',
@@ -149,7 +148,7 @@ export function useCommandBarCommands({
             {
                 id: 'redo',
                 label: 'Redo',
-                icon: <ArrowRight className="w-4 h-4 text-slate-500" />,
+                icon: <ArrowRight className="w-4 h-4 text-[var(--brand-secondary)]" />,
                 tier: 'advanced',
                 shortcut: '⌘Y',
                 type: 'action',
@@ -168,15 +167,6 @@ export function useCommandBarCommands({
                     setEdges(edges.map((edge) => ({ ...edge, selected: true })));
                 },
                 hidden: true,
-            },
-            {
-                id: 'design-systems',
-                label: 'Design Systems',
-                icon: <Palette className="w-4 h-4 text-[var(--brand-primary)]" />,
-                tier: 'advanced',
-                type: 'navigation',
-                view: 'design-system',
-                description: 'Manage themes & styles',
             },
         ];
     }, [onOpenStudioAI, onOpenStudioOpenFlow, onOpenStudioMermaid, hasImport, settings, onUndo, onRedo]);

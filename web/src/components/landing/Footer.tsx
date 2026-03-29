@@ -25,6 +25,9 @@ export function Footer({ onLaunch }: FooterProps): React.ReactElement {
             <button
               type="button"
               onClick={onLaunch}
+              data-analytics-event="landing_open_app_clicked"
+              data-analytics-placement="footer-logo"
+              data-analytics-target="app"
               className="flex items-center gap-2 cursor-pointer group"
               aria-label="Open OpenFlowKit"
             >
@@ -47,6 +50,9 @@ export function Footer({ onLaunch }: FooterProps): React.ReactElement {
               target="_blank"
               rel="noopener noreferrer"
               className="hover:opacity-90 transition-opacity transform hover:scale-105 duration-300"
+              data-analytics-event="landing_producthunt_clicked"
+              data-analytics-placement="footer"
+              data-analytics-target="producthunt"
             >
               <img
                 alt="Product Hunt"
@@ -68,6 +74,9 @@ export function Footer({ onLaunch }: FooterProps): React.ReactElement {
               onClick={handleOpenGithub}
               className="group h-12 gap-3 px-5"
               aria-label="OpenFlowKit on GitHub"
+              data-analytics-event="landing_github_clicked"
+              data-analytics-placement="footer"
+              data-analytics-target="github"
             >
               <Github className="w-5 h-5 text-brand-primary group-hover:rotate-12 transition-transform" />
               <div className="flex items-center gap-2 border-l border-brand-border pl-3">

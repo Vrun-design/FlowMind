@@ -85,9 +85,6 @@ export function getSafetyAdjustedEdges(edges: Edge[], safetyActive: boolean): Ed
   return changed ? adjusted : edges;
 }
 
-export function shouldEnableViewportCulling(safetyActive: boolean): boolean {
-  return safetyActive;
-}
 
 export function isLowDetailModeActive(safetyActive: boolean, zoom: number): boolean {
   return isLowDetailModeActiveForProfile(safetyActive, zoom, 'balanced');

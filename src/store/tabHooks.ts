@@ -23,6 +23,7 @@ export function useTabActions(): Pick<
     | 'addTab'
     | 'duplicateActiveTab'
     | 'duplicateTab'
+    | 'deleteTab'
     | 'closeTab'
     | 'updateTab'
     | 'copySelectedToTab'
@@ -35,6 +36,7 @@ export function useTabActions(): Pick<
             addTab: state.addTab,
             duplicateActiveTab: state.duplicateActiveTab,
             duplicateTab: state.duplicateTab,
+            deleteTab: state.deleteTab,
             closeTab: state.closeTab,
             updateTab: state.updateTab,
             copySelectedToTab: state.copySelectedToTab,

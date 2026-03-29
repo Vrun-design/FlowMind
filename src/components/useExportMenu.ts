@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
+import { captureAnalyticsEvent } from '@/services/analytics/analytics';
 import { recordOnboardingEvent } from '@/services/onboarding/events';
 
 interface UseExportMenuParams {
@@ -29,7 +30,16 @@ interface UseExportMenuResult {
     isOpen: boolean;
     menuRef: RefObject<HTMLDivElement>;
     toggleMenu: () => void;
+    closeMenu: () => void;
     handleSelect: (key: string, action: ExportActionKey) => void;
+}
+
+function isSelectPortalTarget(target: EventTarget | null): boolean {
+    return target instanceof Element && Boolean(target.closest('[data-floating-select-root="true"]'));
+}
+
+function isInsideMenu(menuRef: RefObject<HTMLDivElement>, target: EventTarget | null): boolean {
+    return target instanceof Node && Boolean(menuRef.current?.contains(target));
 }
 
 export function useExportMenu({
@@ -54,25 +64,48 @@ export function useExportMenu({
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
+    function closeMenu(): void {
+        setIsOpen(false);
+    }
+
     useEffect(() => {
-        if (!isOpen) return;
+        if (!isOpen) {
+            return;
+        }
 
-        const handleClickOutside = (event: MouseEvent) => {
-            const target = event.target;
-            const isSelectPortalTarget = target instanceof Element
-                && target.closest('[data-floating-select-root="true"]');
+        function shouldCloseForTarget(target: EventTarget | null): boolean {
+            return !isSelectPortalTarget(target) && !isInsideMenu(menuRef, target);
+        }
 
-            if (isSelectPortalTarget) {
-                return;
+        function handleOutsideInteraction(target: EventTarget | null): void {
+            if (shouldCloseForTarget(target)) {
+                closeMenu();
             }
+        }
 
-            if (menuRef.current && !menuRef.current.contains(target as Node)) {
-                setIsOpen(false);
+        function handlePointerDownOutside(event: MouseEvent): void {
+            handleOutsideInteraction(event.target);
+        }
+
+        function handleFocusOutside(event: FocusEvent): void {
+            handleOutsideInteraction(event.target);
+        }
+
+        function handleEscape(event: KeyboardEvent): void {
+            if (event.key === 'Escape') {
+                closeMenu();
             }
+        }
+
+        document.addEventListener('mousedown', handlePointerDownOutside);
+        document.addEventListener('focusin', handleFocusOutside);
+        window.addEventListener('keydown', handleEscape);
+
+        return () => {
+            document.removeEventListener('mousedown', handlePointerDownOutside);
+            document.removeEventListener('focusin', handleFocusOutside);
+            window.removeEventListener('keydown', handleEscape);
         };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isOpen]);
 
     const handlers: Record<string, ExportActionHandlers> = {
@@ -95,6 +128,10 @@ export function useExportMenu({
 
     function recordSelection(key: string, action: ExportActionKey): void {
         recordOnboardingEvent('first_export_completed', { format: `${key}:${action}` });
+        captureAnalyticsEvent('export_used', {
+            format: key,
+            action,
+        });
     }
 
     function handleSelect(key: string, action: ExportActionKey): void {
@@ -105,13 +142,14 @@ export function useExportMenu({
 
         actionHandler();
         recordSelection(key, action);
-        setIsOpen(false);
+        closeMenu();
     }
 
     return {
         isOpen,
         menuRef,
         toggleMenu,
+        closeMenu,
         handleSelect,
     };
 }

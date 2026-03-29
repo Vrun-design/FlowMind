@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useReactFlow } from '@/lib/reactflowCompat';
 import { useFlowStore } from '../store';
+import { useEditorPagesState } from '@/store/editorPageHooks';
 import {
     applyPlaybackStepStyles,
     buildPlaybackSequence,
@@ -10,7 +11,8 @@ import {
 } from '@/services/playback/contracts';
 
 export function usePlayback() {
-    const { nodes, tabs, activeTabId, setNodes } = useFlowStore();
+    const { nodes, setNodes } = useFlowStore();
+    const { pages, activePageId } = useEditorPagesState();
     const { fitView } = useReactFlow();
 
     const [isPlaying, setIsPlaying] = useState(false);
@@ -21,9 +23,9 @@ export function usePlayback() {
     const initialStyles = useRef(capturePlaybackStyles([]));
 
     const resolveSequence = useCallback(() => {
-        const activeTabPlayback = tabs.find((tab) => tab.id === activeTabId)?.playback;
-        return buildPlaybackSequenceFromState(nodes, activeTabPlayback, playbackSpeed);
-    }, [activeTabId, nodes, playbackSpeed, tabs]);
+        const activePagePlayback = pages.find((page) => page.id === activePageId)?.playback;
+        return buildPlaybackSequenceFromState(nodes, activePagePlayback, playbackSpeed);
+    }, [activePageId, nodes, pages, playbackSpeed]);
 
     const restoreStyles = useCallback(() => {
         if (Object.keys(initialStyles.current).length > 0) {

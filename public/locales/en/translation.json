@@ -53,6 +53,7 @@
     "bringToFront": "Bring to Front",
     "sendToBack": "Send to Back",
     "reverseDirection": "Reverse Direction",
+    "editLabel": "Edit Label",
     "deleteConnection": "Delete Connection",
     "itemsSelected": "{{count}} items selected",
     "align": "Align",
@@ -86,10 +87,14 @@
     "canvasSettings": "Canvas Settings",
     "wideLogo": "Your Wide Logo",
     "uploadWideLogo": "Upload a wide logo in Brand Settings to see it here",
+    "saveStatus": "Local save status",
+    "autoSaved": "Saved locally at {{time}}.",
+    "privacyShort": "Your diagrams stay on this device and do not reach our servers.",
     "beta": "BETA",
     "versionHistory": "Version History",
     "loadJSON": "Load JSON",
     "playbackMode": "Playback Mode",
+    "templates": "Templates",
     "privacyMessage": "Your diagrams stay with you and do not reach our servers."
   },
   "menu": {
@@ -113,6 +118,7 @@
   },
   "export": {
     "title": "Export",
+    "subtitle": "Choose a format and action.",
     "png": "Export as PNG",
     "jpeg": "Export as JPEG",
     "svg": "Export as SVG",
@@ -131,7 +137,7 @@
     "exportDiagram": "Export Diagram",
     "exportAs": "Export As",
     "headingFormat": "Export Format",
-    "actionCopy": "Copy to Clipboard",
+    "actionCopy": "Copy",
     "actionDownload": "Download",
     "exportOrShare": "Export or share this canvas",
     "shareSection": "Share canvas",
@@ -141,8 +147,10 @@
     "hintTransparent4K": "Transparent (4K)",
     "hintWhiteBg4K": "White Background (4K)",
     "hintDownload": "Download",
-    "hintClipboard": "Copy to clipboard",
+    "hintClipboard": "Copy",
     "hintSvgScalable": "Scalable vector file",
+    "hintDocument": "Document",
+    "hintEditableSvg": "Editable SVG",
     "hintPlaybackWebM": "Playback timeline (WebM/MP4)",
     "hintPlaybackGif": "Short loop for docs/social",
     "hintRevealVideo": "Nodes fade in sequentially (WebM/MP4)",
@@ -154,7 +162,11 @@
     "hintReadmeEmbed": "Copy Markdown snippet",
     "sectionImage": "Image",
     "sectionVideo": "Video & Animation",
-    "sectionCode": "Code & Data"
+    "sectionCode": "Code & Data",
+    "chooseFormat": "Choose format",
+    "speed": "Speed",
+    "resolution": "Resolution",
+    "transparentBackground": "Transparent background"
   },
   "import": {
     "title": "Import",
@@ -177,6 +189,7 @@
     "addText": "Add text",
     "addCommentsHere": "Add your comments here.",
     "newSection": "New Section",
+    "section": "Section",
     "text": "Text",
     "image": "Image",
     "group": "Group",
@@ -262,7 +275,7 @@
     "localStorageHint": "Autosaved on this device. We do not upload your diagram data to our servers.",
     "renameFlow": {
       "title": "Rename flow",
-      "description": "Update the name shown on your dashboard and tabs.",
+      "description": "Update the name shown on your dashboard and in the editor.",
       "label": "Flow name",
       "placeholder": "Enter a flow name",
       "hint": "Names are local to this browser profile unless you export or sync them elsewhere.",
@@ -279,10 +292,15 @@
   "settings": {
     "title": "Settings",
     "general": "General",
+    "canvas": "Canvas",
     "shortcuts": "Keyboard Shortcuts",
     "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
     "language": "Language",
     "selectLanguage": "Select Language",
+    "languageDescription": "Choose the interface language used across the app.",
     "appearance": "Appearance",
     "ai": "AI Settings",
     "analytics": "Analytics",
@@ -315,10 +333,22 @@
     "labelTransform": "Label Transform",
     "prefixOptional": "Prefix (optional)",
     "suffixOptional": "Suffix (optional)",
+    "findReplace": "Find & Replace",
+    "findLabel": "Find",
+    "findPlaceholder": "Text to find",
+    "replaceLabel": "Replace with",
+    "replacePlaceholder": "Replacement text",
+    "useRegex": "Use Regular Expression",
     "previewSummary": "Preview summary",
     "bulkApplySummary": "Will update {{count}} selected nodes",
     "selectFieldToApply": "Select at least one field to apply.",
-    "applyToSelectedNodes": "Apply to selected nodes"
+    "applyToSelectedNodes": "Apply to selected nodes",
+    "imageSettings": "Image Settings",
+    "transparency": "Transparency",
+    "rotation": "Rotation"
+  },
+  "saveStatus": {
+    "saved": "Saved"
   },
   "ai": {
     "generate": "Generate with AI",
@@ -361,15 +391,24 @@
     "press": "Press",
     "shortcuts": "for shortcuts",
     "privacy": "Your diagrams, API keys, and data stay locally on your device.",
-    "analytics": "We only count anonymous page visits.",
-    "analyticsTitle": "Help improve OpenFlowKit",
-    "analyticsDesc": "Share anonymous basic usage data (optional)",
+    "analytics": "We collect basic anonymous usage and reliability data to improve the product. Never your diagram content, prompt text, file contents, or API keys.",
     "features": {
       "beautifulByDefault": "Beautiful by default",
       "automatedLayouts": "Automated layouts and professional themes.",
       "privateSecure": "Private and Secure",
       "localFirst": "Local-first architecture keeps your data safe."
-    }
+    },
+    "feature1Title": "Create amazing diagrams",
+    "feature1Desc": "Design beautiful, enterprise-grade architecture visually.",
+    "feature2Title": "Use AI",
+    "feature2Desc": "Generate complete architectures with a single intelligent prompt.",
+    "feature3Title": "Code to diagram",
+    "feature3Desc": "Instantly construct stunning visual infrastructure from text.",
+    "feature4Title": "Export in many formats",
+    "feature4Desc": "Export into beautiful, fully animated presentation diagrams.",
+    "analyticsTitle": "Anonymous Analytics",
+    "analyticsDesc": "We collect diagnostic data. We never read your diagrams or prompts.",
+    "getStarted": "Get Started"
   },
   "footer": {
     "mitLicensed": "MIT Licensed"
@@ -632,6 +671,135 @@
       "untitled": "Untitled Node",
       "type": "Type"
     },
+    "root": {
+      "searchAria": "Search command bar actions",
+      "searchPlaceholder": "Search actions, {{appName}}, code, or canvas tools...",
+      "resultsAria": "Command search results",
+      "quickActionsAria": "Command quick actions",
+      "results": "Results",
+      "noMatchingCommands": "No matching commands for \"{{query}}\""
+    },
+    "figmaImport": {
+      "title": "Import from Figma",
+      "fileUrlLabel": "Figma file URL",
+      "fileUrlPlaceholder": "https://www.figma.com/design/...",
+      "tokenLabel": "Personal access token",
+      "tokenHelpLink": "how to get one",
+      "tokenPlaceholder": "figd_...",
+      "tokenPrivacy": "Token is used only in your browser and is never sent to our servers.",
+      "invalidUrl": "Invalid Figma URL. Use a figma.com/file/... or figma.com/design/... link.",
+      "tokenRequired": "Personal access token is required.",
+      "unknownError": "Unknown error",
+      "foundSummary": "Found {{colors}} colors and {{fonts}} text styles from \"{{name}}\"",
+      "colors": "Colors",
+      "fonts": "Fonts",
+      "moreCount": "+{{count}} more",
+      "fetchingStyles": "Fetching styles...",
+      "fetchStyles": "Fetch styles",
+      "applyToDesignSystem": "Apply to design system"
+    },
+    "layers": {
+      "title": "Layers",
+      "newLayerName": "New layer name",
+      "add": "Add",
+      "active": "Active",
+      "visible": "Visible",
+      "hidden": "Hidden",
+      "locked": "Locked",
+      "unlocked": "Unlocked",
+      "moveSelectedHere": "Move Selected Here",
+      "selectLayer": "Select Layer",
+      "up": "Up",
+      "down": "Down",
+      "sections": "Sections",
+      "previousSection": "Previous section",
+      "nextSection": "Next section",
+      "noSections": "No sections yet.",
+      "sectionFallbackName": "Section",
+      "order": "Order {{order}}",
+      "focus": "Focus",
+      "show": "Show",
+      "hide": "Hide",
+      "unlock": "Unlock",
+      "lock": "Lock",
+      "footerHint": "Layer lock disables drag. Hidden layers are excluded from canvas render."
+    },
+    "aiStudio": {
+      "applyEdit": "Apply AI edit",
+      "generateDiagram": "Generate diagram",
+      "importReady": "Import ready - review changes",
+      "addedCount": "{{count}} added",
+      "updatedCount": "{{count}} updated",
+      "removedCount": "{{count}} removed",
+      "discard": "Discard",
+      "applyToCanvas": "Apply to canvas",
+      "emptyDescription": "Describe the diagram you want and {{appName}} will draft the first graph for you.",
+      "editDescription": "Describe the changes you want and {{appName}} will update the graph for you.",
+      "addKeyCta": "Add AI key to start generating",
+      "retrying": "Retrying ({{retryCount}} of 3)...",
+      "generating": "Generating...",
+      "editCurrent": "Edit current",
+      "editCurrentHint": "Modify your existing canvas",
+      "createNew": "Create new",
+      "createNewHint": "Start fresh with a new diagram",
+      "editingSelectedNodes": "Editing {{count}} selected node",
+      "uploadPreviewAlt": "Upload preview",
+      "attachImage": "Attach image",
+      "cancelGeneration": "Cancel generation",
+      "placeholders": {
+        "create": "Describe the diagram you want to create from scratch...",
+        "selectedEdit": "Describe what to change about the {{count}} selected node...",
+        "edit": "Describe a change, for example 'add Redis between API and DB'",
+        "empty": "Describe a diagram to generate from scratch..."
+      }
+    },
+    "import": {
+      "title": "Import from data",
+      "description": "Import code, infrastructure, SQL, or API specs into your diagram.",
+      "uploadFile": "Upload file",
+      "parse": "Parse",
+      "parsing": "Parsing...",
+      "analyzing": "Analyzing...",
+      "previewDsl": "Preview DSL",
+      "applyToCanvas": "Apply to Canvas",
+      "appliedToCanvas": "Applied to canvas",
+      "categories": {
+        "sql": "SQL",
+        "infra": "Infra",
+        "openapi": "OpenAPI",
+        "code": "Code",
+        "codebase": "Repo"
+      },
+      "aiActions": {
+        "generateErd": "Generate ERD (AI)",
+        "generateDiagram": "Generate Diagram (AI)",
+        "generateSequence": "Generate Sequence",
+        "analyzeArchitecture": "Analyze Architecture",
+        "analyzeProject": "Analyze Project"
+      },
+      "placeholders": {
+        "sql": "Paste CREATE TABLE statements here...",
+        "infra": "Paste Terraform state JSON, Kubernetes YAML, Docker Compose, or Terraform HCL here...",
+        "openapi": "Paste your OpenAPI / Swagger YAML or JSON here...",
+        "code": "Paste your source code here..."
+      },
+      "infraFormats": {
+        "terraformState": "Terraform State (.tfstate)",
+        "kubernetes": "Kubernetes YAML",
+        "dockerCompose": "Docker Compose",
+        "terraformHcl": "Terraform HCL (AI)"
+      },
+      "errors": {
+        "inputTooLarge": "Input is {{size}} - max {{max}} for paste.",
+        "fileTooLarge": "File is {{size}} - max {{max}}.",
+        "terraformHclRequiresAi": "Terraform HCL requires AI analysis. Use the AI button.",
+        "nativeNotAvailable": "Native parsing not available for this type.",
+        "parsingFailed": "Parsing failed.",
+        "aiUnavailable": "AI analysis not available for this type.",
+        "aiFailed": "AI generation failed.",
+        "inputExceedsLimit": "Input exceeds {{max}} limit. Trim the content or use a smaller file."
+      }
+    },
     "templates": {
       "title": "Templates",
       "placeholder": "Search templates...",
@@ -669,8 +837,12 @@
       "algorithm": "Algorithm",
       "layered": "Layered",
       "layeredDesc": "Hierarchical, good for flows",
+      "hierarchical": "Hierarchical",
+      "hierarchicalDesc": "Best default for most flows. Balanced readability and edge crossings.",
       "tree": "Tree",
       "treeDesc": "Strict parent-child structure",
+      "treeOptimized": "Tree",
+      "treeOptimizedDesc": "Strict parent-child layout for org charts and dependency trees.",
       "force": "Force",
       "forceDesc": "Organic, physics-based",
       "radial": "Radial",
@@ -684,6 +856,10 @@
       "compact": "Compact",
       "normal": "Normal",
       "loose": "Loose",
+      "orthogonalCompact": "Compact",
+      "orthogonalCompactDesc": "Dense left-to-right structure for medium and high-density diagrams.",
+      "orthogonalSpacious": "Spacious",
+      "orthogonalSpaciousDesc": "Extra whitespace for clarity in presentations and reviews.",
       "applyLayout": "Apply Layout"
     },
     "designSystem": {
@@ -750,6 +926,10 @@
       "routingProfileHint": "Infrastructure mode biases orthogonal routes for service maps.",
       "edgeBundling": "Bundle Sibling Edges",
       "edgeBundlingDesc": "Keep parallel connections on shared lanes"
+    },
+    "analytics": {
+      "enableTitle": "Anonymous Launch Analytics",
+      "enableDescription": "Share anonymous basic usage data (optional)"
     },
     "ai": {
       "provider": "Provider",
@@ -1076,22 +1256,7 @@
       "showBetaBadgeHint": "Display the BETA chip next to logo"
     },
     "shortcutsHint": "You can also press ? to view these anytime.",
-    "canvasSettings": "Canvas Settings",
-    "privacy": {
-      "manifesto": "Our Privacy Manifesto",
-      "manifestoText": "We believe in privacy by design and user autonomy. We don't collect your email, we don't have a login system, and we don't store your data on our servers.",
-      "localFirst": "Local-First Storage",
-      "noAccounts": "No User Accounts",
-      "ownData": "Own Your Data",
-      "anonymous": "Anonymous Usage Only",
-      "telemetry": "Telemetry & Feedback",
-      "anonymousStats": "Anonymous Stats",
-      "anonymousStatsDesc": "We only track visits and limited anonymous feature usage (like exports) to improve the tool. We do not track your names, IP addresses, inputs, or diagram content.",
-      "quote": "We rely on you to tell us what works, rather than tracking your every move.",
-      "helpImprove": "Help Us Improve",
-      "shareFeedback": "Share Feedback",
-      "shareFeedbackDesc": "Give feedback, report bugs, and ask for features"
-    }
+    "canvasSettings": "Canvas Settings"
   },
   "customNodes": {
     "browserContent": "Browser Content",
@@ -1111,11 +1276,13 @@
     "addItem": "Add Item",
     "addToCanvas": "Add to Canvas",
     "shapes": "Shapes",
+    "diagrams": "Diagrams",
     "assets": "Assets",
     "node": "Shape",
     "stickyNote": "Sticky Note",
     "section": "Section",
     "text": "Text",
+    "other": "Other",
     "wireframes": "Wireframes",
     "image": "Image",
     "autoLayout": "Auto Layout",
@@ -1194,10 +1361,51 @@
     "searchPlaceholder": "Search templates...",
     "noTemplates": "No templates found."
   },
+  "homeTemplates": {
+    "description": "Start from an editable, production-grade template and swap in your real systems, roles, and workflow details.",
+    "openPicker": "Open Template Picker",
+    "featured": "Featured Templates",
+    "count": "{{count}} templates",
+    "nodes": "{{count}} nodes",
+    "edges": "{{count}} edges",
+    "starter": "Starter",
+    "starterTemplate": "Starter template",
+    "bestFirstEdits": "Smart First Edits",
+    "perfectFor": "Perfect For",
+    "useTemplate": "Use Template",
+    "closePreview": "Close template preview"
+  },
   "propertiesPanel": {
     "stickyNote": "Sticky Note",
     "nodeSettings": "Shape Settings",
-    "connection": "Connection"
+    "connection": "Connection",
+    "noSelection": "Nothing selected",
+    "selectHint": "Click a node or edge to edit its properties"
+  },
+  "properties": {
+    "title": "Properties",
+    "shape": "Shape",
+    "color": "Color",
+    "icon": "Icon",
+    "rotation": "Rotation",
+    "transparency": "Transparency",
+    "imageSettings": "Image Settings",
+    "bulkShape": "Bulk Shape",
+    "bulkColor": "Bulk Color",
+    "bulkIcon": "Bulk Icon",
+    "labelTransform": "Label Transform",
+    "findReplace": "Find & Replace",
+    "findLabel": "Find",
+    "findPlaceholder": "Find text",
+    "replaceLabel": "Replace",
+    "replacePlaceholder": "Replace with",
+    "prefixOptional": "Prefix (optional)",
+    "suffixOptional": "Suffix (optional)",
+    "useRegex": "Use Regex",
+    "applyToSelectedNodes": "Apply to selected nodes",
+    "selectFieldToApply": "Select a field to apply",
+    "previewSummary": "Preview summary",
+    "selectionSummary": "Selection summary"
   },
   "connectionPanel": {
     "architecture": "Architecture",
@@ -1214,7 +1422,10 @@
     "strictModePasteBlocked": "Architecture strict mode blocked Mermaid paste. Open Code view, fix diagnostics, then retry."
   },
   "flowTabs": {
-    "closeTab": "Close Tab",
-    "newFlowTab": "New Flow Tab"
+    "closeTab": "Close Page",
+    "newFlowTab": "New Page"
+  },
+  "sidebar": {
+    "close": "Close sidebar"
   }
 }

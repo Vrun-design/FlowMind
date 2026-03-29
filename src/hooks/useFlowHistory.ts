@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 import { useHistoryActions } from '@/store/historyHooks';
-import { useTabsState } from '@/store/tabHooks';
+import { useEditorPagesState } from '@/store/editorPageHooks';
 
 export const useFlowHistory = () => {
-  const { tabs, activeTabId } = useTabsState();
+  const { pages, activePageId } = useEditorPagesState();
   const { recordHistoryV2, undoV2, redoV2, canUndoV2, canRedoV2 } = useHistoryActions();
 
-  const activeTab = tabs.find((tab) => tab.id === activeTabId);
-  const past = activeTab?.history.past ?? [];
-  const future = activeTab?.history.future ?? [];
+  const activePage = pages.find((page) => page.id === activePageId);
+  const past = activePage?.history.past ?? [];
+  const future = activePage?.history.future ?? [];
 
   const recordHistory = useCallback(() => {
     recordHistoryV2();

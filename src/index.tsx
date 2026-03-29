@@ -4,17 +4,26 @@ import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { RouteLoadingFallback } from './components/app/RouteLoadingFallback';
 import { ToastProvider } from './components/ui/ToastContext';
+import { ThemeProvider } from './context/ThemeContext';
+import {
+  captureAppOpened,
+  captureSessionStarted,
+  initializeAnalytics,
+} from './services/analytics/analytics';
 import { ensureLocalFirstPersistenceReady } from './services/storage/localFirstRuntime';
 import { installStorageTelemetrySink } from './services/storage/storageTelemetrySink';
 import { registerAppShellServiceWorker } from './services/offline/registerAppShellServiceWorker';
 import './index.css';
 
+initializeAnalytics();
+captureAppOpened();
+captureSessionStarted();
 installStorageTelemetrySink();
 registerAppShellServiceWorker();
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
+  throw new Error('Could not find root element to mount to');
 }
 
 const root = ReactDOM.createRoot(rootElement);
@@ -53,9 +62,11 @@ function BootstrapApp(): React.ReactElement {
 root.render(
   <React.StrictMode>
     <ErrorBoundary>
-      <ToastProvider>
-        <BootstrapApp />
-      </ToastProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <BootstrapApp />
+        </ToastProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   </React.StrictMode>
 );

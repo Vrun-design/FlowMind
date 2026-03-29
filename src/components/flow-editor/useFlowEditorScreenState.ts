@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 import { useReactFlow } from '@/lib/reactflowCompat';
 import { useFlowStore } from '@/store';
+import { useEditorPageActions, useEditorPagesState } from '@/store/editorPageHooks';
 import { useSnapshots } from '@/hooks/useSnapshots';
 import { useFlowHistory } from '@/hooks/useFlowHistory';
 import { useFlowEditorUIState } from '@/hooks/useFlowEditorUIState';
@@ -16,27 +17,24 @@ export function useFlowEditorScreenState() {
   const navigate = useNavigate();
   const collaborationEnabled = isRolloutFlagEnabled('collaborationEnabled');
 
-  const storeState = useFlowStore(useShallow((state) => ({
+  const canvasState = useFlowStore(useShallow((state) => ({
     nodes: state.nodes,
     edges: state.edges,
     setNodes: state.setNodes,
     setEdges: state.setEdges,
-    tabs: state.tabs,
-    activeTabId: state.activeTabId,
-    addTab: state.addTab,
-    closeTab: state.closeTab,
-    updateTab: state.updateTab,
     toggleGrid: state.toggleGrid,
     toggleSnap: state.toggleSnap,
   })));
+  const { pages, activePageId } = useEditorPagesState();
+  const { addPage, closePage, updatePage } = useEditorPageActions();
   const viewSettings = useViewSettings();
   const { setShortcutsHelpOpen } = useShortcutHelpActions();
   const [diffBaseline, setDiffBaseline] = useState<FlowSnapshot | null>(null);
   const selectionState = useSelectionState();
   const selectionActions = useSelectionActions();
-  const activeTabName = useMemo(
-    () => storeState.tabs.find((tab) => tab.id === storeState.activeTabId)?.name,
-    [storeState.tabs, storeState.activeTabId],
+  const activePageName = useMemo(
+    () => pages.find((page) => page.id === activePageId)?.name,
+    [pages, activePageId],
   );
   const snapshotsState = useSnapshots();
   const uiState = useFlowEditorUIState();
@@ -48,14 +46,19 @@ export function useFlowEditorScreenState() {
     location,
     navigate,
     collaborationEnabled,
-    ...storeState,
+    ...canvasState,
+    pages,
+    activePageId,
+    addPage,
+    closePage,
+    updatePage,
     viewSettings,
     setShortcutsHelpOpen,
     diffBaseline,
     setDiffBaseline,
     ...selectionState,
     ...selectionActions,
-    activeTabName,
+    activePageName,
     ...snapshotsState,
     ...uiState,
     reactFlowWrapper,

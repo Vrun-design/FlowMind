@@ -7,22 +7,33 @@ import { getTransformDiagnosticsAttrs } from '@/components/transformDiagnostics'
 import { NodeTransformControls } from '@/components/NodeTransformControls';
 import { useActiveNodeSelection } from '@/components/useActiveNodeSelection';
 import { NodeQuickCreateButtons } from '@/components/NodeQuickCreateButtons';
-import { formatErFieldLabel, normalizeErFields, parseErField, stringifyErField } from '@/lib/entityFields';
+import {
+  formatErFieldLabel,
+  normalizeErFields,
+  parseErField,
+  stringifyErField,
+} from '@/lib/entityFields';
 import { useStructuredListEditor } from '@/hooks/useStructuredListEditor';
 import { StructuredNodeHandles } from './StructuredNodeHandles';
+import { resolveContainerVisualStyle } from '@/theme';
 
 const applyErFieldPatch = (items: string[]): Record<string, unknown> => {
   return { erFields: items.map((s) => parseErField(s)) };
 };
 
 function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
-  const visualQualityV2Enabled = true;
   const isActiveSelected = useActiveNodeSelection(Boolean(selected));
   const fields = normalizeErFields(data.erFields);
   const labelEdit = useInlineNodeTextEdit(id, 'label', data.label || '');
   const fieldStrings = React.useMemo(() => fields.map(stringifyErField), [fields]);
   const fieldEditor = useStructuredListEditor(id, fieldStrings, applyErFieldPatch);
   const entityBaseMinHeight = 130;
+  const visualStyle = resolveContainerVisualStyle(
+    data.color,
+    data.colorMode || 'subtle',
+    data.customColor,
+    'slate'
+  );
   const estimatedFieldsHeight = fields.length > 0 ? Math.min(fields.length, 6) * 18 + 24 : 18;
   const contentMinHeight = Math.max(entityBaseMinHeight, 56 + estimatedFieldsHeight);
 
@@ -35,8 +46,12 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
       />
 
       <div
-        className={`relative ${visualQualityV2Enabled ? 'bg-slate-50' : 'bg-white'} border border-slate-300 rounded-lg shadow-sm min-w-[220px]`}
-        style={{ minHeight: contentMinHeight }}
+        className="relative min-w-[220px] rounded-lg border shadow-sm"
+        style={{
+          minHeight: contentMinHeight,
+          backgroundColor: visualStyle.bg,
+          borderColor: visualStyle.border,
+        }}
         {...getTransformDiagnosticsAttrs({
           nodeFamily: 'entity',
           selected: Boolean(selected),
@@ -45,8 +60,14 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
         })}
       >
         <NodeQuickCreateButtons nodeId={id} visible={Boolean(selected)} />
-        <div className="border-b border-slate-300 px-3 py-2 bg-slate-50 rounded-t-lg">
-          <div className="text-[11px] font-semibold text-slate-500">Entity</div>
+        <div
+          className="rounded-t-lg border-b px-3 py-2"
+          style={{
+            borderColor: visualStyle.border,
+            backgroundColor: visualStyle.accentBg,
+          }}
+        >
+          <div className="text-[11px] font-semibold" style={{ color: visualStyle.subText }}>Entity</div>
           <InlineTextEditSurface
             isEditing={labelEdit.isEditing}
             draft={labelEdit.draft}
@@ -55,7 +76,8 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
             onDraftChange={labelEdit.setDraft}
             onCommit={labelEdit.commit}
             onKeyDown={labelEdit.handleKeyDown}
-            className={`${visualQualityV2Enabled ? 'text-[13px]' : 'text-sm'} font-semibold text-slate-800 break-words`}
+            className="text-[13px] break-words font-semibold"
+            style={{ color: visualStyle.text }}
             isSelected={Boolean(selected)}
           />
         </div>
@@ -64,7 +86,11 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
           {fields.length > 0 ? (
             <ul className="space-y-1">
               {fields.map((field, index) => (
-                <li key={`field-${index}`} className="text-xs text-slate-700 font-mono break-words">
+                <li
+                  key={`field-${index}`}
+                  className="break-words font-mono text-xs"
+                  style={{ color: visualStyle.text }}
+                >
                   {fieldEditor.editingIndex === index ? (
                     <input
                       autoFocus
@@ -73,12 +99,14 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
                       onBlur={fieldEditor.commitEdit}
                       onMouseDown={(event) => event.stopPropagation()}
                       onKeyDown={(event) => fieldEditor.handleKeyDown(event, index)}
-                      className="w-full rounded border border-slate-300 bg-white px-1 py-0.5 outline-none"
+                      className="w-full rounded border bg-[var(--brand-surface)] px-1 py-0.5 text-[var(--brand-text)] outline-none"
+                      style={{ borderColor: visualStyle.border }}
                     />
                   ) : (
                     <button
                       type="button"
-                      className="w-full text-left hover:bg-slate-50 rounded px-1 -mx-1"
+                      className="-mx-1 w-full rounded px-1 text-left"
+                      style={{ color: visualStyle.text }}
                       onClick={(event) => {
                         event.stopPropagation();
                         fieldEditor.beginEdit(index, stringifyErField(field));
@@ -88,10 +116,20 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
                         <span className="font-mono">{formatErFieldLabel(field)}</span>
                         <span className="flex shrink-0 gap-1">
                           {field.isPrimaryKey ? (
-                            <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">PK</span>
+                            <span
+                              className="rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
+                              style={{
+                                backgroundColor: visualStyle.badgeBg,
+                                color: visualStyle.badgeText,
+                              }}
+                            >
+                              PK
+                            </span>
                           ) : null}
                           {field.isForeignKey ? (
-                            <span className="rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-700">FK</span>
+                            <span className="rounded-full bg-sky-500/12 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-300">
+                              FK
+                            </span>
                           ) : null}
                         </span>
                       </div>
@@ -101,7 +139,7 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
               ))}
             </ul>
           ) : (
-            <div className="text-[11px] text-slate-400">No fields</div>
+            <div className="text-[11px]" style={{ color: visualStyle.subText }}>No fields</div>
           )}
           {fieldEditor.editingIndex === fields.length ? (
             <input
@@ -112,12 +150,14 @@ function EntityNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.Re
               onMouseDown={(event) => event.stopPropagation()}
               onKeyDown={(event) => fieldEditor.handleKeyDown(event, fields.length)}
               placeholder="fieldName: TYPE"
-              className="mt-1 w-full rounded border border-slate-300 bg-white px-1 py-0.5 text-xs font-mono outline-none"
+              className="mt-1 w-full rounded border bg-[var(--brand-surface)] px-1 py-0.5 text-xs font-mono text-[var(--brand-text)] outline-none"
+              style={{ borderColor: visualStyle.border }}
             />
           ) : (
             <button
               type="button"
-              className="mt-1 text-[11px] text-slate-500 hover:text-slate-700"
+              className="mt-1 text-[11px]"
+              style={{ color: visualStyle.subText }}
               onClick={(event) => {
                 event.stopPropagation();
                 fieldEditor.beginEdit(fields.length, '');
