@@ -5,6 +5,8 @@ import { parseKubernetesManifests } from '@/services/infraSync/kubernetesParser'
 import { parseDockerCompose } from '@/services/infraSync/dockerComposeParser';
 import { infraSyncResultToDsl, infraSyncResultSummary } from '@/services/infraSync/infraToDsl';
 import type { InfraFormat, InfraSyncResult } from '@/services/infraSync/types';
+import type { CodebaseAnalysis } from '@/hooks/ai-generation/codebaseAnalyzer';
+import { buildCodebaseNativeDiagram } from '@/hooks/ai-generation/codebaseToNativeDiagram';
 
 export interface NativeParseResult {
   dsl: string;
@@ -20,7 +22,7 @@ function countDslNodesAndEdges(dsl: string): { nodes: number; edges: number } {
   for (const line of lines) {
     const trimmed = line.trim();
     if (
-      /^\[(entity|process|system|section|start|end|decision|browser|mobile|note|annotation|container)\]/.test(
+      /^\[(entity|process|system|section|start|end|decision|browser|mobile|note|annotation|container|architecture)\]/.test(
         trimmed
       )
     ) {
@@ -34,6 +36,10 @@ function countDslNodesAndEdges(dsl: string): { nodes: number; edges: number } {
     }
   }
   return { nodes, edges };
+}
+
+export function parseCodebaseNative(analysis: CodebaseAnalysis): NativeParseResult {
+  return buildCodebaseNativeDiagram(analysis);
 }
 
 export function parseSqlNative(input: string): NativeParseResult {

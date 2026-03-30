@@ -758,6 +758,7 @@
       "description": "Import code, infrastructure, SQL, or API specs into your diagram.",
       "uploadFile": "Upload file",
       "parse": "Parse",
+      "parseNativeProject": "Generate Native Diagram",
       "parsing": "Parsing...",
       "analyzing": "Analyzing...",
       "previewDsl": "Preview DSL",

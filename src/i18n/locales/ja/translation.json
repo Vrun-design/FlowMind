@@ -742,6 +742,7 @@
       "uploadFile": "ファイルをアップロード",
       "parsing": "解析中...",
       "parse": "解析",
+      "parseNativeProject": "Generate Native Diagram",
       "analyzing": "分析中...",
       "aiActions": {
         "generateErd": "ERD を生成 (AI)",

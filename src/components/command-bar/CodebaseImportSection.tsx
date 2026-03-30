@@ -9,6 +9,7 @@ import { extractZipFiles } from '@/services/zipExtractor';
 import { analyzeCodebase, type CodebaseAnalysis } from '@/hooks/ai-generation/codebaseAnalyzer';
 import {
   CodebaseAnalysisSummary,
+  GitHubProgressTimeline,
   GitHubRepoFetcher,
   GitHubTokenSettings,
   ZipUploadButton,
@@ -33,8 +34,16 @@ export function CodebaseImportSection({
   const [githubUrl, setGithubUrl] = useState('');
   const [isFetchingGithub, setIsFetchingGithub] = useState(false);
   const [fetchProgress, setFetchProgress] = useState<string | null>(null);
+  const [progressSteps, setProgressSteps] = useState<string[]>([]);
   const [isExtractingZip, setIsExtractingZip] = useState(false);
   const zipInputRef = useRef<HTMLInputElement | null>(null);
+
+  const pushProgressStep = useCallback((message: string) => {
+    setFetchProgress(message);
+    setProgressSteps((currentSteps) =>
+      currentSteps[currentSteps.length - 1] === message ? currentSteps : [...currentSteps, message]
+    );
+  }, []);
 
   const handleGithubFetch = useCallback(async () => {
     const parsed = parseGitHubUrl(githubUrl);
@@ -45,13 +54,14 @@ export function CodebaseImportSection({
     setIsFetchingGithub(true);
     onSetError(null);
     onSetCodebaseAnalysis(null);
-    setFetchProgress('Connecting...');
+    setProgressSteps([]);
+    pushProgressStep(`Connecting to github.com/${parsed.owner}/${parsed.repo}...`);
     try {
       const files = await fetchGitHubRepo(
         parsed.owner,
         parsed.repo,
         parsed.branch,
-        setFetchProgress
+        pushProgressStep
       );
       if (files.length === 0) {
         onSetError('No source files found in this repository.');
@@ -59,7 +69,14 @@ export function CodebaseImportSection({
         setFetchProgress(null);
         return;
       }
+      pushProgressStep(`Fetched ${files.length} files. Building dependency graph and analysis...`);
       const analysis = analyzeCodebase(files);
+      const languages = Object.keys(analysis.stats.languages).join(', ') || 'unknown stack';
+      pushProgressStep(`Detected: ${languages}`);
+      pushProgressStep(`Detected platform: ${analysis.cloudPlatform}`);
+      pushProgressStep(
+        `Found ${analysis.detectedServices.length} services, ${analysis.entryPoints.length} entry points, ${analysis.edges.length} edges`
+      );
       onSetCodebaseAnalysis(analysis);
       onSetFileInfo({ name: `${parsed.owner}/${parsed.repo}`, size: 0 });
     } catch (err) {
@@ -68,7 +85,7 @@ export function CodebaseImportSection({
       setIsFetchingGithub(false);
       setFetchProgress(null);
     }
-  }, [githubUrl, onSetCodebaseAnalysis, onSetError, onSetFileInfo]);
+  }, [githubUrl, onSetCodebaseAnalysis, onSetError, onSetFileInfo, pushProgressStep]);
 
   const handleZipSelect = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,6 +95,8 @@ export function CodebaseImportSection({
       setIsExtractingZip(true);
       onSetError(null);
       onSetCodebaseAnalysis(null);
+      setProgressSteps([]);
+      pushProgressStep(`Extracting ${file.name}...`);
       try {
         const files = await extractZipFiles(file);
         if (files.length === 0) {
@@ -85,16 +104,24 @@ export function CodebaseImportSection({
           setIsExtractingZip(false);
           return;
         }
+        pushProgressStep(`Extracted ${files.length} files. Building dependency graph and analysis...`);
         const analysis = analyzeCodebase(files);
+        const languages = Object.keys(analysis.stats.languages).join(', ') || 'unknown stack';
+        pushProgressStep(`Detected: ${languages}`);
+        pushProgressStep(`Detected platform: ${analysis.cloudPlatform}`);
+        pushProgressStep(
+          `Found ${analysis.detectedServices.length} services, ${analysis.entryPoints.length} entry points, ${analysis.edges.length} edges`
+        );
         onSetCodebaseAnalysis(analysis);
         onSetFileInfo({ name: file.name, size: file.size });
       } catch (err) {
         onSetError(err instanceof Error ? err.message : 'Failed to extract zip.');
       } finally {
         setIsExtractingZip(false);
+        setFetchProgress(null);
       }
     },
-    [onSetCodebaseAnalysis, onSetError, onSetFileInfo]
+    [onSetCodebaseAnalysis, onSetError, onSetFileInfo, pushProgressStep]
   );
 
   return (
@@ -107,6 +134,11 @@ export function CodebaseImportSection({
         fetchProgress={fetchProgress}
         onUrlChange={setGithubUrl}
         onFetch={() => void handleGithubFetch()}
+      />
+
+      <GitHubProgressTimeline
+        steps={progressSteps}
+        active={isFetchingGithub || isExtractingZip}
       />
 
       <input

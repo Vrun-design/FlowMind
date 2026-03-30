@@ -3,6 +3,7 @@ import { FlowTemplate } from '../../services/templates';
 import { LayoutAlgorithm } from '../../services/elkLayout';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
 import type { SupportedLanguage } from '@/hooks/ai-generation/codeToArchitecture';
+import type { CodebaseAnalysis } from '@/hooks/ai-generation/codebaseAnalyzer';
 import type { TerraformInputFormat } from '@/hooks/ai-generation/terraformToCloud';
 import type { EditorSurfaceTier } from '@/components/editorSurfaceTiers';
 
@@ -67,7 +68,7 @@ export interface CommandBarProps {
   onTerraformAnalysis?: (input: string, format: TerraformInputFormat) => Promise<void>;
   onOpenApiAnalysis?: (spec: string) => Promise<void>;
   onApplyDsl?: (dsl: string) => void;
-  onCodebaseAnalysis?: (summary: string) => Promise<void>;
+  onCodebaseAnalysis?: (analysis: CodebaseAnalysis) => Promise<void>;
   settings?: {
     showGrid: boolean;
     onToggleGrid: () => void;

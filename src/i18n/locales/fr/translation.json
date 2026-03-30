@@ -742,6 +742,7 @@
       "uploadFile": "Téléverser un fichier",
       "parsing": "Analyse en cours...",
       "parse": "Analyser",
+      "parseNativeProject": "Generate Native Diagram",
       "analyzing": "Analyse en cours...",
       "aiActions": {
         "generateErd": "Générer le MCD (IA)",

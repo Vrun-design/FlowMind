@@ -14,6 +14,7 @@ import { applyAIResultToCanvas, positionNewNodesSmartly, restoreExistingPosition
 interface GenerateAIFlowResultParams {
   chatMessages: ChatMessage[];
   prompt: string;
+  seedDsl?: string;
   imageBase64?: string;
   nodes: FlowNode[];
   edges: FlowEdge[];
@@ -102,6 +103,7 @@ function buildSelectionPromptSuffix(selectedNodeIds: string[], nodes: FlowNode[]
 export async function generateAIFlowResult({
   chatMessages,
   prompt,
+  seedDsl,
   imageBase64,
   nodes,
   edges,
@@ -113,12 +115,12 @@ export async function generateAIFlowResult({
   signal,
 }: GenerateAIFlowResultParams): Promise<GenerateAIFlowResult> {
   const hasSelection = (selectedNodeIds?.length ?? 0) > 0;
-  const currentGraph = serializeCanvasContextForAI(nodes, edges, selectedNodeIds);
+  const currentGraph = serializeCanvasContextForAI(nodes, edges, selectedNodeIds) || seedDsl || '';
   const fullPrompt = hasSelection
     ? prompt + buildSelectionPromptSuffix(selectedNodeIds!, nodes)
     : prompt;
 
-  const isEditMode = nodes.length > 0;
+  const isEditMode = nodes.length > 0 || Boolean(seedDsl);
 
   const dslText = await withRetry(
     () => generateDiagramFromChat(

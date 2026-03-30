@@ -16,6 +16,8 @@ import {
   buildCodebaseToArchitecturePrompt,
   type SupportedLanguage,
 } from './ai-generation/codeToArchitecture';
+import type { CodebaseAnalysis } from './ai-generation/codebaseAnalyzer';
+import { buildCodebaseNativeDiagram } from './ai-generation/codebaseToNativeDiagram';
 import { buildSqlToErdPrompt } from './ai-generation/sqlToErd';
 import {
   buildTerraformToCloudPrompt,
@@ -36,17 +38,101 @@ export interface ImportDiff {
   addedCount: number;
   removedCount: number;
   updatedCount: number;
+  previewTitle: string;
+  previewDetail?: string;
+  previewStats?: string[];
   result: GenerateAIFlowResult;
 }
 
-function computeImportDiff(currentNodes: FlowNode[], result: GenerateAIFlowResult): ImportDiff {
+type PreviewRequestKind =
+  | 'prompt'
+  | 'focused-edit'
+  | 'code-import'
+  | 'sql-import'
+  | 'terraform-import'
+  | 'openapi-import';
+
+interface PreviewDescriptor {
+  title: string;
+  detail?: string;
+  stats?: string[];
+}
+
+function buildPreviewCopy(
+  requestKind: PreviewRequestKind,
+  addedCount: number,
+  updatedCount: number,
+  previewDescriptor?: PreviewDescriptor
+): Pick<ImportDiff, 'previewTitle' | 'previewDetail' | 'previewStats'> {
+  if (previewDescriptor) {
+    return {
+      previewTitle: previewDescriptor.title,
+      previewDetail: previewDescriptor.detail,
+      previewStats: previewDescriptor.stats,
+    };
+  }
+
+  if (requestKind === 'code-import') {
+    return {
+      previewTitle: 'Codebase enhancement ready — review the upgraded diagram.',
+      previewDetail:
+        addedCount > 0 || updatedCount > 0
+          ? 'Started from the native repository map and layered in AI architecture improvements.'
+          : 'The native repository map is ready and no additional AI upgrades were needed.',
+      previewStats: undefined,
+    };
+  }
+
+  return {
+    previewTitle: 'Import ready — review changes before applying.',
+    previewStats: undefined,
+  };
+}
+
+function computeImportDiff(
+  currentNodes: FlowNode[],
+  result: GenerateAIFlowResult,
+  requestKind: PreviewRequestKind,
+  previewDescriptor?: PreviewDescriptor
+): ImportDiff {
   const currentIds = new Set(currentNodes.map((n) => n.id));
   const newIds = new Set(result.layoutedNodes.map((n) => n.id));
+  const addedCount = result.layoutedNodes.filter((n) => !currentIds.has(n.id)).length;
+  const removedCount = currentNodes.filter((n) => !newIds.has(n.id)).length;
+  const updatedCount = result.layoutedNodes.filter((n) => currentIds.has(n.id)).length;
+
   return {
-    addedCount: result.layoutedNodes.filter((n) => !currentIds.has(n.id)).length,
-    removedCount: currentNodes.filter((n) => !newIds.has(n.id)).length,
-    updatedCount: result.layoutedNodes.filter((n) => currentIds.has(n.id)).length,
+    addedCount,
+    removedCount,
+    updatedCount,
+    ...buildPreviewCopy(requestKind, addedCount, updatedCount, previewDescriptor),
     result,
+  };
+}
+
+function buildCodebasePreviewDescriptor(
+  analysis: CodebaseAnalysis,
+  nativeDiagram: ReturnType<typeof buildCodebaseNativeDiagram>
+): PreviewDescriptor {
+  const platformLabel =
+    analysis.cloudPlatform === 'unknown'
+      ? 'Platform: app-only'
+      : `Platform: ${analysis.cloudPlatform}`;
+  const serviceLabel =
+    nativeDiagram.platformServiceCount > 0
+      ? `${nativeDiagram.platformServiceCount} platform service${nativeDiagram.platformServiceCount === 1 ? '' : 's'}`
+      : `${analysis.detectedServices.length} detected service${analysis.detectedServices.length === 1 ? '' : 's'}`;
+
+  return {
+    title: 'Codebase enhancement ready — review the upgraded diagram.',
+    detail:
+      'Started from the native repository map, then layered in AI architecture upgrades for services, sections, and labeled flows.',
+    stats: [
+      platformLabel,
+      `${nativeDiagram.sectionCount} native section${nativeDiagram.sectionCount === 1 ? '' : 's'}`,
+      serviceLabel,
+      `${nativeDiagram.edgeCount} preview edge${nativeDiagram.edgeCount === 1 ? '' : 's'}`,
+    ],
   };
 }
 
@@ -135,13 +221,9 @@ export function useAIGeneration(
       imageBase64?: string,
       focusedNodeIds?: string[],
       showPreview = false,
-      requestKind:
-        | 'prompt'
-        | 'focused-edit'
-        | 'code-import'
-        | 'sql-import'
-        | 'terraform-import'
-        | 'openapi-import' = 'prompt'
+      requestKind: PreviewRequestKind = 'prompt',
+      seedDsl?: string,
+      previewDescriptor?: PreviewDescriptor
     ): Promise<boolean> => {
       if (!readiness.canGenerate && readiness.blockingIssue) {
         setLastError(readiness.blockingIssue.detail);
@@ -173,6 +255,7 @@ export function useAIGeneration(
         const result = await generateAIFlowResult({
           chatMessages,
           prompt,
+          seedDsl,
           imageBase64,
           nodes,
           edges,
@@ -188,7 +271,7 @@ export function useAIGeneration(
         });
 
         const { dslText, userMessage, layoutedNodes, layoutedEdges } = result;
-        const isEditMode = nodes.length > 0;
+        const isEditMode = nodes.length > 0 || Boolean(seedDsl);
         setChatMessages((previousMessages) => {
           const next = appendChatExchange(previousMessages, userMessage, dslText, isEditMode);
           void saveChatHistory(activeTabId, next);
@@ -196,10 +279,12 @@ export function useAIGeneration(
         });
 
         if (showPreview) {
-          setPendingDiff(computeImportDiff(nodes, result));
+          const previewDiff = computeImportDiff(nodes, result, requestKind, previewDescriptor);
+          setPendingDiff(previewDiff);
           notifyOperationOutcome(addToast, {
             status: 'success',
-            summary: 'Import ready — review changes before applying.',
+            summary: previewDiff.previewTitle,
+            detail: previewDiff.previewDetail,
           });
           captureAnalyticsEvent('import_preview_ready', {
             provider: aiSettings.provider || 'gemini',
@@ -327,13 +412,23 @@ export function useAIGeneration(
   );
 
   const handleCodebaseAnalysis = useCallback(
-    async (summary: string): Promise<boolean> => {
+    async (analysis: CodebaseAnalysis): Promise<boolean> => {
+      const nativeDiagram = buildCodebaseNativeDiagram(analysis);
+
       return runAIRequest(
-        buildCodebaseToArchitecturePrompt(summary),
+        buildCodebaseToArchitecturePrompt({
+          summary: analysis.summary,
+          cloudPlatform: analysis.cloudPlatform,
+          detectedServices: analysis.detectedServices,
+          infraFiles: analysis.infraFiles,
+        }) +
+          '\n\nUse the provided native repository diagram as the starting point. Preserve useful sections and module structure, then enhance it with platform services, clearer labels, and semantic edges.',
         undefined,
         undefined,
         true,
-        'code-import'
+        'code-import',
+        nativeDiagram.dsl,
+        buildCodebasePreviewDescriptor(analysis, nativeDiagram)
       );
     },
     [runAIRequest]

@@ -742,6 +742,7 @@
       "uploadFile": "Subir archivo",
       "parsing": "Analizando...",
       "parse": "Analizar",
+      "parseNativeProject": "Generate Native Diagram",
       "analyzing": "Procesando...",
       "aiActions": {
         "generateErd": "Generar DER (IA)",

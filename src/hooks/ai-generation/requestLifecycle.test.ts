@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ChatMessage } from '@/services/aiService';
 import { composeDiagramForDisplay } from '@/services/composeDiagramForDisplay';
 import { generateDiagramFromChat } from '@/services/aiService';
+import { serializeCanvasContextForAI } from '@/services/ai/contextSerializer';
 import {
   appendChatExchange,
   buildUserChatMessage,
@@ -68,6 +69,23 @@ describe('requestLifecycle', () => {
     expect(composeDiagramForDisplay).toHaveBeenCalled();
     expect(result.userMessage.role).toBe('user');
     expect(result.dslText).toBe('flow: "A"');
+  });
+
+  it('uses seeded native dsl as edit context on an empty canvas', async () => {
+    vi.mocked(generateDiagramFromChat).mockResolvedValueOnce('flow: "A"');
+    vi.mocked(serializeCanvasContextForAI).mockReturnValueOnce('');
+
+    await generateAIFlowResult({
+      chatMessages: [],
+      prompt: 'Enhance this repository diagram',
+      seedDsl: 'flow: "Repository Module Structure"\ndirection: TB\n[section] api: API { color: "violet" }',
+      nodes: [],
+      edges: [],
+      aiSettings: BASE_AI_SETTINGS,
+      globalEdgeOptions: BASE_EDGE_OPTIONS,
+    });
+
+    expect(vi.mocked(generateDiagramFromChat).mock.calls[0][2]).toContain('Repository Module Structure');
   });
 
   it('skips layout when all AI nodes are matched (pure edit — positions preserved)', async () => {

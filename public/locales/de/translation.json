@@ -742,6 +742,7 @@
       "uploadFile": "Datei hochladen",
       "parsing": "Wird geparst...",
       "parse": "Parsen",
+      "parseNativeProject": "Generate Native Diagram",
       "analyzing": "Wird analysiert...",
       "aiActions": {
         "generateErd": "ERD generieren (KI)",

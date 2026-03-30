@@ -222,9 +222,26 @@ export function StudioAIPanel({
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
             <p className="text-xs font-semibold text-[var(--brand-text)]">
-              {t('commandBar.aiStudio.importReady', 'Import ready - review changes')}
+              {pendingDiff.previewTitle}
             </p>
           </div>
+          {pendingDiff.previewDetail ? (
+            <p className="mb-3 text-[11px] leading-4 text-emerald-800">
+              {pendingDiff.previewDetail}
+            </p>
+          ) : null}
+          {pendingDiff.previewStats && pendingDiff.previewStats.length > 0 ? (
+            <div className="mb-3 flex flex-wrap gap-1.5">
+              {pendingDiff.previewStats.map((stat) => (
+                <span
+                  key={stat}
+                  className="rounded-full border border-emerald-200 bg-white/70 px-2 py-0.5 text-[10px] font-medium text-emerald-800"
+                >
+                  {stat}
+                </span>
+              ))}
+            </div>
+          ) : null}
           <div className="flex items-center gap-3 mb-3 text-[11px]">
             {pendingDiff.addedCount > 0 && (
               <span className="flex items-center gap-1 text-emerald-700 font-medium">

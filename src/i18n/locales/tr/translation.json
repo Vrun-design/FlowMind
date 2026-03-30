@@ -775,6 +775,7 @@
       "uploadFile": "Dosya yükle",
       "parsing": "Ayrıştırılıyor...",
       "parse": "Ayrıştır",
+      "parseNativeProject": "Generate Native Diagram",
       "analyzing": "Analiz ediliyor...",
       "aiActions": {
         "generateErd": "ER diyagramı oluştur (YZ)",

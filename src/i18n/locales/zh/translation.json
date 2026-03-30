@@ -742,6 +742,7 @@
       "uploadFile": "上传文件",
       "parsing": "解析中...",
       "parse": "解析",
+      "parseNativeProject": "Generate Native Diagram",
       "analyzing": "分析中...",
       "aiActions": {
         "generateErd": "生成 ERD（AI）",

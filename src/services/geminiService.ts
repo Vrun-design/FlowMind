@@ -68,7 +68,8 @@ Your job:
 | \`[end]\` | Terminal state (success or failure) |
 | \`[process]\` | Any action, step, or task |
 | \`[decision]\` | Branch / conditional |
-| \`[system]\` | Backend service, API, database |
+| \`[system]\` | Application-level backend service, internal API, business logic component |
+| \`[architecture]\` | Cloud or infrastructure resource such as AWS, Azure, GCP, Kubernetes, network, or security components |
 | \`[browser]\` | Web page / frontend screen |
 | \`[mobile]\` | Mobile screen |
 | \`[note]\` | Callout / annotation |
@@ -91,6 +92,14 @@ Your job:
 ## Node Attributes — ALWAYS add \`icon\` and \`color\` to every non-start/end node
 
 Syntax: \`[type] id: Label { icon: "IconName", color: "color", subLabel: "optional subtitle" }\`
+
+For \`[architecture]\` nodes use:
+\`[architecture] id: Label { archProvider: "aws", archResourceType: "service", archIconPackId: "aws-official-starter-v1", color: "violet" }\`
+
+- Required attributes for \`[architecture]\`: \`archProvider\`, \`archResourceType\`
+- Optional attributes for \`[architecture]\`: \`archIconPackId\`, \`archIconShapeId\`, \`color\`, \`subLabel\`
+- Prefer \`[architecture]\` over \`[system]\` for cloud services, infrastructure, managed data stores, queues, gateways, network, and security resources
+- Prefer \`[system]\` for application services, internal APIs, controllers, workers, and business logic that belong to the product itself
 
 6. **subLabel** — add a short subtitle for context on complex nodes:
    \`\`\`
@@ -131,23 +140,49 @@ Syntax: \`[type] id: Label { icon: "IconName", color: "color", subLabel: "option
 
    Infrastructure: \`Cloud\`, \`Wifi\`, \`Smartphone\`, \`Monitor\`, \`HardDrive\`, \`Cpu\`
 
-10. **Color semantics** — use colors deliberately, not randomly:
-    - \`emerald\` → success, start, go, confirmed
-    - \`red\` → error, end, fail, danger, cancel
-    - \`amber\` → warning, decision, pending, review
-    - \`blue\` → neutral process, info, user action
-    - \`violet\` → system/service/backend/API
-    - \`slate\` → generic fallback
+10. **Cloud provider icons** — when rendering infrastructure, use \`[architecture]\` nodes and these provider values:
+    - AWS: \`archProvider: "aws"\`, prefer \`archIconPackId: "aws-official-starter-v1"\`
+      Common services: EC2, S3, RDS, Lambda, DynamoDB, API Gateway, CloudFront, SQS, SNS, ECS, EKS, ElastiCache, Cognito, IAM
+    - Azure: \`archProvider: "azure"\`, prefer \`archIconPackId: "azure-official-icons-v20"\`
+      Common services: VM, Functions, Storage Account, Azure SQL, API Management, Front Door
+    - GCP: \`archProvider: "gcp"\`
+      Common services: Compute Engine, Cloud Functions, Cloud Storage, Cloud SQL, Load Balancer, Cloud Run
+    - Kubernetes / CNCF: \`archProvider: "cncf"\`
+      Common resources: Cluster, Node, Pod, Service, Ingress, ConfigMap
+    - Network: \`archProvider: "network"\`
+      Common resource types: \`load_balancer\`, \`router\`, \`switch\`, \`cdn\`, \`dns\`, \`service\`
+    - Security: \`archProvider: "security"\`
+      Common resource types: \`firewall\`, \`service\`, \`dns\`
 
-11. Use comments \`#\` only when they add clarity.
+11. **Color semantics** — use colors deliberately, not randomly:
+    - \`blue\` → frontend, user-facing, presentation layer
+    - \`violet\` → backend services, APIs, internal systems
+    - \`emerald\` → data stores, persistence, successful outcomes
+    - \`amber\` → queues, async workers, warning states, decisions
+    - \`red\` → security boundaries, firewalls, error, end, fail, danger, cancel
+    - \`slate\` → generic fallback, unknown services, neutral groups
+    - \`pink\` → third-party or external services
+    - \`yellow\` → cache, fast path, in-memory systems
 
-12. Do NOT explain the output. Do NOT add prose. Only output DSL.
+12. **Use node types intentionally**:
+    - \`[architecture]\`: cloud services, infrastructure, managed databases, queues, gateways, DNS, CDN, VPN, firewalls
+    - \`[system]\`: product-owned backend services, internal APIs, modules, business logic
+    - \`[browser]\`: web apps, dashboards, admin panels, portals
+    - \`[mobile]\`: iOS, Android, React Native, Flutter apps
+    - \`[process]\`: operational steps, jobs, transformations, workflows
+    - \`[section]\`: layers, trust boundaries, VPCs, clusters, namespaces, zones
 
-13. **Node IDs**:
+13. Label important edges with what flows across them, especially in architecture diagrams: \`HTTP/REST\`, \`SQL\`, \`gRPC\`, \`events\`, \`cache lookup\`, \`files\`
+
+14. Use comments \`#\` only when they add clarity.
+
+15. Do NOT explain the output. Do NOT add prose. Only output DSL.
+
+16. **Node IDs**:
     - If the label is simple (e.g., "Login"), you can use it as the ID: \`[process] Login { icon: "LogIn" }\`.
     - If the label is long, use an ID: \`[process] login_step: User enters credentials { icon: "LogIn" }\`.
 
-14. **Iterative editing — preserve existing IDs**:
+17. **Iterative editing — preserve existing IDs**:
     - When a CURRENT CONTENT block is provided, it includes each node's exact \`id\` (e.g. \`"id": "node-abc123"\`).
     - For nodes that should REMAIN in the diagram, reuse their EXACT id as the node identifier in your DSL output.
     - Example: if context shows \`"id": "node-abc123", "label": "Login"\`, output \`[process] node-abc123: Login { icon: "LogIn", color: "blue" }\`
@@ -231,6 +266,35 @@ pass ->|No| failed
 registry ==> deploy
 deploy ..> slack_notify
 slack_notify ==> live
+\`\`\`
+
+### Architecture Diagram
+
+\`\`\`
+flow: Serverless API - AWS
+direction: TB
+
+[section] edge: Edge Layer { color: "slate" }
+[architecture] cf: CloudFront { archProvider: "aws", archResourceType: "cdn", archIconPackId: "aws-official-starter-v1", color: "blue" }
+[architecture] apigw: API Gateway { archProvider: "aws", archResourceType: "service", archIconPackId: "aws-official-starter-v1", color: "violet" }
+
+[section] compute: Compute Layer { color: "blue" }
+[architecture] auth_fn: Auth Lambda { archProvider: "aws", archResourceType: "service", archIconPackId: "aws-official-starter-v1", color: "violet" }
+[architecture] api_fn: API Lambda { archProvider: "aws", archResourceType: "service", archIconPackId: "aws-official-starter-v1", color: "violet" }
+
+[section] data: Data Layer { color: "emerald" }
+[architecture] dynamo: DynamoDB { archProvider: "aws", archResourceType: "database", archIconPackId: "aws-official-starter-v1", color: "emerald" }
+[architecture] cache: ElastiCache { archProvider: "aws", archResourceType: "service", archIconPackId: "aws-official-starter-v1", color: "yellow" }
+[architecture] s3: S3 Storage { archProvider: "aws", archResourceType: "service", archIconPackId: "aws-official-starter-v1", color: "emerald" }
+[architecture] cognito: Cognito { archProvider: "aws", archResourceType: "service", archIconPackId: "aws-official-starter-v1", color: "amber" }
+
+cf ->|HTTPS| apigw
+apigw ->|auth request| auth_fn
+apigw ->|HTTP/REST| api_fn
+auth_fn ->|identity| cognito
+api_fn ->|query| dynamo
+api_fn ->|cache lookup| cache
+api_fn ->|store files| s3
 \`\`\`
 `;
 }

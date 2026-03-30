@@ -85,6 +85,48 @@ export function GitHubRepoFetcher({
   );
 }
 
+interface GitHubProgressTimelineProps {
+  steps: string[];
+  active: boolean;
+}
+
+export function GitHubProgressTimeline({
+  steps,
+  active,
+}: GitHubProgressTimelineProps): React.ReactElement | null {
+  if (steps.length === 0) {
+    return null;
+  }
+
+  const activeIndex = active ? steps.length - 1 : -1;
+
+  return (
+    <div className="rounded-[var(--radius-md)] border border-[var(--color-brand-border)] bg-[var(--brand-surface)] px-3 py-2">
+      <div className="space-y-2">
+        {steps.map((step, index) => {
+          const isActive = index === activeIndex;
+          const isComplete = !isActive;
+
+          return (
+            <div key={`${index}-${step}`} className="flex items-start gap-2 text-[11px]">
+              <span className="mt-0.5 flex h-4 w-4 items-center justify-center">
+                {isActive ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-[var(--brand-primary)]" />
+                ) : (
+                  <Check className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
+                )}
+              </span>
+              <span className={isComplete ? 'text-[var(--brand-text)]' : 'text-[var(--brand-primary)]'}>
+                {step}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 interface ZipUploadButtonProps {
   isExtractingZip: boolean;
   onClick: () => void;
@@ -131,6 +173,8 @@ interface CodebaseAnalysisSummaryProps {
 export function CodebaseAnalysisSummary({
   codebaseAnalysis,
 }: CodebaseAnalysisSummaryProps): React.ReactElement {
+  const topDetectedServices = codebaseAnalysis.detectedServices.slice(0, 4);
+
   return (
     <div className="rounded-[var(--radius-md)] border border-[var(--color-brand-border)] bg-[var(--brand-background)] p-3 flex-1 overflow-y-auto custom-scrollbar">
       <div className="flex items-center gap-2 mb-2">
@@ -147,6 +191,20 @@ export function CodebaseAnalysisSummary({
         <span>{codebaseAnalysis.entryPoints.length} entry points</span>
       </div>
 
+      <div className="flex flex-wrap items-center gap-2 pl-7 mb-2">
+        <span className="rounded-full bg-[var(--brand-primary-50)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--brand-primary)]">
+          {codebaseAnalysis.cloudPlatform}
+        </span>
+        {topDetectedServices.map((service) => (
+          <span
+            key={service.name}
+            className="rounded-full border border-[var(--color-brand-border)] bg-[var(--brand-surface)] px-2 py-0.5 text-[10px] font-medium text-[var(--brand-secondary)]"
+          >
+            {service.name} · {service.type}
+          </span>
+        ))}
+      </div>
+
       {codebaseAnalysis.entryPoints.length > 0 ? (
         <div className="pl-7 mb-2">
           <p className="text-[11px] font-medium text-[var(--brand-secondary)] mb-1">
@@ -158,6 +216,22 @@ export function CodebaseAnalysisSummary({
               className="inline-block text-[10px] font-mono bg-[var(--brand-primary-50)] text-[var(--brand-primary)] rounded px-1.5 py-0.5 mr-1 mb-1"
             >
               {entryPoint}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
+      {codebaseAnalysis.infraFiles.length > 0 ? (
+        <div className="pl-7 mb-2">
+          <p className="text-[11px] font-medium text-[var(--brand-secondary)] mb-1">
+            Infra files:
+          </p>
+          {codebaseAnalysis.infraFiles.slice(0, 4).map((infraFile) => (
+            <span
+              key={infraFile}
+              className="inline-block text-[10px] font-mono bg-[var(--brand-surface)] text-[var(--brand-secondary)] rounded px-1.5 py-0.5 mr-1 mb-1 border border-[var(--color-brand-border)]"
+            >
+              {infraFile}
             </span>
           ))}
         </div>

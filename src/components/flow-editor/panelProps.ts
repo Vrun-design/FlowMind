@@ -10,6 +10,7 @@ import type { LayoutAlgorithm } from '@/services/elkLayout';
 import type { FlowTemplate } from '@/services/templates';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
 import type { ChatMessage } from '@/services/aiService';
+import type { CodebaseAnalysis } from '@/hooks/ai-generation/codebaseAnalyzer';
 import type { SupportedLanguage } from '@/hooks/ai-generation/codeToArchitecture';
 import type { TerraformInputFormat } from '@/hooks/ai-generation/terraformToCloud';
 import type { AIReadinessState } from '@/hooks/ai-generation/readiness';
@@ -48,7 +49,7 @@ export interface CommandBarPanelBuilderParams {
   handleTerraformAnalysis?: (input: string, format: TerraformInputFormat) => Promise<boolean>;
   handleOpenApiAnalysis?: (spec: string) => Promise<boolean>;
   handleApplyDsl?: (dsl: string) => void;
-  handleCodebaseAnalysis?: (summary: string) => Promise<boolean>;
+  handleCodebaseAnalysis?: (analysis: CodebaseAnalysis) => Promise<boolean>;
   showGrid: boolean;
   toggleGrid: () => void;
   snapToGrid: boolean;

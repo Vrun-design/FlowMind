@@ -44,7 +44,7 @@ export const IMPORT_CATEGORY_DEFINITIONS: ImportCategoryDefinition[] = [
     id: 'codebase',
     fallbackLabel: 'Repo',
     labelKey: 'commandBar.import.categories.codebase',
-    hasNative: false,
+    hasNative: true,
     hasAI: true,
   },
 ];
@@ -132,7 +132,7 @@ export function getImportAiActionLabel(
     case 'code':
       return t('commandBar.import.aiActions.analyzeArchitecture', 'Analyze Architecture');
     case 'codebase':
-      return t('commandBar.import.aiActions.analyzeProject', 'Analyze Project');
+      return t('commandBar.import.aiActions.analyzeProject', 'Enhance with AI');
     default:
       return category;
   }

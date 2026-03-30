@@ -178,6 +178,7 @@ describe('buildResolvedLayoutConfiguration', () => {
     expect(Number(architecture.dims.nodeNode)).toBeGreaterThan(Number(standard.dims.nodeNode));
     expect(Number(architecture.dims.nodeLayer)).toBeGreaterThan(Number(standard.dims.nodeLayer));
     expect(Number(architecture.dims.component)).toBeGreaterThan(Number(standard.dims.component));
+    expect(architecture.layoutOptions['elk.layered.nodePlacement.strategy']).toBe('BRANDES_KOEPF');
     expect(architecture.layoutOptions['elk.spacing.edgeNode']).toBe('24');
     expect(architecture.layoutOptions['elk.spacing.edgeEdge']).toBe('18');
     expect(architecture.layoutOptions['elk.layered.spacing.edgeEdgeBetweenLayers']).toBe('42');

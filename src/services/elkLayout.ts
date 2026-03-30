@@ -25,6 +25,7 @@ let elkInstancePromise: Promise<ElkLayoutEngine> | null = null;
 const LARGE_DIAGRAM_NODE_THRESHOLD = 48;
 const LARGE_DIAGRAM_EDGE_THRESHOLD = 72;
 const logger = createLogger({ scope: 'elkLayout' });
+const SEMANTIC_LAYER_ORDER = ['edge', 'frontend', 'api', 'services', 'data', 'external'] as const;
 
 /** Reset the cached ELK instance — useful in tests or when the instance may have become stale. */
 export function resetElkInstance(): void {
@@ -86,6 +87,87 @@ function buildElkNode(node: FlowNode, childrenByParent: Map<string, FlowNode[]>)
       'elk.padding': '[top=40,left=20,bottom=20,right=20]',
     },
   };
+}
+
+function inferSemanticLayerRank(node: FlowNode): number | null {
+  const label = String(node.data?.label ?? '').toLowerCase();
+  const subLabel = String(node.data?.subLabel ?? '').toLowerCase();
+  const type = String(node.type ?? '').toLowerCase();
+  const haystack = `${label} ${subLabel} ${type}`;
+
+  if (haystack.includes('edge') || haystack.includes('gateway') || haystack.includes('cdn')) {
+    return SEMANTIC_LAYER_ORDER.indexOf('edge');
+  }
+  if (
+    haystack.includes('frontend') ||
+    haystack.includes('browser') ||
+    haystack.includes('web') ||
+    haystack.includes('mobile')
+  ) {
+    return SEMANTIC_LAYER_ORDER.indexOf('frontend');
+  }
+  if (haystack.includes('api')) {
+    return SEMANTIC_LAYER_ORDER.indexOf('api');
+  }
+  if (
+    haystack.includes('service') ||
+    haystack.includes('compute') ||
+    haystack.includes('worker') ||
+    haystack.includes('backend')
+  ) {
+    return SEMANTIC_LAYER_ORDER.indexOf('services');
+  }
+  if (
+    haystack.includes('data') ||
+    haystack.includes('database') ||
+    haystack.includes('cache') ||
+    haystack.includes('storage')
+  ) {
+    return SEMANTIC_LAYER_ORDER.indexOf('data');
+  }
+  if (
+    haystack.includes('external') ||
+    haystack.includes('third-party') ||
+    haystack.includes('third party')
+  ) {
+    return SEMANTIC_LAYER_ORDER.indexOf('external');
+  }
+
+  return null;
+}
+
+function isArchitectureLikeNode(node: FlowNode): boolean {
+  if (node.type === 'architecture') {
+    return true;
+  }
+
+  return inferSemanticLayerRank(node) !== null || ['browser', 'mobile', 'section', 'group'].includes(String(node.type));
+}
+
+function resolveEffectiveDiagramType(nodes: FlowNode[], diagramType?: string): string | undefined {
+  if (diagramType) {
+    return diagramType;
+  }
+
+  return nodes.some(isArchitectureLikeNode) ? 'architecture' : undefined;
+}
+
+function sortTopLevelNodesForArchitecture(topLevelNodes: FlowNode[]): FlowNode[] {
+  return [...topLevelNodes].sort((left, right) => {
+    const leftRank = inferSemanticLayerRank(left);
+    const rightRank = inferSemanticLayerRank(right);
+
+    if (leftRank === null && rightRank === null) {
+      return 0;
+    }
+    if (leftRank === null) {
+      return 1;
+    }
+    if (rightRank === null) {
+      return -1;
+    }
+    return leftRank - rightRank;
+  });
 }
 
 function buildPositionMap(
@@ -190,16 +272,24 @@ export async function getElkLayout(
     }
   }
 
-  const { layoutOptions } = buildResolvedLayoutConfiguration(options);
+  const effectiveDiagramType = resolveEffectiveDiagramType(nodes, options.diagramType);
+  const { layoutOptions } = buildResolvedLayoutConfiguration({
+    ...options,
+    diagramType: effectiveDiagramType,
+  });
   const { topLevelNodes, childrenByParent, sortedEdges } = normalizeLayoutInputsForDeterminism(
     nodes,
     edges
   );
+  const orderedTopLevelNodes =
+    effectiveDiagramType === 'architecture' || effectiveDiagramType === 'infrastructure'
+      ? sortTopLevelNodesForArchitecture(topLevelNodes)
+      : topLevelNodes;
 
   const elkGraph: ElkNode = {
     id: 'root',
     layoutOptions,
-    children: topLevelNodes.map((node) => buildElkNode(node, childrenByParent)),
+    children: orderedTopLevelNodes.map((node) => buildElkNode(node, childrenByParent)),
     edges: sortedEdges.map((edge) => ({
       id: edge.id,
       sources: [edge.source],
@@ -238,7 +328,7 @@ export async function getElkLayout(
     const useLightweightPostProcessing = shouldUseLightweightLayoutPostProcessing(
       nodes.length,
       sortedEdges.length,
-      options.diagramType
+      effectiveDiagramType
     );
 
     const normalizedElkPointsMap =

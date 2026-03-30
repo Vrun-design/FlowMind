@@ -94,7 +94,7 @@ function getAlgorithmOptions(
         Object.assign(algorithmOptions, {
             'elk.layered.crossingMinimization.strategy': 'LAYER_SWEEP',
             'elk.layered.crossingMinimization.thoroughness': '64',
-            'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+            'elk.layered.nodePlacement.strategy': architectureLike ? 'BRANDES_KOEPF' : 'NETWORK_SIMPLEX',
             'elk.layered.nodePlacement.favorStraightEdges': 'true',
             'elk.layered.mergeEdges': 'true',
             'elk.layered.unnecessaryBendpoints': 'true',

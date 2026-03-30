@@ -14,7 +14,7 @@ import {
   detectLanguage,
   formatBytes,
 } from './importDetection';
-import { type NativeParseResult, parseSqlNative, parseInfraNative } from './importNativeParsers';
+import { type NativeParseResult, parseSqlNative, parseInfraNative, parseCodebaseNative } from './importNativeParsers';
 import { CodebaseImportSection } from './CodebaseImportSection';
 import type { CodebaseAnalysis } from '@/hooks/ai-generation/codebaseAnalyzer';
 import type { InfraFormat } from '@/services/infraSync/types';
@@ -176,7 +176,7 @@ export function ImportView({
   );
 
   const handleNativeParse = useCallback(() => {
-    if (!input.trim()) return;
+    if (category !== 'codebase' && !input.trim()) return;
     setIsParsing(true);
     setError(null);
     setNativeResult(null);
@@ -196,6 +196,13 @@ export function ImportView({
           return;
         }
         result = parseInfraNative(input, infraFormat as InfraFormat);
+      } else if (category === 'codebase') {
+        if (!codebaseAnalysis) {
+          setError(t('commandBar.import.errors.nativeNotAvailable', 'Native parsing not available for this type.'));
+          setIsParsing(false);
+          return;
+        }
+        result = parseCodebaseNative(codebaseAnalysis);
       } else {
         setError(t('commandBar.import.errors.nativeNotAvailable', 'Native parsing not available for this type.'));
         setIsParsing(false);
@@ -207,7 +214,7 @@ export function ImportView({
     } finally {
       setIsParsing(false);
     }
-  }, [input, category, infraFormat, t]);
+  }, [input, category, infraFormat, codebaseAnalysis, t]);
 
   const handleApply = useCallback(() => {
     if (!nativeResult || !onApplyDsl) return;
@@ -218,8 +225,7 @@ export function ImportView({
   }, [nativeResult, onApplyDsl]);
 
   const handleAiGenerate = useCallback(async () => {
-    if (category === 'codebase') return;
-    if (!input.trim()) return;
+    if (category !== 'codebase' && !input.trim()) return;
     setIsAiRunning(true);
     setError(null);
     try {
@@ -228,6 +234,8 @@ export function ImportView({
       else if (category === 'infra' && onTerraformAnalysis)
         await onTerraformAnalysis(input, infraFormat as TerraformInputFormat);
       else if (category === 'openapi' && onOpenApiAnalysis) await onOpenApiAnalysis(input);
+      else if (category === 'codebase' && onCodebaseAnalysis && codebaseAnalysis)
+        await onCodebaseAnalysis(codebaseAnalysis);
       else {
         setError(t('commandBar.import.errors.aiUnavailable', 'AI analysis not available for this type.'));
         setIsAiRunning(false);
@@ -247,6 +255,8 @@ export function ImportView({
     onSqlAnalysis,
     onTerraformAnalysis,
     onOpenApiAnalysis,
+    onCodebaseAnalysis,
+    codebaseAnalysis,
     t,
   ]);
 
@@ -354,11 +364,19 @@ export function ImportView({
             canAI={Boolean(canAI)}
             isParsing={isParsing}
             isAiRunning={isAiRunning}
-            parseDisabled={!input.trim() || isParsing || inputTooLarge}
+            parseDisabled={
+              category === 'codebase'
+                ? !codebaseAnalysis || isParsing
+                : !input.trim() || isParsing || inputTooLarge
+            }
             aiDisabled={aiDisabled}
             aiLabel={getImportAiActionLabel(t, category)}
             parsingLabel={t('commandBar.import.parsing', 'Parsing...')}
-            parseLabel={t('commandBar.import.parse', 'Parse')}
+            parseLabel={
+              category === 'codebase'
+                ? t('commandBar.import.parseNativeProject', 'Generate Native Diagram')
+                : t('commandBar.import.parse', 'Parse')
+            }
             analyzingLabel={t('commandBar.import.analyzing', 'Analyzing...')}
             onParse={handleNativeParse}
             onAiGenerate={() => void handleAiGenerate()}

@@ -14,6 +14,7 @@ import type { FlowTemplate } from '@/services/templates';
 import type { EdgeData, NodeData } from '@/lib/types';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
 import type { SupportedLanguage } from '@/hooks/ai-generation/codeToArchitecture';
+import type { CodebaseAnalysis } from '@/hooks/ai-generation/codebaseAnalyzer';
 import type { TerraformInputFormat } from '@/hooks/ai-generation/terraformToCloud';
 import type { AIReadinessState } from '@/hooks/ai-generation/readiness';
 
@@ -89,7 +90,7 @@ export interface CommandBarPanelProps {
   onTerraformAnalysis?: (input: string, format: TerraformInputFormat) => Promise<void>;
   onOpenApiAnalysis?: (spec: string) => Promise<void>;
   onApplyDsl?: (dsl: string) => void;
-  onCodebaseAnalysis?: (summary: string) => Promise<void>;
+  onCodebaseAnalysis?: (analysis: CodebaseAnalysis) => Promise<void>;
   showGrid: boolean;
   onToggleGrid: () => void;
   snapToGrid: boolean;

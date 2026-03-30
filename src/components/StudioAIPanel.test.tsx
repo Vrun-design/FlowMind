@@ -202,4 +202,55 @@ describe('StudioAIPanel', () => {
     expect(screen.getByRole('button', { name: 'Edit current' })).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByRole('button', { name: 'Create new' })).toHaveAttribute('aria-pressed', 'false');
   });
+
+  it('shows preview copy for repo enhancement diffs', () => {
+    render(
+      <StudioAIPanel
+        onAIGenerate={vi.fn().mockResolvedValue(false)}
+        isGenerating={false}
+        streamingText={null}
+        retryCount={0}
+        onCancelGeneration={vi.fn()}
+        pendingDiff={{
+          addedCount: 4,
+          updatedCount: 6,
+          removedCount: 0,
+          previewTitle: 'Codebase enhancement ready — review the upgraded diagram.',
+          previewDetail:
+            'Started from the native repository map and layered in AI architecture improvements.',
+          previewStats: ['Platform: aws', '4 native sections', '3 platform services'],
+          result: {
+            dslText: '',
+            userMessage: { role: 'user', parts: [{ text: 'test' }] },
+            layoutedNodes: [],
+            layoutedEdges: [],
+          },
+        }}
+        onConfirmDiff={vi.fn()}
+        onDiscardDiff={vi.fn()}
+        aiReadiness={{
+          canGenerate: true,
+          blockingIssue: null,
+          advisory: null,
+        }}
+        lastError={null}
+        onClearError={vi.fn()}
+        chatMessages={[]}
+        onClearChat={vi.fn()}
+        nodeCount={0}
+        selectedNodeCount={0}
+      />
+    );
+
+    expect(
+      screen.getByText('Codebase enhancement ready — review the upgraded diagram.')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Started from the native repository map and layered in AI architecture improvements.'
+      )
+    ).toBeInTheDocument();
+    expect(screen.getByText('Platform: aws')).toBeInTheDocument();
+    expect(screen.getByText('4 native sections')).toBeInTheDocument();
+  });
 });
