@@ -6,6 +6,7 @@ import {
 } from '@/app/routeState';
 import { getFlowTemplates } from '@/services/templates';
 import type { FlowEdge, FlowNode, FlowSnapshot } from '@/lib/types';
+import type { CinematicExportRequest } from '@/services/export/cinematicExport';
 import type { FlowEditorMode, StudioCodeMode, StudioTab } from '@/hooks/useFlowEditorUIState';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
 import type { LayoutAlgorithm } from '@/services/elkLayout';
@@ -146,7 +147,7 @@ export interface UseFlowEditorChromeParams {
     handleSvgExport: () => void;
     handleCopySvg: () => void;
     handlePdfExport: () => void;
-    handleCinematicExport: (format: 'cinematic-video' | 'cinematic-gif') => void;
+    handleCinematicExport: (request: CinematicExportRequest) => void;
     handleExportJSON: () => void;
     handleCopyJSON: () => void;
     handleExportMermaid: () => void;

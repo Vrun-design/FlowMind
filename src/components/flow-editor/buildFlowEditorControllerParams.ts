@@ -2,6 +2,7 @@ import type { TFunction } from 'i18next';
 import type { FlowEdge, FlowNode, FlowSnapshot } from '@/lib/types';
 import type { FlowEditorMode, StudioCodeMode, StudioTab } from '@/hooks/useFlowEditorUIState';
 import type { DomainLibraryItem } from '@/services/domainLibrary';
+import type { CinematicExportRequest } from '@/services/export/cinematicExport';
 import type {
     UseFlowEditorChromeParams,
     UseFlowEditorPanelsParams,
@@ -60,7 +61,7 @@ interface BuildFlowEditorControllerChromeParams {
     handleSvgExport: () => void;
     handleCopySvg: () => void;
     handlePdfExport: () => void;
-    handleCinematicExport: (format: 'cinematic-video' | 'cinematic-gif') => void;
+    handleCinematicExport: (request: CinematicExportRequest) => void;
     handleExportJSON: () => void;
     handleCopyJSON: () => void;
     handleExportMermaid: () => void;

@@ -65,23 +65,6 @@ export function HomeDashboard({
     onCreateNew();
   }
 
-  const handleCreateNewShortcut = React.useEffectEvent((): void => {
-    handleCreateNew();
-  });
-
-  React.useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent): void {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
-        e.preventDefault();
-        handleCreateNewShortcut();
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   function handlePromptWithAI(): void {
     recordOnboardingEvent('welcome_prompt_selected', { source: 'home-dashboard' });
     onPromptWithAI();
@@ -124,20 +107,6 @@ export function HomeDashboard({
           <p className="text-[var(--brand-secondary)] text-sm">
             {t('home.description', 'Manage your flows and diagrams.')}
           </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={handleCreateNew}
-            variant="primary"
-            size="md"
-            data-testid="home-create-new"
-            icon={<Plus className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110" />}
-          >
-            {t('common.createNew', 'Create New')}
-            <kbd className="hidden sm:inline-flex ml-1.5 h-[18px] items-center justify-center rounded-[4px] border border-white/20 bg-white/10 px-[5px] font-sans text-[10px] font-bold text-white/90 pointer-events-none">
-              ⌘N
-            </kbd>
-          </Button>
         </div>
       </div>
 
