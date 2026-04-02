@@ -1,5 +1,5 @@
 import type { FlowEdge, FlowNode } from '@/lib/types';
-import { sanitizeId, sanitizeLabel } from './formatting';
+import { sanitizeId, sanitizeLabel, sanitizeEdgeLabel } from './formatting';
 import { toArchitectureMermaid } from './mermaid/architectureMermaid';
 import { toMindmapMermaid } from './mermaid/mindmapMermaid';
 import { toJourneyMermaid } from './mermaid/journeyMermaid';
@@ -94,7 +94,7 @@ function toFlowchartMermaid(nodes: FlowNode[], edges: FlowEdge[]): string {
     const target = sanitizeId(edge.target);
     const connector = resolveFlowchartConnector(edge);
     if (edge.label) {
-      const label = sanitizeLabel(edge.label as string);
+      const label = sanitizeEdgeLabel(edge.label as string);
       mermaid += `    ${source} ${connector}|"${label}"| ${target}\n`;
     } else {
       mermaid += `    ${source} ${connector} ${target}\n`;

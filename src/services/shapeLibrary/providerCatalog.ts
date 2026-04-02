@@ -27,6 +27,7 @@ const shapePreviewPromiseCache = new Map<string, Promise<ProviderShapePreview | 
 const KNOWN_PROVIDER_PACK_IDS: Partial<Record<string, string>> = {
     aws: 'aws-official-starter-v1',
     azure: 'azure-official-icons-v20',
+    gcp: 'gcp-official-icons-v1',
     cncf: 'cncf-artwork-icons-v1',
     developer: 'developer-icons-v1',
 };
@@ -53,6 +54,26 @@ function inferLabelFromId(id: string): string {
 
 function getPackIdForProvider(provider: string): string {
     return KNOWN_PROVIDER_PACK_IDS[provider] ?? `${provider}-processed-pack-v1`;
+}
+
+function getProviderColor(provider: string): string {
+    if (provider === 'aws') {
+        return 'amber';
+    }
+
+    if (provider === 'azure') {
+        return 'blue';
+    }
+
+    if (provider === 'gcp') {
+        return 'emerald';
+    }
+
+    if (provider === 'cncf') {
+        return 'cyan';
+    }
+
+    return 'slate';
 }
 
 function parseSvgSource(modulePath: string, previewLoader: () => Promise<string>): SvgSource | null {
@@ -93,15 +114,7 @@ function createProviderItem(
         label: source.label,
         description: `${provider.toUpperCase()} ${source.category}`,
         icon: 'Box',
-        color: provider === 'aws'
-            ? 'amber'
-            : provider === 'azure'
-                ? 'blue'
-                : provider === 'gcp'
-                    ? 'emerald'
-                    : provider === 'cncf'
-                        ? 'cyan'
-                        : 'slate',
+        color: getProviderColor(provider),
         nodeType: 'custom',
         assetPresentation: 'icon',
         providerShapeCategory: source.category,

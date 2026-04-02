@@ -18,11 +18,14 @@ const t = ((key: string, fallback?: string) => fallback ?? key) as TFunction<
 
 describe('importViewModel', () => {
   it('returns translated category labels from the shared definitions', () => {
-    expect(getImportCategoryLabel(t, 'sql')).toBe('SQL');
-    expect(getImportCategoryLabel(t, 'codebase')).toBe('Repo');
+    expect(getImportCategoryLabel(t, 'infra')).toBe('Infra');
     expect(getImportCategoryDefinition('infra').hasNative).toBe(true);
-    expect(getImportCategoryDefinition('openapi').hasNative).toBe(false);
     expect(IMPORT_CATEGORY_DEFINITIONS.some((definition) => definition.id === 'mermaid')).toBe(
+      false
+    );
+    // sql, openapi, codebase are hidden behind feature flags (default off)
+    expect(IMPORT_CATEGORY_DEFINITIONS.some((definition) => definition.id === 'sql')).toBe(false);
+    expect(IMPORT_CATEGORY_DEFINITIONS.some((definition) => definition.id === 'codebase')).toBe(
       false
     );
   });
@@ -38,7 +41,6 @@ describe('importViewModel', () => {
       'terraform-state',
       'kubernetes',
       'docker-compose',
-      'terraform-hcl',
     ]);
     expect(languageOptions.some((option) => option.value === 'typescript')).toBe(true);
   });

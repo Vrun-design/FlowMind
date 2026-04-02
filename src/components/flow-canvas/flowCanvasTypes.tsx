@@ -20,6 +20,7 @@ import JourneyNode from '@/components/custom-nodes/JourneyNode';
 import ArchitectureNode from '@/components/custom-nodes/ArchitectureNode';
 import SequenceParticipantNode from '@/components/custom-nodes/SequenceParticipantNode';
 import SequenceNoteNode from '@/components/custom-nodes/SequenceNoteNode';
+import SectionNode from '@/components/SectionNode';
 
 export const flowCanvasNodeTypes: NodeTypes = {
   start: CustomNode,
@@ -34,6 +35,7 @@ export const flowCanvasNodeTypes: NodeTypes = {
   architecture: ArchitectureNode,
   annotation: AnnotationNode,
   text: TextNode,
+  section: SectionNode,
   swimlane: SwimlaneNode,
   image: ImageNode,
   browser: BrowserNode,

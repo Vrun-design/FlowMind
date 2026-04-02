@@ -1,6 +1,6 @@
 import type { FlowEdge, FlowNode } from '@/lib/types';
 import { handleIdToSide as handleIdToFlowSide } from '@/lib/nodeHandles';
-import { sanitizeId, sanitizeLabel } from '../formatting';
+import { sanitizeId, sanitizeLabel, sanitizeEdgeLabel } from '../formatting';
 
 function normalizeArchitectureDirection(direction: string | undefined): '-->' | '<--' | '<-->' {
   if (direction === '<--' || direction === '<-->') return direction;
@@ -66,7 +66,7 @@ export function toArchitectureMermaid(nodes: FlowNode[], edges: FlowEdge[]): str
       | undefined;
     const protocol = edgeData?.archProtocol;
     const port = edgeData?.archPort;
-    const label = edge.label ? sanitizeLabel(String(edge.label)) : undefined;
+    const label = edge.label ? sanitizeEdgeLabel(String(edge.label)) : undefined;
     const sourceSide =
       normalizeArchitectureSide(edgeData?.archSourceSide) || handleIdToSide(edge.sourceHandle);
     const targetSide =

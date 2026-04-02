@@ -67,8 +67,14 @@ describe('parseMermaidByType', () => {
     expect(result.diagramType).toBe('classDiagram');
     expect(result.error).toBeUndefined();
     expect(result.nodes.length).toBeGreaterThan(0);
-    expect(result.diagnostics?.some((message) => message.includes('Invalid class declaration at line'))).toBe(true);
-    expect(result.diagnostics?.some((message) => message.includes('Invalid class relation syntax at line'))).toBe(true);
+    expect(
+      result.diagnostics?.some((message) => message.includes('Invalid class declaration at line'))
+    ).toBe(true);
+    expect(
+      result.diagnostics?.some((message) =>
+        message.includes('Invalid class relation syntax at line')
+      )
+    ).toBe(true);
   });
 
   it('parses erDiagram through plugin dispatcher', () => {
@@ -103,8 +109,14 @@ describe('parseMermaidByType', () => {
     expect(result.diagramType).toBe('erDiagram');
     expect(result.error).toBeUndefined();
     expect(result.nodes.length).toBeGreaterThan(0);
-    expect(result.diagnostics?.some((message) => message.includes('Invalid entity declaration at line'))).toBe(true);
-    expect(result.diagnostics?.some((message) => message.includes('Invalid erDiagram relation syntax at line'))).toBe(true);
+    expect(
+      result.diagnostics?.some((message) => message.includes('Invalid entity declaration at line'))
+    ).toBe(true);
+    expect(
+      result.diagnostics?.some((message) =>
+        message.includes('Invalid erDiagram relation syntax at line')
+      )
+    ).toBe(true);
   });
 
   it('parses mindmap through plugin dispatcher', () => {
@@ -148,8 +160,14 @@ describe('parseMermaidByType', () => {
     expect(result.diagramType).toBe('journey');
     expect(result.error).toBeUndefined();
     expect(result.nodes.length).toBeGreaterThan(0);
-    expect(result.diagnostics?.some((message) => message.includes('Invalid journey section syntax at line'))).toBe(true);
-    expect(result.diagnostics?.some((message) => message.includes('Invalid journey step syntax at line'))).toBe(true);
+    expect(
+      result.diagnostics?.some((message) =>
+        message.includes('Invalid journey section syntax at line')
+      )
+    ).toBe(true);
+    expect(
+      result.diagnostics?.some((message) => message.includes('Invalid journey step syntax at line'))
+    ).toBe(true);
   });
 
   it('returns mindmap diagnostics for malformed indentation/wrapper lines', () => {
@@ -164,8 +182,29 @@ describe('parseMermaidByType', () => {
     expect(result.diagramType).toBe('mindmap');
     expect(result.error).toBeUndefined();
     expect(result.nodes.length).toBeGreaterThan(0);
-    expect(result.diagnostics?.some((message) => message.includes('Mindmap indentation jump at line'))).toBe(true);
-    expect(result.diagnostics?.some((message) => message.includes('Malformed mindmap wrapper syntax at line'))).toBe(true);
+    expect(
+      result.diagnostics?.some((message) => message.includes('Mindmap indentation jump at line'))
+    ).toBe(true);
+    expect(
+      result.diagnostics?.some((message) =>
+        message.includes('Malformed mindmap wrapper syntax at line')
+      )
+    ).toBe(true);
+  });
+
+  it('parses sequenceDiagram through plugin dispatcher', () => {
+    const result = parseMermaidByType(`
+      sequenceDiagram
+      participant Alice
+      participant Bob
+      Alice->>Bob: Hello
+      Bob-->>Alice: Hi
+    `);
+
+    expect(result.diagramType).toBe('sequence');
+    expect(result.error).toBeUndefined();
+    expect(result.nodes.length).toBeGreaterThan(0);
+    expect(result.edges.length).toBeGreaterThan(0);
   });
 
   it('parses architecture through plugin dispatcher', () => {
@@ -187,28 +226,32 @@ describe('parseMermaidByType', () => {
   });
 
   it('rejects architecture recovery diagnostics in strict mode', () => {
-    const result = parseMermaidByType(`
+    const result = parseMermaidByType(
+      `
       architecture-beta
       service api(server)[API]
       api --> cache
-    `, { architectureStrictMode: true });
+    `,
+      { architectureStrictMode: true }
+    );
 
     expect(result.diagramType).toBe('architecture');
     expect(result.error).toContain('strict mode rejected');
     expect(result.nodes).toHaveLength(0);
     expect(result.edges).toHaveLength(0);
-    expect(result.diagnostics?.some((d) => d.includes('Recovered implicit service node "cache"'))).toBe(true);
+    expect(
+      result.diagnostics?.some((d) => d.includes('Recovered implicit service node "cache"'))
+    ).toBe(true);
   });
 
-  it('returns explicit unsupported error for non-supported families', () => {
+  it('returns missing-header error for unsupported diagram types like gitGraph', () => {
     const result = parseMermaidByType(`
       gitGraph
       commit id: "A"
       commit id: "B"
     `);
 
-    expect(result.diagramType).toBe('gitGraph');
-    expect(result.error).toContain('not supported yet in editable mode');
+    expect(result.error).toContain('Missing chart type declaration');
     expect(result.nodes).toHaveLength(0);
     expect(result.edges).toHaveLength(0);
   });

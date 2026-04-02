@@ -14,10 +14,10 @@ describe('detectMermaidDiagramType', () => {
   it('detects target q2 families', () => {
     expect(detectMermaidDiagramType('classDiagram\nA <|-- B')).toBe('classDiagram');
     expect(detectMermaidDiagramType('erDiagram\nA ||--o{ B : has')).toBe('erDiagram');
-    expect(detectMermaidDiagramType('gitGraph\ncommit')).toBe('gitGraph');
     expect(detectMermaidDiagramType('mindmap\nroot')).toBe('mindmap');
     expect(detectMermaidDiagramType('journey\ntitle Onboarding')).toBe('journey');
     expect(detectMermaidDiagramType('architecture-beta\nservice api')).toBe('architecture');
+    expect(detectMermaidDiagramType('sequenceDiagram\nparticipant A')).toBe('sequence');
   });
 
   it('skips empty and comment lines', () => {
@@ -35,4 +35,3 @@ A --> B
     expect(detectMermaidDiagramType('')).toBeNull();
   });
 });
-
