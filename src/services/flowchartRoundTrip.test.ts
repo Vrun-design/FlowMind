@@ -22,8 +22,8 @@ describe('flowchart round-trip', () => {
     expect(first.edges[2].markerStart).toBeDefined();
     expect(first.edges[2].markerEnd).toBeUndefined();
 
-    const exported = toMermaid(first.nodes, first.edges);
-    expect(exported.startsWith('flowchart TD')).toBe(true);
+    const exported = toMermaid(first.nodes, first.edges, first.direction);
+    expect(exported.startsWith('flowchart TB')).toBe(true);
     expect(exported).toContain('A -.->|"warmup"| B');
     expect(exported).toContain('B ==> C');
     expect(exported).toContain('C <-- D');
@@ -61,5 +61,21 @@ describe('flowchart round-trip', () => {
     expect(second.edges).toHaveLength(1);
     expect(second.edges[0].markerStart).toBeDefined();
     expect(second.edges[0].markerEnd).toBeDefined();
+  });
+
+  it('preserves direction through parse/export/parse', () => {
+    const source = `
+      flowchart LR
+      A["Left"] --> B["Right"]
+    `;
+
+    const first = parseMermaidByType(source);
+    expect(first.direction).toBe('LR');
+
+    const exported = toMermaid(first.nodes, first.edges, first.direction);
+    expect(exported).toContain('flowchart LR');
+
+    const second = parseMermaidByType(exported);
+    expect(second.direction).toBe('LR');
   });
 });

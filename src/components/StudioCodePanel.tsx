@@ -1,9 +1,7 @@
 import React, { useRef } from 'react';
 import {
   AlertCircle,
-  BookOpen,
   CheckCircle2,
-  CircleHelp,
   Play,
   RotateCcw,
   Zap,
@@ -12,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Textarea';
 import { useFlowStore } from '@/store';
-import { APP_NAME, IS_BEVELED } from '@/lib/brand';
+import { IS_BEVELED } from '@/lib/brand';
 import { useMermaidDiagnosticsActions } from '@/store/selectionHooks';
 import { useToast } from './ui/ToastContext';
 import type { FlowEdge, FlowNode } from '@/lib/types';
@@ -21,7 +19,6 @@ import {
   useStudioCodePanelController,
   type DraftPreviewState,
 } from './studio-code-panel/useStudioCodePanelController';
-import { Tooltip } from './Tooltip';
 
 interface CodeModeOption {
   id: StudioCodeMode;
@@ -29,7 +26,6 @@ interface CodeModeOption {
 }
 
 const MODE_OPTIONS: CodeModeOption[] = [
-  { id: 'openflow', label: `${APP_NAME} DSL` },
   { id: 'mermaid', label: 'Mermaid' },
 ];
 
@@ -168,28 +164,16 @@ export function StudioCodePanel({
               </button>
             ))}
           </div>
-          {mode === 'mermaid' ? (
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={() => setLiveSync(!liveSync)}
-                title={livePreviewTitle}
-                className={`flex h-6 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-medium transition-all ${getLivePreviewButtonClassName(liveSync)}`}
-              >
-                <Zap className="h-3 w-3" />
-                Live sync
-              </button>
-            </div>
-          ) : (
-            <Tooltip text="Edit the full diagram source, validate the draft, then apply the changes back to the canvas.">
-              <button
-                type="button"
-                className="flex h-5 w-5 items-center justify-center rounded-full text-[var(--brand-secondary)] transition-colors hover:bg-[var(--brand-background)] hover:text-[var(--brand-text)]"
-                aria-label="Diagram as code help"
-              >
-                <CircleHelp className="h-3.5 w-3.5" />
-              </button>
-            </Tooltip>
-          )}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setLiveSync(!liveSync)}
+              title={livePreviewTitle}
+              className={`flex h-6 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-medium transition-all ${getLivePreviewButtonClassName(liveSync)}`}
+            >
+              <Zap className="h-3 w-3" />
+              Live sync
+            </button>
+          </div>
         </div>
       </div>
 
@@ -204,7 +188,7 @@ export function StudioCodePanel({
             placeholder={
               mode === 'mermaid'
                 ? t('commandBar.code.mermaidPlaceholder')
-                : t('commandBar.code.dslPlaceholder', { appName: APP_NAME })
+                : t('commandBar.code.dslPlaceholder')
             }
           />
         </div>
@@ -260,19 +244,7 @@ export function StudioCodePanel({
                   </span>
                 ) : null}
               </div>
-              {mode === 'openflow' ? (
-                <a
-                  href="https://docs.openflowkit.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-self-end gap-1 font-medium text-[var(--brand-primary)] transition-colors hover:text-[var(--brand-primary-700)]"
-                >
-                  <BookOpen className="h-3.5 w-3.5" />
-                  {t('commandBar.code.syntaxGuide')}
-                </a>
-              ) : (
-                <div className="shrink-0" />
-              )}
+              <div className="shrink-0" />
             </div>
 
             <div

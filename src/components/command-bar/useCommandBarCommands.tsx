@@ -3,7 +3,6 @@ import {
     ArrowRight,
     Code2,
     Compass,
-    FileCode,
     Import,
     Search,
     Settings,
@@ -12,7 +11,7 @@ import {
     Workflow,
 } from 'lucide-react';
 import { useFlowStore } from '@/store';
-import { APP_NAME, FLOWPILOT_NAME } from '@/lib/brand';
+import { FLOWPILOT_NAME } from '@/lib/brand';
 import type { CommandItem, CommandBarProps } from './types';
 import { AssetsIcon } from '../icons/AssetsIcon';
 
@@ -32,7 +31,7 @@ export function useCommandBarCommands({
     onUndo,
     onRedo,
     onOpenStudioAI,
-    onOpenStudioOpenFlow,
+    onOpenStudioOpenFlow: _onOpenStudioOpenFlow,
     onOpenStudioMermaid,
     onOpenArchitectureRules,
     hasImport = false,
@@ -137,15 +136,6 @@ export function useCommandBarCommands({
                 action: onOpenArchitectureRules,
             },
             {
-                id: 'studio-openflow',
-                label: 'Edit Flow DSL',
-                icon: <FileCode className="w-4 h-4 text-emerald-500" />,
-                tier: 'advanced',
-                type: 'action',
-                description: `Open ${APP_NAME} DSL in Studio`,
-                action: onOpenStudioOpenFlow,
-            },
-            {
                 id: 'studio-mermaid',
                 label: 'Edit Mermaid Code',
                 icon: <Code2 className="w-4 h-4 text-pink-500" />,
@@ -194,7 +184,6 @@ export function useCommandBarCommands({
         onOpenArchitectureRules,
         onOpenStudioAI,
         onOpenStudioMermaid,
-        onOpenStudioOpenFlow,
         onRedo,
         onUndo,
         settings,

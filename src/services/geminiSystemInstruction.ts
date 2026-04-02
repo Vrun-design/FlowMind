@@ -1,3 +1,5 @@
+import { buildCatalogSummary } from '@/lib/iconMatcher';
+
 const EDIT_MODE_PREAMBLE = `
 ## EDIT MODE — MODIFYING AN EXISTING DIAGRAM
 
@@ -65,7 +67,14 @@ For \`[architecture]\` nodes: \`[architecture] id: Label { archProvider: "aws", 
 
 Colors: \`blue\` (frontend), \`violet\` (backend), \`emerald\` (data), \`amber\` (decisions/queues), \`red\` (errors/end), \`slate\` (generic), \`pink\` (third-party), \`yellow\` (cache).
 
-Icons are optional — the system auto-assigns them. Include an \`icon\` only when you want a specific Lucide icon name.
+Icons are optional — the system auto-assigns them. For known technologies, use \`archProvider\` and \`archResourceType\` to specify the icon directly:
+
+\`[system] db: PostgreSQL { archProvider: "developer", archResourceType: "database-postgresql", color: "violet" }\`
+
+Available icon catalog:
+${buildCatalogSummary(15)}
+
+Use exact shape IDs from the catalog when possible (e.g. \`database-postgresql\`, \`queue-rabbitmq\`). If unsure, omit \`archResourceType\` and the system will match by label.
 
 ---
 
@@ -112,16 +121,34 @@ token ==> dashboard
 flow: Serverless API
 direction: TB
 
-[architecture] cf: CloudFront { archProvider: "aws", archResourceType: "cdn", color: "blue" }
-[architecture] apigw: API Gateway { archProvider: "aws", archResourceType: "service", color: "violet" }
-[architecture] lambda: API Lambda { archProvider: "aws", archResourceType: "lambda", color: "violet" }
-[architecture] dynamo: DynamoDB { archProvider: "aws", archResourceType: "database", color: "emerald" }
-[architecture] cache: ElastiCache { archProvider: "aws", archResourceType: "service", color: "yellow" }
+[architecture] cf: CloudFront { archProvider: "aws", archResourceType: "networking-cloudfront", color: "blue" }
+[architecture] apigw: API Gateway { archProvider: "aws", archResourceType: "app-integration-api-gateway", color: "violet" }
+[architecture] lambda: API Lambda { archProvider: "aws", archResourceType: "compute-lambda", color: "violet" }
+[architecture] dynamo: DynamoDB { archProvider: "aws", archResourceType: "database-dynamodb", color: "emerald" }
+[architecture] cache: ElastiCache { archProvider: "aws", archResourceType: "database-elasticache", color: "yellow" }
 
 cf ->|HTTPS| apigw
 apigw ->|HTTP/REST| lambda
 lambda ->|query| dynamo
 lambda ->|cache lookup| cache
+\`\`\`
+
+### Full-Stack with Developer Icons
+
+\`\`\`
+flow: E-Commerce Stack
+direction: TB
+
+[system] react: React App { archProvider: "developer", archResourceType: "frontend-react", color: "blue" }
+[system] api: Express API { archProvider: "developer", archResourceType: "others-expressjs-dark", color: "violet" }
+[system] db: PostgreSQL { archProvider: "developer", archResourceType: "database-postgresql", color: "violet" }
+[system] cache: Redis { archProvider: "developer", archResourceType: "database-redis", color: "red" }
+[system] mq: RabbitMQ { archProvider: "developer", archResourceType: "queue-rabbitmq", color: "amber" }
+
+react ->|HTTP/REST| api
+api ->|SQL| db
+api ->|cache lookup| cache
+api ->|publish| mq
 \`\`\`
 `;
 

@@ -40,31 +40,14 @@ describe('enrichNodesWithIcons', () => {
 
     const enriched = await enrichNodesWithIcons(nodes);
 
-    // PostgreSQL should get a provider icon (developer catalog)
-    const pgNode = enriched[0];
-    if (pgNode.data.archIconPackId) {
-      expect(pgNode.data.archIconPackId).toBe('developer-icons-v1');
-      expect(pgNode.data.archIconShapeId).toContain('postgresql');
-    } else {
-      expect(pgNode.data.icon).toBe('database');
-    }
+    // All three should get provider icons (any catalog)
+    expect(enriched[0].data.archIconPackId).toBeTruthy();
+    expect(enriched[0].data.archIconShapeId).toContain('postgresql');
 
-    // Redis should get a provider icon (developer catalog)
-    const redisNode = enriched[1];
-    if (redisNode.data.archIconPackId) {
-      expect(redisNode.data.archIconPackId).toBe('developer-icons-v1');
-      expect(redisNode.data.archIconShapeId).toContain('redis');
-    } else {
-      expect(redisNode.data.icon).toBe('hard-drive');
-    }
+    expect(enriched[1].data.archIconPackId).toBeTruthy();
+    expect(enriched[1].data.archIconShapeId).toContain('redis');
 
-    // Express should get a provider icon or Lucide fallback
-    const expressNode = enriched[2];
-    if (expressNode.data.archIconPackId) {
-      expect(expressNode.data.archIconPackId).toBe('developer-icons-v1');
-    } else {
-      expect(expressNode.data.icon).toBe('server');
-    }
+    expect(enriched[2].data.archIconPackId).toBeTruthy();
   });
 
   it('skips section and group nodes', async () => {
@@ -148,9 +131,33 @@ describe('enrichNodesWithIcons', () => {
 
     const enriched = await enrichNodesWithIcons(nodes);
     expect(enriched[0].data.color).toBe('violet');
-    // Cylinder + PostgreSQL gets a provider icon or Lucide fallback
     if (!enriched[0].data.archIconPackId) {
       expect(enriched[0].data.icon).toBe('database');
+    }
+  });
+
+  it('uses icon attribute for explicit catalog search', async () => {
+    const nodes = [
+      makeNode('cache', 'My Cache', {
+        data: { label: 'My Cache', color: 'slate', icon: 'redis' },
+      }),
+    ];
+
+    const enriched = await enrichNodesWithIcons(nodes);
+    expect(enriched[0].data.archIconPackId).toBeTruthy();
+    expect(enriched[0].data.archIconShapeId).toContain('redis');
+  });
+
+  it('uses provider filter when set', async () => {
+    const nodes = [
+      makeNode('db', 'Database', {
+        data: { label: 'Database', color: 'slate', provider: 'aws' },
+      }),
+    ];
+
+    const enriched = await enrichNodesWithIcons(nodes);
+    if (enriched[0].data.archIconPackId) {
+      expect(enriched[0].data.archIconPackId).toBe('aws-official-starter-v1');
     }
   });
 });

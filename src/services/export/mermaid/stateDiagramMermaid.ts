@@ -21,12 +21,8 @@ export function looksLikeStateDiagram(nodes: FlowNode[]): boolean {
   if (nodes.length === 0) return false;
   const hasStateStartNode = nodes.some((node) => node.id.startsWith('state_start_'));
   const hasExplicitStateNode = nodes.some((node) => node.type === 'state');
-  const hasCompositeParenting = nodes.some((node) => {
-    const parentId = getNodeParentId(node);
-    return parentId.length > 0;
-  });
 
-  if (!hasStateStartNode && !hasExplicitStateNode && !hasCompositeParenting) {
+  if (!hasStateStartNode && !hasExplicitStateNode) {
     return false;
   }
 

@@ -1,5 +1,6 @@
 import { startTransition, useCallback, useRef } from 'react';
 import type { FlowEdge, FlowNode, FlowSnapshot } from '@/lib/types';
+import { enrichNodesWithIcons } from '@/lib/nodeEnricher';
 import { useFlowStore } from '@/store';
 import { composeDiagramForDisplay } from '@/services/composeDiagramForDisplay';
 
@@ -110,7 +111,6 @@ export function useFlowEditorCallbacks({
 
   const handleCommandBarApply = useCallback(
     async (newNodes: FlowNode[], newEdges: FlowEdge[]) => {
-      const { enrichNodesWithIcons } = await import('@/lib/nodeEnricher');
       const enrichedNodes = await enrichNodesWithIcons(newNodes);
       recordHistory();
       startTransition(() => {

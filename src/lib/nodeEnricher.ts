@@ -1,24 +1,24 @@
 import type { FlowNode } from '@/lib/types';
 import { classifyNode } from '@/lib/semanticClassifier';
-import { resolveIconSync } from '@/lib/iconResolver';
-import { loadDomainAssetSuggestions } from '@/services/assetCatalog';
-import type { DomainLibraryCategory } from '@/services/domainLibrary';
+import { matchIcon, type IconMatch } from '@/lib/iconMatcher';
 
-export async function enrichNodesWithIcons(nodes: FlowNode[]): Promise<FlowNode[]> {
-  const enriched = await Promise.all(nodes.map(enrichSingleNode));
-  return enriched;
+export function enrichNodesWithIcons(nodes: FlowNode[]): FlowNode[] {
+  return nodes.map(enrichSingleNode);
 }
 
-async function enrichSingleNode(node: FlowNode): Promise<FlowNode> {
+function enrichSingleNode(node: FlowNode): FlowNode {
   if (node.type === 'section' || node.type === 'group' || node.type === 'swimlane') {
     return node;
   }
 
   const label = node.data?.label ?? '';
-  const hasExplicitColor = node.data?.color && node.data.color !== 'slate';
-  const hasExplicitIcon = Boolean(node.data?.icon);
+  const nodeColor = node.data?.color;
+  const isDefaultColor = !nodeColor || nodeColor === 'slate' || nodeColor === 'white';
+  const hasExplicitColor = !isDefaultColor;
+  const hasExplicitProviderIcon = Boolean(node.data?.archIconPackId);
+  const hasAnyIcon = Boolean(node.data?.icon) || hasExplicitProviderIcon;
 
-  if (hasExplicitColor && hasExplicitIcon) {
+  if (hasExplicitColor && hasAnyIcon) {
     return node;
   }
 
@@ -26,43 +26,11 @@ async function enrichSingleNode(node: FlowNode): Promise<FlowNode> {
   const dataUpdates: Record<string, unknown> = {};
 
   if (!hasExplicitColor) {
-    // Use parser-assigned node type to override classifier if it's more specific
-    if (node.type === 'start') {
-      dataUpdates.color = 'emerald';
-    } else if (node.type === 'end') {
-      dataUpdates.color = 'red';
-    } else if (node.type === 'decision') {
-      dataUpdates.color = 'amber';
-    } else {
-      dataUpdates.color = hint.color;
-    }
+    applyColor(node, hint.color, dataUpdates);
   }
 
-  if (!hasExplicitIcon) {
-    const classifierIcon = hint.lucideFallback;
-
-    if (hint.iconQuery) {
-      const resolved = resolveIconSync(hint.iconQuery, hint.category);
-      if (resolved.found && resolved.catalog && resolved.iconSearch) {
-        const catalogResult = await searchCatalogForIcon(resolved.catalog, resolved.iconSearch);
-        if (catalogResult?.archIconPackId && catalogResult.archIconShapeId) {
-          dataUpdates.archIconPackId = catalogResult.archIconPackId;
-          dataUpdates.archIconShapeId = catalogResult.archIconShapeId;
-          dataUpdates.assetPresentation = 'icon';
-        }
-      }
-    }
-
-    // Use classifier icon if specific (not generic 'box'), otherwise use node type defaults
-    if (classifierIcon && classifierIcon !== 'box') {
-      dataUpdates.icon = classifierIcon;
-    } else if (node.type === 'start') {
-      dataUpdates.icon = 'play';
-    } else if (node.type === 'end') {
-      dataUpdates.icon = 'check-circle';
-    } else if (node.type === 'decision') {
-      dataUpdates.icon = 'help-circle';
-    }
+  if (!hasExplicitProviderIcon) {
+    applyIcon(node, label, hint, dataUpdates);
   }
 
   if (Object.keys(dataUpdates).length === 0) {
@@ -78,41 +46,80 @@ async function enrichSingleNode(node: FlowNode): Promise<FlowNode> {
   };
 }
 
-const catalogCache = new Map<
-  string,
-  { icon?: string; archIconPackId?: string; archIconShapeId?: string } | null
->();
-
-async function searchCatalogForIcon(
-  catalog: DomainLibraryCategory,
-  query: string
-): Promise<{ icon?: string; archIconPackId?: string; archIconShapeId?: string } | null> {
-  const cacheKey = `${catalog}:${query}`;
-  if (catalogCache.has(cacheKey)) {
-    return catalogCache.get(cacheKey)!;
+function applyColor(
+  node: FlowNode,
+  classifierColor: string,
+  updates: Record<string, unknown>
+): void {
+  if (node.type === 'start') {
+    updates.color = 'emerald';
+  } else if (node.type === 'end') {
+    updates.color = 'red';
+  } else if (node.type === 'decision') {
+    updates.color = 'amber';
+  } else {
+    updates.color = classifierColor;
   }
+}
 
-  try {
-    const results = await loadDomainAssetSuggestions(catalog, { query, limit: 1 });
-    if (results.length > 0) {
-      const best = results[0];
-      const labelMatch = best.label.toLowerCase().includes(query.toLowerCase());
-      const descMatch = best.description.toLowerCase().includes(query.toLowerCase());
+function applyIcon(
+  node: FlowNode,
+  label: string,
+  hint: { iconQuery: string; lucideFallback: string; category: string },
+  updates: Record<string, unknown>
+): void {
+  const explicitIcon = node.data?.icon;
+  const provider = node.data?.provider;
+  const providerHint = typeof provider === 'string' ? provider : undefined;
 
-      if (labelMatch || descMatch) {
-        const match = {
-          icon: best.icon,
-          archIconPackId: best.archIconPackId,
-          archIconShapeId: best.archIconShapeId,
-        };
-        catalogCache.set(cacheKey, match);
-        return match;
-      }
+  // Priority 1: Explicit icon attribute (e.g., icon: "redis")
+  if (explicitIcon && typeof explicitIcon === 'string' && explicitIcon !== 'none') {
+    const match = findBestMatch(explicitIcon, providerHint);
+    if (match) {
+      updates.archIconPackId = match.packId;
+      updates.archIconShapeId = match.shapeId;
+      updates.assetPresentation = 'icon';
     }
-  } catch {
-    // Catalog search failed — fall back to Lucide
+    return;
   }
 
-  catalogCache.set(cacheKey, null);
-  return null;
+  // Priority 2: Classifier icon query (e.g., label contains "PostgreSQL")
+  if (hint.iconQuery) {
+    const match = findBestMatch(hint.iconQuery, providerHint);
+    if (match) {
+      updates.archIconPackId = match.packId;
+      updates.archIconShapeId = match.shapeId;
+      updates.assetPresentation = 'icon';
+      updates.icon = hint.lucideFallback;
+      return;
+    }
+  }
+
+  // Priority 3: Label-based fallback (icons: auto — match by node label)
+  // Only when node has NO icon at all
+  if (label && !node.data?.icon) {
+    const match = findBestMatch(label, providerHint);
+    if (match) {
+      updates.archIconPackId = match.packId;
+      updates.archIconShapeId = match.shapeId;
+      updates.assetPresentation = 'icon';
+    }
+  }
+
+  // Lucide icon fallback
+  if (hint.lucideFallback && hint.lucideFallback !== 'box') {
+    updates.icon = hint.lucideFallback;
+  } else if (node.type === 'start') {
+    updates.icon = 'play';
+  } else if (node.type === 'end') {
+    updates.icon = 'check-circle';
+  } else if (node.type === 'decision') {
+    updates.icon = 'help-circle';
+  }
+}
+
+function findBestMatch(query: string, providerHint?: string): IconMatch | undefined {
+  const matches = matchIcon(query, providerHint);
+  const best = matches[0];
+  return best && best.score >= 0.8 ? best : undefined;
 }
