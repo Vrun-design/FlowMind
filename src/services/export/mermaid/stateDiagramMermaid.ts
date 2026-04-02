@@ -14,19 +14,15 @@ function escapeStateLabel(label: string): string {
 }
 
 function isStateDiagramNodeType(type: string | undefined): boolean {
-  return type === 'state' || type === 'start' || type === 'process';
+  return type === 'state' || type === 'start' || type === 'process' || type === 'section';
 }
 
 export function looksLikeStateDiagram(nodes: FlowNode[]): boolean {
   if (nodes.length === 0) return false;
   const hasStateStartNode = nodes.some((node) => node.id.startsWith('state_start_'));
   const hasExplicitStateNode = nodes.some((node) => node.type === 'state');
-  const hasCompositeParenting = nodes.some((node) => {
-    const parentId = getNodeParentId(node);
-    return parentId.length > 0;
-  });
 
-  if (!hasStateStartNode && !hasExplicitStateNode && !hasCompositeParenting) {
+  if (!hasStateStartNode && !hasExplicitStateNode) {
     return false;
   }
 
@@ -120,7 +116,8 @@ export function toStateDiagramMermaid(nodes: FlowNode[], edges: FlowEdge[]): str
       const sourceParentId = sourceNode ? getNodeParentId(sourceNode) : '';
       const targetParentId = targetNode ? getNodeParentId(targetNode) : '';
       const shouldEmitInsideParent =
-        (sourceParentId === node.id && (targetParentId === node.id || edge.target.startsWith('state_start_'))) ||
+        (sourceParentId === node.id &&
+          (targetParentId === node.id || edge.target.startsWith('state_start_'))) ||
         (targetParentId === node.id && edge.source.startsWith('state_start_'));
 
       if (!shouldEmitInsideParent) {
@@ -146,7 +143,10 @@ export function toStateDiagramMermaid(nodes: FlowNode[], edges: FlowEdge[]): str
     const targetNode = nodeById.get(edge.target);
     if (!sourceNode || !targetNode) return;
 
-    if (getNodeParentId(sourceNode) && getNodeParentId(sourceNode) === getNodeParentId(targetNode)) {
+    if (
+      getNodeParentId(sourceNode) &&
+      getNodeParentId(sourceNode) === getNodeParentId(targetNode)
+    ) {
       return;
     }
 

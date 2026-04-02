@@ -1,5 +1,5 @@
 import type { FlowEdge, FlowNode } from '@/lib/types';
-import { sanitizeId, sanitizeLabel } from './formatting';
+import { sanitizeId, sanitizeLabel, sanitizeEdgeLabel } from './formatting';
 import { toArchitectureMermaid } from './mermaid/architectureMermaid';
 import { toMindmapMermaid } from './mermaid/mindmapMermaid';
 import { toJourneyMermaid } from './mermaid/journeyMermaid';
@@ -48,53 +48,119 @@ function resolveFlowchartConnector(edge: FlowEdge): string {
   return body;
 }
 
-function toFlowchartMermaid(nodes: FlowNode[], edges: FlowEdge[]): string {
-  let mermaid = 'flowchart TD\n';
+function resolveShapeBrackets(
+  shape: string | undefined,
+  type: string | undefined
+): { start: string; end: string } {
+  switch (shape) {
+    case 'diamond':
+      return { start: '{', end: '}' };
+    case 'hexagon':
+      return { start: '{{', end: '}}' };
+    case 'cylinder':
+      return { start: '[(', end: ')]' };
+    case 'circle':
+      return { start: '((', end: '))' };
+    case 'ellipse':
+      return { start: '([', end: '])' };
+    case 'capsule':
+      return { start: '([', end: '])' };
+    case 'parallelogram':
+      return { start: '>', end: ']' };
+    case 'rounded':
+      return { start: '(', end: ')' };
+    default:
+      break;
+  }
 
-  nodes.forEach((node) => {
-    const label = sanitizeLabel(node.data.label);
-    const id = sanitizeId(node.id);
-    let shapeStart = '[';
-    let shapeEnd = ']';
+  if (type === 'decision') return { start: '{', end: '}' };
+  if (type === 'start' || type === 'end') return { start: '([', end: '])' };
 
-    const shape = node.data.shape || 'rounded';
-    const type = node.type;
+  return { start: '[', end: ']' };
+}
 
-    if (shape === 'diamond') {
-      shapeStart = '{';
-      shapeEnd = '}';
-    } else if (shape === 'hexagon') {
-      shapeStart = '{{';
-      shapeEnd = '}}';
-    } else if (shape === 'cylinder') {
-      shapeStart = '[(';
-      shapeEnd = ')]';
-    } else if (shape === 'ellipse') {
-      shapeStart = '([';
-      shapeEnd = '])';
-    } else if (shape === 'circle') {
-      shapeStart = '((';
-      shapeEnd = '))';
-    } else if (shape === 'parallelogram') {
-      shapeStart = '>';
-      shapeEnd = ']';
-    } else if (type === 'decision') {
-      shapeStart = '{';
-      shapeEnd = '}';
-    } else if (type === 'start' || type === 'end') {
-      shapeStart = '([';
-      shapeEnd = '])';
+function collectSectionTree(nodes: FlowNode[]): {
+  roots: FlowNode[];
+  childrenByParent: Map<string, FlowNode[]>;
+} {
+  const childrenByParent = new Map<string, FlowNode[]>();
+  const roots: FlowNode[] = [];
+
+  for (const node of nodes) {
+    const parentId = node.parentId;
+    if (parentId) {
+      const children = childrenByParent.get(parentId) ?? [];
+      children.push(node);
+      childrenByParent.set(parentId, children);
+    } else if (node.type !== 'section' && node.type !== 'group') {
+      roots.push(node);
+    }
+  }
+
+  return { roots, childrenByParent };
+}
+
+function emitFlowchartNode(node: FlowNode, indent: string): string {
+  const label = sanitizeLabel(node.data.label);
+  const id = sanitizeId(node.id);
+  const { start, end } = resolveShapeBrackets(node.data.shape, node.type);
+  return `${indent}${id}${start}"${label}"${end}\n`;
+}
+
+function emitSectionBlock(
+  section: FlowNode,
+  children: FlowNode[],
+  childrenByParent: Map<string, FlowNode[]>,
+  indent: string
+): string {
+  const label = sanitizeLabel(section.data.label);
+  let out = `${indent}subgraph ${label}\n`;
+
+  for (const child of children) {
+    if (child.type === 'section' || child.type === 'group') {
+      const grandChildren = childrenByParent.get(child.id) ?? [];
+      out += emitSectionBlock(child, grandChildren, childrenByParent, indent + '    ');
+    } else {
+      out += emitFlowchartNode(child, indent + '    ');
+    }
+  }
+
+  out += `${indent}end\n`;
+  return out;
+}
+
+function toFlowchartMermaid(nodes: FlowNode[], edges: FlowEdge[], direction?: string): string {
+  const dir = direction ?? 'TD';
+  let mermaid = `flowchart ${dir}\n`;
+
+  const sectionNodes = nodes.filter((n) => n.type === 'section' || n.type === 'group');
+  const hasSubgraphs = sectionNodes.length > 0;
+
+  if (hasSubgraphs) {
+    const { roots, childrenByParent } = collectSectionTree(nodes);
+
+    for (const section of sectionNodes) {
+      if (!section.parentId) {
+        const children = childrenByParent.get(section.id) ?? [];
+        mermaid += emitSectionBlock(section, children, childrenByParent, '    ');
+      }
     }
 
-    mermaid += `    ${id}${shapeStart}"${label}"${shapeEnd}\n`;
-  });
+    for (const node of roots) {
+      mermaid += emitFlowchartNode(node, '    ');
+    }
+  } else {
+    for (const node of nodes) {
+      mermaid += emitFlowchartNode(node, '    ');
+    }
+  }
 
   edges.forEach((edge) => {
     const source = sanitizeId(edge.source);
     const target = sanitizeId(edge.target);
     const connector = resolveFlowchartConnector(edge);
     if (edge.label) {
-      const label = sanitizeLabel(edge.label as string);
+      const label = sanitizeEdgeLabel(edge.label as string);
       mermaid += `    ${source} ${connector}|"${label}"| ${target}\n`;
     } else {
       mermaid += `    ${source} ${connector} ${target}\n`;
@@ -104,7 +170,7 @@ function toFlowchartMermaid(nodes: FlowNode[], edges: FlowEdge[]): string {
   return mermaid;
 }
 
-export function toMermaid(nodes: FlowNode[], edges: FlowEdge[]): string {
+export function toMermaid(nodes: FlowNode[], edges: FlowEdge[], direction?: string): string {
   const architectureNodeCount = nodes.filter((node) => node.type === 'architecture').length;
   if (nodes.length > 0 && architectureNodeCount === nodes.length) {
     return toArchitectureMermaid(nodes, edges);
@@ -141,5 +207,5 @@ export function toMermaid(nodes: FlowNode[], edges: FlowEdge[]): string {
     return toStateDiagramMermaid(nodes, edges);
   }
 
-  return toFlowchartMermaid(nodes, edges);
+  return toFlowchartMermaid(nodes, edges, direction);
 }

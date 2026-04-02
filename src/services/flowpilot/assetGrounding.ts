@@ -12,25 +12,155 @@ const ALL_GROUNDING_CATEGORIES: DomainLibraryCategory[] = [
 ];
 
 const SERVICE_ALIASES: Array<{ query: string; categories?: DomainLibraryCategory[] }> = [
+  // AWS Services
   { query: 'API Gateway', categories: ['aws'] },
   { query: 'Lambda', categories: ['aws'] },
   { query: 'S3', categories: ['aws'] },
   { query: 'RDS', categories: ['aws'] },
   { query: 'ElastiCache', categories: ['aws'] },
   { query: 'Cognito', categories: ['aws'] },
+  { query: 'DynamoDB', categories: ['aws'] },
+  { query: 'Aurora', categories: ['aws'] },
+  { query: 'EC2', categories: ['aws'] },
+  { query: 'ECS', categories: ['aws'] },
+  { query: 'EKS', categories: ['aws'] },
+  { query: 'SQS', categories: ['aws'] },
+  { query: 'SNS', categories: ['aws'] },
+  { query: 'CloudFront', categories: ['aws'] },
+  { query: 'ALB', categories: ['aws'] },
+  { query: 'EventBridge', categories: ['aws'] },
+  { query: 'Step Functions', categories: ['aws'] },
+  { query: 'CloudWatch', categories: ['aws'] },
+  { query: 'Secrets Manager', categories: ['aws'] },
+  { query: 'Kinesis', categories: ['aws'] },
+  { query: 'Redshift', categories: ['aws'] },
+  { query: 'Glue', categories: ['aws'] },
+  { query: 'SageMaker', categories: ['aws'] },
+
+  // Azure Services
   { query: 'Azure Functions', categories: ['azure'] },
   { query: 'Azure SQL', categories: ['azure'] },
   { query: 'Storage Account', categories: ['azure'] },
   { query: 'API Management', categories: ['azure'] },
+  { query: 'Service Bus', categories: ['azure'] },
+  { query: 'Event Hubs', categories: ['azure'] },
+  { query: 'Cosmos DB', categories: ['azure'] },
+  { query: 'Front Door', categories: ['azure'] },
+  { query: 'Key Vault', categories: ['azure'] },
+  { query: 'Azure Monitor', categories: ['azure'] },
+  { query: 'Azure Kubernetes', categories: ['azure'] },
+  { query: 'App Service', categories: ['azure'] },
+  { query: 'Azure Cache', categories: ['azure'] },
+
+  // GCP Services
   { query: 'Cloud Run', categories: ['gcp'] },
   { query: 'Cloud SQL', categories: ['gcp'] },
   { query: 'Cloud Storage', categories: ['gcp'] },
+  { query: 'Cloud Functions', categories: ['gcp'] },
+  { query: 'BigQuery', categories: ['gcp'] },
+  { query: 'Pub/Sub', categories: ['gcp'] },
+  { query: 'Cloud CDN', categories: ['gcp'] },
+  { query: 'Firestore', categories: ['gcp'] },
+  { query: 'Cloud Build', categories: ['gcp'] },
+  { query: 'Vertex AI', categories: ['gcp'] },
+  { query: 'Memorystore', categories: ['gcp'] },
+  { query: 'GKE', categories: ['gcp'] },
+  { query: 'Cloud Armor', categories: ['gcp'] },
+
+  // CNCF / Kubernetes
   { query: 'Kubernetes', categories: ['cncf'] },
   { query: 'Ingress', categories: ['cncf'] },
-  { query: 'Redis' },
-  { query: 'Postgres' },
+  { query: 'Envoy', categories: ['cncf'] },
+  { query: 'Istio', categories: ['cncf'] },
+  { query: 'Helm', categories: ['cncf'] },
+  { query: 'Prometheus', categories: ['cncf'] },
+  { query: 'Containerd', categories: ['cncf'] },
+  { query: 'Fluentd', categories: ['cncf'] },
+  { query: 'CoreDNS', categories: ['cncf'] },
+  { query: 'etcd', categories: ['cncf'] },
+  { query: 'Argo', categories: ['cncf'] },
+  { query: 'Linkerd', categories: ['cncf'] },
+
+  // Databases (developer catalog)
+  { query: 'PostgreSQL', categories: ['developer'] },
+  { query: 'Postgres', categories: ['developer'] },
+  { query: 'MySQL', categories: ['developer'] },
+  { query: 'MongoDB', categories: ['developer'] },
+  { query: 'Redis', categories: ['developer'] },
+  { query: 'Elasticsearch', categories: ['developer'] },
+  { query: 'SQLite', categories: ['developer'] },
+  { query: 'MariaDB', categories: ['developer'] },
+  { query: 'Cassandra', categories: ['developer'] },
+  { query: 'Neo4j', categories: ['developer'] },
+  { query: 'Supabase', categories: ['developer'] },
+  { query: 'PlanetScale', categories: ['developer'] },
+
+  // Frameworks & Runtimes
+  { query: 'Express', categories: ['developer'] },
+  { query: 'Node.js', categories: ['developer'] },
+  { query: 'React', categories: ['developer'] },
+  { query: 'Vue', categories: ['developer'] },
+  { query: 'Angular', categories: ['developer'] },
+  { query: 'Svelte', categories: ['developer'] },
+  { query: 'Next.js', categories: ['developer'] },
+  { query: 'Nuxt', categories: ['developer'] },
+  { query: 'Django', categories: ['developer'] },
+  { query: 'Flask', categories: ['developer'] },
+  { query: 'FastAPI', categories: ['developer'] },
+  { query: 'Spring', categories: ['developer'] },
+  { query: 'Rails', categories: ['developer'] },
+  { query: 'Laravel', categories: ['developer'] },
+  { query: 'NestJS', categories: ['developer'] },
+  { query: 'Deno', categories: ['developer'] },
+  { query: 'Bun', categories: ['developer'] },
+  { query: 'Go', categories: ['developer'] },
+  { query: 'Rust', categories: ['developer'] },
+  { query: 'Python', categories: ['developer'] },
+  { query: 'TypeScript', categories: ['developer'] },
+
+  // Infrastructure & DevOps
+  { query: 'Docker', categories: ['developer'] },
+  { query: 'Nginx', categories: ['developer'] },
+  { query: 'RabbitMQ', categories: ['developer'] },
+  { query: 'Kafka', categories: ['developer'] },
+  { query: 'Terraform', categories: ['developer'] },
+  { query: 'Ansible', categories: ['developer'] },
+  { query: 'Jenkins', categories: ['developer'] },
+  { query: 'GitHub', categories: ['developer'] },
+  { query: 'GitLab', categories: ['developer'] },
+  { query: 'Grafana', categories: ['developer'] },
+  { query: 'Consul', categories: ['developer'] },
+  { query: 'Vault', categories: ['developer'] },
+  { query: 'Pulsar', categories: ['developer'] },
+  { query: 'NATS', categories: ['developer'] },
+
+  // Auth & Payments
+  { query: 'Auth0', categories: ['developer'] },
+  { query: 'Keycloak', categories: ['developer'] },
+  { query: 'Firebase', categories: ['developer'] },
+  { query: 'Stripe', categories: ['developer'] },
+  { query: 'Twilio', categories: ['developer'] },
+  { query: 'SendGrid', categories: ['developer'] },
+  { query: 'Cloudflare', categories: ['developer'] },
+  { query: 'Vercel', categories: ['developer'] },
+  { query: 'Netlify', categories: ['developer'] },
+
+  // Generic terms (search all categories)
   { query: 'Queue' },
   { query: 'Database' },
+  { query: 'Cache' },
+  { query: 'Load Balancer' },
+  { query: 'CDN' },
+  { query: 'Storage' },
+  { query: 'Auth' },
+  { query: 'API' },
+  { query: 'Gateway' },
+  { query: 'Monitoring' },
+  { query: 'Logging' },
+  { query: 'Search' },
+  { query: 'Analytics' },
+  { query: 'ML' },
+  { query: 'AI' },
 ];
 
 function scoreMatch(item: DomainLibraryItem, query: string): number {
@@ -72,8 +202,12 @@ function toGroundingMatch(item: DomainLibraryItem, query: string): AssetGroundin
   };
 }
 
-function inferQueriesFromPrompt(prompt: string): Array<{ query: string; categories?: DomainLibraryCategory[] }> {
-  const matches = SERVICE_ALIASES.filter((entry) => prompt.toLowerCase().includes(entry.query.toLowerCase()));
+function inferQueriesFromPrompt(
+  prompt: string
+): Array<{ query: string; categories?: DomainLibraryCategory[] }> {
+  const matches = SERVICE_ALIASES.filter((entry) =>
+    prompt.toLowerCase().includes(entry.query.toLowerCase())
+  );
   if (matches.length > 0) {
     return matches;
   }

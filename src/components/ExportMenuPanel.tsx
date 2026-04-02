@@ -11,10 +11,8 @@ import {
   GitBranch,
   Image,
   Share2,
-  Wand2,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { APP_NAME } from '@/lib/brand';
 import {
   type CinematicExportResolution,
   type CinematicExportSpeed,
@@ -175,16 +173,6 @@ export function ExportMenuPanel({
             label: t('export.jsonLabel', 'JSON File'),
             hint: t('export.hintDownload', 'Download'),
             Icon: FileJson,
-            actions: ['download', 'copy'],
-          },
-          {
-            key: 'openflow',
-            label: t('export.openflowdslLabel', {
-              appName: APP_NAME,
-              defaultValue: `${APP_NAME} DSL`,
-            }),
-            hint: t('export.actionCopy', 'Copy'),
-            Icon: Wand2,
             actions: ['download', 'copy'],
           },
           {

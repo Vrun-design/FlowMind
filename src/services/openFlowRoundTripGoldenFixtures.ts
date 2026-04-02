@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { Edge, Node } from '@/lib/reactflowCompat';
 
 export interface OpenFlowRoundTripGoldenFixture {
@@ -39,6 +40,49 @@ function createEdge(id: string, source: string, target: string, label?: string):
   } as Edge;
 }
 
+function createArchNode(
+  id: string,
+  label: string,
+  archIconPackId: string,
+  archIconShapeId: string,
+  color: string
+): Node {
+  return {
+    id,
+    type: 'custom',
+    position: { x: 0, y: 0 },
+    data: {
+      label,
+      color,
+      archIconPackId,
+      archIconShapeId,
+    },
+  } as Node;
+}
+
+function createEdgeWithStyle(
+  id: string,
+  source: string,
+  target: string,
+  label?: string,
+  style?: { type?: string; strokeDasharray?: string; strokeWidth?: number }
+): Edge {
+  const edge: Record<string, unknown> = {
+    id,
+    source,
+    target,
+    label,
+  };
+  if (style?.type) edge.type = style.type;
+  if (style?.strokeDasharray || style?.strokeWidth) {
+    edge.style = {
+      ...(style.strokeDasharray ? { strokeDasharray: style.strokeDasharray } : {}),
+      ...(style.strokeWidth ? { strokeWidth: style.strokeWidth } : {}),
+    } as CSSProperties;
+  }
+  return edge as Edge;
+}
+
 export const OPENFLOW_ROUND_TRIP_GOLDEN_FIXTURES: OpenFlowRoundTripGoldenFixture[] = [
   {
     name: 'simple-linear',
@@ -72,6 +116,30 @@ export const OPENFLOW_ROUND_TRIP_GOLDEN_FIXTURES: OpenFlowRoundTripGoldenFixture
       createEdge('e3', 'n3', 'n4'),
       createEdge('e2', 'n2', 'n3', 'retry'),
       createEdge('e1', 'n1', 'n3', 'ok'),
+    ],
+  },
+  {
+    name: 'arch-icons',
+    nodes: [
+      createArchNode('lambda', 'Lambda', 'aws-official-starter-v1', 'compute-lambda', 'violet'),
+      createArchNode('sqs', 'SQS Queue', 'aws-official-starter-v1', 'app-integration-sqs', 'amber'),
+      createArchNode('dynamo', 'DynamoDB', 'aws-official-starter-v1', 'database-dynamodb', 'emerald'),
+    ],
+    edges: [
+      createEdge('e1', 'lambda', 'sqs', 'publish'),
+      createEdge('e2', 'sqs', 'dynamo', 'write'),
+    ],
+  },
+  {
+    name: 'edge-styles',
+    nodes: [
+      createNode('n1', 'Source', 'process'),
+      createNode('n2', 'Dashed Target', 'process'),
+      createNode('n3', 'Curved Target', 'process'),
+    ],
+    edges: [
+      createEdgeWithStyle('e1', 'n1', 'n2', undefined, { strokeDasharray: '5 5' }),
+      createEdgeWithStyle('e2', 'n1', 'n3', 'flow', { type: 'smoothstep' }),
     ],
   },
 ];

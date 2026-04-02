@@ -17,7 +17,6 @@ export const DIAGRAM_TYPES = [
   'stateDiagram',
   'classDiagram',
   'erDiagram',
-  'gitGraph',
   'mindmap',
   'journey',
   'architecture',
@@ -165,18 +164,19 @@ export interface SectionNodeData {
   sectionCollapsed?: boolean;
 }
 
-export interface NodeData extends
-  NodeLabelData,
-  NodeIconData,
-  NodeVisualStyleData,
-  NodeCanvasMetadata,
-  ClassNodeData,
-  EntityNodeData,
-  JourneyNodeData,
-  MindmapNodeData,
-  ArchitectureNodeData,
-  SequenceNodeData,
-  SectionNodeData {
+export interface NodeData
+  extends
+    NodeLabelData,
+    NodeIconData,
+    NodeVisualStyleData,
+    NodeCanvasMetadata,
+    ClassNodeData,
+    EntityNodeData,
+    JourneyNodeData,
+    MindmapNodeData,
+    ArchitectureNodeData,
+    SequenceNodeData,
+    SectionNodeData {
   [key: string]: unknown;
 }
 

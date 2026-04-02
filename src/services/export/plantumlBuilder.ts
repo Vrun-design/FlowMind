@@ -1,5 +1,5 @@
 import type { FlowEdge, FlowNode } from '@/lib/types';
-import { sanitizeId, sanitizeLabel } from './formatting';
+import { sanitizeId, sanitizeLabel, sanitizeEdgeLabel } from './formatting';
 
 export function toPlantUML(nodes: FlowNode[], edges: FlowEdge[]): string {
   let plantuml = '@startuml\n\n';
@@ -28,7 +28,7 @@ export function toPlantUML(nodes: FlowNode[], edges: FlowEdge[]): string {
   edges.forEach((edge) => {
     const source = sanitizeId(edge.source);
     const target = sanitizeId(edge.target);
-    const label = edge.label ? ` : ${sanitizeLabel(edge.label as string)}` : '';
+    const label = edge.label ? ` : ${sanitizeEdgeLabel(edge.label as string)}` : '';
     plantuml += `${source} --> ${target}${label}\n`;
   });
 

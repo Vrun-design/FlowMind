@@ -2,6 +2,7 @@ import type { TFunction } from 'i18next';
 import type { SelectOption } from '@/components/ui/Select';
 import { LANGUAGE_LABELS } from '@/hooks/ai-generation/codeToArchitecture';
 import type { ImportCategory } from './importDetection';
+import { ROLLOUT_FLAGS, type RolloutFlagKey } from '@/config/rolloutFlags';
 
 export interface ImportCategoryDefinition {
   id: ImportCategory;
@@ -9,15 +10,17 @@ export interface ImportCategoryDefinition {
   labelKey: string;
   hasNative: boolean;
   hasAI: boolean;
+  featureFlag?: RolloutFlagKey;
 }
 
-export const IMPORT_CATEGORY_DEFINITIONS: ImportCategoryDefinition[] = [
+const ALL_IMPORT_CATEGORY_DEFINITIONS: ImportCategoryDefinition[] = [
   {
     id: 'sql',
     fallbackLabel: 'SQL',
     labelKey: 'commandBar.import.categories.sql',
     hasNative: true,
     hasAI: true,
+    featureFlag: 'importSql',
   },
   {
     id: 'infra',
@@ -32,6 +35,7 @@ export const IMPORT_CATEGORY_DEFINITIONS: ImportCategoryDefinition[] = [
     labelKey: 'commandBar.import.categories.openapi',
     hasNative: false,
     hasAI: true,
+    featureFlag: 'importOpenApi',
   },
   {
     id: 'code',
@@ -46,8 +50,14 @@ export const IMPORT_CATEGORY_DEFINITIONS: ImportCategoryDefinition[] = [
     labelKey: 'commandBar.import.categories.codebase',
     hasNative: true,
     hasAI: true,
+    featureFlag: 'importCodebase',
   },
 ];
+
+export const IMPORT_CATEGORY_DEFINITIONS: ImportCategoryDefinition[] =
+  ALL_IMPORT_CATEGORY_DEFINITIONS.filter(
+    (cat) => !cat.featureFlag || ROLLOUT_FLAGS[cat.featureFlag]
+  );
 
 export function createLanguageOptions(): SelectOption[] {
   return Object.entries(LANGUAGE_LABELS).map(([value, label]) => ({
@@ -76,7 +86,7 @@ export function getImportPlaceholders(
 }
 
 export function getInfraFormatOptions(t: TFunction<'translation', undefined>): SelectOption[] {
-  return [
+  const options: SelectOption[] = [
     {
       value: 'terraform-state',
       label: t('commandBar.import.infraFormats.terraformState', 'Terraform State (.tfstate)'),
@@ -89,11 +99,16 @@ export function getInfraFormatOptions(t: TFunction<'translation', undefined>): S
       value: 'docker-compose',
       label: t('commandBar.import.infraFormats.dockerCompose', 'Docker Compose'),
     },
-    {
+  ];
+
+  if (ROLLOUT_FLAGS.importInfraTerraformHcl) {
+    options.push({
       value: 'terraform-hcl',
       label: t('commandBar.import.infraFormats.terraformHcl', 'Terraform HCL (AI)'),
-    },
-  ];
+    });
+  }
+
+  return options;
 }
 
 export function getImportCategoryLabel(

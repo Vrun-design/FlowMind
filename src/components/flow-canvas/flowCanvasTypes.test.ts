@@ -19,6 +19,7 @@ describe('flowCanvasNodeTypes', () => {
         "mindmap",
         "mobile",
         "process",
+        "section",
         "sequence_note",
         "sequence_participant",
         "start",

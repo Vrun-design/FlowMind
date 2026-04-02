@@ -13,19 +13,31 @@ export interface ParseMermaidByTypeOptions {
   architectureStrictMode?: boolean;
 }
 
-const SUPPORTED_MERMAID_FAMILIES: DiagramType[] = ['flowchart', 'stateDiagram', 'classDiagram', 'erDiagram', 'mindmap', 'journey', 'architecture'];
+const SUPPORTED_MERMAID_FAMILIES: DiagramType[] = [
+  'flowchart',
+  'stateDiagram',
+  'classDiagram',
+  'erDiagram',
+  'mindmap',
+  'journey',
+  'architecture',
+  'sequence',
+];
 
 function getUnsupportedTypeError(diagramType: DiagramType): string {
-  return `Mermaid "${diagramType}" is not supported yet in editable mode. Supported families: flowchart, stateDiagram, classDiagram, erDiagram, mindmap, journey, architecture.`;
+  return `Mermaid "${diagramType}" is not supported yet in editable mode. Supported families: flowchart, stateDiagram, classDiagram, erDiagram, mindmap, journey, architecture, sequence.`;
 }
 
-function applyArchitectureStrictMode(result: MermaidDispatchParseResult): MermaidDispatchParseResult {
+function applyArchitectureStrictMode(
+  result: MermaidDispatchParseResult
+): MermaidDispatchParseResult {
   const diagnostics = Array.isArray(result.diagnostics) ? result.diagnostics : [];
-  const strictViolations = diagnostics.filter((message) => (
-    message.startsWith('Invalid architecture ')
-    || message.startsWith('Duplicate architecture node id')
-    || message.startsWith('Recovered implicit service node')
-  ));
+  const strictViolations = diagnostics.filter(
+    (message) =>
+      message.startsWith('Invalid architecture ') ||
+      message.startsWith('Duplicate architecture node id') ||
+      message.startsWith('Recovered implicit service node')
+  );
 
   if (strictViolations.length === 0) {
     return result;
@@ -70,7 +82,8 @@ export function parseMermaidByType(
     return {
       nodes: [],
       edges: [],
-      error: 'Missing chart type declaration. Start with "flowchart TD", "stateDiagram-v2", or another Mermaid diagram type header.',
+      error:
+        'Missing chart type declaration. Start with "flowchart TD", "stateDiagram-v2", or another Mermaid diagram type header.',
     };
   }
 

@@ -15,14 +15,13 @@ export function detectMermaidDiagramType(input: string): DiagramType | null {
     if (/^stateDiagram(?:-v2)?\b/i.test(line)) return 'stateDiagram';
     if (/^classDiagram\b/i.test(line)) return 'classDiagram';
     if (/^erDiagram\b/i.test(line)) return 'erDiagram';
-    if (/^gitGraph\b/i.test(line)) return 'gitGraph';
     if (/^mindmap\b/i.test(line)) return 'mindmap';
     if (/^journey\b/i.test(line)) return 'journey';
     if (/^architecture(?:-beta)?\b/i.test(line)) return 'architecture';
+    if (/^sequenceDiagram\b/i.test(line)) return 'sequence';
 
     return null;
   }
 
   return null;
 }
-
