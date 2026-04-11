@@ -17,6 +17,7 @@ import { NodeShapeSVG } from './NodeShapeSVG';
 import { DiffBadge, LintViolationBadge } from './NodeBadges';
 import { IconAssetNodeBody } from './IconAssetNodeBody';
 import { CustomNodeContent } from './CustomNodeContent';
+import { readMermaidImportedNodeMetadataFromData } from '@/services/mermaid/importProvenance';
 import {
   type NodeShape,
   COMPLEX_SHAPES,
@@ -24,17 +25,52 @@ import {
   NEEDS_SQUARE_ASPECT,
   COMPLEX_SHAPE_PADDING,
   getNodeDefaults,
+  getNumericNodeDimension,
   getMinNodeSize,
   toCssSize,
   getNodeBorderRadius,
   fontSizeClassFor,
 } from './nodeHelpers';
 
+function getMermaidImportedFontSize(nodeHeightPx: number | undefined): number {
+  if (typeof nodeHeightPx !== 'number') {
+    return 15;
+  }
+
+  if (nodeHeightPx <= 56) {
+    return 14;
+  }
+
+  if (nodeHeightPx >= 96) {
+    return 16;
+  }
+
+  return 15;
+}
+
+function getMermaidImportedContentPadding(nodeHeightPx: number | undefined): string {
+  if (typeof nodeHeightPx !== 'number') {
+    return '0.6rem 0.75rem';
+  }
+
+  if (nodeHeightPx <= 40) {
+    return '0.4rem 0.6rem';
+  }
+
+  if (nodeHeightPx <= 60) {
+    return '0.5rem 0.7rem';
+  }
+
+  return '0.65rem 0.9rem';
+}
+
 function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
   const { id, data, type, selected } = props;
   const explicitNodeStyle = (props as { style?: React.CSSProperties }).style;
   const explicitWidth = data.width ?? explicitNodeStyle?.width;
   const explicitHeight = data.height ?? explicitNodeStyle?.height;
+  const explicitWidthPx = getNumericNodeDimension(explicitWidth);
+  const explicitHeightPx = getNumericNodeDimension(explicitHeight);
   const measuredHeight = (props as { height?: number }).height;
   const shiftHeld = useShiftHeld(Boolean(selected));
   const resolvedAssetIconUrl = useProviderShapePreview(
@@ -73,8 +109,10 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
   const hasIcon = Boolean(iconName) || Boolean(data.customIconUrl);
   const hasLabel = Boolean(data.label?.trim());
   const hasSubLabel = Boolean(data.subLabel);
+  const mermaidImportedNodeMetadata = readMermaidImportedNodeMetadataFromData(data);
+  const isMermaidImportedLeaf = mermaidImportedNodeMetadata?.role === 'leaf';
   const isComplexShape = COMPLEX_SHAPES.includes(activeShape);
-  const { minWidth, minHeight } = getMinNodeSize(activeShape);
+  const { minWidth: baseMinWidth, minHeight: baseMinHeight } = getMinNodeSize(activeShape);
   const contentMinHeight = !isComplexShape
     ? hasIcon && hasSubLabel
       ? 128
@@ -83,11 +121,18 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
         : hasSubLabel
           ? 96
           : 84
-    : minHeight;
-  const effectiveMinHeight = Math.max(minHeight, contentMinHeight);
-  const nodeHeightPx = typeof measuredHeight === 'number' ? measuredHeight : undefined;
+    : baseMinHeight;
+  const minWidth = isMermaidImportedLeaf ? explicitWidthPx ?? baseMinWidth : baseMinWidth;
+  const effectiveMinHeight = isMermaidImportedLeaf
+    ? explicitHeightPx ?? baseMinHeight
+    : Math.max(baseMinHeight, contentMinHeight);
+  const nodeHeightPx = typeof measuredHeight === 'number' ? measuredHeight : explicitHeightPx;
   const isCompactNode = typeof nodeHeightPx === 'number' && nodeHeightPx < effectiveMinHeight + 8;
-  const contentPadding = isCompactNode ? '0.5rem' : designSystem.components.node.padding;
+  const contentPadding = isMermaidImportedLeaf
+    ? getMermaidImportedContentPadding(nodeHeightPx)
+    : isCompactNode
+      ? '0.5rem'
+      : designSystem.components.node.padding;
   const labelEdit = useInlineNodeTextEdit(id, 'label', data.label || '', { multiline: true });
   const subLabelEdit = useInlineNodeTextEdit(id, 'subLabel', data.subLabel || '');
   const connectionHandleClass =
@@ -99,11 +144,13 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
     data.assetPresentation === 'icon' &&
     (Boolean(resolvedAssetIconUrl) || Boolean(activeIconKey) || Boolean(data.archIconPackId));
 
-  const labelDisplayValue = hasLabel ? (
-    <MemoizedMarkdown content={data.label} />
-  ) : showEmptyLabelPrompt ? (
-    <span className="text-slate-400/80">{emptyLabelPrompt}</span>
-  ) : null;
+  const labelDisplayValue = hasLabel
+    ? isMermaidImportedLeaf
+      ? <span className="block whitespace-pre-wrap break-words">{data.label}</span>
+      : <MemoizedMarkdown content={data.label} />
+    : showEmptyLabelPrompt
+      ? <span className="text-slate-400/80">{emptyLabelPrompt}</span>
+      : null;
 
   const needsSquareAspect = NEEDS_SQUARE_ASPECT.has(activeShape);
   const selectionRing =
@@ -151,13 +198,23 @@ function CustomNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
     );
   }
 
+  const importedFontFamilyStyle =
+    isMermaidImportedLeaf && !data.fontFamily
+      ? { fontFamily: designSystem.typography.fontFamily }
+      : {};
+  const importedFontSizeStyle =
+    !data.fontSize && isMermaidImportedLeaf
+      ? { fontSize: `${getMermaidImportedFontSize(nodeHeightPx)}px` }
+      : {};
   const textProps = {
     ...fontSizeStyle,
+    ...importedFontSizeStyle,
     ...labelFontFamilyStyle,
+    ...importedFontFamilyStyle,
     color: visualStyle.text,
-    fontWeight: data.fontWeight || '600',
+    fontWeight: data.fontWeight || (isMermaidImportedLeaf ? '500' : '600'),
     fontStyle: data.fontStyle || 'normal',
-    lineHeight: 1.2,
+    lineHeight: isMermaidImportedLeaf ? 1.1 : 1.2,
   };
   const subTextProps = {
     ...subLabelFontSizeStyle,

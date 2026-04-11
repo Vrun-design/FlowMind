@@ -4,10 +4,16 @@ import { parseOpenFlowDSL, type ParseDiagnostic } from '@/lib/openFlowDSLParser'
 import { toMermaid } from '@/services/exportService';
 import { toOpenFlowDSL } from '@/services/openFlowDSLExporter';
 import { parseMermaidByType } from '@/services/mermaid/parseMermaidByType';
-import type { FlowEdge, FlowNode } from '@/lib/types';
+import type { FlowEdge, FlowNode, MermaidImportMode } from '@/lib/types';
 import { applyCodeChanges } from '@/components/command-bar/applyCodeChanges';
 import type { StudioCodeMode } from '@/hooks/useFlowEditorUIState';
 import type { MermaidDiagnosticsSnapshot } from '@/store/types';
+import type { MermaidDispatchParseResult } from '@/services/mermaid/parseMermaidByType';
+import {
+  appendMermaidImportGuidance,
+  getMermaidImportStateDetail,
+  getMermaidImportStateLabel,
+} from '@/services/mermaid/importStatePresentation';
 
 export type DraftPreviewState = 'empty' | 'error' | 'ready';
 
@@ -15,6 +21,19 @@ export interface DraftPreview {
   state: DraftPreviewState;
   label: string;
   detail: string;
+}
+
+function buildMermaidDraftPreviewDetail(parsed: MermaidDispatchParseResult): DraftPreview {
+  return {
+    state: 'ready',
+    label: getMermaidImportStateLabel(parsed.importState),
+    detail: getMermaidImportStateDetail({
+      importState: parsed.importState,
+      diagramType: parsed.diagramType,
+      nodeCount: parsed.nodes.length,
+      edgeCount: parsed.edges.length,
+    }),
+  };
 }
 
 interface UseStudioCodePanelControllerParams {
@@ -26,6 +45,7 @@ interface UseStudioCodePanelControllerParams {
   activeTabId: string | null;
   updateTab: (id: string, updates: Partial<{ diagramType: string }>) => void;
   architectureStrictMode: boolean;
+  mermaidImportMode?: MermaidImportMode;
   setMermaidDiagnostics: (snapshot: MermaidDiagnosticsSnapshot | null) => void;
   clearMermaidDiagnostics: () => void;
   addToast: (
@@ -60,6 +80,7 @@ export function useStudioCodePanelController({
   activeTabId,
   updateTab,
   architectureStrictMode,
+  mermaidImportMode = 'renderer_first',
   setMermaidDiagnostics,
   clearMermaidDiagnostics,
   addToast,
@@ -96,16 +117,16 @@ export function useStudioCodePanelController({
       if (parsed.error) {
         return {
           state: 'error',
-          label: 'Needs fixes',
-          detail: parsed.error,
+          label: getMermaidImportStateLabel(parsed.importState),
+          detail: appendMermaidImportGuidance({
+            message: parsed.error,
+            importState: parsed.importState,
+            diagramType: parsed.diagramType,
+          }),
         };
       }
 
-      return {
-        state: 'ready',
-        label: 'Ready to apply',
-        detail: `${parsed.nodes.length} nodes, ${parsed.edges.length} edges`,
-      };
+      return buildMermaidDraftPreviewDetail(parsed);
     }
 
     const parsed = parseOpenFlowDSL(code);
@@ -132,6 +153,7 @@ export function useStudioCodePanelController({
       mode,
       code,
       architectureStrictMode,
+      mermaidImportMode,
       onApply,
       onClose: () => undefined,
       activeTabId,
@@ -162,6 +184,7 @@ export function useStudioCodePanelController({
     architectureStrictMode,
     clearMermaidDiagnostics,
     code,
+    mermaidImportMode,
     mode,
     onApply,
     setMermaidDiagnostics,

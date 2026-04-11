@@ -1,4 +1,5 @@
 import type { FlowNode } from '@/lib/types';
+import { isMermaidImportedContainerNode } from '@/services/mermaid/importProvenance';
 import {
   SECTION_CONTENT_PADDING_TOP,
   getAbsoluteNodeBounds,
@@ -19,6 +20,7 @@ interface SectionTargetCandidate {
 function canTargetSection(section: FlowNode, draggedNodeId: string, allNodes: FlowNode[]): boolean {
   return (
     section.type === 'section' &&
+    !isMermaidImportedContainerNode(section) &&
     section.id !== draggedNodeId &&
     !isSectionHidden(section) &&
     !isSectionLocked(section) &&

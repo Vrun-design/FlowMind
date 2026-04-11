@@ -1,6 +1,21 @@
 import type { FlowEdge, FlowNode } from '@/lib/types';
 import { handleIdToSide as handleIdToFlowSide } from '@/lib/nodeHandles';
-import { sanitizeId, sanitizeLabel } from '../formatting';
+import { sanitizeId, sanitizeLabel, sanitizeEdgeLabel } from '../formatting';
+
+const ARCHITECTURE_NODE_KINDS = new Set([
+  'service',
+  'person',
+  'system',
+  'container',
+  'component',
+  'database_container',
+  'router',
+  'switch',
+  'firewall',
+  'load_balancer',
+  'cdn',
+  'dns',
+]);
 
 function normalizeArchitectureDirection(direction: string | undefined): '-->' | '<--' | '<-->' {
   if (direction === '<--' || direction === '<-->') return direction;
@@ -25,31 +40,43 @@ function handleIdToSide(handleId: string | null | undefined): 'L' | 'R' | 'T' | 
   return undefined;
 }
 
+function toArchitectureNodeStatement(node: FlowNode): string {
+  const id = sanitizeId(node.id);
+  const label = sanitizeLabel(node.data.label);
+  const kind = (node.data.archResourceType || 'service').toLowerCase();
+  const parent = node.data.archBoundaryId ? sanitizeId(node.data.archBoundaryId) : '';
+  const provider = typeof node.data.archProvider === 'string' ? node.data.archProvider : '';
+  const icon =
+    provider && provider !== 'custom' && !(kind === 'group' && provider === 'group')
+      ? `(${sanitizeLabel(provider)})`
+      : '';
+  const suffix = parent ? ` in ${parent}` : '';
+
+  if (kind === 'group') {
+    return `    group ${id}${icon}[${label}]${suffix}`;
+  }
+
+  if (kind === 'junction') {
+    return `    junction ${id}${icon}[${label}]${suffix}`;
+  }
+  const statementKind = ARCHITECTURE_NODE_KINDS.has(kind) ? kind : 'service';
+
+  return `    ${statementKind} ${id}${icon}[${label}]${suffix}`;
+}
+
 export function toArchitectureMermaid(nodes: FlowNode[], edges: FlowEdge[]): string {
   const lines: string[] = ['architecture-beta'];
+  const titleNode = nodes.find(
+    (node) => typeof node.data.archTitle === 'string' && node.data.archTitle.trim().length > 0
+  );
+  const title = typeof titleNode?.data.archTitle === 'string' ? sanitizeLabel(titleNode.data.archTitle) : '';
+
+  if (title) {
+    lines.push(`    title "${title}"`);
+  }
 
   nodes.forEach((node) => {
-    const id = sanitizeId(node.id);
-    const label = sanitizeLabel(node.data.label);
-    const kind = (node.data.archResourceType || 'service').toLowerCase();
-    const parent = node.data.archBoundaryId ? sanitizeId(node.data.archBoundaryId) : '';
-    const icon =
-      node.data.archProvider && node.data.archProvider !== 'custom'
-        ? `(${sanitizeLabel(node.data.archProvider)})`
-        : '';
-    const suffix = parent ? ` in ${parent}` : '';
-
-    if (kind === 'group') {
-      lines.push(`    group ${id}[${label}]`);
-      return;
-    }
-
-    if (kind === 'junction') {
-      lines.push(`    junction ${id}${icon}[${label}]${suffix}`);
-      return;
-    }
-
-    lines.push(`    service ${id}${icon}[${label}]${suffix}`);
+    lines.push(toArchitectureNodeStatement(node));
   });
 
   edges.forEach((edge) => {
@@ -66,7 +93,7 @@ export function toArchitectureMermaid(nodes: FlowNode[], edges: FlowEdge[]): str
       | undefined;
     const protocol = edgeData?.archProtocol;
     const port = edgeData?.archPort;
-    const label = edge.label ? sanitizeLabel(String(edge.label)) : undefined;
+    const label = edge.label ? sanitizeEdgeLabel(String(edge.label)) : undefined;
     const sourceSide =
       normalizeArchitectureSide(edgeData?.archSourceSide) || handleIdToSide(edge.sourceHandle);
     const targetSide =

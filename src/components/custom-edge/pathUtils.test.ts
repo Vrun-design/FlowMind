@@ -181,6 +181,283 @@ describe('buildEdgePath', () => {
     expect(Number.isFinite(result.labelY)).toBe(true);
   });
 
+  it('uses node dimensions when building self-loop paths', () => {
+    const result = buildEdgePath(
+      {
+        id: 'edge-self',
+        source: 'a',
+        target: 'a',
+        sourceX: 100,
+        sourceY: 100,
+        targetX: 100,
+        targetY: 100,
+        sourcePosition: Position.Right,
+        targetPosition: Position.Right,
+      },
+      [],
+      [{ ...NODE_A, width: 320, height: 120 }],
+      'smoothstep'
+    );
+
+    expect(result.edgePath).toContain('C');
+    expect(result.labelX).toBeGreaterThan(100 + 100);
+  });
+
+  it('nudges ELK label positions for dense sibling bundles', () => {
+    const allEdges = [
+      { id: 'edge-1', source: 'a', target: 'b', sourceHandle: 'right', targetHandle: 'left' },
+      { id: 'edge-2', source: 'a', target: 'c', sourceHandle: 'right', targetHandle: 'left' },
+      { id: 'edge-3', source: 'a', target: 'd', sourceHandle: 'right', targetHandle: 'left' },
+    ];
+
+    const first = buildEdgePath(
+      {
+        id: 'edge-1',
+        source: 'a',
+        target: 'b',
+        sourceX: 100,
+        sourceY: 100,
+        targetX: 260,
+        targetY: 40,
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+        sourceHandleId: 'right',
+        targetHandleId: 'left',
+      },
+      allEdges,
+      THREE_TARGET_NODES,
+      'smoothstep',
+      {
+        routingMode: 'elk',
+        elkPoints: [{ x: 180, y: 100 }, { x: 220, y: 40 }],
+      }
+    );
+    const middle = buildEdgePath(
+      {
+        id: 'edge-2',
+        source: 'a',
+        target: 'c',
+        sourceX: 100,
+        sourceY: 100,
+        targetX: 260,
+        targetY: 100,
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+        sourceHandleId: 'right',
+        targetHandleId: 'left',
+      },
+      allEdges,
+      THREE_TARGET_NODES,
+      'smoothstep',
+      {
+        routingMode: 'elk',
+        elkPoints: [{ x: 180, y: 100 }, { x: 220, y: 100 }],
+      }
+    );
+
+    expect(first.labelY).not.toBe(middle.labelY);
+  });
+
+  it('uses Mermaid import-fixed geometry exactly when provided', () => {
+    const result = buildEdgePath(
+      {
+        id: 'edge-import',
+        source: 'a',
+        target: 'b',
+        sourceX: 0,
+        sourceY: 0,
+        targetX: 100,
+        targetY: 100,
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+      },
+      [],
+      [NODE_A, NODE_B],
+      'smoothstep',
+      {
+        routingMode: 'import-fixed',
+        importRoutePath: 'M 0 0 C 20 0, 80 100, 100 100',
+        importRoutePoints: [
+          { x: 0, y: 0 },
+          { x: 50, y: 50 },
+          { x: 100, y: 100 },
+        ],
+      }
+    );
+
+    expect(result.edgePath).toBe('M 0 0 C 20 0, 80 100, 100 100');
+    expect(result.labelX).toBe(50);
+    expect(result.labelY).toBe(50);
+  });
+
+  it('uses orthogonal non-fanout routing for Mermaid preserved-endpoint edges', () => {
+    const allEdges = [
+      { id: 'edge-1', source: 'a', target: 'b', sourceHandle: 'right', targetHandle: 'left' },
+      { id: 'edge-2', source: 'a', target: 'c', sourceHandle: 'right', targetHandle: 'left' },
+      { id: 'edge-3', source: 'a', target: 'd', sourceHandle: 'right', targetHandle: 'left' },
+    ];
+
+    const result = buildEdgePath(
+      {
+        id: 'edge-1',
+        source: 'a',
+        target: 'b',
+        sourceX: 100,
+        sourceY: 100,
+        targetX: 260,
+        targetY: 40,
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+        sourceHandleId: 'right',
+        targetHandleId: 'left',
+      },
+      allEdges,
+      THREE_TARGET_NODES,
+      'bezier',
+      {
+        routingMode: 'auto',
+        mermaidPreservedEndpoints: true,
+      }
+    );
+
+    expect(getMovePoint(result.edgePath)).toBe('100,100');
+    expect(result.edgePath).not.toContain('C');
+  });
+
+  it('adds anchor clearance when Mermaid preserved-endpoint edges connect to imported containers', () => {
+    const result = buildEdgePath(
+      {
+        id: 'edge-container',
+        source: 'a',
+        target: 'b',
+        sourceX: 100,
+        sourceY: 100,
+        targetX: 260,
+        targetY: 100,
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+        sourceHandleId: 'right',
+        targetHandleId: 'left',
+      },
+      [{ id: 'edge-container', source: 'a', target: 'b', sourceHandle: 'right', targetHandle: 'left' }],
+      [NODE_A, NODE_B],
+      'smoothstep',
+      {
+        routingMode: 'auto',
+        mermaidPreservedEndpoints: true,
+        mermaidSourceContainer: true,
+        mermaidTargetContainer: true,
+      }
+    );
+
+    expect(getMovePoint(result.edgePath)).toBe('114,100');
+    expect(getLastPoint(result.edgePath)).toBe('246,100');
+  });
+
+  it('keeps decision-branch fanout for Mermaid preserved-endpoint edges', () => {
+    const decisionNode = {
+      id: 'decision',
+      position: { x: 100, y: 100 },
+      width: 80,
+      height: 80,
+      data: { shape: 'diamond' },
+    };
+    const branchA = { id: 'branch-a', position: { x: 260, y: 40 }, width: 0, height: 0 };
+    const branchB = { id: 'branch-b', position: { x: 260, y: 100 }, width: 0, height: 0 };
+    const branchC = { id: 'branch-c', position: { x: 260, y: 160 }, width: 0, height: 0 };
+    const branchEdges = [
+      { id: 'branch-1', source: 'decision', target: 'branch-a', sourceHandle: 'right', targetHandle: 'left' },
+      { id: 'branch-2', source: 'decision', target: 'branch-b', sourceHandle: 'right', targetHandle: 'left' },
+      { id: 'branch-3', source: 'decision', target: 'branch-c', sourceHandle: 'right', targetHandle: 'left' },
+    ];
+
+    const topBranch = buildEdgePath(
+      {
+        id: 'branch-1',
+        source: 'decision',
+        target: 'branch-a',
+        sourceX: 100,
+        sourceY: 100,
+        targetX: 260,
+        targetY: 40,
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+        sourceHandleId: 'right',
+        targetHandleId: 'left',
+      },
+      branchEdges,
+      [decisionNode, branchA, branchB, branchC],
+      'smoothstep',
+      {
+        routingMode: 'auto',
+        mermaidPreservedEndpoints: true,
+      }
+    );
+
+    const centerBranch = buildEdgePath(
+      {
+        id: 'branch-2',
+        source: 'decision',
+        target: 'branch-b',
+        sourceX: 100,
+        sourceY: 100,
+        targetX: 260,
+        targetY: 100,
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+        sourceHandleId: 'right',
+        targetHandleId: 'left',
+      },
+      branchEdges,
+      [decisionNode, branchA, branchB, branchC],
+      'smoothstep',
+      {
+        routingMode: 'auto',
+        mermaidPreservedEndpoints: true,
+      }
+    );
+
+    expect(getMovePoint(topBranch.edgePath)).toBe('112,100');
+    expect(getMovePoint(centerBranch.edgePath)).toBe('112,100');
+    expect(topBranch.edgePath).not.toBe(centerBranch.edgePath);
+    expect(topBranch.labelY).toBeLessThan(centerBranch.labelY);
+  });
+
+  it('adds shape-aware clearance for Mermaid preserved-endpoint decision anchors', () => {
+    const decisionNode = {
+      id: 'decision',
+      position: { x: 60, y: 60 },
+      width: 80,
+      height: 80,
+      data: { shape: 'diamond' },
+    };
+
+    const result = buildEdgePath(
+      {
+        id: 'edge-decision-preserved',
+        source: 'decision',
+        target: 'b',
+        sourceX: 100,
+        sourceY: 100,
+        targetX: 260,
+        targetY: 100,
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+        sourceHandleId: 'right',
+        targetHandleId: 'left',
+      },
+      [{ id: 'edge-decision-preserved', source: 'decision', target: 'b', sourceHandle: 'right', targetHandle: 'left' }],
+      [decisionNode, NODE_B],
+      'smoothstep',
+      {
+        routingMode: 'auto',
+        mermaidPreservedEndpoints: true,
+      }
+    );
+
+    expect(getMovePoint(result.edgePath)).toBe('112,100');
+  });
+
   it('builds straight auto-routed paths when the straight renderer is used', () => {
     const result = buildEdgePath(
       {
@@ -746,6 +1023,7 @@ describe('buildEdgePath', () => {
 
     expect(getMovePoint(first.edgePath)).toBe('100,100');
     expect(first.labelX).toBe(160);
-    expect(first.labelY).toBe(70);
+    expect(first.labelY).toBeLessThan(70);
+    expect(first.labelY).toBeGreaterThan(60);
   });
 });

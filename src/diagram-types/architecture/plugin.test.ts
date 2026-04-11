@@ -39,6 +39,7 @@ describe('ARCHITECTURE_PLUGIN', () => {
 
     const result = ARCHITECTURE_PLUGIN.parseMermaid(input);
     expect(result.error).toBeUndefined();
+    expect(result.nodes.some((node) => node.data.archTitle === 'Platform')).toBe(true);
     expect(result.nodes.some((node) => node.id === 'api.gateway')).toBe(true);
     expect(result.nodes.some((node) => node.data.label === 'API Gateway')).toBe(true);
     expect(result.edges).toHaveLength(1);
@@ -50,6 +51,22 @@ describe('ARCHITECTURE_PLUGIN', () => {
     expect(result.edges[0].data?.archTargetSide).toBe('L');
     expect(result.edges[0].sourceHandle).toBe('right');
     expect(result.edges[0].targetHandle).toBe('left');
+  });
+
+  it('preserves nested architecture groups and parented group metadata', () => {
+    const input = `
+      architecture-beta
+      group global[Global]
+      group prod(cloud)[Prod] in global
+      service api(server)[API] in prod
+    `;
+
+    const result = ARCHITECTURE_PLUGIN.parseMermaid(input);
+    expect(result.error).toBeUndefined();
+    expect(result.nodes.find((node) => node.id === 'prod')?.parentId).toBe('global');
+    expect(result.nodes.find((node) => node.id === 'prod')?.data.archBoundaryId).toBe('global');
+    expect(result.nodes.find((node) => node.id === 'prod')?.data.archProvider).toBe('cloud');
+    expect(result.nodes.find((node) => node.id === 'api')?.parentId).toBe('prod');
   });
 
   it('extracts protocol and port metadata when label follows protocol:port format', () => {
@@ -66,6 +83,25 @@ describe('ARCHITECTURE_PLUGIN', () => {
     expect(result.edges[0].label).toBe('HTTPS:443');
     expect(result.edges[0].data?.archProtocol).toBe('HTTPS');
     expect(result.edges[0].data?.archPort).toBe('443');
+  });
+
+  it('parses official Mermaid architecture edge syntax without labels', () => {
+    const input = `
+      architecture-beta
+      service api(server)[API]
+      service db(database)[Database]
+      api:R --> L:db
+    `;
+
+    const result = ARCHITECTURE_PLUGIN.parseMermaid(input);
+    expect(result.error).toBeUndefined();
+    expect(result.edges).toHaveLength(1);
+    expect(result.edges[0].source).toBe('api');
+    expect(result.edges[0].target).toBe('db');
+    expect(result.edges[0].label).toBeUndefined();
+    expect(result.edges[0].data?.archDirection).toBe('-->');
+    expect(result.edges[0].data?.archSourceSide).toBe('R');
+    expect(result.edges[0].data?.archTargetSide).toBe('L');
   });
 
   it('parses reverse and bidirectional direction tokens', () => {

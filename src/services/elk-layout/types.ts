@@ -7,8 +7,11 @@ export interface LayoutOptions {
     direction?: 'TB' | 'LR' | 'RL' | 'BT';
     algorithm?: LayoutAlgorithm;
     spacing?: 'compact' | 'normal' | 'loose';
+    contentDensity?: 'compact' | 'balanced' | 'verbose';
     preset?: 'hierarchical' | 'orthogonal-compact' | 'orthogonal-spacious';
     diagramType?: string;
+    /** 'import' triggers compact node size estimates and tighter spacing defaults */
+    source?: 'import' | 'canvas';
 }
 
 export type ResolvedLayoutConfiguration = {

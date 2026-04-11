@@ -174,4 +174,69 @@ describe('assignSmartHandles', () => {
     expect(routed[0].sourceHandle).toBe('source-right');
     expect(routed[0].targetHandle).toBe('target-left');
   });
+
+  it('leaves Mermaid import-fixed edges untouched', () => {
+    const nodes = [createNode('a', 0, 0), createNode('b', 300, 0)];
+    const edge = {
+      ...createEdge('e-import', 'a', 'b'),
+      sourceHandle: 'source-bottom',
+      targetHandle: 'target-top',
+      data: {
+        routingMode: 'import-fixed',
+        importRoutePath: 'M 0 0 L 300 0',
+      },
+    } as FlowEdge;
+
+    const routed = assignSmartHandles(nodes, [edge]);
+
+    expect(routed[0]).toBe(edge);
+    expect(routed[0].sourceHandle).toBe('source-bottom');
+    expect(routed[0].targetHandle).toBe('target-top');
+  });
+
+  it('preserves imported Mermaid endpoints after fixed geometry is released', () => {
+    const nodes = [createNode('a', 0, 0), createNode('b', 0, 300)];
+    const edge = {
+      ...createEdge('e-import-degraded', 'a', 'b'),
+      sourceHandle: 'source-right',
+      targetHandle: 'target-left',
+      data: {
+        routingMode: 'auto',
+        _mermaidImportedEdge: {
+          source: 'official-flowchart',
+          fidelity: 'renderer-backed',
+          hasFixedRoute: false,
+        },
+      },
+    } as FlowEdge;
+
+    const routed = assignSmartHandles(nodes, [edge]);
+
+    expect(routed[0]).toBe(edge);
+    expect(routed[0].sourceHandle).toBe('source-right');
+    expect(routed[0].targetHandle).toBe('target-left');
+  });
+
+  it('restores preserved Mermaid endpoints from metadata when live handles are absent', () => {
+    const nodes = [createNode('a', 0, 0), createNode('b', 0, 300)];
+    const edge = {
+      ...createEdge('e-import-degraded-metadata', 'a', 'b'),
+      data: {
+        routingMode: 'auto',
+        _mermaidImportedEdge: {
+          source: 'official-flowchart',
+          fidelity: 'renderer-backed',
+          hasFixedRoute: false,
+          preferredSourceHandle: 'source-right',
+          preferredTargetHandle: 'target-left',
+        },
+      },
+    } as FlowEdge;
+
+    const routed = assignSmartHandles(nodes, [edge]);
+
+    expect(routed[0]).not.toBe(edge);
+    expect(routed[0].sourceHandle).toBe('source-right');
+    expect(routed[0].targetHandle).toBe('target-left');
+  });
 });

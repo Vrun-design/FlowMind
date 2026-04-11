@@ -1,31 +1,99 @@
 import type { DiagramType } from '@/lib/types';
-import { parseMermaid, type ParseResult } from '@/lib/mermaidParser';
+import type { ParseResult } from '@/lib/mermaidParser';
 import { getDiagramPlugin } from '@/diagram-types/core';
 import { initializeDiagramTypeRuntime } from '@/diagram-types/bootstrap';
-import { detectMermaidDiagramType } from './detectDiagramType';
+import {
+  determineMermaidImportStatus,
+  normalizeMermaidImportDiagnostics,
+  type MermaidImportDiagnostic,
+  type MermaidImportStatus,
+} from './importContracts';
+import { detectMermaidDiagramType, extractMermaidDiagramHeader } from './detectDiagramType';
+import { detectMermaidWithOfficialParser } from './officialMermaidValidation';
 
 export interface MermaidDispatchParseResult extends ParseResult {
   diagramType?: DiagramType;
   diagnostics?: string[];
+  structuredDiagnostics?: MermaidImportDiagnostic[];
+  importState?: MermaidImportStatus;
+  originalSource?: string;
 }
 
 export interface ParseMermaidByTypeOptions {
   architectureStrictMode?: boolean;
 }
 
-const SUPPORTED_MERMAID_FAMILIES: DiagramType[] = ['flowchart', 'stateDiagram', 'classDiagram', 'erDiagram', 'mindmap', 'journey', 'architecture'];
+const SUPPORTED_MERMAID_FAMILIES: DiagramType[] = [
+  'flowchart',
+  'stateDiagram',
+  'classDiagram',
+  'erDiagram',
+  'mindmap',
+  'journey',
+  'architecture',
+  'sequence',
+];
 
-function getUnsupportedTypeError(diagramType: DiagramType): string {
-  return `Mermaid "${diagramType}" is not supported yet in editable mode. Supported families: flowchart, stateDiagram, classDiagram, erDiagram, mindmap, journey, architecture.`;
+const SUPPORTED_MERMAID_FAMILY_LIST = SUPPORTED_MERMAID_FAMILIES.join(', ');
+
+function getUnsupportedEditableModeError(typeLabel: string): string {
+  return `Mermaid "${typeLabel}" is not supported yet in editable mode. Supported families: ${SUPPORTED_MERMAID_FAMILY_LIST}.`;
 }
 
-function applyArchitectureStrictMode(result: MermaidDispatchParseResult): MermaidDispatchParseResult {
+function getUnsupportedTypeError(diagramType: DiagramType): string {
+  return getUnsupportedEditableModeError(diagramType);
+}
+
+function getUnsupportedHeaderError(rawType: string): string {
+  return getUnsupportedEditableModeError(rawType);
+}
+
+function finalizeResult(
+  input: string,
+  result: MermaidDispatchParseResult,
+  params: {
+    hasHeader: boolean;
+    isSupportedFamily: boolean;
+    family?: DiagramType;
+    officialMermaidAccepted?: boolean;
+  }
+): MermaidDispatchParseResult {
+  const diagnosticInput =
+    result.structuredDiagnostics
+    ?? result.diagnostics
+    ?? (result.error ? [result.error] : []);
+  const structuredDiagnostics = normalizeMermaidImportDiagnostics({
+    diagnostics: diagnosticInput,
+    family: params.family,
+    parseBlocked: Boolean(result.error),
+    officialMermaidAccepted: params.officialMermaidAccepted,
+  });
+
+  return {
+    ...result,
+    structuredDiagnostics,
+    importState:
+      result.importState
+      ?? determineMermaidImportStatus({
+        hasHeader: params.hasHeader,
+        isSupportedFamily: params.isSupportedFamily,
+        error: result.error,
+        structuredDiagnostics,
+      }),
+    originalSource: input,
+  };
+}
+
+function applyArchitectureStrictMode(
+  result: MermaidDispatchParseResult
+): MermaidDispatchParseResult {
   const diagnostics = Array.isArray(result.diagnostics) ? result.diagnostics : [];
-  const strictViolations = diagnostics.filter((message) => (
-    message.startsWith('Invalid architecture ')
-    || message.startsWith('Duplicate architecture node id')
-    || message.startsWith('Recovered implicit service node')
-  ));
+  const strictViolations = diagnostics.filter(
+    (message) =>
+      message.startsWith('Invalid architecture ') ||
+      message.startsWith('Duplicate architecture node id') ||
+      message.startsWith('Recovered implicit service node')
+  );
 
   if (strictViolations.length === 0) {
     return result;
@@ -39,76 +107,111 @@ function applyArchitectureStrictMode(result: MermaidDispatchParseResult): Mermai
   };
 }
 
-function normalizeLegacyStateTransitionLabels(input: string): string {
-  const lines = input.replace(/\r\n/g, '\n').split('\n');
-  const normalized = lines.map((rawLine) => {
-    const line = rawLine.trim();
-    if (line.includes('|')) return rawLine;
-    const transitionMatch = line.match(/^(.+?)\s+(<-->|<--|-->|==>|-.->)\s+(.+?)\s*:\s*(.+)$/);
-    if (!transitionMatch) return rawLine;
-
-    const source = transitionMatch[1].trim();
-    const arrow = transitionMatch[2];
-    const target = transitionMatch[3].trim();
-    const label = transitionMatch[4].trim();
-    if (!source || !target || !label) return rawLine;
-    return `  ${source} ${arrow}|${label}| ${target}`;
-  });
-
-  return normalized.join('\n');
-}
-
 export function parseMermaidByType(
   input: string,
   options: ParseMermaidByTypeOptions = {}
 ): MermaidDispatchParseResult {
   initializeDiagramTypeRuntime();
 
-  const detectedType = detectMermaidDiagramType(input);
+  const oracleValidation = detectMermaidWithOfficialParser(input);
+  const header = extractMermaidDiagramHeader(input);
+  const detectedType = oracleValidation.detectedType ?? detectMermaidDiagramType(input);
 
   if (!detectedType) {
-    return {
-      nodes: [],
-      edges: [],
-      error: 'Missing chart type declaration. Start with "flowchart TD", "stateDiagram-v2", or another Mermaid diagram type header.',
-    };
+    if (header.rawType) {
+      return finalizeResult(
+        input,
+        {
+          nodes: [],
+          edges: [],
+          error: getUnsupportedHeaderError(header.rawType),
+        },
+        {
+          hasHeader: true,
+          isSupportedFamily: false,
+          officialMermaidAccepted: oracleValidation.isValid,
+        }
+      );
+    }
+
+    return finalizeResult(
+      input,
+      {
+        nodes: [],
+        edges: [],
+        error:
+          'Missing chart type declaration. Start with "flowchart TD", "stateDiagram-v2", or another Mermaid diagram type header.',
+        importState: 'invalid_source',
+      },
+      {
+        hasHeader: false,
+        isSupportedFamily: false,
+        officialMermaidAccepted: oracleValidation.isValid,
+      }
+    );
   }
 
   if (!SUPPORTED_MERMAID_FAMILIES.includes(detectedType)) {
-    return {
-      nodes: [],
-      edges: [],
-      diagramType: detectedType,
-      error: getUnsupportedTypeError(detectedType),
-    };
+    return finalizeResult(
+      input,
+      {
+        nodes: [],
+        edges: [],
+        diagramType: detectedType,
+        error: getUnsupportedTypeError(detectedType),
+      },
+      {
+        hasHeader: true,
+        isSupportedFamily: false,
+        family: detectedType,
+        officialMermaidAccepted: oracleValidation.isValid,
+      }
+    );
   }
 
-  const canUsePluginDispatch = true;
-  if (canUsePluginDispatch) {
-    const plugin = getDiagramPlugin(detectedType);
-    if (plugin) {
-      const parsed = {
+  const plugin = getDiagramPlugin(detectedType);
+  if (plugin) {
+    const parsed = finalizeResult(
+      input,
+      {
         ...plugin.parseMermaid(input),
         diagramType: detectedType,
-      };
-      if (detectedType === 'architecture' && options.architectureStrictMode) {
-        return applyArchitectureStrictMode(parsed);
+      },
+      {
+        hasHeader: true,
+        isSupportedFamily: true,
+        family: detectedType,
+        officialMermaidAccepted: oracleValidation.isValid,
       }
-      return parsed;
+    );
+    if (detectedType === 'architecture' && options.architectureStrictMode) {
+      return finalizeResult(
+        input,
+        applyArchitectureStrictMode(parsed),
+        {
+          hasHeader: true,
+          isSupportedFamily: true,
+          family: detectedType,
+          officialMermaidAccepted: oracleValidation.isValid,
+        }
+      );
     }
+    return parsed;
+  }
 
-    return {
+  return finalizeResult(
+    input,
+    {
       nodes: [],
       edges: [],
       diagramType: detectedType,
       error: `Mermaid "${detectedType}" plugin is not registered.`,
-    };
-  }
-
-  // Compatibility adapter for legacy state-diagram parsing until state plugin lands.
-  const normalizedStateInput = normalizeLegacyStateTransitionLabels(input);
-  return {
-    ...parseMermaid(normalizedStateInput),
-    diagramType: detectedType,
-  };
+    },
+    {
+      hasHeader: true,
+      isSupportedFamily: true,
+      family: detectedType,
+      officialMermaidAccepted: oracleValidation.isValid,
+    }
+  );
 }

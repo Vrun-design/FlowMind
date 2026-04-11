@@ -14,10 +14,10 @@ export const DEFAULT_MODELS: Record<AIProvider, string> = {
     openai: 'gpt-5-mini',
     claude: 'claude-sonnet-4-6',
     groq: 'meta-llama/llama-4-scout-17b-16e-instruct',
-    nvidia: 'meta/llama-4-scout-17b-16e-instruct',
+    nvidia: 'meta/llama-4-maverick-17b-128e-instruct',
     cerebras: 'gpt-oss-120b',
-    mistral: 'mistral-medium-latest',
-    openrouter: 'google/gemini-2.5-flash',
+    mistral: 'mistral-large-latest',
+    openrouter: 'google/gemini-2.5-pro',
     custom: 'gpt-4o',
 };
 

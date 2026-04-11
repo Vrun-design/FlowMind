@@ -856,7 +856,11 @@
       "architectureStrictMode": "架构严格模式",
       "architectureStrictModeDesc": "当架构诊断包含恢复/验证问题时阻止Mermaid导入",
       "miniMap": "小地图",
-      "miniMapDesc": "在右下角显示小地图"
+      "miniMapDesc": "在右下角显示小地图",
+      "mermaidImportMode": "Mermaid Import Mode",
+      "mermaidImportModeRenderer": "Fidelity-first",
+      "mermaidImportModeEditable": "Editable-first",
+      "mermaidImportModeDesc": "Controls how Mermaid diagrams are imported to the canvas."
     },
     "ai": {
       "provider": "提供商",

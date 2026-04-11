@@ -18,12 +18,28 @@ describe('JOURNEY_PLUGIN', () => {
     expect(result.nodes).toHaveLength(3);
     expect(result.edges).toHaveLength(1);
     expect(result.nodes[0].type).toBe('journey');
+    expect(result.nodes[0].data.journeyTitle).toBe('Checkout Journey');
     expect(result.nodes[0].data.journeySection).toBe('Happy Path');
     expect(result.nodes[0].data.journeyScore).toBe(5);
     expect(result.nodes[0].data.journeyActor).toBe('Buyer');
   });
 
-  it('returns diagnostics for malformed score while keeping valid parse', () => {
+  it('emits diagnostics for malformed title syntax while preserving valid steps', () => {
+    const input = `
+      journey
+      title
+      section Support
+        Open ticket: 3: User
+    `;
+
+    const result = JOURNEY_PLUGIN.parseMermaid(input);
+    expect(result.error).toBeUndefined();
+    expect(result.nodes).toHaveLength(1);
+    expect(result.nodes[0].data.journeyTitle).toBe('Journey');
+    expect(result.diagnostics?.some((message) => message.includes('Invalid journey title syntax at line'))).toBe(true);
+  });
+
+  it('returns diagnostics for malformed score and skips invalid steps', () => {
     const input = `
       journey
       section Support
@@ -33,11 +49,42 @@ describe('JOURNEY_PLUGIN', () => {
 
     const result = JOURNEY_PLUGIN.parseMermaid(input);
     expect(result.error).toBeUndefined();
-    expect(result.nodes).toHaveLength(2);
+    expect(result.nodes).toHaveLength(1);
     expect(result.diagnostics?.some((message) => message.includes('Invalid journey score at line'))).toBe(true);
   });
 
-  it('returns diagnostics for malformed section and invalid step syntax while preserving valid steps', () => {
+  it('color-codes steps by score for quick satisfaction scanning', () => {
+    const input = `
+      journey
+      section Checkout
+        Browse: 5: Buyer
+        Retry payment: 1: Buyer
+    `;
+
+    const result = JOURNEY_PLUGIN.parseMermaid(input);
+    expect(result.error).toBeUndefined();
+    expect(result.nodes[0].data.color).toBe('emerald');
+    expect(result.nodes[1].data.color).toBe('red');
+  });
+
+  it('preserves journey tasks and actors that contain colons', () => {
+    const input = `
+      journey
+      section Incident Flow
+        HTTP: 500 Error: 1: SRE: On-call
+        Recover service: 4: API: Team
+    `;
+
+    const result = JOURNEY_PLUGIN.parseMermaid(input);
+    expect(result.error).toBeUndefined();
+    expect(result.nodes).toHaveLength(2);
+    expect(result.nodes[0].data.journeyTask).toBe('HTTP: 500 Error');
+    expect(result.nodes[0].data.journeyScore).toBe(1);
+    expect(result.nodes[0].data.journeyActor).toBe('SRE: On-call');
+    expect(result.nodes[1].data.journeyActor).toBe('API: Team');
+  });
+
+  it('returns diagnostics for malformed section and malformed score-like steps while preserving valid steps', () => {
     const input = `
       journey
       section
@@ -49,7 +96,7 @@ describe('JOURNEY_PLUGIN', () => {
     expect(result.error).toBeUndefined();
     expect(result.nodes).toHaveLength(1);
     expect(result.diagnostics?.some((message) => message.includes('Invalid journey section syntax at line'))).toBe(true);
-    expect(result.diagnostics?.some((message) => message.includes('Invalid journey step syntax at line'))).toBe(true);
+    expect(result.diagnostics?.some((message) => message.includes('Invalid journey score at line'))).toBe(true);
   });
 
   it('returns error when header is missing', () => {

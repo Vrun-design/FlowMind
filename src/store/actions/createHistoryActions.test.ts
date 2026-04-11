@@ -89,6 +89,7 @@ function createState(snapshotCount = 0): FlowState {
       smartRoutingProfile: 'standard',
       smartRoutingBundlingEnabled: false,
       architectureStrictMode: false,
+      mermaidImportMode: 'renderer_first',
       largeGraphSafetyMode: 'auto',
       largeGraphSafetyProfile: 'balanced',
       exportSerializationMode: 'deterministic',

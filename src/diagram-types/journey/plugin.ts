@@ -21,6 +21,14 @@ function normalizeScore(input: string): number | null {
   return rounded;
 }
 
+function getJourneyScoreColor(score: number | undefined): string {
+  if (typeof score !== 'number') return 'slate';
+  if (score >= 4) return 'emerald';
+  if (score === 3) return 'amber';
+  if (score === 2) return 'orange';
+  return 'red';
+}
+
 interface ParsedJourneyStep {
   task: string;
   actor?: string;
@@ -28,39 +36,57 @@ interface ParsedJourneyStep {
   scoreMalformed: boolean;
 }
 
+function buildJourneyStep(
+  task: string,
+  scoreMalformed: boolean,
+  score?: number,
+  actor?: string
+): ParsedJourneyStep | null {
+  const normalizedTask = task.trim();
+  if (!normalizedTask) {
+    return null;
+  }
+  const normalizedActor = actor?.trim() || undefined;
+
+  return {
+    task: normalizedTask,
+    actor: normalizedActor,
+    score,
+    scoreMalformed,
+  };
+}
+
+function joinJourneySegments(parts: string[]): string {
+  return parts.join(': ');
+}
+
 function parseJourneyStep(line: string): ParsedJourneyStep | null {
   const parts = line.split(':').map((item) => item.trim());
   if (parts.length === 0) return null;
 
-  const task = parts[0];
-  if (!task) return null;
-
   if (parts.length === 1) {
-    return { task, scoreMalformed: false };
+    return buildJourneyStep(parts[0], false);
   }
 
-  if (parts.length === 2) {
-    const score = normalizeScore(parts[1]);
+  for (let scoreIndex = parts.length - 1; scoreIndex >= 1; scoreIndex -= 1) {
+    const score = normalizeScore(parts[scoreIndex]);
     if (score === null) {
-      return null;
+      continue;
     }
-    return { task, score, scoreMalformed: false };
+    return buildJourneyStep(
+      joinJourneySegments(parts.slice(0, scoreIndex)),
+      false,
+      score,
+      joinJourneySegments(parts.slice(scoreIndex + 1))
+    );
   }
 
-  const score = normalizeScore(parts[1]);
-  if (score === null) {
-    return {
-      task,
-      actor: parts.slice(2).join(':').trim() || undefined,
-      scoreMalformed: true,
-    };
-  }
-  return {
-    task,
-    score,
-    actor: parts.slice(2).join(':').trim() || undefined,
-    scoreMalformed: false,
-  };
+  return buildJourneyStep(
+    parts[0],
+    true,
+    undefined,
+    parts.length > 2 ? joinJourneySegments(parts.slice(2)) : undefined
+  );
 }
 
 function parseJourney(input: string): { nodes: FlowNode[]; edges: FlowEdge[]; error?: string; diagnostics?: string[] } {
@@ -70,6 +96,7 @@ function parseJourney(input: string): { nodes: FlowNode[]; edges: FlowEdge[]; er
 
   let hasHeader = false;
   let currentSection = 'General';
+  let journeyTitle = 'Journey';
 
   for (const [index, rawLine] of lines.entries()) {
     const lineNumber = index + 1;
@@ -82,7 +109,13 @@ function parseJourney(input: string): { nodes: FlowNode[]; edges: FlowEdge[]; er
     }
     if (!hasHeader) continue;
 
-    if (/^title\s+/i.test(line)) {
+    if (/^title\b/i.test(line)) {
+      const titleMatch = line.match(/^title\s+(.+)$/i);
+      if (titleMatch?.[1]?.trim()) {
+        journeyTitle = titleMatch[1].trim();
+      } else {
+        diagnostics.push(`Invalid journey title syntax at line ${lineNumber}: "${line}"`);
+      }
       continue;
     }
 
@@ -109,6 +142,7 @@ function parseJourney(input: string): { nodes: FlowNode[]; edges: FlowEdge[]; er
     }
     if (parsedStep.scoreMalformed) {
       diagnostics.push(`Invalid journey score at line ${lineNumber}: "${line}" (expected 0-5)`);
+      continue;
     }
 
     steps.push({
@@ -159,8 +193,9 @@ function parseJourney(input: string): { nodes: FlowNode[]; edges: FlowEdge[]; er
       data: {
         label: step.task,
         subLabel: step.actor,
-        color: 'violet',
+        color: getJourneyScoreColor(step.score),
         shape: 'rounded',
+        journeyTitle,
         journeySection: step.section,
         journeyTask: step.task,
         journeyActor: step.actor,

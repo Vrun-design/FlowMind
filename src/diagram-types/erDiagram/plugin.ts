@@ -3,13 +3,15 @@ import {
   buildERRelationTokenRegexPattern,
   type ERRelationToken,
 } from '@/lib/relationSemantics';
+import { createDefaultErField } from '@/lib/entityFields';
+import type { ErField } from '@/lib/types';
 import type { FlowEdge, FlowNode } from '@/lib/types';
 import type { DiagramPlugin } from '@/diagram-types/core';
 
 interface EntityRecord {
   id: string;
   label: string;
-  fields: string[];
+  fields: ErField[];
 }
 
 interface RelationRecord {
@@ -21,12 +23,82 @@ interface RelationRecord {
 
 const ENTITY_ID_PATTERN = '[A-Za-z_][\\w.]*';
 
+function parseReferenceTarget(reference: string): {
+  referencesTable?: string;
+  referencesField?: string;
+} {
+  const trimmed = reference.trim();
+  if (!trimmed) {
+    return {};
+  }
+
+  const lastDotIndex = trimmed.lastIndexOf('.');
+  if (lastDotIndex <= 0 || lastDotIndex === trimmed.length - 1) {
+    return { referencesTable: trimmed };
+  }
+
+  return {
+    referencesTable: trimmed.slice(0, lastDotIndex),
+    referencesField: trimmed.slice(lastDotIndex + 1),
+  };
+}
+
 function createEmptyEntity(id: string): EntityRecord {
   return {
     id,
     label: id,
     fields: [],
   };
+}
+
+function parseMermaidErField(line: string): ErField {
+  const trimmed = line.trim();
+  if (!trimmed) {
+    return createDefaultErField();
+  }
+
+  const tokens = trimmed.split(/\s+/).filter(Boolean);
+  if (tokens.length < 2) {
+    return {
+      ...createDefaultErField(),
+      name: trimmed,
+    };
+  }
+
+  const [dataType, name, ...rawConstraints] = tokens;
+  const field: ErField = {
+    ...createDefaultErField(),
+    name,
+    dataType,
+  };
+
+  for (let index = 0; index < rawConstraints.length; index += 1) {
+    const token = rawConstraints[index].toUpperCase();
+    if (token === 'PK' || token === 'PRIMARY') {
+      field.isPrimaryKey = true;
+      continue;
+    }
+    if (token === 'FK' || token === 'FOREIGN') {
+      field.isForeignKey = true;
+      continue;
+    }
+    if (token === 'UK' || token === 'UNIQUE' || token === 'UQ') {
+      field.isUnique = true;
+      continue;
+    }
+    if (token === 'NN' || token === 'NOTNULL' || token === 'NOT') {
+      field.isNotNull = true;
+      continue;
+    }
+    if (token === 'REFERENCES' && rawConstraints[index + 1]) {
+      const reference = parseReferenceTarget(rawConstraints[index + 1]);
+      field.referencesTable = reference.referencesTable;
+      field.referencesField = reference.referencesField;
+      index += 1;
+    }
+  }
+
+  return field;
 }
 
 function parseRelation(line: string): RelationRecord | null {
@@ -77,7 +149,7 @@ function parseERDiagram(input: string): { nodes: FlowNode[]; edges: FlowEdge[]; 
         activeEntityLine = -1;
         continue;
       }
-      activeEntity.fields.push(line);
+      activeEntity.fields.push(parseMermaidErField(line));
       continue;
     }
 

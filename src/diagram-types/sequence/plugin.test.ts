@@ -98,7 +98,8 @@ describe('SEQUENCE_PLUGIN', () => {
     end`;
 
     const result = SEQUENCE_PLUGIN.parseMermaid(input);
-    expect(result.nodes).toHaveLength(2);
+    expect(result.nodes).toHaveLength(3);
+    expect(result.nodes.some((node) => node.type === 'annotation')).toBe(true);
     expect(result.edges).toHaveLength(1);
   });
 
@@ -108,5 +109,103 @@ describe('SEQUENCE_PLUGIN', () => {
 
     const result = SEQUENCE_PLUGIN.parseMermaid(input);
     expect(result.edges[0].data?.seqMessageKind).toBe('async');
+  });
+
+  it('creates visible note and fragment nodes for sequence annotations', () => {
+    const input = `sequenceDiagram
+    participant A
+    participant B
+    note right of A: warm cache
+    alt success
+      A->>B: Request
+    else failure
+      B-->>A: Error
+    end`;
+
+    const result = SEQUENCE_PLUGIN.parseMermaid(input);
+    expect(result.error).toBeUndefined();
+    expect(result.nodes.some((node) => node.type === 'sequence_note')).toBe(true);
+    expect(result.nodes.some((node) => node.type === 'annotation')).toBe(true);
+    expect(result.edges[0].data?.seqFragment?.type).toBe('alt');
+  });
+
+  it('preserves note-over two participants as shared note metadata', () => {
+    const input = `sequenceDiagram
+    participant A
+    participant B
+    note over A, B: Shared context
+    A->>B: Hello`;
+
+    const result = SEQUENCE_PLUGIN.parseMermaid(input);
+    const noteNode = result.nodes.find((node) => node.type === 'sequence_note');
+
+    expect(noteNode).toBeDefined();
+    expect(noteNode?.data.seqNoteTarget).toBe('A');
+    expect(noteNode?.data.seqNoteTargets).toEqual(['A', 'B']);
+    expect(noteNode?.data.label).toBe('Shared context');
+  });
+
+  it('preserves explicit activation and deactivation events with message order metadata', () => {
+    const input = `sequenceDiagram
+    participant A
+    participant B
+    A->>B: Request
+    activate B
+    B-->>A: Response
+    deactivate B`;
+
+    const result = SEQUENCE_PLUGIN.parseMermaid(input);
+    const participant = result.nodes.find((node) => node.id === 'B');
+
+    expect(participant?.data.seqActivations).toEqual([
+      { order: 1, activate: true },
+      { order: 2, activate: false },
+    ]);
+  });
+
+  it('preserves fragment metadata on notes inside sequence control blocks', () => {
+    const input = `sequenceDiagram
+    participant A
+    participant B
+    alt success
+      note over A, B: Shared context
+      A->>B: Request
+    else failure
+      B-->>A: Error
+    end`;
+
+    const result = SEQUENCE_PLUGIN.parseMermaid(input);
+    const noteNode = result.nodes.find((node) => node.type === 'sequence_note');
+
+    expect(noteNode?.data.seqFragment).toMatchObject({
+      type: 'alt',
+      condition: 'success',
+      branchKind: 'start',
+    });
+  });
+
+  it('preserves critical and option branch metadata on sequence messages', () => {
+    const input = `sequenceDiagram
+    participant A
+    participant B
+    critical primary path
+      A->>B: Request
+    option fallback path
+      B-->>A: Error
+    end`;
+
+    const result = SEQUENCE_PLUGIN.parseMermaid(input);
+
+    expect(result.error).toBeUndefined();
+    expect(result.edges[0].data?.seqFragment).toMatchObject({
+      type: 'critical',
+      condition: 'primary path',
+      branchKind: 'start',
+    });
+    expect(result.edges[1].data?.seqFragment).toMatchObject({
+      type: 'critical',
+      condition: 'fallback path',
+      branchKind: 'option',
+    });
   });
 });

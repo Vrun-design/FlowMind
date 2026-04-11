@@ -13,20 +13,26 @@ function escapeStateLabel(label: string): string {
   return label.replace(/"/g, '\\"');
 }
 
+function quoteIfNeeded(value: string): string {
+  return /[\s()[\]{}]/.test(value) ? `"${escapeStateLabel(value)}"` : value;
+}
+
 function isStateDiagramNodeType(type: string | undefined): boolean {
-  return type === 'state' || type === 'start' || type === 'process';
+  return (
+    type === 'state' ||
+    type === 'start' ||
+    type === 'process' ||
+    type === 'section' ||
+    type === 'annotation'
+  );
 }
 
 export function looksLikeStateDiagram(nodes: FlowNode[]): boolean {
   if (nodes.length === 0) return false;
   const hasStateStartNode = nodes.some((node) => node.id.startsWith('state_start_'));
   const hasExplicitStateNode = nodes.some((node) => node.type === 'state');
-  const hasCompositeParenting = nodes.some((node) => {
-    const parentId = getNodeParentId(node);
-    return parentId.length > 0;
-  });
 
-  if (!hasStateStartNode && !hasExplicitStateNode && !hasCompositeParenting) {
+  if (!hasStateStartNode && !hasExplicitStateNode) {
     return false;
   }
 
@@ -73,9 +79,33 @@ function toStateNodeToken(nodeId: string, startNodeIds: Set<string>): string {
   return nodeId;
 }
 
-export function toStateDiagramMermaid(nodes: FlowNode[], edges: FlowEdge[]): string {
+function resolveStateDiagramDirection(
+  nodes: FlowNode[],
+  direction?: string
+): 'TB' | 'LR' {
+  if (direction === 'LR' || direction === 'TB') {
+    return direction;
+  }
+
+  const xValues = nodes.map((node) => node.position.x);
+  const yValues = nodes.map((node) => node.position.y);
+  const xSpan = Math.max(...xValues) - Math.min(...xValues);
+  const ySpan = Math.max(...yValues) - Math.min(...yValues);
+  return xSpan > ySpan * 1.2 ? 'LR' : 'TB';
+}
+
+export function toStateDiagramMermaid(
+  nodes: FlowNode[],
+  edges: FlowEdge[],
+  direction?: string
+): string {
   const lines: string[] = ['stateDiagram-v2'];
   const nodeById = new Map(nodes.map((node) => [node.id, node]));
+  const noteNodes = sortNodesByPosition(
+    nodes.filter(
+      (node) => node.type === 'annotation' && typeof node.data.stateNoteTarget === 'string'
+    )
+  );
   const childrenByParentId = new Map<string, FlowNode[]>();
   const topLevelNodes: FlowNode[] = [];
 
@@ -90,11 +120,7 @@ export function toStateDiagramMermaid(nodes: FlowNode[], edges: FlowEdge[]): str
     childrenByParentId.set(parentId, parentChildren);
   });
 
-  const xValues = nodes.map((node) => node.position.x);
-  const yValues = nodes.map((node) => node.position.y);
-  const xSpan = Math.max(...xValues) - Math.min(...xValues);
-  const ySpan = Math.max(...yValues) - Math.min(...yValues);
-  lines.push(`    direction ${xSpan > ySpan * 1.2 ? 'LR' : 'TB'}`);
+  lines.push(`    direction ${resolveStateDiagramDirection(nodes, direction)}`);
 
   function emitNodeDeclaration(node: FlowNode, depth: number): void {
     const indent = '  '.repeat(depth);
@@ -105,12 +131,20 @@ export function toStateDiagramMermaid(nodes: FlowNode[], edges: FlowEdge[]): str
     }
 
     const label = String(node.data.label || node.id).trim() || node.id;
+    if (node.data.stateControlKind === 'fork' || node.data.stateControlKind === 'join') {
+      lines.push(`${indent}state ${node.id} <<${node.data.stateControlKind}>>`);
+      return;
+    }
     if (children.length === 0) {
       lines.push(`${indent}state "${escapeStateLabel(label)}" as ${node.id}`);
       return;
     }
 
-    lines.push(`${indent}state ${node.id} {`);
+    if (label !== node.id) {
+      lines.push(`${indent}state "${escapeStateLabel(label)}" as ${node.id} {`);
+    } else {
+      lines.push(`${indent}state ${node.id} {`);
+    }
     children.forEach((childNode) => emitNodeDeclaration(childNode, depth + 1));
     edges.forEach((edge) => {
       const sourceNode = nodeById.get(edge.source);
@@ -120,7 +154,8 @@ export function toStateDiagramMermaid(nodes: FlowNode[], edges: FlowEdge[]): str
       const sourceParentId = sourceNode ? getNodeParentId(sourceNode) : '';
       const targetParentId = targetNode ? getNodeParentId(targetNode) : '';
       const shouldEmitInsideParent =
-        (sourceParentId === node.id && (targetParentId === node.id || edge.target.startsWith('state_start_'))) ||
+        (sourceParentId === node.id &&
+          (targetParentId === node.id || edge.target.startsWith('state_start_'))) ||
         (targetParentId === node.id && edge.source.startsWith('state_start_'));
 
       if (!shouldEmitInsideParent) {
@@ -146,7 +181,10 @@ export function toStateDiagramMermaid(nodes: FlowNode[], edges: FlowEdge[]): str
     const targetNode = nodeById.get(edge.target);
     if (!sourceNode || !targetNode) return;
 
-    if (getNodeParentId(sourceNode) && getNodeParentId(sourceNode) === getNodeParentId(targetNode)) {
+    if (
+      getNodeParentId(sourceNode) &&
+      getNodeParentId(sourceNode) === getNodeParentId(targetNode)
+    ) {
       return;
     }
 
@@ -156,6 +194,15 @@ export function toStateDiagramMermaid(nodes: FlowNode[], edges: FlowEdge[]): str
     const label = typeof edge.label === 'string' ? edge.label.trim() : '';
     const suffix = label ? ` : ${label}` : '';
     lines.push(`    ${sourceToken} ${connector} ${targetToken}${suffix}`);
+  });
+
+  noteNodes.forEach((node) => {
+    const position = String(node.data.stateNotePosition || 'right').trim();
+    const target = String(node.data.stateNoteTarget || '').trim();
+    const label = String(node.data.label || '').trim();
+    if (!target || !label) return;
+
+    lines.push(`    note ${position} of ${quoteIfNeeded(target)}: ${escapeStateLabel(label)}`);
   });
 
   return `${lines.join('\n')}\n`;

@@ -72,6 +72,20 @@ export function getIconAssetNodeMinSize(hasLabel: boolean): {
 }
 
 export function resolveNodeSize(node: FlowNode): { width: number; height: number } {
+  if (node.type === 'mermaid_svg') {
+    const styleWidth = typeof node.style?.width === 'number' ? node.style.width : undefined;
+    const styleHeight = typeof node.style?.height === 'number' ? node.style.height : undefined;
+    const dataWidth = typeof node.data?.width === 'number' ? node.data.width : undefined;
+    const dataHeight = typeof node.data?.height === 'number' ? node.data.height : undefined;
+    const nodeWidth = typeof node.width === 'number' ? node.width : undefined;
+    const nodeHeight = typeof node.height === 'number' ? node.height : undefined;
+
+    return {
+      width: dataWidth ?? styleWidth ?? nodeWidth ?? 640,
+      height: dataHeight ?? styleHeight ?? nodeHeight ?? 480,
+    };
+  }
+
   const minSize = node.data?.assetPresentation === 'icon'
     ? getIconAssetNodeMinSize(Boolean(node.data?.label?.trim()))
     : getMinNodeSize(node.data?.shape);
@@ -91,6 +105,10 @@ export function resolveNodeSize(node: FlowNode): { width: number; height: number
 export function toCssSize(value: number | string | undefined): string | undefined {
   if (value === undefined || value === null) return undefined;
   return typeof value === 'number' ? `${value}px` : value;
+}
+
+export function getNumericNodeDimension(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 }
 
 export function getNodeBorderRadius(

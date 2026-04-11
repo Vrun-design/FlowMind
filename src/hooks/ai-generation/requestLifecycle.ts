@@ -3,13 +3,13 @@ import { serializeCanvasContextForAI } from '@/services/ai/contextSerializer';
 import { generateDiagramFromChat, type ChatMessage } from '@/services/aiService';
 import type { FlowEdge, FlowNode, GlobalEdgeOptions } from '@/lib/types';
 import type { AISettings } from '@/store/types';
+import { buildIdMap, parseDslOrThrow, toFinalEdges, toFinalNodes } from './graphComposer';
 import {
-  buildIdMap,
-  parseDslOrThrow,
-  toFinalEdges,
-  toFinalNodes,
-} from './graphComposer';
-import { applyAIResultToCanvas, positionNewNodesSmartly, restoreExistingPositions } from './positionPreservingApply';
+  applyAIResultToCanvas,
+  positionNewNodesSmartly,
+  restoreExistingPositions,
+} from './positionPreservingApply';
+import { enrichNodesWithIcons } from '@/lib/nodeEnricher';
 
 interface GenerateAIFlowResultParams {
   chatMessages: ChatMessage[];
@@ -34,7 +34,12 @@ function isRetryableError(error: unknown): boolean {
   if (error instanceof Error) {
     const msg = error.message.toLowerCase();
     // Retry on rate-limit and network errors, not on auth or parse errors
-    return msg.includes('429') || msg.includes('rate') || msg.includes('network') || msg.includes('fetch');
+    return (
+      msg.includes('429') ||
+      msg.includes('rate') ||
+      msg.includes('network') ||
+      msg.includes('fetch')
+    );
   }
   return false;
 }
@@ -42,7 +47,7 @@ function isRetryableError(error: unknown): boolean {
 async function withRetry<T>(
   fn: () => Promise<T>,
   signal: AbortSignal | undefined,
-  onRetry?: (attempt: number) => void,
+  onRetry?: (attempt: number) => void
 ): Promise<T> {
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
@@ -69,9 +74,11 @@ export interface GenerateAIFlowResult {
 export function buildUserChatMessage(prompt: string, imageBase64?: string): ChatMessage {
   return {
     role: 'user',
-    parts: [{
-      text: imageBase64 ? `${prompt} [Image Attached]` : prompt,
-    }],
+    parts: [
+      {
+        text: imageBase64 ? `${prompt} [Image Attached]` : prompt,
+      },
+    ],
   };
 }
 
@@ -82,11 +89,7 @@ export function appendChatExchange(
   editMode = false
 ): ChatMessage[] {
   const modelText = editMode ? '[Diagram updated]' : dslText;
-  return [
-    ...previousMessages,
-    userMessage,
-    { role: 'model', parts: [{ text: modelText }] },
-  ];
+  return [...previousMessages, userMessage, { role: 'model', parts: [{ text: modelText }] }];
 }
 
 function buildSelectionPromptSuffix(selectedNodeIds: string[], nodes: FlowNode[]): string {
@@ -128,22 +131,23 @@ export async function generateAIFlowResult({
 
   for (let attempt = 0; attempt <= 1; attempt++) {
     dslText = await withRetry(
-      () => generateDiagramFromChat(
-        chatMessages,
-        activePrompt,
-        currentGraph,
-        imageBase64,
-        aiSettings.apiKey,
-        aiSettings.model,
-        aiSettings.provider || 'gemini',
-        aiSettings.customBaseUrl,
-        isEditMode,
-        onChunk,
-        signal,
-        aiSettings.temperature,
-      ),
+      () =>
+        generateDiagramFromChat(
+          chatMessages,
+          activePrompt,
+          currentGraph,
+          imageBase64,
+          aiSettings.apiKey,
+          aiSettings.model,
+          aiSettings.provider || 'gemini',
+          aiSettings.customBaseUrl,
+          isEditMode,
+          onChunk,
+          signal,
+          aiSettings.temperature
+        ),
       signal,
-      onRetry,
+      onRetry
     );
     try {
       parsed = parseDslOrThrow(dslText);
@@ -157,7 +161,7 @@ export async function generateAIFlowResult({
   }
   parsed = parsed!;
   const idMap = buildIdMap(parsed.nodes, nodes);
-  const finalNodes = toFinalNodes(parsed.nodes, idMap);
+  const finalNodes = await enrichNodesWithIcons(toFinalNodes(parsed.nodes, idMap));
   const finalEdges = toFinalEdges(parsed.edges, idMap, globalEdgeOptions);
 
   const isEmptyCanvas = nodes.length === 0;
@@ -167,7 +171,12 @@ export async function generateAIFlowResult({
       finalEdges,
       { direction: 'TB', algorithm: 'mrtree', spacing: 'loose' }
     );
-    return { dslText, userMessage: buildUserChatMessage(prompt, imageBase64), layoutedNodes, layoutedEdges };
+    return {
+      dslText,
+      userMessage: buildUserChatMessage(prompt, imageBase64),
+      layoutedNodes,
+      layoutedEdges,
+    };
   }
 
   // Position-preserving apply: matched nodes keep their positions, new nodes get ELK positions
@@ -188,7 +197,12 @@ export async function generateAIFlowResult({
   }
 
   // Smart placement: position new nodes near their existing neighbors
-  const smartPositioned = positionNewNodesSmartly(mergedNodes, mergedEdges, newNodeIds, existingById);
+  const smartPositioned = positionNewNodesSmartly(
+    mergedNodes,
+    mergedEdges,
+    newNodeIds,
+    existingById
+  );
   const unplacedIds = [...newNodeIds].filter((id) => {
     const node = smartPositioned.find((n) => n.id === id);
     return !node?.position || (node.position.x === 0 && node.position.y === 0);

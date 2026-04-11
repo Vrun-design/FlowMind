@@ -55,7 +55,7 @@
 
 <table>
 <tr>
-<td align="center"><b>🧑‍💻 Code → Diagram</b><br/><sub>SQL · Terraform · K8s<br/>OpenAPI · Source code</sub></td>
+<td align="center"><b>✨ Mermaid → Icons</b><br/><sub>Paste Mermaid · 1,600+ icons<br/>auto-assigned · beautiful</sub></td>
 <td align="center"><b>🤖 AI Generation</b><br/><sub>9 providers · BYOK<br/>Direct-to-canvas output</sub></td>
 <td align="center"><b>`{}` Diagram as Code</b><br/><sub>Bidirectional live sync<br/>Git-friendly DSL</sub></td>
 <td align="center"><b>🧩 Asset Libraries</b><br/><sub>Developer · AWS · Azure<br/>GCP · CNCF · Icons</sub></td>
@@ -101,79 +101,68 @@ Every diagramming tool makes a compromise. OpenFlowKit doesn't.
 | **Lucidchart / Miro**   | Cloud lock-in — expensive, account required, your data lives on their servers |
 | **PlantUML**            | Server-dependent rendering — no visual editor, no local-first model           |
 
-OpenFlowKit is the **only MIT-licensed tool** that combines a real workspace home, a professional visual canvas, bidirectional diagram-as-code, AI generation from 9 providers, deterministic and AI-assisted imports, asset libraries for technical diagrams, and cinematic animated export — with zero server-side storage.
+OpenFlowKit is the **only MIT-licensed tool** that combines a real workspace home, a professional visual canvas, bidirectional diagram-as-code, AI generation from 9 providers, **automatic icon assignment from 1,100+ tech icons**, and cinematic animated export — with zero server-side storage.
 
 ---
 
 ## Feature highlights
 
-|                                | OpenFlowKit | Excalidraw | Draw.io | Mermaid | Lucidchart |
-| ------------------------------ | :---------: | :--------: | :-----: | :-----: | :--------: |
-| Visual canvas editor           |     ✅      |     ✅     |   ✅    |   ❌    |     ✅     |
-| Bidirectional diagram-as-code  |     ✅      |     ❌     |   ❌    |   ✅    |     ❌     |
-| AI generation (9 providers) `Beta`  |     ✅      |     ❌     |   ❌    |   ❌    |  Limited   |
-| SQL → ERD (native parser)           |     ✅      |     ❌     |   ❌    |   ❌    |     ❌     |
-| Terraform / K8s import `Beta`       |     ✅      |     ❌     |   ❌    |   ❌    |     ❌     |
-| AWS / Azure / GCP / CNCF icons |     ✅      |     ❌     |   ✅    | Partial |     ✅     |
+|                                      | OpenFlowKit | Excalidraw | Draw.io | Mermaid | Lucidchart |
+| ------------------------------------ | :---------: | :--------: | :-----: | :-----: | :--------: |
+| Visual canvas editor                 |     ✅      |     ✅     |   ✅    |   ❌    |     ✅     |
+| Bidirectional diagram-as-code        |     ✅      |     ❌     |   ❌    |   ✅    |     ❌     |
+| AI generation (9 providers) `Beta`   |     ✅      |     ❌     |   ❌    |   ❌    |  Limited   |
+| Mermaid import (8 types)             |     ✅      |     ❌     |   ⚠️    |   ✅    |     ❌     |
+| Auto-icon assignment (1,600+)        |     ✅      |     ❌     |   ❌    |   ❌    |     ❌     |
+| AWS / Azure / GCP / CNCF icons       |     ✅      |     ❌     |   ✅    | Partial |     ✅     |
 | Real-time collaboration (P2P) `Beta` |     ✅      |     ✅     |   ❌    |   ❌    | ✅ (cloud) |
-| Cinematic animated export      |     ✅      |     ❌     |   ❌    |   ❌    |     ❌     |
-| Figma export (editable SVG)    |     ✅      |     ❌     |   ❌    |   ❌    |     ❌     |
-| No account required            |     ✅      |     ✅     |   ✅    |   ✅    |     ❌     |
-| Open source (MIT)              |     ✅      |     ✅     |   ✅    |   ✅    |     ❌     |
+| Cinematic animated export            |     ✅      |     ❌     |   ❌    |   ❌    |     ❌     |
+| Figma export (editable SVG)          |     ✅      |     ❌     |   ❌    |   ❌    |     ❌     |
+| No account required                  |     ✅      |     ✅     |   ✅    |   ✅    |     ❌     |
+| Open source (MIT)                    |     ✅      |     ✅     |   ✅    |   ✅    |     ❌     |
 
 ---
 
-## Code → Diagram
+## Paste Mermaid → Beautiful Diagrams
 
-Drop in your existing artifacts. Many formats are handled by **deterministic native parsers** that run entirely in your browser. AI-powered imports help when the source needs interpretation or when you want a richer first-pass architecture draft.
+Paste any Mermaid flowchart, architecture, state diagram, class diagram, ER diagram, sequence diagram, mindmap, or journey — all 8 diagram families. OpenFlowKit renders it on a visual canvas and automatically assigns the correct branded icon to every technology node.
 
-**Native parsers (no API key needed):**
-
-```sql
-CREATE TABLE orders (
-  id       BIGINT PRIMARY KEY,
-  user_id  BIGINT NOT NULL REFERENCES users(id),
-  status   ENUM('pending','paid','shipped') NOT NULL
-);
+```
+flowchart TD
+  API[Express API] --> DB[(PostgreSQL)]
+  DB --> Cache[Redis Cache]
+  Cache --> Queue[RabbitMQ]
 ```
 
-→ Typed ERD with inferred foreign-key edges and cardinalities. Rendered in milliseconds, no server involved.
+Paste this → you get the Express wordmark, PostgreSQL elephant, Redis logo, and RabbitMQ icon — all auto-detected, all beautifully laid out. No other tool does this.
 
-```yaml
-# deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-spec:
-  replicas: 3
----
-apiVersion: v1
-kind: Service
-selector:
-  app: api
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-spec:
-  rules:
-    - host: api.example.com
-```
+**1,600+ icons** from developer, AWS, Azure, CNCF, and GCP catalogs are matched automatically based on node labels. No manual drag-and-drop. No configuration.
 
-→ Kubernetes architecture with Deployment → Service → Ingress connections.
+### How it works
 
-**AI-powered imports (API key required):**
+1. **Paste Mermaid** on the canvas or in the code panel
+2. **Semantic classifier** detects technology names (PostgreSQL, Redis, Express, Lambda, etc.)
+3. **Icon matcher** searches 1,100+ icons across all catalogs — exact match, then alias, then substring
+4. **Enricher** assigns colors, icons, and provider SVGs to every node
+5. **ELK layout** arranges everything cleanly
 
-Paste source code, infrastructure, or API specs and hit generate — the diagram lands directly on your canvas. AWS, Azure, GCP, and CNCF icons are automatically applied when the AI detects cloud services in your input.
+### Mermaid quality gates
 
-| Source                              | Engine                    | API key? |
-| ----------------------------------- | ------------------------- | :------: |
-| SQL DDL                             | **Native parser**         |  **No**  |
-| Terraform `.tfstate`                | **Native parser**         |  **No**  |
-| Terraform HCL                       | AI-assisted               |   Yes    |
-| Kubernetes YAML / Helm              | **Native parser**         |  **No**  |
-| OpenAPI / Swagger YAML/JSON         | **Native parser**         |  **No**  |
-| OpenAPI source text → richer flow   | AI-assisted               |   Yes    |
-| Source code (single file)           | AI-assisted · 9 languages |   Yes    |
-| Mermaid                             | **Native parser**         |  **No**  |
+- `npm run test:mermaid` runs the broad Mermaid parser/plugin/round-trip gate
+- `npm run test:mermaid:layout` runs the layout, import-state, and recovery corpus gate
+- `npm run test:mermaid:gold` runs both together
+
+### AI generation (API key required)
+
+Describe your system in plain English. AI generates a diagram on the canvas with correct icons applied automatically.
+
+| Prompt                                    | Output                                  |
+| ----------------------------------------- | --------------------------------------- |
+| "Node.js API with PostgreSQL and Redis"   | 3 nodes with correct icons              |
+| "AWS Lambda → SQS → DynamoDB"             | 3 nodes with AWS icons                  |
+| "React frontend → Express → MongoDB → S3" | 4 nodes across developer + AWS catalogs |
+
+9 providers supported: Google Gemini, OpenAI, Anthropic Claude, Groq, Mistral, NVIDIA NIM, Cerebras, OpenRouter, or any custom OpenAI-compatible endpoint.
 
 ---
 
@@ -194,17 +183,17 @@ Flowpilot sits directly in the editor. Describe a system, paste source code, upl
 
 **9 providers. Bring your own key. Switch any time.**
 
-| Provider            | Default model                    | Why use it                                      |
-| ------------------- | -------------------------------- | ----------------------------------------------- |
-| Google Gemini       | `gemini-2.5-flash-lite`          | Free tier available, fast, browser-safe         |
-| OpenAI              | `gpt-5-mini`                     | Best reasoning for complex architectures        |
-| Anthropic Claude    | `claude-sonnet-4-6`              | Excellent code and system understanding         |
-| Groq                | `llama-4-scout-17b-16e-instruct` | Fastest inference available                     |
-| Mistral             | `mistral-medium-latest`          | Strong European privacy-first alternative       |
-| NVIDIA NIM          | `llama-4-scout-17b-16e-instruct` | Enterprise GPU inference                        |
-| Cerebras            | `gpt-oss-120b`                   | Fastest on WSE-3 silicon                        |
-| OpenRouter          | `google/gemini-2.5-flash`        | Access 100+ models through one key              |
-| **Custom endpoint** | Any model                        | Ollama, LM Studio, or any OpenAI-compatible API |
+| Provider            | Default model                              | Why use it                                      |
+| ------------------- | ------------------------------------------ | ----------------------------------------------- |
+| Google Gemini       | `gemini-2.5-flash-lite`                    | Free tier available, fast, browser-safe         |
+| OpenAI              | `gpt-5-mini`                               | Best reasoning for complex architectures        |
+| Anthropic Claude    | `claude-sonnet-4-6`                        | Excellent code and system understanding         |
+| Groq                | `meta-llama/llama-4-scout-17b-16e-instruct`| Fastest open-source inference available         |
+| Mistral             | `mistral-large-latest`                     | Strong European privacy-first alternative       |
+| NVIDIA NIM          | `meta/llama-4-maverick-17b-128e-instruct`  | Enterprise GPU inference                        |
+| Cerebras            | `gpt-oss-120b`                             | Ultra-fast on WSE-3 silicon                     |
+| OpenRouter          | `google/gemini-2.5-pro`                    | Access 300+ models through one key              |
+| **Custom endpoint** | Any model                                  | Ollama, LM Studio, or any OpenAI-compatible API |
 
 No proxy. No middleman. Direct browser-to-provider requests.
 
@@ -224,9 +213,10 @@ flowchart TB
   auth                --> db
 ```
 
-- Mermaid-compatible syntax
+- Mermaid-compatible syntax — paste any Mermaid and it renders with auto-assigned icons
+- Specify icons directly: `{ archProvider: "developer", archResourceType: "database-postgresql" }`
+- Auto-icon resolution: nodes are enriched with the correct branded icon based on their label
 - Export to Mermaid, PlantUML, or JSON
-- Paste any Mermaid diagram and it renders immediately
 - Version snapshots — restore any previous state
 
 ---
@@ -267,7 +257,7 @@ Designed for architecture reviews, onboarding docs, and demos where a static ima
 
 > **No other open-source diagramming tool does this.**
 
-Export as **WebM**, control animation speed, and share a link or embed it anywhere.
+Export as **WebM or MP4** (browser-native, no codec install needed), control animation speed, and share or embed anywhere.
 
 ---
 
@@ -275,7 +265,7 @@ Export as **WebM**, control animation speed, and share a link or embed it anywhe
 
 Build your diagram once. Take it anywhere.
 
-- **🎬 Cinematic MP4 / GIF** — animated walkthrough, browser-only, no upload required
+- **🎬 Cinematic WebM / MP4** — animated build walkthrough, browser-only, no upload required
 - **PNG / SVG** — transparent background, pixel-perfect at any resolution
 - **PDF** — print-ready, vector-crisp
 - **Mermaid** — paste directly into GitHub READMEs, Notion, Confluence, Linear
@@ -310,7 +300,7 @@ Plus: smart alignment guides, snap-to-grid, multi-select, pages, layers, section
 
 Current roadmap focus:
 
-- **GIF export for cinematic animations** — WebM is shipping now; GIF export coming next so diagrams can be embedded anywhere without conversion
+- **GIF export for cinematic animations** — WebM/MP4 ship today; GIF export for zero-conversion embeds is next
 - **GitHub repo → diagram** — currently in beta internally; will ship when output quality is consistent across real-world codebases
 - better layers and page workflows for larger technical diagrams
 - stronger code and structured-import diagram quality

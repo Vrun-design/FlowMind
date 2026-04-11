@@ -66,6 +66,7 @@ export const INITIAL_VIEW_SETTINGS: ViewSettings = {
     smartRoutingProfile: 'standard',
     smartRoutingBundlingEnabled: false,
     architectureStrictMode: false,
+    mermaidImportMode: 'renderer_first',
     largeGraphSafetyMode: 'auto',
     largeGraphSafetyProfile: 'balanced',
     exportSerializationMode: 'deterministic',

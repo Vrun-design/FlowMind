@@ -13,7 +13,10 @@ import type {
   FlowNode,
   FlowTab,
   GlobalEdgeOptions,
+  MermaidImportMode,
+  MermaidVisualMode,
 } from '@/lib/types';
+import type { MermaidImportStatus } from '@/services/mermaid/importContracts';
 import type { ExportSerializationMode } from '@/services/canonicalSerialization';
 import type { FlowDocument } from '@/services/storage/flowDocumentModel';
 
@@ -27,6 +30,7 @@ export interface ViewSettings {
   smartRoutingProfile: 'standard' | 'infrastructure';
   smartRoutingBundlingEnabled: boolean;
   architectureStrictMode: boolean;
+  mermaidImportMode: MermaidImportMode;
   largeGraphSafetyMode: 'auto' | 'on' | 'off';
   largeGraphSafetyProfile: 'performance' | 'balanced' | 'quality';
   exportSerializationMode: ExportSerializationMode;
@@ -73,6 +77,13 @@ export interface Layer {
 export interface MermaidDiagnosticsSnapshot {
   source: 'paste' | 'import' | 'code';
   diagramType?: DiagramType;
+  importState?: MermaidImportStatus;
+  statusLabel?: string;
+  statusDetail?: string;
+  layoutMode?: 'mermaid_exact' | 'mermaid_preserved_partial' | 'mermaid_partial' | 'elk_fallback';
+  visualMode?: MermaidVisualMode;
+  layoutFallbackReason?: string;
+  originalSource?: string;
   diagnostics: ParseDiagnostic[];
   error?: string;
   updatedAt: number;
@@ -264,6 +275,7 @@ export type CanvasViewSettingsSlice = Pick<
   | 'largeGraphSafetyMode'
   | 'largeGraphSafetyProfile'
   | 'architectureStrictMode'
+  | 'mermaidImportMode'
 >;
 export type ShortcutHelpActionsSlice = Pick<FlowState, 'setShortcutsHelpOpen'>;
 export type VisualSettingsActionsSlice = Pick<

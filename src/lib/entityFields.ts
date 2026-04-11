@@ -20,6 +20,16 @@ function isErField(value: unknown): value is ErField {
   return Boolean(value) && typeof value === 'object' && 'name' in (value as Record<string, unknown>);
 }
 
+function formatMermaidReferenceTarget(field: ErField): string | null {
+  const referencesTable = field.referencesTable?.trim();
+  if (!referencesTable) {
+    return null;
+  }
+
+  const referencesField = field.referencesField?.trim();
+  return referencesField ? `${referencesTable}.${referencesField}` : referencesTable;
+}
+
 export function parseErField(input: string): ErField {
   const normalizedInput = input.trim();
   if (!normalizedInput) {
@@ -95,6 +105,24 @@ export function stringifyErField(field: ErField): string {
   if (field.isForeignKey) segments.push('FK');
   if (field.isNotNull) segments.push('NN');
   if (field.isUnique) segments.push('UNIQUE');
+  return segments.join(' ').trim();
+}
+
+export function stringifyMermaidErField(field: ErField): string {
+  const segments: string[] = [];
+  const normalizedName = field.name.trim() || 'field';
+  const normalizedType = field.dataType.trim() || 'string';
+
+  segments.push(normalizedType, normalizedName);
+  if (field.isPrimaryKey) segments.push('PK');
+  if (field.isForeignKey) segments.push('FK');
+  if (field.isUnique) segments.push('UK');
+  if (field.isNotNull) segments.push('NN');
+  const referenceTarget = formatMermaidReferenceTarget(field);
+  if (referenceTarget) {
+    segments.push('REFERENCES', referenceTarget);
+  }
+
   return segments.join(' ').trim();
 }
 

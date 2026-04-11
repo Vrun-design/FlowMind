@@ -8,6 +8,7 @@ export {
   getAbsoluteNodePosition,
   getAbsoluteNodeBounds,
   getSectionContentBounds,
+  getSectionLayoutMetrics,
   getSectionDescendants,
   isSectionLocked,
   isSectionHidden,

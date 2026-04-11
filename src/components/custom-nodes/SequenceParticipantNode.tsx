@@ -7,18 +7,53 @@ import { InlineTextEditSurface } from '@/components/InlineTextEditSurface';
 import { NodeChrome } from '@/components/NodeChrome';
 import { getTransformDiagnosticsAttrs } from '@/components/transformDiagnostics';
 import { resolveContainerVisualStyle } from '@/theme';
-
-// These constants are used by SequenceMessageEdge to position arrows correctly.
-export const SEQ_BOX_H = 48;
-export const SEQ_ACTOR_EXTRA_H = 40;
-export const SEQ_LIFELINE_H = 500;
-export const SEQ_MSG_OFFSET = 20; // gap between box bottom and first message
-export const SEQ_MSG_SPACING = 52;
-
-const SEQ_NODE_W = 140;
+import {
+  SEQ_ACTOR_EXTRA_H,
+  SEQ_BOX_H,
+  SEQ_LIFELINE_H,
+  SEQ_NODE_W,
+  SEQ_MSG_OFFSET,
+  SEQ_MSG_SPACING,
+} from '@/services/sequence/layoutConstants';
 
 // Single invisible handle at top-center — used by SequenceMessageEdge
 const TOP_HANDLE_ONLY = [{ id: 'top', position: Position.Top, side: 'top' as const }];
+
+function buildActivationRanges(
+  activations: Array<{ order: number; activate: boolean }> | undefined
+): Array<{ startOrder: number; endOrder: number }> {
+  if (!activations || activations.length === 0) {
+    return [];
+  }
+
+  const sortedActivations = [...activations].sort((left, right) => left.order - right.order);
+  const ranges: Array<{ startOrder: number; endOrder: number }> = [];
+  const openStack: number[] = [];
+
+  sortedActivations.forEach((activation) => {
+    if (activation.activate) {
+      openStack.push(activation.order);
+      return;
+    }
+
+    const startOrder = openStack.pop();
+    if (typeof startOrder === 'number') {
+      ranges.push({
+        startOrder,
+        endOrder: Math.max(startOrder + 1, activation.order),
+      });
+    }
+  });
+
+  openStack.forEach((startOrder) => {
+    ranges.push({
+      startOrder,
+      endOrder: startOrder + 1,
+    });
+  });
+
+  return ranges.sort((left, right) => left.startOrder - right.startOrder);
+}
 
 function SequenceParticipantNode({
   id,
@@ -28,6 +63,7 @@ function SequenceParticipantNode({
   const labelEdit = useInlineNodeTextEdit(id, 'label', data.label || '');
   const isActor = data.seqParticipantKind === 'actor';
   const totalH = (isActor ? SEQ_ACTOR_EXTRA_H : 0) + SEQ_BOX_H + SEQ_LIFELINE_H;
+  const activationRanges = buildActivationRanges(data.seqActivations);
   const visualStyle = resolveContainerVisualStyle(
     data.color,
     data.colorMode || 'subtle',
@@ -96,7 +132,7 @@ function SequenceParticipantNode({
         />
 
         {/* Activation bars */}
-        {data.seqActivations && data.seqActivations.length > 0 && (
+        {activationRanges.length > 0 && (
           <div
             className="absolute"
             style={{
@@ -105,9 +141,7 @@ function SequenceParticipantNode({
               top: (isActor ? SEQ_ACTOR_EXTRA_H : 0) + SEQ_BOX_H,
             }}
           >
-            {data.seqActivations.map((startOrder, i) => {
-              if (i % 2 !== 0) return null;
-              const endOrder = data.seqActivations![i + 1] ?? startOrder + 1;
+            {activationRanges.map(({ startOrder, endOrder }, i) => {
               const y = SEQ_MSG_OFFSET + startOrder * SEQ_MSG_SPACING;
               const h = (endOrder - startOrder) * SEQ_MSG_SPACING;
               return (

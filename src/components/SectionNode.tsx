@@ -4,13 +4,70 @@ import type { NodeData } from '@/lib/types';
 import { getNodeParentId } from '@/lib/nodeParent';
 import { Group, Lock, EyeOff } from 'lucide-react';
 import { NamedIcon } from './IconMap';
+import { getNumericNodeDimension } from './nodeHelpers';
 import { resolveSectionVisualStyle } from '../theme';
 import { useInlineNodeTextEdit } from '@/hooks/useInlineNodeTextEdit';
 import { InlineTextEditSurface } from './InlineTextEditSurface';
 import { NodeChrome } from './NodeChrome';
 import { useSelectionState } from '@/store/selectionHooks';
+import { readMermaidImportedNodeMetadataFromData } from '@/services/mermaid/importProvenance';
 
-function SectionNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.ReactElement {
+type SectionRenderVariant = 'default' | 'mermaid-import';
+
+interface SectionRenderConfig {
+  variant: SectionRenderVariant;
+  bodyBorderRadius: string;
+  bodyInset: number;
+  titleTop: number;
+  titleLeft: number;
+  titlePadding: string;
+  titleBackgroundColor: string;
+  titleMaxWidth: string;
+  showLeadingIcon: boolean;
+  showImportedBadge: boolean;
+  showChildCount: boolean;
+}
+
+function getSectionRenderConfig(
+  isImportedMermaidContainer: boolean,
+  borderColor: string
+): SectionRenderConfig {
+  if (isImportedMermaidContainer) {
+    return {
+      variant: 'mermaid-import',
+      bodyBorderRadius: '12px',
+      bodyInset: 0,
+      titleTop: 8,
+      titleLeft: 10,
+      titlePadding: '0.15rem 0.45rem',
+      titleBackgroundColor: 'rgba(255,255,255,0.9)',
+      titleMaxWidth: 'calc(100% - 72px)',
+      showLeadingIcon: false,
+      showImportedBadge: true,
+      showChildCount: false,
+    };
+  }
+
+  return {
+    variant: 'default',
+    bodyBorderRadius: '16px',
+    bodyInset: 0,
+    titleTop: -36,
+    titleLeft: 0,
+    titlePadding: '0.375rem 0.625rem',
+    titleBackgroundColor: `${borderColor}22`,
+    titleMaxWidth: 'calc(100% - 8px)',
+    showLeadingIcon: true,
+    showImportedBadge: true,
+    showChildCount: true,
+  };
+}
+
+function SectionNode(props: LegacyNodeProps<NodeData>): React.ReactElement {
+  const { id, data, selected } = props;
+  const explicitNodeStyle = (props as { style?: React.CSSProperties }).style;
+  const explicitWidth = getNumericNodeDimension(explicitNodeStyle?.width);
+  const explicitHeight = getNumericNodeDimension(explicitNodeStyle?.height);
   const allNodes = useNodes();
   const { hoveredSectionId } = useSelectionState();
   const theme = resolveSectionVisualStyle(data.color, data.colorMode, data.customColor, 'blue');
@@ -24,39 +81,57 @@ function SectionNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
   const isDropTarget = hoveredSectionId === id;
   const isLocked = data.sectionLocked === true;
   const isHidden = data.sectionHidden === true;
+  const isImportedMermaidContainer =
+    readMermaidImportedNodeMetadataFromData(data)?.role === 'container';
+  const minWidth = isImportedMermaidContainer ? explicitWidth ?? 350 : 350;
+  const minHeight = isImportedMermaidContainer ? explicitHeight ?? 250 : 250;
 
   const borderColor = isDropTarget ? theme.title : theme.border;
   const bgColor = isDropTarget
     ? `color-mix(in srgb, ${theme.bg} 85%, white 15%)`
     : theme.bg;
+  const renderConfig = getSectionRenderConfig(isImportedMermaidContainer, borderColor);
 
   return (
     <NodeChrome
       nodeId={id}
       selected={Boolean(selected)}
-      minWidth={350}
-      minHeight={250}
+      minWidth={minWidth}
+      minHeight={minHeight}
       handleClassName="!w-3 !h-3 !border-2 !border-white transition-opacity"
       handleVisibilityOptions={{ includeConnectingState: false }}
     >
       <div
         className={`group relative w-full h-full ${selected ? 'z-10' : ''}`}
-        style={{ minWidth: 350, minHeight: 250 }}
+        style={{ minWidth, minHeight }}
+        data-section-render-variant={renderConfig.variant}
       >
-        {/* Floating title — sits ABOVE the section border, FigJam-style */}
         <div
           className="pointer-events-auto absolute left-0 flex items-center gap-2 px-2.5 py-1.5 rounded-lg"
           style={{
-            top: -36,
-            backgroundColor: `${borderColor}22`,
-            maxWidth: 'calc(100% - 8px)',
+            top: renderConfig.titleTop,
+            left: renderConfig.titleLeft,
+            padding: renderConfig.titlePadding,
+            backgroundColor: renderConfig.titleBackgroundColor,
+            maxWidth: renderConfig.titleMaxWidth,
+            zIndex: 1,
           }}
         >
-          {iconName ? (
-            <NamedIcon name={iconName} fallbackName="Group" className="w-3.5 h-3.5 shrink-0 flow-lod-far-target" style={{ color: theme.title }} />
-          ) : (
-            <Group className="w-3.5 h-3.5 shrink-0 flow-lod-far-target" style={{ color: theme.title }} />
-          )}
+          {renderConfig.showLeadingIcon ? (
+            iconName ? (
+              <NamedIcon
+                name={iconName}
+                fallbackName="Group"
+                className="w-3.5 h-3.5 shrink-0 flow-lod-far-target"
+                style={{ color: theme.title }}
+              />
+            ) : (
+              <Group
+                className="w-3.5 h-3.5 shrink-0 flow-lod-far-target"
+                style={{ color: theme.title }}
+              />
+            )
+          ) : null}
           <InlineTextEditSurface
             isEditing={labelEdit.isEditing}
             draft={labelEdit.draft}
@@ -65,7 +140,9 @@ function SectionNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
             onDraftChange={labelEdit.setDraft}
             onCommit={labelEdit.commit}
             onKeyDown={labelEdit.handleKeyDown}
-            className="font-semibold text-[13px] leading-tight tracking-tight whitespace-nowrap"
+            className={`font-semibold leading-tight tracking-tight whitespace-nowrap ${
+              isImportedMermaidContainer ? 'text-[12px]' : 'text-[13px]'
+            }`}
             style={{ color: theme.title }}
             inputClassName="font-semibold"
             isSelected={Boolean(selected)}
@@ -94,14 +171,26 @@ function SectionNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
               {isHidden && <EyeOff className="h-3 w-3 flow-lod-secondary shrink-0" style={{ color: theme.title }} />}
             </div>
           )}
+          {renderConfig.showImportedBadge && isImportedMermaidContainer && (
+            <span
+              className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full flow-lod-secondary"
+              style={{
+                backgroundColor: theme.badgeBg,
+                color: theme.badgeText,
+              }}
+            >
+              Imported
+            </span>
+          )}
         </div>
 
-        {/* Section body — clean border, no internal header bar */}
         <div
           className="absolute inset-0 rounded-xl transition-all duration-150"
           style={{
+            inset: renderConfig.bodyInset,
             backgroundColor: bgColor,
             border: `1.5px solid ${borderColor}`,
+            borderRadius: renderConfig.bodyBorderRadius,
             boxShadow: selected
               ? `0 0 0 2px ${theme.title}33, 0 2px 8px rgba(0,0,0,0.06)`
               : isDropTarget
@@ -110,14 +199,12 @@ function SectionNode({ id, data, selected }: LegacyNodeProps<NodeData>): React.R
           }}
         />
 
-        {/* Edge drag-handle strips for resize */}
         <div className="pointer-events-auto absolute inset-x-0 top-0 h-3 rounded-t-xl" />
         <div className="pointer-events-auto absolute inset-x-0 bottom-0 h-3 rounded-b-xl" />
         <div className="pointer-events-auto absolute inset-y-0 left-0 w-3 rounded-l-xl" />
         <div className="pointer-events-auto absolute inset-y-0 right-0 w-3 rounded-r-xl" />
 
-        {/* Child count — subtle bottom-right badge */}
-        {childCount > 0 && (
+        {renderConfig.showChildCount && childCount > 0 && (
           <span
             className="pointer-events-none absolute bottom-2 right-3 text-[10px] font-medium flow-lod-secondary select-none"
             style={{ color: theme.title, opacity: 0.55 }}

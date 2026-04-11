@@ -24,6 +24,38 @@ interface ParsedArchEdge {
   targetSide?: 'L' | 'R' | 'T' | 'B';
 }
 
+function buildArchitectureLayerRanks(nodes: ParsedArchNode[]): Map<string, number> {
+  const ranks = new Map<string, number>();
+  let nextRank = 0;
+
+  for (const node of nodes) {
+    if (node.kind === 'group' && !node.parentId && !ranks.has(node.id)) {
+      ranks.set(node.id, nextRank++);
+    }
+  }
+
+  for (const node of nodes) {
+    if (node.kind !== 'group' && !node.parentId && !ranks.has(node.id)) {
+      ranks.set(node.id, nextRank++);
+    }
+  }
+
+  return ranks;
+}
+
+function resolveArchitectureLayerRank(
+  node: ParsedArchNode,
+  layerRanks: Map<string, number>
+): number | undefined {
+  if (layerRanks.has(node.id)) {
+    return layerRanks.get(node.id);
+  }
+  if (node.parentId && layerRanks.has(node.parentId)) {
+    return layerRanks.get(node.parentId);
+  }
+  return undefined;
+}
+
 function sideToHandleId(side: ParsedArchEdge['sourceSide']): string | undefined {
   if (side === 'L') return 'left';
   if (side === 'R') return 'right';
@@ -190,18 +222,27 @@ function parseArchitecture(input: string): { nodes: FlowNode[]; edges: FlowEdge[
   const nodeFirstDefinedAt = new Map<string, number>();
   const diagnostics: string[] = [];
   let hasHeader = false;
+  let title: string | undefined;
 
   for (const [index, rawLine] of lines.entries()) {
     const lineNumber = index + 1;
     const line = rawLine.trim();
     if (!line || line.startsWith('%%')) continue;
-    if (/^title\b/i.test(line)) continue;
 
     if (/^architecture(?:-beta)?\b/i.test(line)) {
       hasHeader = true;
       continue;
     }
     if (!hasHeader) continue;
+
+    const titleMatch = line.match(/^title\s+(.+)$/i);
+    if (titleMatch) {
+      const nextTitle = stripQuotes(titleMatch[1]);
+      if (nextTitle) {
+        title = nextTitle;
+      }
+      continue;
+    }
 
     const node = parseNodeLine(line);
     if (node) {
@@ -257,7 +298,9 @@ function parseArchitecture(input: string): { nodes: FlowNode[]; edges: FlowEdge[
   }
 
   const nodeIds = new Set(parsedNodes.map((node) => node.id));
+  const layerRanks = buildArchitectureLayerRanks(parsedNodes);
   const nodes: FlowNode[] = parsedNodes.map((node, index) => {
+    const layerRank = resolveArchitectureLayerRank(node, layerRanks);
     let mappedNode: FlowNode = {
       id: node.id,
       type: 'architecture',
@@ -270,9 +313,12 @@ function parseArchitecture(input: string): { nodes: FlowNode[]; edges: FlowEdge[
         color: resolveArchKindColor(node.kind),
         shape: node.kind === 'group' ? 'rounded' : 'rectangle',
         icon: resolveArchKindIcon(node.kind),
+        archTitle: index === 0 ? title : undefined,
         archProvider: node.icon || (node.kind === 'group' ? 'group' : 'custom'),
         archResourceType: node.kind,
         archBoundaryId: node.parentId,
+        archLayerRank: layerRank,
+        archLayerLabel: node.parentId || node.id,
       },
     };
 

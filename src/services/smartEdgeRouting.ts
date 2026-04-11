@@ -3,24 +3,14 @@ import { NODE_WIDTH, NODE_HEIGHT } from '../constants';
 import type { ViewSettings } from '@/store/types';
 import { getNodeParentId } from '@/lib/nodeParent';
 import { getNodeHandleIdForSide, type HandleSide } from '@/lib/nodeHandles';
+import { resolveNodeSize } from '@/components/nodeHelpers';
+import { estimateWrappedTextBox, DEFAULT_MAX_WIDTH } from './elk-layout/textSizing';
+import { readMermaidImportedEdgeMetadata } from './mermaid/importProvenance';
 
-/**
- * Assign intelligent `sourceHandle` and `targetHandle` to each edge
- * based on the relative positions of connected nodes.
- *
- * This produces natural edge routing:
- * - If target is below source → bottom→top
- * - If target is right of source → right→left
- * - Bidirectional edges use different handle pairs
- * - Multiple edges between same pair distribute across handles
- */
-// Helper to get absolute position
-function getAbsolutePosition(node: FlowNode, nodeMap: Map<string, FlowNode>): { x: number, y: number } {
-    // We intentionally ignore node.positionAbsolute here because during drag operations
-    // in React Flow, the positionAbsolute might be stale or not yet updated in the store
-    // while node.position (relative) is updated.
-    // To ensure smooth "magnetic" routing, we always calculate absolute position
-    // from the hierarchy.
+// Walks the parent hierarchy to get the canvas-absolute position of a node.
+// Uses node.position (relative) rather than positionAbsolute, which can be
+// stale during drag operations before React Flow updates the store.
+function getAbsolutePosition(node: FlowNode, nodeMap: Map<string, FlowNode>): { x: number; y: number } {
 
     let x = node.position.x;
     let y = node.position.y;
@@ -39,33 +29,25 @@ function getAbsolutePosition(node: FlowNode, nodeMap: Map<string, FlowNode>): { 
     return { x, y };
 }
 
-// Helper to get node dimensions robustly
-function getNodeDimensions(node: FlowNode): { width: number, height: number } {
-    const measured = (node as FlowNode & {
-        measured?: {
-            width?: number;
-            height?: number;
-        };
-    }).measured;
-    if (measured && measured.width && measured.height) {
+function getNodeDimensions(node: FlowNode): { width: number; height: number } {
+    const measured = (node as FlowNode & { measured?: { width?: number; height?: number } }).measured;
+    if (measured?.width && measured?.height) {
         return { width: measured.width, height: measured.height };
     }
 
-    const styleWidth = node.style?.width;
-    const styleHeight = node.style?.height;
+    const resolved = resolveNodeSize(node);
+    if (resolved.width && resolved.height) {
+        return resolved;
+    }
 
-    const w = typeof styleWidth === 'string' && styleWidth.endsWith('px')
-        ? parseFloat(styleWidth)
-        : (typeof styleWidth === 'number' ? styleWidth : null);
-
-    const h = typeof styleHeight === 'string' && styleHeight.endsWith('px')
-        ? parseFloat(styleHeight)
-        : (typeof styleHeight === 'number' ? styleHeight : null);
-
-    return {
-        width: w ?? node.width ?? NODE_WIDTH,
-        height: h ?? node.height ?? NODE_HEIGHT
-    };
+    // Match ELK's text-based estimation so handle assignment uses the same
+    // assumed size that ELK used when computing node positions.
+    const estimate = estimateWrappedTextBox(String(node.data?.label ?? ''), {
+      minWidth: NODE_WIDTH,
+      minHeight: NODE_HEIGHT,
+      maxWidth: DEFAULT_MAX_WIDTH,
+    });
+    return { width: estimate.width, height: estimate.height };
 }
 
 type RoutingContext = {
@@ -120,27 +102,22 @@ function preserveEdgeLabelPlacement(originalEdge: FlowEdge, nextEdge: FlowEdge):
     };
 }
 
+export function handleSideFromVector(dx: number, dy: number): HandleSide {
+    if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? 'right' : 'left';
+    return dy >= 0 ? 'bottom' : 'top';
+}
+
 function resolveAutoHandleSides(
     dx: number,
     dy: number,
     profile: SmartRoutingOptions['profile']
 ): { sourceHandleSide: HandleSide; targetHandleSide: HandleSide } {
-    const verticalDominance = profile === 'infrastructure'
-        ? Math.abs(dy) > Math.abs(dx) * 1.25
-        : Math.abs(dy) >= Math.abs(dx);
-
-    if (verticalDominance) {
-        if (dy >= 0) {
-            return { sourceHandleSide: 'bottom', targetHandleSide: 'top' };
-        }
-        return { sourceHandleSide: 'top', targetHandleSide: 'bottom' };
-    }
-
-    if (dx >= 0) {
-        return { sourceHandleSide: 'right', targetHandleSide: 'left' };
-    }
-
-    return { sourceHandleSide: 'left', targetHandleSide: 'right' };
+    // Infrastructure uses a 1.25x bias toward horizontal routing by
+    // reducing the vertical component before side selection.
+    const effectiveDy = profile === 'infrastructure' ? dy / 1.25 : dy;
+    const sourceSide = handleSideFromVector(dx, effectiveDy);
+    const targetSide = handleSideFromVector(-dx, -effectiveDy);
+    return { sourceHandleSide: sourceSide, targetHandleSide: targetSide };
 }
 
 function buildRoutingContext(nodes: FlowNode[], _edges: FlowEdge[]): RoutingContext {
@@ -202,6 +179,43 @@ export function assignSmartHandlesWithOptions(
     const profile = options.profile ?? 'standard';
 
     return edges.map((edge) => {
+        if (edge.data?.routingMode === 'import-fixed') {
+            return edge;
+        }
+
+        const importedEdgeMetadata = readMermaidImportedEdgeMetadata(edge);
+        if (
+            importedEdgeMetadata
+            && importedEdgeMetadata.hasFixedRoute === false
+        ) {
+            const preservedSourceHandle =
+                typeof edge.sourceHandle === 'string'
+                    ? edge.sourceHandle
+                    : importedEdgeMetadata.preferredSourceHandle;
+            const preservedTargetHandle =
+                typeof edge.targetHandle === 'string'
+                    ? edge.targetHandle
+                    : importedEdgeMetadata.preferredTargetHandle;
+
+            if (
+                typeof preservedSourceHandle === 'string'
+                && typeof preservedTargetHandle === 'string'
+            ) {
+                if (
+                    edge.sourceHandle === preservedSourceHandle
+                    && edge.targetHandle === preservedTargetHandle
+                ) {
+                    return edge;
+                }
+
+                return {
+                    ...edge,
+                    sourceHandle: preservedSourceHandle,
+                    targetHandle: preservedTargetHandle,
+                };
+            }
+        }
+
         const sourceNode = nodeMap.get(edge.source);
         const targetNode = nodeMap.get(edge.target);
 

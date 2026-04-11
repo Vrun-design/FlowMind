@@ -1,4 +1,5 @@
 import type { FlowEdge } from '@/lib/types';
+import { clearStoredRouteData } from '@/lib/edgeRouteData';
 
 export function releaseStaleElkRoutesForNodeIds(
   edges: FlowEdge[],
@@ -15,18 +16,21 @@ export function releaseStaleElkRoutesForNodeIds(
       return edge;
     }
 
-    if ((edge.data?.elkPoints?.length ?? 0) === 0 && edge.data?.routingMode !== 'elk') {
+    const hasStoredAutoRoute =
+      (edge.data?.elkPoints?.length ?? 0) > 0
+      || (edge.data?.importRoutePoints?.length ?? 0) > 0
+      || typeof edge.data?.importRoutePath === 'string'
+      || edge.data?.routingMode === 'elk'
+      || edge.data?.routingMode === 'import-fixed';
+
+    if (!hasStoredAutoRoute) {
       return edge;
     }
 
     changed = true;
     return {
       ...edge,
-      data: {
-        ...edge.data,
-        routingMode: 'auto' as const,
-        elkPoints: undefined,
-      },
+      data: clearStoredRouteData(edge),
     };
   });
 

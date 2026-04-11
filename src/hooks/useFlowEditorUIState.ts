@@ -42,7 +42,7 @@ export function useFlowEditorUIState(): UseFlowEditorUIStateResult {
     const [commandBarView, setCommandBarView] = useState<CommandBarView>('root');
     const [editorMode, setEditorMode] = useState<FlowEditorMode>('canvas');
     const [studioTab, setStudioTab] = useState<StudioTab>('ai');
-    const [studioCodeMode, setStudioCodeMode] = useState<StudioCodeMode>('openflow');
+    const [studioCodeMode, setStudioCodeMode] = useState<StudioCodeMode>('mermaid');
     const [isSelectMode, setIsSelectMode] = useState(true);
     const [isArchitectureRulesOpen, setIsArchitectureRulesOpen] = useState(false);
 

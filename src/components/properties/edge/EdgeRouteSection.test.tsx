@@ -60,6 +60,26 @@ describe('EdgeRouteSection', () => {
         expect(screen.getByText(/connector routing is automatic/i)).toBeTruthy();
     });
 
+    it('shows preserved Mermaid endpoint state after fixed geometry is released', () => {
+        render(
+            <EdgeRouteSection
+                selectedEdge={createEdge({
+                    data: {
+                        routingMode: 'auto',
+                        _mermaidImportedEdge: {
+                            source: 'official-flowchart',
+                            fidelity: 'renderer-backed',
+                            hasFixedRoute: false,
+                        },
+                    },
+                })}
+                onChange={vi.fn()}
+            />
+        );
+
+        expect(screen.getByText(/mermaid preserved endpoints/i)).toBeTruthy();
+    });
+
     it('resets manual bends back to auto when no elk route exists', () => {
         const onChange = vi.fn();
         render(

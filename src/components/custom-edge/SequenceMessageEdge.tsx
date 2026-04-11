@@ -7,7 +7,7 @@ import {
   SEQ_ACTOR_EXTRA_H,
   SEQ_MSG_OFFSET,
   SEQ_MSG_SPACING,
-} from '@/components/custom-nodes/SequenceParticipantNode';
+} from '@/services/sequence/layoutConstants';
 
 // Resolved at edge render time from source node data (passed via edge data).
 const SELF_LOOP_W = 56;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 import { useReactFlow, toFlowNode } from '@/lib/reactflowCompat';
@@ -26,6 +26,12 @@ import { useSelectionActions } from '@/store/selectionHooks';
 import { useTabActions, useActiveTabId } from '@/store/tabHooks';
 import { useCanvasViewSettings } from '@/store/viewHooks';
 import { useMermaidDiagnosticsActions } from '@/store/selectionHooks';
+import {
+  clearImportLayoutMetadata,
+  isImportPendingLayoutNode,
+  readImportLayoutMetadata,
+} from '@/services/importLayoutMetadata';
+import { composeDiagramForDisplay } from '@/services/composeDiagramForDisplay';
 
 interface FlowCanvasProps {
   recordHistory: () => void;
@@ -52,6 +58,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
     largeGraphSafetyMode,
     largeGraphSafetyProfile,
     architectureStrictMode,
+    mermaidImportMode,
   } = useCanvasViewSettings();
   const { layers } = useFlowStore(
     useShallow((state) => ({
@@ -76,6 +83,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const lastInteractionScreenPositionRef = useRef<{ x: number; y: number } | null>(null);
   const connectMenuSetterRef = useRef<((value: ConnectMenuState | null) => void) | null>(null);
+  const importStabilizationSignatureRef = useRef<string | null>(null);
 
   const { screenToFlowPosition, fitView } = useReactFlow();
   const clearPaneSelection = useCallback((): void => {
@@ -240,6 +248,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
 
   const { handleCanvasPaste } = useFlowCanvasPaste({
     architectureStrictMode,
+    mermaidImportMode,
     activeTabId,
     fitView,
     updateTab,
@@ -265,6 +274,122 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
       setEdgeInteractionLowDetailMode(false);
     };
   }, [interactionLowDetailModeActive]);
+
+  // Stable signal: changes only when import-pending node IDs or their measured
+  // state change — not on every node array reference update.
+  const importStabilizationKey = useMemo(() => {
+    const pending = nodes.filter(isImportPendingLayoutNode);
+    if (pending.length === 0) return null;
+    return pending
+      .map((n) => {
+        const m = (n as FlowNode & { measured?: { width?: number; height?: number } }).measured;
+        return `${n.id}:${m?.width ?? '?'}x${m?.height ?? '?'}`;
+      })
+      .join('|');
+  }, [nodes]);
+
+  useEffect(() => {
+    if (!importStabilizationKey) {
+      importStabilizationSignatureRef.current = null;
+      return;
+    }
+
+    const pendingImportNodes = nodes.filter(isImportPendingLayoutNode);
+    const metadata = readImportLayoutMetadata(pendingImportNodes);
+    if (!metadata || importStabilizationSignatureRef.current === metadata.signature) {
+      return;
+    }
+
+    const measurableNodes = pendingImportNodes.filter((node) => node.type !== 'section');
+    const allMeasured =
+      measurableNodes.length > 0
+      && measurableNodes.every((node) => {
+        const m = (node as FlowNode & { measured?: { width?: number; height?: number } }).measured;
+        return typeof m?.width === 'number' && typeof m?.height === 'number';
+      });
+
+    if (!allMeasured) {
+      return;
+    }
+
+    importStabilizationSignatureRef.current = metadata.signature;
+
+    const runConvergenceLoop = async (signature: string): Promise<void> => {
+      const { clearLayoutCache } = await import('@/services/elkLayout');
+      const { assignSmartHandles } = await import('@/services/smartEdgeRouting');
+
+      // Up to 3 layout passes until node positions converge within 1px.
+      // Mermaid.js does the same — first pass uses estimated sizes, subsequent
+      // passes use React Flow's measured dimensions for precision.
+      const MAX_PASSES = 3;
+      const CONVERGENCE_THRESHOLD_PX = 1;
+
+      let prevPositions: Map<string, { x: number; y: number }> | null = null;
+
+      for (let pass = 0; pass < MAX_PASSES; pass++) {
+        const state = useFlowStore.getState();
+        const currentMetadata = readImportLayoutMetadata(state.nodes);
+        if (!currentMetadata || currentMetadata.signature !== signature) return;
+
+        clearLayoutCache();
+        const { nodes: layoutedNodes, edges: layoutedEdges } = await composeDiagramForDisplay(
+          state.nodes,
+          state.edges,
+          {
+            direction: currentMetadata.direction,
+            spacing: currentMetadata.spacing,
+            contentDensity: currentMetadata.contentDensity,
+            diagramType: currentMetadata.diagramType,
+            source: 'import',
+          }
+        );
+
+        const nextPositions = new Map(layoutedNodes.map((n) => [n.id, n.position]));
+
+        const converged =
+          prevPositions !== null &&
+          layoutedNodes.every((n) => {
+            const prev = prevPositions!.get(n.id);
+            return (
+              prev !== undefined &&
+              Math.abs(n.position.x - prev.x) <= CONVERGENCE_THRESHOLD_PX &&
+              Math.abs(n.position.y - prev.y) <= CONVERGENCE_THRESHOLD_PX
+            );
+          });
+
+        prevPositions = nextPositions;
+
+        const latestMetadata = readImportLayoutMetadata(useFlowStore.getState().nodes);
+        if (!latestMetadata || latestMetadata.signature !== signature) return;
+
+        const smartEdges = assignSmartHandles(layoutedNodes, layoutedEdges);
+        const finalNodes = converged || pass === MAX_PASSES - 1
+          ? clearImportLayoutMetadata(layoutedNodes)
+          : layoutedNodes;
+
+        setNodes(finalNodes);
+        setEdges(smartEdges);
+
+        if (converged) break;
+
+        // Yield to React to render and measure the updated nodes before next pass.
+        await new Promise<void>((resolve) => { window.setTimeout(resolve, 60); });
+      }
+
+      fitView({ duration: 500, padding: 0.2 });
+    };
+
+    const timer = window.setTimeout(() => {
+      void runConvergenceLoop(metadata.signature).finally(() => {
+        if (importStabilizationSignatureRef.current === metadata.signature) {
+          importStabilizationSignatureRef.current = null;
+        }
+      });
+    // Wait for React to render and measure nodes before first pass.
+    }, 60);
+
+    return () => window.clearTimeout(timer);
+  }, [fitView, importStabilizationKey, nodes, setEdges, setNodes]);
 
   const selectedNodeCount = nodes.filter((node) => node.selected).length;
   const selectedEdgeCount = edges.filter((edge) => edge.selected).length;

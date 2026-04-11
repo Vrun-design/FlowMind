@@ -856,7 +856,11 @@
       "architectureStrictMode": "アーキテクチャStrictモード",
       "architectureStrictModeDesc": "アーキテクチャ診断が回復/検証の問題を含む場合、Mermaidインポートをブロック",
       "miniMap": "ミニマップ",
-      "miniMapDesc": "右下にミニマップを表示"
+      "miniMapDesc": "右下にミニマップを表示",
+      "mermaidImportMode": "Mermaid Import Mode",
+      "mermaidImportModeRenderer": "Fidelity-first",
+      "mermaidImportModeEditable": "Editable-first",
+      "mermaidImportModeDesc": "Controls how Mermaid diagrams are imported to the canvas."
     },
     "ai": {
       "provider": "プロバイダー",

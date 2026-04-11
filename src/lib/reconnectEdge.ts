@@ -1,16 +1,7 @@
 import type { Connection } from '@/lib/reactflowCompat';
 import type { FlowEdge, FlowNode } from '@/lib/types';
+import { clearStoredRouteData } from '@/lib/edgeRouteData';
 import { normalizeNodeHandleId } from '@/lib/nodeHandles';
-
-function clearStoredRouteData(edge: FlowEdge): FlowEdge['data'] {
-  return {
-    ...edge.data,
-    routingMode: 'auto' as const,
-    elkPoints: undefined,
-    waypoint: undefined,
-    waypoints: undefined,
-  };
-}
 
 export function buildReconnectedEdge(
   oldEdge: FlowEdge,

@@ -16,10 +16,12 @@ interface ParsedMessage {
 }
 
 interface ParsedFragment {
+  id: string;
   type: 'alt' | 'loop' | 'opt' | 'par' | 'break' | 'critical';
   condition: string;
+  branchKind: 'start' | 'else' | 'and' | 'option';
   startOrder: number;
-  elseOrder?: number;
+  endOrder: number;
 }
 
 interface ParsedActivation {
@@ -31,8 +33,32 @@ interface ParsedActivation {
 interface ParsedNote {
   text: string;
   target: string;
+  targetIds: string[];
   position: 'over' | 'left' | 'right';
   order: number;
+  fragment?: {
+    type: ParsedFragment['type'];
+    condition: string;
+    branchKind: ParsedFragment['branchKind'];
+  };
+}
+
+function getSequenceFragmentColor(fragmentType: ParsedFragment['type']): string {
+  switch (fragmentType) {
+    case 'loop':
+      return 'blue';
+    case 'opt':
+      return 'amber';
+    case 'critical':
+      return 'red';
+    default:
+      return 'violet';
+  }
+}
+
+function getParticipantLaneIndex(participants: ParsedParticipant[], participantId: string): number {
+  const laneIndex = participants.findIndex((participant) => participant.id === participantId);
+  return Math.max(0, laneIndex);
 }
 
 function resolveMessageKind(arrow: string): ParsedMessage['kind'] {
@@ -59,10 +85,56 @@ function parseSequence(input: string): {
   let hasHeader = false;
   let messageOrder = 0;
   const fragmentStack: Array<{
+    id: string;
     type: ParsedFragment['type'];
     condition: string;
+    branchKind: ParsedFragment['branchKind'];
     startOrder: number;
   }> = [];
+
+  function pushCompletedFragmentBranch(
+    fragment: {
+      id: string;
+      type: ParsedFragment['type'];
+      condition: string;
+      branchKind: ParsedFragment['branchKind'];
+      startOrder: number;
+    }
+  ): void {
+    fragments.push({
+      id: `${fragment.id}-branch-${fragments.length + 1}`,
+      type: fragment.type,
+      condition: fragment.condition,
+      branchKind: fragment.branchKind,
+      startOrder: fragment.startOrder,
+      endOrder: messageOrder,
+    });
+  }
+
+  function switchFragmentBranch(
+    line: string,
+    params: {
+      keyword: 'else' | 'and' | 'option';
+      allowedType: 'alt' | 'par' | 'critical';
+      branchKind: 'else' | 'and' | 'option';
+    }
+  ): boolean {
+    const match = line.match(new RegExp(`^${params.keyword}\\s+(.+)$`, 'i'));
+    if (!match || fragmentStack.length === 0) {
+      return false;
+    }
+
+    const top = fragmentStack[fragmentStack.length - 1];
+    if (top.type !== params.allowedType) {
+      return true;
+    }
+
+    pushCompletedFragmentBranch(top);
+    top.condition = match[1].trim();
+    top.branchKind = params.branchKind;
+    top.startOrder = messageOrder;
+    return true;
+  }
 
   function ensureParticipant(name: string): void {
     if (knownIds.has(name)) return;
@@ -108,33 +180,49 @@ function parseSequence(input: string): {
     const fragmentMatch = line.match(/^(alt|loop|opt|par|break|critical)\s+(.+)$/i);
     if (fragmentMatch) {
       fragmentStack.push({
+        id: `seq-fragment-${fragmentStack.length + fragments.length + 1}`,
         type: fragmentMatch[1].toLowerCase() as ParsedFragment['type'],
         condition: fragmentMatch[2].trim(),
+        branchKind: 'start',
         startOrder: messageOrder,
       });
       continue;
     }
 
-    const elseMatch = line.match(/^else\s+(.+)$/i);
-    if (elseMatch && fragmentStack.length > 0) {
-      const top = fragmentStack[fragmentStack.length - 1];
-      if (top.type === 'alt') {
-        fragments.push({
-          type: top.type,
-          condition: top.condition,
-          startOrder: top.startOrder,
-          elseOrder: messageOrder,
-        });
-        top.condition = elseMatch[1].trim();
-        top.startOrder = messageOrder;
-      }
+    if (
+      switchFragmentBranch(line, {
+        keyword: 'else',
+        allowedType: 'alt',
+        branchKind: 'else',
+      })
+    ) {
+      continue;
+    }
+
+    if (
+      switchFragmentBranch(line, {
+        keyword: 'and',
+        allowedType: 'par',
+        branchKind: 'and',
+      })
+    ) {
+      continue;
+    }
+
+    if (
+      switchFragmentBranch(line, {
+        keyword: 'option',
+        allowedType: 'critical',
+        branchKind: 'option',
+      })
+    ) {
       continue;
     }
 
     if (/^end\b/i.test(line)) {
       if (fragmentStack.length > 0) {
         const top = fragmentStack.pop()!;
-        fragments.push({ type: top.type, condition: top.condition, startOrder: top.startOrder });
+        pushCompletedFragmentBranch(top);
       }
       continue;
     }
@@ -149,7 +237,20 @@ function parseSequence(input: string): {
       const text = noteMatch[4].trim();
       ensureParticipant(target1);
       if (target2) ensureParticipant(target2);
-      notes.push({ text, target: target1, position, order: messageOrder });
+      notes.push({
+        text,
+        target: target1,
+        targetIds: target2 ? [target1, target2] : [target1],
+        position,
+        order: messageOrder,
+        fragment: fragmentStack.length > 0
+          ? {
+              type: fragmentStack[fragmentStack.length - 1].type,
+              condition: fragmentStack[fragmentStack.length - 1].condition,
+              branchKind: fragmentStack[fragmentStack.length - 1].branchKind,
+            }
+          : undefined,
+      });
       continue;
     }
 
@@ -197,11 +298,14 @@ function parseSequence(input: string): {
   const LANE_WIDTH = 220;
   const participantKindMap = new Map(participants.map((p) => [p.id, p.kind]));
 
-  const activationByParticipant = new Map<string, number[]>();
+  const activationByParticipant = new Map<string, Array<{ order: number; activate: boolean }>>();
   for (const act of activations) {
     if (!activationByParticipant.has(act.participant))
       activationByParticipant.set(act.participant, []);
-    activationByParticipant.get(act.participant)!.push(act.order);
+    activationByParticipant.get(act.participant)!.push({
+      order: act.order,
+      activate: act.activate,
+    });
   }
 
   const nodes: FlowNode[] = participants.map((p, i) => ({
@@ -217,10 +321,7 @@ function parseSequence(input: string): {
   }));
 
   const edges: FlowEdge[] = messages.map((msg, i) => {
-    const frag = fragments.find((f) => {
-      const end = f.elseOrder !== undefined ? f.elseOrder : f.startOrder;
-      return i >= f.startOrder && i <= end;
-    });
+    const frag = [...fragments].reverse().find((f) => i >= f.startOrder && i <= f.endOrder);
 
     return {
       id: `e-seq-${i + 1}`,
@@ -235,7 +336,14 @@ function parseSequence(input: string): {
         seqMessageOrder: i,
         sourceIsActor: participantKindMap.get(msg.from) === 'actor',
         targetIsActor: participantKindMap.get(msg.to) === 'actor',
-        seqFragment: frag ? { type: frag.type, condition: frag.condition, edgeIds: [] } : undefined,
+        seqFragment: frag
+          ? {
+              type: frag.type,
+              condition: frag.condition,
+              branchKind: frag.branchKind,
+              edgeIds: [],
+            }
+          : undefined,
       },
     };
   });
@@ -243,17 +351,46 @@ function parseSequence(input: string): {
   const noteNodes: FlowNode[] = notes.map((note, i) => ({
     id: `seq-note-${i + 1}`,
     type: 'sequence_note',
-    position: { x: 0, y: 0 },
+    position: {
+      x: getParticipantLaneIndex(participants, note.target) * LANE_WIDTH
+        + (note.position === 'left' ? -160 : note.position === 'right' ? 160 : 0),
+      y: 110 + note.order * 110,
+    },
     data: {
       label: note.text,
       seqNoteTarget: note.target,
+      seqNoteTargets: note.targetIds,
       seqNotePosition: note.position,
       seqMessageOrder: note.order,
+      seqFragment: note.fragment
+        ? {
+            type: note.fragment.type,
+            condition: note.fragment.condition,
+            branchKind: note.fragment.branchKind,
+            edgeIds: [],
+          }
+        : undefined,
+    },
+  }));
+
+  const fragmentNodes: FlowNode[] = fragments.map((fragment, index) => ({
+    id: fragment.id,
+    type: 'annotation',
+    position: {
+      x: -260,
+      y: 80 + fragment.startOrder * 110 + index * 12,
+    },
+    data: {
+      label: fragment.type.toUpperCase(),
+      subLabel: fragment.condition,
+      color: getSequenceFragmentColor(fragment.type),
+      seqFragmentId: fragment.id,
+      seqMessageOrder: fragment.startOrder,
     },
   }));
 
   return {
-    nodes: [...nodes, ...noteNodes],
+    nodes: [...nodes, ...noteNodes, ...fragmentNodes],
     edges,
     ...(diagnostics.length > 0 ? { diagnostics } : {}),
   };
