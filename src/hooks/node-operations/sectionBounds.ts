@@ -1,5 +1,6 @@
 import type { FlowNode } from '@/lib/types';
 import { getNodeParentId } from '@/lib/nodeParent';
+import { isMermaidImportedContainerNode } from '@/services/mermaid/importProvenance';
 import { resolveNodeSize } from '@/components/nodeHelpers';
 
 export const SECTION_MIN_WIDTH = 200;
@@ -16,6 +17,24 @@ export interface NodeBounds {
   width: number;
   height: number;
 }
+
+export interface SectionLayoutMetrics {
+  contentPaddingTop: number;
+  contentPaddingBottom: number;
+  contentPaddingX: number;
+}
+
+const DEFAULT_SECTION_LAYOUT_METRICS: SectionLayoutMetrics = {
+  contentPaddingTop: SECTION_CONTENT_PADDING_TOP,
+  contentPaddingBottom: SECTION_PADDING_BOTTOM,
+  contentPaddingX: SECTION_PADDING_X,
+};
+
+const MERMAID_IMPORTED_SECTION_LAYOUT_METRICS: SectionLayoutMetrics = {
+  contentPaddingTop: 34,
+  contentPaddingBottom: 20,
+  contentPaddingX: 16,
+};
 
 export function getAbsoluteNodePosition(
   node: FlowNode,
@@ -85,13 +104,20 @@ export function isPointInsideBounds(point: { x: number; y: number }, bounds: Nod
 
 export function getSectionContentBounds(section: FlowNode, allNodes: FlowNode[]): NodeBounds {
   const bounds = getAbsoluteNodeBounds(section, allNodes);
+  const metrics = getSectionLayoutMetrics(section);
 
   return {
-    x: bounds.x + SECTION_PADDING_X,
-    y: bounds.y + SECTION_CONTENT_PADDING_TOP,
-    width: Math.max(bounds.width - SECTION_PADDING_X * 2, 1),
-    height: Math.max(bounds.height - SECTION_CONTENT_PADDING_TOP - SECTION_PADDING_BOTTOM, 1),
+    x: bounds.x + metrics.contentPaddingX,
+    y: bounds.y + metrics.contentPaddingTop,
+    width: Math.max(bounds.width - metrics.contentPaddingX * 2, 1),
+    height: Math.max(bounds.height - metrics.contentPaddingTop - metrics.contentPaddingBottom, 1),
   };
+}
+
+export function getSectionLayoutMetrics(section: FlowNode): SectionLayoutMetrics {
+  return isMermaidImportedContainerNode(section)
+    ? MERMAID_IMPORTED_SECTION_LAYOUT_METRICS
+    : DEFAULT_SECTION_LAYOUT_METRICS;
 }
 
 export function isSectionLocked(node: FlowNode): boolean {

@@ -40,6 +40,8 @@ function createMermaidReport(): ImportFidelityReport {
     id: 'import-2',
     source: 'mermaid',
     importState: 'unsupported_family',
+    layoutMode: 'elk_fallback',
+    layoutFallbackReason: 'Mermaid SVG extraction unavailable',
     originalSource: 'gitGraph\ncommit id: "a1"',
     timestamp: '2026-03-30T00:00:00.000Z',
     status: 'failed',
@@ -56,6 +58,33 @@ function createMermaidReport(): ImportFidelityReport {
     summary: {
       warningCount: 0,
       errorCount: 1,
+    },
+  };
+}
+
+function createMermaidLayoutWarningReport(): ImportFidelityReport {
+  return {
+    id: 'import-3',
+    source: 'mermaid',
+    importState: 'editable_full',
+    layoutMode: 'mermaid_preserved_partial',
+    layoutFallbackReason: 'matched 1/2 official flowchart edge routes',
+    originalSource: 'flowchart LR\nA-->B',
+    timestamp: '2026-03-30T00:00:00.000Z',
+    status: 'success_with_warnings',
+    nodeCount: 2,
+    edgeCount: 1,
+    elapsedMs: 11,
+    issues: [
+      {
+        code: 'MERMAID_LAYOUT_PRESERVED',
+        severity: 'warning',
+        message: 'Partial Mermaid layout preserved: matched 1/2 official flowchart edge routes',
+      },
+    ],
+    summary: {
+      warningCount: 1,
+      errorCount: 0,
     },
   };
 }
@@ -97,7 +126,8 @@ describe('ImportRecoveryDialog', () => {
     );
 
     expect(screen.getByText('Unsupported Mermaid family')).toBeTruthy();
-    expect(screen.getByText(/not editable yet/i)).toBeTruthy();
+    expect(screen.getByText('ELK fallback')).toBeTruthy();
+    expect(screen.getByText(/ELK fallback was used/i)).toBeTruthy();
     expect(screen.getByText(/Original Mermaid source is preserved/i)).toBeTruthy();
   });
 
@@ -117,5 +147,19 @@ describe('ImportRecoveryDialog', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Open Mermaid code' }));
     expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows warning-grade Mermaid status when layout degraded despite editable_full parsing', () => {
+    render(
+      <ImportRecoveryDialog
+        fileName="layout-warning.mmd"
+        report={createMermaidLayoutWarningReport()}
+        onRetry={vi.fn()}
+        onClose={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText('Ready with warnings')).toBeTruthy();
+    expect(screen.getByText('Preserved partial Mermaid layout')).toBeTruthy();
   });
 });

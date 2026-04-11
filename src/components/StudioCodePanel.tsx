@@ -122,6 +122,7 @@ export function StudioCodePanel({
     activeTabId,
     updateTab,
     architectureStrictMode: viewSettings.architectureStrictMode,
+    mermaidImportMode: viewSettings.mermaidImportMode,
     setMermaidDiagnostics,
     clearMermaidDiagnostics,
     addToast,

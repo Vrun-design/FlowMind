@@ -8,6 +8,11 @@ const openStudioCode = vi.fn();
 const importRecoveryDialogMock = vi.fn();
 const useMermaidDiagnosticsMock = vi.fn();
 const useFlowEditorScreenModelMock = vi.fn();
+const setNodesMock = vi.fn();
+const setEdgesMock = vi.fn();
+const updateTabMock = vi.fn();
+const setMermaidDiagnosticsMock = vi.fn();
+const clearMermaidDiagnosticsMock = vi.fn();
 
 vi.mock('./FlowCanvas', () => ({
   FlowCanvas: () => <div>FlowCanvas</div>,
@@ -46,6 +51,23 @@ vi.mock('@/components/ImportRecoveryDialog', () => ({
 
 vi.mock('@/store/selectionHooks', () => ({
   useMermaidDiagnostics: () => useMermaidDiagnosticsMock(),
+  useMermaidDiagnosticsActions: () => ({
+    setMermaidDiagnostics: setMermaidDiagnosticsMock,
+    clearMermaidDiagnostics: clearMermaidDiagnosticsMock,
+  }),
+}));
+
+vi.mock('@/store/canvasHooks', () => ({
+  useCanvasActions: () => ({
+    setNodes: setNodesMock,
+    setEdges: setEdgesMock,
+  }),
+}));
+
+vi.mock('@/store/tabHooks', () => ({
+  useTabActions: () => ({
+    updateTab: updateTabMock,
+  }),
 }));
 
 vi.mock('./flow-editor/useFlowEditorScreenModel', () => ({
@@ -65,8 +87,26 @@ function createMermaidDiagnostics() {
   };
 }
 
+function createMermaidLayoutWarningDiagnostics() {
+  return {
+    source: 'code',
+    diagramType: 'flowchart',
+    importState: 'editable_full',
+    layoutMode: 'mermaid_preserved_partial',
+    layoutFallbackReason: 'matched 1/2 official flowchart edge routes',
+    statusLabel: 'Ready to apply',
+    statusDetail: '2 nodes, 1 edges · Partial Mermaid layout preserved',
+    originalSource: 'flowchart LR\nA-->B',
+    diagnostics: [],
+    updatedAt: 1,
+  };
+}
+
 function createFlowEditorScreenModel(
-  importRecoveryState: { fileName: string; report: Pick<ImportFidelityReport, 'source' | 'importState' | 'originalSource'> } | null = null
+  importRecoveryState: {
+    fileName: string;
+    report: Pick<ImportFidelityReport, 'source' | 'importState' | 'layoutMode' | 'originalSource'>;
+  } | null = null
 ) {
   return {
     nodes: [],
@@ -110,6 +150,11 @@ describe('FlowEditor', () => {
   beforeEach(() => {
     openStudioCode.mockReset();
     importRecoveryDialogMock.mockReset();
+    setNodesMock.mockReset();
+    setEdgesMock.mockReset();
+    updateTabMock.mockReset();
+    setMermaidDiagnosticsMock.mockReset();
+    clearMermaidDiagnosticsMock.mockReset();
     useMermaidDiagnosticsMock.mockReturnValue(createMermaidDiagnostics());
     useFlowEditorScreenModelMock.mockReturnValue(createFlowEditorScreenModel());
   });
@@ -144,6 +189,42 @@ describe('FlowEditor', () => {
     expect(props.actionLabel).toBe('Open Mermaid code');
 
     props.onAction?.();
+    expect(openStudioCode).toHaveBeenCalledWith('mermaid');
+  });
+
+  it('passes Mermaid recovery action into the import recovery dialog when parsing is editable_full but report layout degraded', () => {
+    useMermaidDiagnosticsMock.mockReturnValue(null);
+    useFlowEditorScreenModelMock.mockReturnValue(
+      createFlowEditorScreenModel({
+        fileName: 'layout-warning.mmd',
+        report: {
+          source: 'mermaid',
+          importState: 'editable_full',
+          layoutMode: 'mermaid_preserved_partial',
+          originalSource: 'flowchart LR\nA-->B',
+        },
+      })
+    );
+
+    render(<FlowEditor onGoHome={vi.fn()} />);
+
+    expect(importRecoveryDialogMock).toHaveBeenCalled();
+    const props = importRecoveryDialogMock.mock.calls[0][0] as {
+      actionLabel?: string;
+      onAction?: () => void;
+    };
+    expect(props.actionLabel).toBe('Open Mermaid code');
+
+    props.onAction?.();
+    expect(openStudioCode).toHaveBeenCalledWith('mermaid');
+  });
+
+  it('still offers Mermaid code recovery when parsing is editable_full but layout fidelity degraded', () => {
+    useMermaidDiagnosticsMock.mockReturnValue(createMermaidLayoutWarningDiagnostics());
+
+    render(<FlowEditor onGoHome={vi.fn()} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open Mermaid code' }));
     expect(openStudioCode).toHaveBeenCalledWith('mermaid');
   });
 });

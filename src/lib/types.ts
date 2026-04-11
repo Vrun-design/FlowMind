@@ -25,6 +25,13 @@ export const DIAGRAM_TYPES = [
 
 export type DiagramType = (typeof DIAGRAM_TYPES)[number];
 
+export type MermaidImportMode = 'native_editable' | 'renderer_first';
+export type MermaidVisualMode =
+  | 'renderer_exact'
+  | 'editable_exact'
+  | 'editable_partial'
+  | 'editable_fallback';
+
 export function isDiagramType(value: unknown): value is DiagramType {
   return typeof value === 'string' && (DIAGRAM_TYPES as readonly string[]).includes(value);
 }
@@ -45,6 +52,7 @@ export enum NodeType {
   GROUP = 'group',
   SWIMLANE = 'swimlane',
   IMAGE = 'image',
+  MERMAID_SVG = 'mermaid_svg',
   TEXT = 'text',
   BROWSER = 'browser',
   MOBILE = 'mobile',
@@ -62,6 +70,7 @@ export interface NodeIconData {
   secondaryIcon?: string; // Optional secondary icon key
   customIconUrl?: string; // User-uploaded icon (base64 or URL)
   imageUrl?: string; // Base64 or URL
+  mermaidSvg?: string; // Rendered Mermaid SVG markup
 }
 
 export interface NodeVisualStyleData {
@@ -184,6 +193,16 @@ export interface SectionNodeData {
   sectionLocked?: boolean;
   sectionHidden?: boolean;
   sectionCollapsed?: boolean;
+  sectionMermaidId?: string;
+  sectionMermaidTitle?: string;
+}
+
+export interface MermaidSvgNodeData {
+  mermaidSource?: string;
+  mermaidViewBox?: string;
+  mermaidImportMode?: MermaidImportMode;
+  mermaidRendererTheme?: 'default';
+  linkedEditableGraphId?: string;
 }
 
 export interface NodeData
@@ -198,7 +217,8 @@ export interface NodeData
     MindmapNodeData,
     ArchitectureNodeData,
     SequenceNodeData,
-    SectionNodeData {
+    SectionNodeData,
+    MermaidSvgNodeData {
   [key: string]: unknown;
 }
 
@@ -231,7 +251,7 @@ export type FlowNode = LegacyNode<NodeData>;
 
 export interface EdgeData {
   [key: string]: unknown;
-  routingMode?: 'auto' | 'elk' | 'manual';
+  routingMode?: 'auto' | 'elk' | 'manual' | 'import-fixed';
   condition?: EdgeCondition;
   labelOffsetX?: number;
   labelOffsetY?: number;
@@ -252,6 +272,11 @@ export interface EdgeData {
     x: number;
     y: number;
   }[];
+  importRoutePoints?: {
+    x: number;
+    y: number;
+  }[];
+  importRoutePath?: string;
   mindmapBranchKind?: 'root' | 'branch';
   seqMessageKind?: 'sync' | 'async' | 'return' | 'self' | 'create' | 'destroy';
   connectionType?: 'fixed' | 'dynamic';

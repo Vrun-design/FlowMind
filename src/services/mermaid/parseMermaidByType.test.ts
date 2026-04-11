@@ -72,6 +72,20 @@ describe('parseMermaidByType', () => {
     });
   });
 
+  it('preserves Mermaid subgraph identity metadata for editable conversion', () => {
+    const result = parseMermaidByType(`
+      flowchart TD
+      subgraph WritePath["Write Path"]
+        A[Alpha] --> B[Beta]
+      end
+    `);
+
+    const section = result.nodes.find((node) => node.type === 'section');
+    expect(section?.id).toBe('WritePath');
+    expect(section?.data.sectionMermaidId).toBe('WritePath');
+    expect(section?.data.sectionMermaidTitle).toBe('Write Path');
+  });
+
   it('parses supported state diagram families', () => {
     const result = parseMermaidByType(`
       stateDiagram-v2

@@ -44,11 +44,6 @@ function getSpacingDimensions(
       nodeLayer = 84;
   }
 
-  if (options.source === 'import') {
-    nodeNode -= 6;
-    nodeLayer -= 8;
-  }
-
   switch (options.contentDensity) {
     case 'compact':
       nodeNode -= 8;

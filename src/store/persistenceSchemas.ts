@@ -20,6 +20,7 @@ export const persistedViewSettingsSchema = z
     smartRoutingProfile: z.enum(['standard', 'infrastructure']),
     smartRoutingBundlingEnabled: z.boolean(),
     architectureStrictMode: z.boolean(),
+    mermaidImportMode: z.enum(['native_editable', 'renderer_first']),
     largeGraphSafetyMode: z.enum(['auto', 'on', 'off']),
     largeGraphSafetyProfile: z.enum(['performance', 'balanced', 'quality']),
     exportSerializationMode: z.enum(['deterministic', 'legacy']),

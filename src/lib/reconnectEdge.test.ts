@@ -30,6 +30,8 @@ describe('buildReconnectedEdge', () => {
       data: {
         routingMode: 'manual',
         elkPoints: [{ x: 10, y: 10 }],
+        importRoutePoints: [{ x: 15, y: 15 }],
+        importRoutePath: 'M 10 10 L 20 20',
         waypoints: [{ x: 20, y: 20 }],
         waypoint: { x: 30, y: 30 },
       },
@@ -43,6 +45,8 @@ describe('buildReconnectedEdge', () => {
 
     expect(result.data?.routingMode).toBe('auto');
     expect(result.data?.elkPoints).toBeUndefined();
+    expect(result.data?.importRoutePoints).toBeUndefined();
+    expect(result.data?.importRoutePath).toBeUndefined();
     expect(result.data?.waypoints).toBeUndefined();
     expect(result.data?.waypoint).toBeUndefined();
   });

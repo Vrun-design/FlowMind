@@ -1,6 +1,7 @@
 import type { FlowNode, NodeData } from '@/lib/types';
 import { clearNodeParent, getNodeParentId, setNodeParent } from '@/lib/nodeParent';
 import { createId } from '@/lib/id';
+import { isMermaidImportedContainerNode } from '@/services/mermaid/importProvenance';
 import {
   SECTION_PADDING_X,
   SECTION_PADDING_BOTTOM,
@@ -23,6 +24,10 @@ import { createSectionNode } from './nodeFactories';
 import { findSectionTargetAtPoint, getDragTargetPoint } from './sectionHitTesting';
 
 export function fitSectionToChildren(section: FlowNode, allNodes: FlowNode[]): FlowNode[] {
+  if (isMermaidImportedContainerNode(section)) {
+    return allNodes;
+  }
+
   const descendants = getSectionDescendants(section.id, allNodes);
   if (descendants.length === 0) {
     return allNodes;
@@ -309,6 +314,7 @@ export function insertNodeIntoNearestSection(
   const targetSection =
     !absolutePoint &&
     preferredSection &&
+    !isMermaidImportedContainerNode(preferredSection) &&
     !isSectionHidden(preferredSection) &&
     !isSectionLocked(preferredSection)
       ? preferredSection
@@ -401,6 +407,10 @@ export function releaseNodeFromSection(allNodes: FlowNode[], nodeId: string): Fl
 export function bringContentsIntoSection(allNodes: FlowNode[], sectionId: string): FlowNode[] {
   const section = allNodes.find((node) => node.id === sectionId);
   if (!section || section.type !== 'section') {
+    return allNodes;
+  }
+
+  if (isMermaidImportedContainerNode(section)) {
     return allNodes;
   }
 

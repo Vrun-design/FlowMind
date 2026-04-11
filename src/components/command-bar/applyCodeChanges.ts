@@ -20,8 +20,12 @@ import {
   persistLatestImportReport,
 } from '@/services/importFidelity';
 import { composeDiagramForDisplay } from '@/services/composeDiagramForDisplay';
-import type { FlowEdge, FlowNode } from '@/lib/types';
+import type { FlowEdge, FlowNode, MermaidImportMode } from '@/lib/types';
 import { createImportReportOutcome, notifyOperationOutcome } from '@/services/operationFeedback';
+import {
+  importMermaidToCanvas,
+  resolveEffectiveMermaidImportMode,
+} from '@/services/mermaid/rendererFirstImport';
 
 const logger = createLogger({ scope: 'applyCodeChanges' });
 
@@ -35,6 +39,7 @@ interface ApplyCodeChangesParams {
   mode: 'mermaid' | 'openflow';
   code: string;
   architectureStrictMode: boolean;
+  mermaidImportMode?: MermaidImportMode;
   onApply: (nodes: FlowNode[], edges: FlowEdge[]) => void;
   onClose: () => void;
   activeTabId: string;
@@ -54,6 +59,7 @@ export async function applyCodeChanges({
   mode,
   code,
   architectureStrictMode,
+  mermaidImportMode = 'renderer_first',
   onApply,
   onClose,
   activeTabId,
@@ -211,12 +217,55 @@ export async function applyCodeChanges({
       if (isLiveRequestStale(options.liveRequestId, options.source)) {
         return false;
       }
+      const parserDiagnostics = mode === 'mermaid' && 'diagnostics' in res
+        ? normalizeParseDiagnostics(res.diagnostics)
+        : [];
+      const combinedDiagnostics = [...officialDiagnostics, ...parserDiagnostics];
+      const effectiveMermaidImportMode = mode === 'mermaid'
+        ? resolveEffectiveMermaidImportMode(
+            mermaidImportMode,
+            'diagramType' in res ? res.diagramType : undefined
+          )
+        : mermaidImportMode;
+
+      const direction = ('direction' in res && res.direction) ? res.direction : 'TB';
+
+      const canvasImport =
+        mode === 'mermaid'
+          ? await importMermaidToCanvas({
+              parsed: res as typeof res & Parameters<typeof importMermaidToCanvas>[0]['parsed'],
+              source: code,
+              importMode: effectiveMermaidImportMode,
+              layout: {
+                direction,
+                spacing: 'normal',
+                contentDensity: 'balanced',
+              },
+            })
+          : await composeDiagramForDisplay(res.nodes, res.edges, {
+              direction,
+              algorithm: 'layered',
+              spacing: 'normal',
+            }).then((layoutResult) => ({
+              nodes: layoutResult.nodes,
+              edges: layoutResult.edges,
+              layoutMode: layoutResult.layoutMode,
+              layoutFallbackReason: layoutResult.layoutFallbackReason,
+              visualMode: 'editable_fallback' as const,
+            }));
+      if (isLiveRequestStale(options.liveRequestId, options.source)) {
+        return false;
+      }
+
       if (mode === 'mermaid') {
-        const parserDiagnostics = 'diagnostics' in res
-          ? normalizeParseDiagnostics(res.diagnostics)
-          : [];
-        const combinedDiagnostics = [...officialDiagnostics, ...parserDiagnostics];
-        if (combinedDiagnostics.length > 0) {
+        const shouldSurfaceDiagnostics =
+          combinedDiagnostics.length > 0
+          || canvasImport.visualMode === 'renderer_exact'
+          || canvasImport.visualMode !== 'editable_exact'
+          || canvasImport.layoutMode === 'mermaid_preserved_partial'
+          || canvasImport.layoutMode === 'mermaid_partial'
+          || canvasImport.layoutMode === 'elk_fallback';
+        if (shouldSurfaceDiagnostics) {
           setMermaidDiagnostics(
             buildMermaidDiagnosticsSnapshot({
               source: 'code',
@@ -224,8 +273,11 @@ export async function applyCodeChanges({
               importState: 'importState' in res ? res.importState : undefined,
               originalSource: mode === 'mermaid' && 'originalSource' in res ? res.originalSource : code,
               diagnostics: combinedDiagnostics,
-              nodeCount: res.nodes.length,
-              edgeCount: res.edges.length,
+              nodeCount: canvasImport.nodes.length,
+              edgeCount: canvasImport.edges.length,
+              layoutMode: canvasImport.layoutMode,
+              visualMode: canvasImport.visualMode,
+              layoutFallbackReason: canvasImport.layoutFallbackReason,
             })
           );
         } else {
@@ -233,19 +285,18 @@ export async function applyCodeChanges({
         }
       }
 
-      const direction = ('direction' in res && res.direction) ? res.direction : 'TB';
-
-      const { nodes: layoutedNodes, edges: layoutedEdges } = await composeDiagramForDisplay(res.nodes, res.edges, {
-        direction,
-        algorithm: 'layered',
-        spacing: 'normal',
-        diagramType: mode === 'mermaid' && 'diagramType' in res ? res.diagramType : undefined,
-      });
-      if (isLiveRequestStale(options.liveRequestId, options.source)) {
-        return false;
-      }
-
-      onApply(layoutedNodes, layoutedEdges);
+      onApply(
+        mode === 'mermaid'
+          ? canvasImport.nodes.map((node) => ({
+              ...node,
+              data: {
+                ...node.data,
+                _appliedFromMermaidImport: true,
+              },
+            }))
+          : canvasImport.nodes,
+        canvasImport.edges
+      );
       setError(null);
       setDiagnostics([]);
       if (mode === 'mermaid' && 'diagramType' in res && res.diagramType) {
@@ -261,9 +312,11 @@ export async function applyCodeChanges({
         const report = buildImportFidelityReport({
           source: mode === 'mermaid' ? 'mermaid' : 'openflowdsl',
           importState: mode === 'mermaid' && 'importState' in res ? res.importState : undefined,
+          layoutMode: mode === 'mermaid' ? canvasImport.layoutMode : undefined,
+          layoutFallbackReason: mode === 'mermaid' ? canvasImport.layoutFallbackReason : undefined,
           originalSource: mode === 'mermaid' ? ('originalSource' in res ? res.originalSource : code) : undefined,
-          nodeCount: layoutedNodes.length,
-          edgeCount: layoutedEdges.length,
+          nodeCount: canvasImport.nodes.length,
+          edgeCount: canvasImport.edges.length,
           elapsedMs: Math.round(performance.now() - importStart),
           issues,
         });
@@ -287,6 +340,8 @@ export async function applyCodeChanges({
         const report = buildImportFidelityReport({
           source: mode === 'mermaid' ? 'mermaid' : 'openflowdsl',
           importState: mode === 'mermaid' && 'importState' in res ? res.importState : undefined,
+          layoutMode: mode === 'mermaid' ? 'elk_fallback' : undefined,
+          layoutFallbackReason: mode === 'mermaid' ? 'Layout fallback applied after import.' : undefined,
           originalSource: mode === 'mermaid' ? ('originalSource' in res ? res.originalSource : code) : undefined,
           nodeCount: res.nodes.length,
           edgeCount: res.edges.length,

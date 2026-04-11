@@ -4,6 +4,7 @@ import { enrichNodesWithIcons } from '@/lib/nodeEnricher';
 import { normalizeNodeIconData } from '@/lib/nodeIconState';
 import { useFlowStore } from '@/store';
 import { composeDiagramForDisplay } from '@/services/composeDiagramForDisplay';
+import { assignSmartHandles } from '@/services/smartEdgeRouting';
 
 interface UseFlowEditorCallbacksParams {
   addPage: () => string;
@@ -35,6 +36,23 @@ interface UseFlowEditorCallbacksResult {
   selectAll: () => void;
   handleRestoreSnapshot: (snapshot: FlowSnapshot) => void;
   handleCommandBarApply: (newNodes: FlowNode[], newEdges: FlowEdge[]) => void;
+}
+
+function isMermaidImportApply(node: FlowNode): boolean {
+  return node.data?._appliedFromMermaidImport === true;
+}
+
+function stripMermaidImportApplyFlag(node: FlowNode): FlowNode {
+  if (!isMermaidImportApply(node)) {
+    return node;
+  }
+
+  const data = { ...node.data };
+  delete data._appliedFromMermaidImport;
+  return {
+    ...node,
+    data,
+  };
 }
 
 export function useFlowEditorCallbacks({
@@ -112,10 +130,16 @@ export function useFlowEditorCallbacks({
 
   const handleCommandBarApply = useCallback(
     async (newNodes: FlowNode[], newEdges: FlowEdge[]) => {
-      const enrichedNodes = (await enrichNodesWithIcons(newNodes)).map((node) => ({
+      const incomingMermaidImport =
+        newNodes.some(isMermaidImportApply)
+        || newEdges.some((edge) => edge.data?.routingMode === 'import-fixed');
+      const sanitizedNodes = newNodes.map(stripMermaidImportApplyFlag);
+
+      const enrichedNodes = (await enrichNodesWithIcons(sanitizedNodes)).map((node) => ({
         ...node,
         data: normalizeNodeIconData(node.data),
       }));
+      const routedEdges = assignSmartHandles(enrichedNodes, newEdges);
       recordHistory();
       startTransition(() => {
         setNodes(
@@ -124,9 +148,14 @@ export function useFlowEditorCallbacks({
             data: { ...node.data, freshlyAdded: true, animateDelay: Math.min(index * 20, 400) },
           }))
         );
-        setEdges(newEdges);
+        setEdges(routedEdges);
       });
       setTimeout(() => fitView({ duration: 800, padding: 0.2 }), 100);
+
+      if (incomingMermaidImport) {
+        stabilizationRunIdRef.current += 1;
+        return;
+      }
 
       const runId = stabilizationRunIdRef.current + 1;
       stabilizationRunIdRef.current = runId;

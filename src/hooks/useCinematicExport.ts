@@ -264,6 +264,7 @@ export function useCinematicExport({
           height: exportCapture.height,
           fps: timeline.preset.fps,
           mimeType,
+          videoBitsPerSecond: timeline.preset.videoBitsPerSecond,
           signal: abortController.signal,
           backgroundPainter: (context, width, height) =>
             paintCinematicExportBackground(context, width, height, request.themeMode),

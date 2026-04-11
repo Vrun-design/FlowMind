@@ -40,7 +40,7 @@ const FIXTURE_METADATA = {
     bucket: 'editable_full',
     expectedImportState: 'editable_full',
     structuralAssertions: { minNodes: 3, minEdges: 2 },
-    layoutAssertions: { maxBoundingWidth: 360, maxBoundingHeight: 280, requireUniquePositions: true },
+    layoutAssertions: { maxBoundingWidth: 420, maxBoundingHeight: 320, requireUniquePositions: true },
   },
   'state-invalid-direction': {
     bucket: 'editable_partial',

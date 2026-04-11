@@ -4,8 +4,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Position } from '@/lib/reactflowCompat';
 import type { DesignSystem } from '@/lib/types';
 import { DEFAULT_DESIGN_SYSTEM, useFlowStore } from '@/store';
+import { attachMermaidImportedNodeMetadata } from '@/services/mermaid/importProvenance';
 import CustomNode from './CustomNode';
 import { CustomSmoothStepEdge } from './CustomEdge';
+import SectionNode from './SectionNode';
 import { DEFAULT_EDGE_OPTIONS } from '@/constants';
 
 vi.mock('react-i18next', () => ({
@@ -55,6 +57,7 @@ vi.mock('@/lib/reactflowCompat', async (importOriginal) => {
             setEdges: vi.fn(),
             screenToFlowPosition: ({ x, y }: { x: number; y: number }) => ({ x, y }),
         }),
+        useNodes: () => [],
         useViewport: () => ({ zoom: 1 }),
     };
 });
@@ -242,5 +245,96 @@ describe('Design System integration', () => {
         expect(diagnosticsNode).not.toBeNull();
         expect(diagnosticsNode?.style.width).toBe('100%');
         expect(diagnosticsNode?.style.height).toBe('');
+    });
+
+    it('honors imported Mermaid node geometry instead of generic canvas minimums', () => {
+        const importedNodeData = attachMermaidImportedNodeMetadata(
+            {
+                id: 'decision-1',
+                type: 'decision',
+                position: { x: 0, y: 0 },
+                data: { label: 'Approved?' },
+            } as const,
+            {
+                role: 'leaf',
+                source: 'official-flowchart',
+                fidelity: 'renderer-backed',
+            }
+        ).data;
+
+        const { container } = render(
+            <CustomNode
+                id="decision-1"
+                type="decision"
+                selected={false}
+                dragging={false}
+                zIndex={1}
+                data={importedNodeData}
+                isConnectable={true}
+                xPos={0}
+                yPos={0}
+                sourcePosition={Position.Right}
+                targetPosition={Position.Left}
+                {...({ style: { width: 150, height: 70 } } as { style: CSSProperties })}
+            />
+        );
+
+        const diagnosticsNode = container.querySelector('[data-transform-diagnostics="1"]') as HTMLElement | null;
+        expect(diagnosticsNode).not.toBeNull();
+        expect(diagnosticsNode?.style.minWidth).toBe('150px');
+        expect(diagnosticsNode?.style.minHeight).toBe('70px');
+        expect(diagnosticsNode?.style.width).toBe('150px');
+        expect(diagnosticsNode?.style.height).toBe('70px');
+        expect(diagnosticsNode?.getAttribute('data-transform-compact')).toBe('1');
+        const importedLabelStyle = screen.getByText('Approved?').parentElement?.getAttribute('style') ?? '';
+        expect(importedLabelStyle).toContain('font-family:');
+        // Imported nodes now use the design system font for visual consistency
+        expect(importedLabelStyle).not.toContain('Trebuchet MS');
+        expect(importedLabelStyle).toContain('line-height: 1.1;');
+    });
+
+    it('honors imported Mermaid section geometry instead of generic section minimums', () => {
+        const importedSectionData = attachMermaidImportedNodeMetadata(
+            {
+                id: 'payments',
+                type: 'section',
+                position: { x: 0, y: 0 },
+                data: { label: 'Payments' },
+            } as const,
+            {
+                role: 'container',
+                source: 'official-flowchart',
+                fidelity: 'renderer-backed',
+            }
+        ).data;
+
+        const { container } = render(
+            <SectionNode
+                id="payments"
+                type="section"
+                selected={false}
+                dragging={false}
+                zIndex={1}
+                data={importedSectionData}
+                isConnectable={true}
+                xPos={0}
+                yPos={0}
+                sourcePosition={Position.Right}
+                targetPosition={Position.Left}
+                {...({ style: { width: 260, height: 180 } } as { style: CSSProperties })}
+            />
+        );
+
+        const sectionFrame = Array.from(container.querySelectorAll('div')).find(
+            (element) => element instanceof HTMLElement
+                && element.style.minWidth === '260px'
+                && element.style.minHeight === '180px'
+        ) as HTMLElement | undefined;
+
+        expect(sectionFrame).toBeTruthy();
+        expect(sectionFrame?.getAttribute('data-section-render-variant')).toBe('mermaid-import');
+        expect(screen.getByText('Imported')).toBeTruthy();
+        expect(screen.queryByText(/items?$/)).toBeNull();
+        expect(screen.getByText('Payments').parentElement?.getAttribute('style')).toContain('top: 8px;');
     });
 });

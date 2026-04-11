@@ -169,6 +169,45 @@ export function CanvasSettings(): React.ReactElement {
             checked={viewSettings.architectureStrictMode}
             onChange={(checked) => setViewSettings({ architectureStrictMode: checked })}
           />
+          <div className="rounded-[var(--radius-lg)] border border-[var(--color-brand-border)] bg-[var(--brand-surface)] p-3">
+            <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-[var(--brand-secondary)]">
+              {t('settingsModal.canvas.mermaidImportMode', 'Mermaid Import Mode')}
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                {
+                  mode: 'renderer_first',
+                  label: t('settingsModal.canvas.mermaidImportModeRenderer', 'Fidelity-first'),
+                },
+                {
+                  mode: 'native_editable',
+                  label: t('settingsModal.canvas.mermaidImportModeEditable', 'Editable-first'),
+                },
+              ].map((option) => (
+                <button
+                  key={option.mode}
+                  onClick={() =>
+                    setViewSettings({
+                      mermaidImportMode: option.mode as 'renderer_first' | 'native_editable',
+                    })
+                  }
+                  className={`h-9 rounded-[var(--radius-sm)] border text-xs font-semibold transition-colors ${
+                    viewSettings.mermaidImportMode === option.mode
+                      ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-50)] text-[var(--brand-primary-700)]'
+                      : 'border-[var(--color-brand-border)] text-[var(--brand-text)] hover:border-[var(--brand-primary)]'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-[11px] text-[var(--brand-secondary)]">
+              {t(
+                'settingsModal.canvas.mermaidImportModeDesc',
+                'Fidelity-first keeps Mermaid’s rendered geometry. Editable-first converts directly to native canvas nodes.'
+              )}
+            </p>
+          </div>
 
           <div className="rounded-[var(--radius-lg)] border border-[var(--color-brand-border)] bg-[var(--brand-surface)] p-3">
             <label className="mb-2 block text-[11px] font-semibold uppercase tracking-wider text-[var(--brand-secondary)]">

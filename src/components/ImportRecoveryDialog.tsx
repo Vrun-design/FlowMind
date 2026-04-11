@@ -5,7 +5,7 @@ import {
   getImportRecoveryGuidance,
   type ImportFidelityReport,
 } from '@/services/importFidelity';
-import { getMermaidImportStateLabel } from '@/services/mermaid/importStatePresentation';
+import { getMermaidStatusLabel } from '@/services/mermaid/importStatePresentation';
 import { MODAL_PANEL_CLASS, SECTION_CARD_CLASS, SECTION_SURFACE_CLASS, STATUS_SURFACE_CLASS } from '@/lib/designTokens';
 import { Button } from './ui/Button';
 
@@ -26,6 +26,27 @@ function formatSourceLabel(source: ImportFidelityReport['source']): string {
   return source.toUpperCase();
 }
 
+function formatLayoutLabel(report: ImportFidelityReport): string | null {
+  if (report.source !== 'mermaid' || !report.layoutMode) {
+    return null;
+  }
+
+  if (report.layoutMode === 'mermaid_exact') {
+    return 'Exact Mermaid layout';
+  }
+  if (report.layoutMode === 'mermaid_preserved_partial') {
+    return 'Preserved partial Mermaid layout';
+  }
+  if (report.layoutMode === 'mermaid_partial') {
+    return 'Partial Mermaid extraction with ELK';
+  }
+  if (report.layoutMode === 'elk_fallback') {
+    return 'ELK fallback';
+  }
+
+  return null;
+}
+
 export function ImportRecoveryDialog({
   fileName,
   report,
@@ -38,7 +59,13 @@ export function ImportRecoveryDialog({
   const visibleIssues = report.issues.slice(0, 3);
   const remainingIssueCount = Math.max(0, report.issues.length - visibleIssues.length);
   const mermaidStateLabel =
-    report.source === 'mermaid' ? getMermaidImportStateLabel(report.importState) : null;
+    report.source === 'mermaid'
+      ? getMermaidStatusLabel({
+          importState: report.importState,
+          layoutMode: report.layoutMode,
+        })
+      : null;
+  const layoutLabel = formatLayoutLabel(report);
   const recoveryGuidance = getImportRecoveryGuidance(report);
 
   useEffect(() => {
@@ -89,7 +116,7 @@ export function ImportRecoveryDialog({
         </div>
 
         <div className="space-y-4 px-6 py-5">
-          <div className={`grid gap-3 ${report.source === 'mermaid' ? 'sm:grid-cols-4' : 'sm:grid-cols-3'}`}>
+          <div className={`grid gap-3 ${report.source === 'mermaid' && layoutLabel ? 'sm:grid-cols-5' : report.source === 'mermaid' ? 'sm:grid-cols-4' : 'sm:grid-cols-3'}`}>
             <div className={`${SECTION_CARD_CLASS} px-3 py-3`}>
               <div className="text-[11px] font-semibold uppercase tracking-wide text-[var(--brand-secondary)]">Source</div>
               <div className="mt-1 text-sm font-medium text-[var(--brand-text)]">{formatSourceLabel(report.source)}</div>
@@ -98,6 +125,12 @@ export function ImportRecoveryDialog({
               <div className={`${SECTION_CARD_CLASS} px-3 py-3`}>
                 <div className="text-[11px] font-semibold uppercase tracking-wide text-[var(--brand-secondary)]">Status</div>
                 <div className="mt-1 text-sm font-medium text-[var(--brand-text)]">{mermaidStateLabel}</div>
+              </div>
+            ) : null}
+            {layoutLabel ? (
+              <div className={`${SECTION_CARD_CLASS} px-3 py-3`}>
+                <div className="text-[11px] font-semibold uppercase tracking-wide text-[var(--brand-secondary)]">Layout</div>
+                <div className="mt-1 text-sm font-medium text-[var(--brand-text)]">{layoutLabel}</div>
               </div>
             ) : null}
             <div className={`${SECTION_CARD_CLASS} px-3 py-3`}>

@@ -22,6 +22,7 @@ interface OfficialMermaidRuntime {
     startOnLoad: boolean;
     securityLevel: 'loose';
     suppressErrorRendering: boolean;
+    htmlLabels?: boolean;
   }) => void;
   parse: (
     input: string,
@@ -51,6 +52,7 @@ async function getOfficialMermaidRuntime(): Promise<OfficialMermaidRuntime | nul
             startOnLoad: false,
             securityLevel: 'loose',
             suppressErrorRendering: true,
+            htmlLabels: false,
           });
           initialized = true;
         }

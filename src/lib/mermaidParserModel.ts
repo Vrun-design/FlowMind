@@ -100,7 +100,12 @@ export function registerMermaidNode(
     if (parsed.classes) {
       existing.classes = [...(existing.classes || []), ...parsed.classes];
     }
-    if (!existing.parentId && parentId) {
+    // Only re-parent if this reference is an explicit declaration (has a distinct label
+    // or shape), not a bare ID reference from an edge. A bare edge reference like
+    // `VEC --> RETRIEVE` inside a subgraph should NOT pull VEC into that subgraph if
+    // VEC was already declared outside it — that violates Mermaid's actual membership
+    // semantics where only explicit subgraph-interior declarations create membership.
+    if (!existing.parentId && parentId && parsed.label !== parsed.id) {
       existing.parentId = parentId;
     }
   }

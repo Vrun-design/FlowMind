@@ -1,0 +1,62 @@
+[
+  {
+    "id": "gold-flowchart-auth-decision",
+    "fixtureName": "flowchart-auth-decision",
+    "priority": "p0",
+    "failureModes": ["edge_route_drift", "rank_order_drift"],
+    "userImpact": "Decision branches become hard to scan when route ownership or branching direction drifts from Mermaid.",
+    "successCriteria": [
+      "Decision node remains visually above both outcomes.",
+      "Yes and No branches stay clearly separated left-to-right.",
+      "Imported result stays in a renderer-backed Mermaid outcome when possible."
+    ]
+  },
+  {
+    "id": "gold-flowchart-nested-subgraphs",
+    "fixtureName": "flowchart-nested-subgraphs",
+    "priority": "p0",
+    "failureModes": ["container_geometry_drift", "parent_child_containment_drift"],
+    "userImpact": "Nested subgraphs look unreliable when parent boxes, child offsets, or containment structure drift.",
+    "successCriteria": [
+      "Outer and inner containers keep stable nesting relationships.",
+      "Child nodes stay inside their intended subgraph.",
+      "Container geometry remains visibly intentional rather than auto-fit noise."
+    ]
+  },
+  {
+    "id": "gold-flowchart-subgraph-explicit-id",
+    "fixtureName": "flowchart-subgraph-explicit-id",
+    "priority": "p1",
+    "failureModes": ["container_geometry_drift", "identifier_reconciliation_drift"],
+    "userImpact": "Explicit Mermaid section ids must map cleanly into editable sections or users lose trust in imported structure.",
+    "successCriteria": [
+      "Explicit subgraph id stays stable through import.",
+      "Section title and bounds remain readable.",
+      "Nodes remain attached to the correct imported section."
+    ]
+  },
+  {
+    "id": "gold-flowchart-modern-dotted-ids",
+    "fixtureName": "flowchart-modern-annotation-dotted-ids",
+    "priority": "p1",
+    "failureModes": ["identifier_reconciliation_drift", "node_sizing_readability_drift"],
+    "userImpact": "Modern Mermaid ids with dots are common in infrastructure diagrams and break trust fast when labels or identity drift.",
+    "successCriteria": [
+      "Dotted ids survive reconciliation intact.",
+      "Imported node labels remain readable without overlap.",
+      "Result does not silently degrade identity semantics."
+    ]
+  },
+  {
+    "id": "gold-flowchart-basic",
+    "fixtureName": "flowchart-basic",
+    "priority": "p2",
+    "failureModes": ["node_sizing_readability_drift", "rank_order_drift"],
+    "userImpact": "Even the simplest flowchart must remain visually obvious or all more complex imports feel risky.",
+    "successCriteria": [
+      "Top-to-bottom order remains obvious at a glance.",
+      "Node spacing stays compact and readable.",
+      "Baseline case remains exact Mermaid layout."
+    ]
+  }
+]

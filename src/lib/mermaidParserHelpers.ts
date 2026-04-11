@@ -130,6 +130,10 @@ export interface RawNode {
   parentId?: string;
   styles?: Record<string, string>;
   classes?: string[];
+  metadata?: {
+    sectionMermaidId?: string;
+    sectionMermaidTitle?: string;
+  };
 }
 
 const MODERN_SHAPE_MAP: Record<string, { type: string; shape: NodeData['shape'] }> = {

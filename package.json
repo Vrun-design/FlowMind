@@ -49,7 +49,9 @@
   },
   "dependencies": {
     "@google/genai": "^1.40.0",
+    "@mermaid-js/layout-elk": "^0.2.1",
     "@xyflow/react": "^12.10.1",
+    "dagre": "^0.8.5",
     "elkjs": "^0.11.0",
     "framer-motion": "^12.34.0",
     "html-to-image": "^1.11.13",
@@ -79,6 +81,7 @@
     "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@types/dagre": "^0.7.54",
     "@types/node": "^22.14.0",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@typescript-eslint/eslint-plugin": "^8.55.0",

@@ -47,4 +47,25 @@ describe('MermaidDiagnosticsBanner', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Open Mermaid code' }));
     expect(onAction).toHaveBeenCalledTimes(1);
   });
+
+  it('keeps the Mermaid recovery hint visible when layout fidelity degrades despite editable_full parsing', () => {
+    render(
+      <MermaidDiagnosticsBanner
+        snapshot={{
+          source: 'code',
+          diagramType: 'flowchart',
+          importState: 'editable_full',
+          layoutMode: 'mermaid_preserved_partial',
+          layoutFallbackReason: 'matched 1/2 official flowchart edge routes',
+          statusLabel: 'Ready to apply',
+          statusDetail: '2 nodes, 1 edges · Partial Mermaid layout preserved',
+          originalSource: 'flowchart LR\nA-->B',
+          diagnostics: [],
+          updatedAt: 1,
+        }}
+      />
+    );
+
+    expect(screen.getByText(/Original Mermaid source is preserved/i)).toBeTruthy();
+  });
 });

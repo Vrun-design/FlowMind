@@ -856,7 +856,11 @@
       "architectureStrictMode": "Modo Estricto de Arquitectura",
       "architectureStrictModeDesc": "Bloquear importación de Mermaid cuando los diagnósticos de arquitectura incluyan problemas de recuperación/validación",
       "miniMap": "Minimapa",
-      "miniMapDesc": "Mostrar minimapa en la esquina inferior derecha"
+      "miniMapDesc": "Mostrar minimapa en la esquina inferior derecha",
+      "mermaidImportMode": "Mermaid Import Mode",
+      "mermaidImportModeRenderer": "Fidelity-first",
+      "mermaidImportModeEditable": "Editable-first",
+      "mermaidImportModeDesc": "Controls how Mermaid diagrams are imported to the canvas."
     },
     "ai": {
       "provider": "Proveedor",

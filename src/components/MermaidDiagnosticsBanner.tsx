@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertCircle } from 'lucide-react';
 import type { MermaidDiagnosticsSnapshot } from '@/store/types';
+import { canRecoverMermaidSource } from '@/services/mermaid/recoveryPresentation';
 
 function getMermaidDiagnosticsBannerClass(hasError: boolean): string {
   if (hasError) {
@@ -28,6 +29,11 @@ export function MermaidDiagnosticsBanner({
     || snapshot.statusDetail
     || snapshot.diagnostics[0]?.message
     || 'Mermaid diagnostics are available.';
+  const showRecoveryHint = canRecoverMermaidSource({
+    originalSource: snapshot.originalSource,
+    importState: snapshot.importState,
+    layoutMode: snapshot.layoutMode,
+  });
 
   return (
     <div
@@ -38,7 +44,7 @@ export function MermaidDiagnosticsBanner({
         <span>{snapshot.statusLabel ?? 'Mermaid diagnostics'}</span>
       </div>
       <div className="mt-1 text-[11px] opacity-90">{message}</div>
-      {snapshot.originalSource && snapshot.importState !== 'editable_full' ? (
+      {showRecoveryHint ? (
         <div className="mt-1 text-[11px] opacity-80">
           Original Mermaid source is preserved. Open Mermaid code to continue editing safely.
         </div>

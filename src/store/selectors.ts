@@ -163,6 +163,7 @@ export function selectCanvasViewSettings(
     largeGraphSafetyMode: state.viewSettings.largeGraphSafetyMode,
     largeGraphSafetyProfile: state.viewSettings.largeGraphSafetyProfile,
     architectureStrictMode: state.viewSettings.architectureStrictMode,
+    mermaidImportMode: state.viewSettings.mermaidImportMode,
   };
 }
 

@@ -14,6 +14,8 @@ export interface CinematicResolutionPreset {
   maxDimension: number;
   pixelRatio: number;
   label: string;
+  /** Target video bitrate in bits/sec passed to MediaRecorder. */
+  videoBitsPerSecond: number;
 }
 
 export function getCinematicSpeedMultiplier(speed: CinematicExportSpeed): number {
@@ -36,6 +38,7 @@ export function getCinematicResolutionPreset(
       maxDimension: 1280,
       pixelRatio: 1.5,
       label: '720p',
+      videoBitsPerSecond: 8_000_000,   // 8 Mbps — clean at 720p
     };
   }
 
@@ -44,6 +47,7 @@ export function getCinematicResolutionPreset(
       maxDimension: 3840,
       pixelRatio: 2,
       label: '4k',
+      videoBitsPerSecond: 40_000_000,  // 40 Mbps — near-lossless for 4K diagrams
     };
   }
 
@@ -51,6 +55,7 @@ export function getCinematicResolutionPreset(
     maxDimension: 1920,
     pixelRatio: 2,
     label: '1080p',
+    videoBitsPerSecond: 14_000_000,    // 14 Mbps — high quality 1080p
   };
 }
 

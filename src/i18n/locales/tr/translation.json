@@ -876,7 +876,11 @@
       "architectureStrictMode": "Mimari Katı Modu",
       "architectureStrictModeDesc": "Mimari tanılamalar kurtarma/doğrulama sorunları içerdiğinde Mermaid içe aktarmayı engelle",
       "miniMap": "Mini Harita",
-      "miniMapDesc": "Sağ altta mini haritayı göster"
+      "miniMapDesc": "Sağ altta mini haritayı göster",
+      "mermaidImportMode": "Mermaid Import Mode",
+      "mermaidImportModeRenderer": "Fidelity-first",
+      "mermaidImportModeEditable": "Editable-first",
+      "mermaidImportModeDesc": "Controls how Mermaid diagrams are imported to the canvas."
     },
     "ai": {
       "provider": "Sağlayıcı",

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { FlowNode } from '@/lib/types';
+import { attachMermaidImportedNodeMetadata } from '@/services/mermaid/importProvenance';
 import {
   applySectionParenting,
   autoFitSectionsToChildren,
@@ -9,7 +10,9 @@ import {
   duplicateSectionWithChildren,
   fitSectionToChildren,
   getContainingSectionId,
+  getSectionContentBounds,
   getSectionInsertPosition,
+  getSectionLayoutMetrics,
   insertNodeIntoNearestSection,
   releaseNodeFromSection,
   unparentSectionChildren,
@@ -117,6 +120,20 @@ describe('section node utilities', () => {
     );
   });
 
+  it('does not target imported Mermaid containers for generic live drop parenting', () => {
+    const importedSection = attachMermaidImportedNodeMetadata(
+      makeSectionNode('section-imported', 100, 100, 700, 520),
+      {
+        role: 'container',
+        source: 'official-flowchart',
+        fidelity: 'renderer-backed',
+      }
+    );
+    const draggedNode = makeProcessNode('node-a', 240, 260);
+
+    expect(getContainingSectionId([importedSection, draggedNode], draggedNode)).toBeNull();
+  });
+
   it('duplicates a section with its descendants and preserves hierarchy', () => {
     const section = makeSectionNode('section-1', 120, 140, 500, 400);
     const child = {
@@ -178,6 +195,31 @@ describe('section node utilities', () => {
     expect(fittedSection?.position).toEqual({ x: 320, y: 264 });
   });
 
+  it('does not refit imported Mermaid containers even when explicitly requested', () => {
+    const section = attachMermaidImportedNodeMetadata(
+      {
+        ...makeSectionNode('section-1', 100, 100, 500, 400),
+        data: { label: 'Section', sectionSizingMode: 'fit' },
+      } as FlowNode,
+      {
+        role: 'container',
+        source: 'official-flowchart',
+        fidelity: 'renderer-backed',
+      }
+    );
+    const child = {
+      ...makeProcessNode('node-a', 240, 180),
+      parentId: 'section-1',
+      extent: 'parent' as const,
+    };
+
+    const fittedNodes = fitSectionToChildren(section, [section, child]);
+    const fittedSection = fittedNodes.find((node) => node.id === 'section-1');
+
+    expect(fittedSection?.position).toEqual({ x: 100, y: 100 });
+    expect(fittedSection?.style).toMatchObject({ width: 500, height: 400 });
+  });
+
   it('releases a child from its parent section while preserving absolute position', () => {
     const section = makeSectionNode('section-1', 120, 140, 500, 400);
     const child = {
@@ -203,6 +245,23 @@ describe('section node utilities', () => {
     expect(nextNode?.parentId).toBe('section-1');
   });
 
+  it('does not sweep loose nodes into imported Mermaid containers', () => {
+    const section = attachMermaidImportedNodeMetadata(
+      makeSectionNode('section-1', 100, 100, 500, 400),
+      {
+        role: 'container',
+        source: 'official-flowchart',
+        fidelity: 'renderer-backed',
+      }
+    );
+    const node = makeProcessNode('node-a', 180, 220);
+
+    const nextNodes = bringContentsIntoSection([section, node], 'section-1');
+    const nextNode = nextNodes.find((candidate) => candidate.id === 'node-a');
+
+    expect(nextNode?.parentId).toBeUndefined();
+  });
+
   it('inserts new nodes into an explicitly selected section', () => {
     const section = createSectionNode('section-1', { x: 100, y: 100 }, 'Frame');
     const node = makeProcessNode('node-a', 0, 0);
@@ -214,6 +273,45 @@ describe('section node utilities', () => {
     expect(insertedNode.position).toEqual({
       x: insertPosition.x - section.position.x,
       y: insertPosition.y - section.position.y,
+    });
+  });
+
+  it('does not insert new nodes into an explicitly selected imported Mermaid container', () => {
+    const section = attachMermaidImportedNodeMetadata(
+      createSectionNode('section-1', { x: 100, y: 100 }, 'Frame'),
+      {
+        role: 'container',
+        source: 'official-flowchart',
+        fidelity: 'renderer-backed',
+      }
+    );
+    const node = makeProcessNode('node-a', 0, 0);
+
+    const insertedNode = insertNodeIntoNearestSection([section], node, undefined, 'section-1');
+
+    expect(insertedNode.parentId).toBeUndefined();
+  });
+
+  it('uses Mermaid-aware content bounds for imported containers', () => {
+    const section = attachMermaidImportedNodeMetadata(
+      makeSectionNode('section-1', 100, 100, 500, 400),
+      {
+        role: 'container',
+        source: 'official-flowchart',
+        fidelity: 'renderer-backed',
+      }
+    );
+
+    expect(getSectionLayoutMetrics(section)).toEqual({
+      contentPaddingTop: 34,
+      contentPaddingBottom: 20,
+      contentPaddingX: 16,
+    });
+    expect(getSectionContentBounds(section, [section])).toEqual({
+      x: 116,
+      y: 134,
+      width: 468,
+      height: 346,
     });
   });
 });

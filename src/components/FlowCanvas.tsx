@@ -58,6 +58,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
     largeGraphSafetyMode,
     largeGraphSafetyProfile,
     architectureStrictMode,
+    mermaidImportMode,
   } = useCanvasViewSettings();
   const { layers } = useFlowStore(
     useShallow((state) => ({
@@ -247,6 +248,7 @@ export const FlowCanvas: React.FC<FlowCanvasProps> = ({
 
   const { handleCanvasPaste } = useFlowCanvasPaste({
     architectureStrictMode,
+    mermaidImportMode,
     activeTabId,
     fitView,
     updateTab,

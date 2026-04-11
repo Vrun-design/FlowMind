@@ -949,7 +949,11 @@
       "routingProfileInfrastructure": "Infrastructure",
       "routingProfileHint": "Infrastructure mode biases orthogonal routes for service maps.",
       "edgeBundling": "Bundle Sibling Edges",
-      "edgeBundlingDesc": "Keep parallel connections on shared lanes"
+      "edgeBundlingDesc": "Keep parallel connections on shared lanes",
+      "mermaidImportMode": "Mermaid Import Mode",
+      "mermaidImportModeRenderer": "Fidelity-first",
+      "mermaidImportModeEditable": "Editable-first",
+      "mermaidImportModeDesc": "Controls how Mermaid diagrams are imported to the canvas."
     },
     "analytics": {
       "enableTitle": "Anonymous Launch Analytics",

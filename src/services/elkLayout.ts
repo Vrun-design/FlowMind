@@ -9,6 +9,7 @@ import {
   SECTION_PADDING_X,
 } from '@/hooks/node-operations/sectionBounds';
 import { createLogger } from '@/lib/logger';
+import { clearStoredRouteData } from '@/lib/edgeRouteData';
 import { getNodeParentId } from '@/lib/nodeParent';
 import type { FlowEdge, FlowNode } from '@/lib/types';
 import { assignSmartHandlesWithOptions, handleSideFromVector } from './smartEdgeRouting';
@@ -98,9 +99,9 @@ async function getElkInstance(): Promise<ElkLayoutEngine> {
   return elkInstancePromise;
 }
 
-const IMPORT_NODE_MIN_WIDTH = 160;
-const IMPORT_NODE_MIN_HEIGHT = 52;
-const IMPORT_NODE_MAX_WIDTH = 240;
+const IMPORT_NODE_MIN_WIDTH = 120;
+const IMPORT_NODE_MIN_HEIGHT = 40;
+const IMPORT_NODE_MAX_WIDTH = 320;
 
 function estimateNodeSize(
   node: FlowNode,
@@ -559,11 +560,7 @@ export function resolveLayoutedEdgeHandles(nodes: FlowNode[], edges: FlowEdge[])
 export function rerouteEdges(nodes: FlowNode[], edges: FlowEdge[]): FlowEdge[] {
   return resolveLayoutedEdgeHandles(nodes, edges).map((edge) => ({
     ...edge,
-    data: {
-      ...edge.data,
-      routingMode: 'auto' as const,
-      elkPoints: undefined,
-    },
+    data: clearStoredRouteData(edge),
   }));
 }
 
@@ -785,6 +782,8 @@ export async function getElkLayout(
             routingMode:
               edge.data?.routingMode === 'manual' ? ('manual' as const) : ('auto' as const),
             elkPoints: undefined,
+            importRoutePoints: undefined,
+            importRoutePath: undefined,
           },
         };
       }
@@ -797,6 +796,8 @@ export async function getElkLayout(
             routingMode:
               edge.data?.routingMode === 'manual' ? ('manual' as const) : ('elk' as const),
             elkPoints: points,
+            importRoutePoints: undefined,
+            importRoutePath: undefined,
           },
         };
       }

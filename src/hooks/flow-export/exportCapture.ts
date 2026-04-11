@@ -301,6 +301,7 @@ export async function encodeVideoFromFrames(params: {
   height: number;
   fps: number;
   mimeType: string;
+  videoBitsPerSecond?: number;
   backgroundColor?: string;
   backgroundPainter?: FrameBackgroundPainter;
   signal?: AbortSignal;
@@ -312,6 +313,7 @@ export async function encodeVideoFromFrames(params: {
     height,
     fps,
     mimeType,
+    videoBitsPerSecond,
     backgroundColor,
     backgroundPainter,
     signal,
@@ -319,7 +321,10 @@ export async function encodeVideoFromFrames(params: {
   } = params;
   const { canvas, context } = createExportCanvas(width, height);
   const stream = canvas.captureStream(fps);
-  const recorder = new MediaRecorder(stream, { mimeType });
+  const recorder = new MediaRecorder(stream, {
+    mimeType,
+    ...(videoBitsPerSecond !== undefined ? { videoBitsPerSecond } : {}),
+  });
   const chunks: BlobPart[] = [];
 
   recorder.ondataavailable = (event) => {

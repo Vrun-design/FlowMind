@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useFlowStore } from '@/store';
 
-import type { FlowEdge, FlowNode } from '@/lib/types';
+import type { FlowEdge, FlowNode, MermaidImportMode } from '@/lib/types';
 import type { MermaidDiagnosticsSnapshot } from '@/store/types';
 import {
   createPastedTextNode,
@@ -23,12 +23,13 @@ import {
   validateMermaidWithOfficialParser,
 } from '@/services/mermaid/officialMermaidValidation';
 import { parseMermaidByType } from '@/services/mermaid/parseMermaidByType';
-import { composeDiagramForDisplay } from '@/services/composeDiagramForDisplay';
 import { enrichNodesWithIcons } from '@/lib/nodeEnricher';
 import { normalizeNodeIconData } from '@/lib/nodeIconState';
-import { assignSmartHandles } from '@/services/smartEdgeRouting';
 import type { LayoutOptions } from '@/services/elk-layout/types';
-import { attachImportLayoutMetadata } from '@/services/importLayoutMetadata';
+import {
+  importMermaidToCanvas,
+  resolveEffectiveMermaidImportMode,
+} from '@/services/mermaid/rendererFirstImport';
 
 const IMPORT_LABEL_COMPACT_THRESHOLD = 10;
 const IMPORT_LABEL_VERBOSE_THRESHOLD = 20;
@@ -75,6 +76,7 @@ type AddToast = (
 
 interface UseFlowCanvasPasteParams {
   architectureStrictMode: boolean;
+  mermaidImportMode: MermaidImportMode;
   activeTabId: string;
   fitView: (options?: { duration?: number; padding?: number }) => void;
   updateTab: (tabId: string, updates: Partial<{ diagramType: string }>) => void;
@@ -93,6 +95,7 @@ interface UseFlowCanvasPasteParams {
 
 export function useFlowCanvasPaste({
   architectureStrictMode,
+  mermaidImportMode,
   activeTabId,
   fitView,
   updateTab,
@@ -180,68 +183,105 @@ export function useFlowCanvasPaste({
         const diagnostics = [...officialDiagnostics, ...parserDiagnostics];
 
         if (!result.error) {
-          if (diagnostics.length > 0) {
-            setMermaidDiagnostics(
-              buildMermaidDiagnosticsSnapshot({
-                source: 'paste',
-                diagramType: result.diagramType,
-                importState: result.importState,
-                originalSource: result.originalSource,
-                diagnostics,
-                nodeCount: result.nodes.length,
-                edgeCount: result.edges.length,
-              })
-            );
-            const toastMessage = getMermaidImportToastMessage({
-              importState: result.importState,
-              warningCount: diagnostics.length,
-            });
-            if (toastMessage) {
-              addToast(toastMessage, 'warning');
-            }
-          } else {
-            clearMermaidDiagnostics();
-          }
-
           recordHistory();
 
           if (result.nodes.length > 0) {
-            const enrichedNodes = safelyEnrichImportedNodes(result.nodes, result.diagramType);
             try {
-              const { clearLayoutCache } = await import('@/services/elkLayout');
-              clearLayoutCache();
               const layoutDirection = resolveLayoutDirection(result);
+              const effectiveMermaidImportMode = resolveEffectiveMermaidImportMode(
+                mermaidImportMode,
+                result.diagramType
+              );
+              const enrichedNodes = effectiveMermaidImportMode === 'native_editable'
+                ? safelyEnrichImportedNodes(result.nodes, result.diagramType)
+                : result.nodes;
               const { spacing, contentDensity } = resolveImportLayoutOptions(enrichedNodes, result.diagramType);
-              const { nodes: layoutedNodes, edges: layoutedEdges } = await composeDiagramForDisplay(
-                enrichedNodes,
-                result.edges,
-                {
+              const canvasImport = await importMermaidToCanvas({
+                parsed: { ...result, nodes: enrichedNodes },
+                source: pastedText,
+                importMode: effectiveMermaidImportMode,
+                layout: {
                   direction: layoutDirection,
                   spacing,
                   contentDensity,
-                  diagramType: result.diagramType,
-                  source: 'import',
-                }
-              );
-              const smartEdges = assignSmartHandles(layoutedNodes, layoutedEdges);
-              const importSignature = `mermaid-import-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-              setNodes(
-                attachImportLayoutMetadata(layoutedNodes, {
-                  signature: importSignature,
-                  direction: layoutDirection,
-                  spacing,
-                  contentDensity,
-                  diagramType: result.diagramType,
-                })
-              );
-              setEdges(smartEdges);
+                },
+              });
+
+              setNodes(canvasImport.nodes);
+              setEdges(canvasImport.edges);
+
+              const shouldSurfaceDiagnostics =
+                diagnostics.length > 0
+                || canvasImport.visualMode === 'renderer_exact'
+                || canvasImport.visualMode !== 'editable_exact'
+                || canvasImport.layoutMode === 'mermaid_preserved_partial'
+                || canvasImport.layoutMode === 'mermaid_partial'
+                || canvasImport.layoutMode === 'elk_fallback';
+
+              if (shouldSurfaceDiagnostics) {
+                setMermaidDiagnostics(
+                  buildMermaidDiagnosticsSnapshot({
+                    source: 'paste',
+                    diagramType: result.diagramType,
+                    importState: result.importState,
+                    originalSource: result.originalSource,
+                    diagnostics,
+                    nodeCount: canvasImport.nodes.length,
+                    edgeCount: canvasImport.edges.length,
+                    layoutMode: canvasImport.layoutMode,
+                    visualMode: canvasImport.visualMode,
+                    layoutFallbackReason: canvasImport.layoutFallbackReason,
+                  })
+                );
+              } else {
+                clearMermaidDiagnostics();
+              }
+
+              const toastMessage = getMermaidImportToastMessage({
+                importState: result.importState,
+                warningCount:
+                  diagnostics.length + (canvasImport.visualMode === 'renderer_exact' ? 0 : 1),
+              });
+              if (toastMessage && (diagnostics.length > 0 || canvasImport.visualMode !== 'renderer_exact')) {
+                addToast(toastMessage, 'warning');
+              }
             } catch {
+              const enrichedNodes = safelyEnrichImportedNodes(result.nodes, result.diagramType);
               setNodes(enrichedNodes);
               setEdges(result.edges);
+              setMermaidDiagnostics(
+                buildMermaidDiagnosticsSnapshot({
+                  source: 'paste',
+                  diagramType: result.diagramType,
+                  importState: result.importState,
+                  originalSource: result.originalSource,
+                  diagnostics,
+                  nodeCount: result.nodes.length,
+                  edgeCount: result.edges.length,
+                  layoutMode: 'elk_fallback',
+                  visualMode: 'editable_fallback',
+                  layoutFallbackReason: 'Import layout orchestration failed after parsing',
+                })
+              );
             }
           } else {
             setNodes(result.nodes);
             setEdges(result.edges);
+            if (diagnostics.length > 0) {
+              setMermaidDiagnostics(
+                buildMermaidDiagnosticsSnapshot({
+                  source: 'paste',
+                  diagramType: result.diagramType,
+                  importState: result.importState,
+                  originalSource: result.originalSource,
+                  diagnostics,
+                  nodeCount: result.nodes.length,
+                  edgeCount: result.edges.length,
+                })
+              );
+            } else {
+              clearMermaidDiagnostics();
+            }
           }
 
           if ('diagramType' in result && result.diagramType) {
@@ -303,6 +343,7 @@ export function useFlowCanvasPaste({
       pasteSelection,
       getLastInteractionFlowPosition,
       recordHistory,
+      mermaidImportMode,
       setEdges,
       setMermaidDiagnostics,
       setNodes,

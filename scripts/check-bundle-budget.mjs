@@ -37,6 +37,20 @@ function readAllChunkSizes() {
   return sizes;
 }
 
+function isStaticAssetWrapperChunk(relativePath) {
+  const filePath = path.join(DIST_DIR, relativePath);
+  const source = fs.readFileSync(filePath, 'utf8').trim();
+
+  // Vite emits tiny JS modules for SVG/data-URL assets when we use import.meta.glob with
+  // `?url` or when small SVGs are inlined. These modules are static string exports, not
+  // executable application code, so including them in the lazy-JS total creates false
+  // bundle-budget failures for large icon catalogs.
+  return /^const\s+\w+=["'`][\s\S]*["'`];export\{\w+ as default\};?$/.test(source)
+    && !source.includes('import')
+    && !source.includes('function')
+    && !source.includes('=>');
+}
+
 function readEntryAssetSizes() {
   if (!fs.existsSync(INDEX_HTML_PATH)) {
     throw new Error('Missing dist/index.html. Run "npm run build" before "npm run bundle:check".');
@@ -108,7 +122,9 @@ function main() {
   // Lazy chunk checks
   const allChunkSizes = readAllChunkSizes();
   const entryJsSet = new Set(jsEntries.map(([file]) => file));
-  const lazyChunks = Array.from(allChunkSizes.entries()).filter(([file]) => !entryJsSet.has(file));
+  const lazyChunks = Array.from(allChunkSizes.entries()).filter(
+    ([file]) => !entryJsSet.has(file) && !isStaticAssetWrapperChunk(file)
+  );
   const totalLazyBytes = lazyChunks.reduce((sum, [, size]) => sum + size, 0);
 
   const top5 = [...lazyChunks].sort(([, a], [, b]) => b - a).slice(0, 5);

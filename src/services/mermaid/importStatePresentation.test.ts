@@ -4,6 +4,7 @@ import {
   getMermaidImportStateDetail,
   getMermaidImportStateGuidance,
   getMermaidImportStateLabel,
+  getMermaidStatusLabel,
   getMermaidImportToastMessage,
   summarizeMermaidImport,
 } from './importStatePresentation';
@@ -24,7 +25,16 @@ describe('importStatePresentation', () => {
         importState: 'editable_partial',
         warningCount: 2,
       })
-    ).toBe('Imported with warnings: partial editability (2 diagnostic warnings).');
+    ).toBe('Imported with warnings: partial editability (2 warnings).');
+  });
+
+  it('uses generic warning copy for clean parses with degraded layout fidelity', () => {
+    expect(
+      getMermaidImportToastMessage({
+        importState: 'editable_full',
+        warningCount: 1,
+      })
+    ).toBe('Imported with 1 warning.');
   });
 
   it('summarizes clean Mermaid imports without fallback wording', () => {
@@ -36,6 +46,24 @@ describe('importStatePresentation', () => {
         edgeCount: 1,
       })
     ).toBe('Mermaid flowchart: Ready to apply (2 nodes, 1 edges)');
+  });
+
+  it('upgrades editable_full status labels to warnings when layout fidelity degrades', () => {
+    expect(
+      getMermaidStatusLabel({
+        importState: 'editable_full',
+        layoutMode: 'mermaid_preserved_partial',
+      })
+    ).toBe('Ready with warnings');
+    expect(
+      summarizeMermaidImport({
+        diagramType: 'flowchart',
+        importState: 'editable_full',
+        layoutMode: 'mermaid_preserved_partial',
+        nodeCount: 2,
+        edgeCount: 1,
+      })
+    ).toBe('Mermaid flowchart: Ready with warnings (2 nodes, 1 edges)');
   });
 
   it('adds guidance for unsupported Mermaid families', () => {

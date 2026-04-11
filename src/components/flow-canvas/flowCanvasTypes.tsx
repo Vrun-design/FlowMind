@@ -9,6 +9,7 @@ import {
 } from '@/components/CustomEdge';
 import SequenceMessageEdge from '@/components/custom-edge/SequenceMessageEdge';
 import ImageNode from '@/components/ImageNode';
+import MermaidSvgNode from '@/components/MermaidSvgNode';
 import SwimlaneNode from '@/components/SwimlaneNode';
 import TextNode from '@/components/TextNode';
 import BrowserNode from '@/components/custom-nodes/BrowserNode';
@@ -38,6 +39,7 @@ export const flowCanvasNodeTypes: NodeTypes = {
   section: SectionNode,
   swimlane: SwimlaneNode,
   image: ImageNode,
+  mermaid_svg: MermaidSvgNode,
   browser: BrowserNode,
   mobile: MobileNode,
   sequence_participant: SequenceParticipantNode,

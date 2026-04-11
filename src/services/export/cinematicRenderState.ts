@@ -15,6 +15,7 @@ export interface CinematicExportPreset {
   fps: number;
   maxDimension: number;
   pixelRatio: number;
+  videoBitsPerSecond: number;
   introHoldMs: number;
   rootNodeFadeMs: number;
   edgeGrowMs: number;
@@ -99,6 +100,7 @@ export function getCinematicExportPreset(
     fps: isHighResolution ? 24 : isLowResolution ? 18 : 20,
     maxDimension: resolutionPreset.maxDimension,
     pixelRatio: resolutionPreset.pixelRatio,
+    videoBitsPerSecond: resolutionPreset.videoBitsPerSecond,
     introHoldMs: Math.round(200 / speedMultiplier),
     rootNodeFadeMs: Math.round(300 / speedMultiplier),
     edgeGrowMs: Math.round(500 / speedMultiplier),

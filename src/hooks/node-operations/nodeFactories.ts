@@ -131,6 +131,41 @@ export function createImageNode(
   };
 }
 
+export function createMermaidSvgNode(
+  id: string,
+  position: { x: number; y: number },
+  options: {
+    label: string;
+    mermaidSource: string;
+    mermaidSvg: string;
+    mermaidViewBox?: string;
+    width: number;
+    height: number;
+    linkedEditableGraphId?: string;
+  }
+): FlowNode {
+  return {
+    id,
+    position,
+    data: {
+      label: options.label,
+      mermaidSource: options.mermaidSource,
+      mermaidSvg: options.mermaidSvg,
+      mermaidViewBox: options.mermaidViewBox,
+      mermaidImportMode: 'renderer_first',
+      mermaidRendererTheme: 'default',
+      linkedEditableGraphId: options.linkedEditableGraphId,
+      transparency: 1,
+      rotation: 0,
+    },
+    type: 'mermaid_svg',
+    draggable: true,
+    selectable: true,
+    connectable: false,
+    style: { width: options.width, height: options.height },
+  };
+}
+
 export function createClassNode(
   id: string,
   position: { x: number; y: number },

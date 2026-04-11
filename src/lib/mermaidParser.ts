@@ -75,7 +75,7 @@ function createSectionIdFromLabel(label: string): string {
 
 function parseSubgraphDeclaration(
   line: string
-): { sectionId: string; sectionLabel: string } | null {
+): { sectionId: string; sectionLabel: string; sectionMermaidId?: string; sectionMermaidTitle: string } | null {
   const subgraphMatch = line.match(/^subgraph\s+(.+)$/i);
   if (!subgraphMatch) {
     return null;
@@ -91,6 +91,8 @@ function parseSubgraphDeclaration(
     return {
       sectionId: parsedNodeDeclaration.id,
       sectionLabel: parsedNodeDeclaration.label,
+      sectionMermaidId: parsedNodeDeclaration.id,
+      sectionMermaidTitle: parsedNodeDeclaration.label,
     };
   }
 
@@ -103,6 +105,7 @@ function parseSubgraphDeclaration(
   return {
     sectionId: createSectionIdFromLabel(sectionLabel),
     sectionLabel,
+    sectionMermaidTitle: sectionLabel,
   };
 }
 
@@ -120,13 +123,19 @@ function registerSectionNode(
 
   let sectionId: string;
   let sectionLabel: string;
+  let sectionMermaidId: string | undefined;
+  let sectionMermaidTitle: string;
 
   if (subgraphDeclaration) {
     sectionLabel = subgraphDeclaration.sectionLabel;
     sectionId = subgraphDeclaration.sectionId;
+    sectionMermaidId = subgraphDeclaration.sectionMermaidId;
+    sectionMermaidTitle = subgraphDeclaration.sectionMermaidTitle;
   } else if (stateGroupMatch) {
     sectionId = stateGroupMatch[2] ?? stateGroupMatch[1];
     sectionLabel = stateGroupMatch[1] ?? stateGroupMatch[2];
+    sectionMermaidId = sectionId;
+    sectionMermaidTitle = sectionLabel;
   } else {
     return false;
   }
@@ -143,6 +152,10 @@ function registerSectionNode(
     label: sectionLabel,
     type: 'section',
     parentId,
+    metadata: {
+      sectionMermaidId,
+      sectionMermaidTitle,
+    },
   });
   state.parentStack.push(finalId);
 
@@ -344,16 +357,26 @@ function buildMermaidParseModel(lines: string[]): MermaidParseModel {
 }
 
 function createFlowNodes(model: MermaidParseModel): FlowNode[] {
-  return Array.from(model.nodesMap.values()).map((node, index) => {
+  return Array.from(model.nodesMap.values()).map((node) => {
+    // Position is a placeholder — the SVG extraction pipeline (extractMermaidLayout /
+    // buildOfficialFlowchartImportGraph) will overwrite these with real Mermaid-rendered
+    // positions. Using {0,0} rather than an index-based grid avoids polluting the
+    // node-ID reconciliation logic with positions that look meaningful but aren't.
     let flowNode: FlowNode = {
       id: node.id,
       type: node.type,
-      position: { x: (index % 4) * 200, y: Math.floor(index / 4) * 150 },
+      position: { x: 0, y: 0 },
       data: {
         label: node.label,
         subLabel: '',
         color: getDefaultColor(node.type),
         ...(node.shape ? { shape: node.shape } : {}),
+        ...(node.metadata?.sectionMermaidId
+          ? { sectionMermaidId: node.metadata.sectionMermaidId }
+          : {}),
+        ...(node.metadata?.sectionMermaidTitle
+          ? { sectionMermaidTitle: node.metadata.sectionMermaidTitle }
+          : {}),
       },
       ...(node.type === 'section'
         ? {

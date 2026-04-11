@@ -1,5 +1,7 @@
 import type { DiagramType } from '@/lib/types';
+import type { MermaidDiagnosticsSnapshot } from '@/store/types';
 import type { MermaidImportStatus } from './importContracts';
+import { isMermaidLayoutRecoveryRecommended } from './recoveryPresentation';
 import { getMermaidFamilySupportMatrixEntry } from './supportMatrix';
 
 function formatGraphSummary(nodeCount: number, edgeCount: number): string {
@@ -22,6 +24,29 @@ export function getMermaidImportStateLabel(
     default:
       return 'Ready to apply';
   }
+}
+
+export function getMermaidStatusLabel(params: {
+  importState: MermaidImportStatus | undefined;
+  layoutMode?: MermaidDiagnosticsSnapshot['layoutMode'];
+  visualMode?: MermaidDiagnosticsSnapshot['visualMode'];
+}): string {
+  if (params.visualMode === 'renderer_exact') {
+    return 'Rendered from Mermaid SVG';
+  }
+
+  if (params.layoutMode === 'mermaid_exact') {
+    return 'Imported as editable Mermaid diagram';
+  }
+
+  if (
+    params.importState === 'editable_full'
+    && isMermaidLayoutRecoveryRecommended(params.layoutMode)
+  ) {
+    return 'Ready with warnings';
+  }
+
+  return getMermaidImportStateLabel(params.importState);
 }
 
 export function getMermaidImportStateDetail(params: {
@@ -59,11 +84,11 @@ export function getMermaidImportToastMessage(params: {
   warningCount: number;
 }): string | null {
   if (params.importState === 'editable_partial') {
-    return `Imported with warnings: partial editability (${params.warningCount} diagnostic warning${params.warningCount === 1 ? '' : 's'}).`;
+    return `Imported with warnings: partial editability (${params.warningCount} warning${params.warningCount === 1 ? '' : 's'}).`;
   }
 
   if (params.warningCount > 0) {
-    return `Imported with ${params.warningCount} diagnostic warning${params.warningCount === 1 ? '' : 's'}.`;
+    return `Imported with ${params.warningCount} warning${params.warningCount === 1 ? '' : 's'}.`;
   }
 
   return null;
@@ -111,11 +136,17 @@ export function appendMermaidImportGuidance(params: {
 export function summarizeMermaidImport(params: {
   diagramType?: string;
   importState?: MermaidImportStatus;
+  layoutMode?: MermaidDiagnosticsSnapshot['layoutMode'];
+  visualMode?: MermaidDiagnosticsSnapshot['visualMode'];
   nodeCount: number;
   edgeCount: number;
 }): string {
   const typeLabel = params.diagramType ?? 'diagram';
-  const label = getMermaidImportStateLabel(params.importState);
+  const label = getMermaidStatusLabel({
+    importState: params.importState,
+    layoutMode: params.layoutMode,
+    visualMode: params.visualMode,
+  });
   const detail = getMermaidImportStateDetail({
     importState: params.importState,
     diagramType: params.diagramType as DiagramType | undefined,

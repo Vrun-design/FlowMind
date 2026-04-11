@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildResolvedLayoutConfiguration } from './options';
 
 describe('buildResolvedLayoutConfiguration', () => {
-  it('tightens import spacing for compact short-label diagrams', () => {
+  it('uses standard compact spacing for import diagrams', () => {
     const config = buildResolvedLayoutConfiguration({
       direction: 'TB',
       spacing: 'compact',
@@ -11,8 +11,10 @@ describe('buildResolvedLayoutConfiguration', () => {
       source: 'import',
     });
 
-    expect(config.dims.nodeNode).toBe('26');
-    expect(config.dims.nodeLayer).toBe('42');
+    // Import no longer gets an extra spacing reduction — diagrams should
+    // breathe the same as any other compact flowchart.
+    expect(config.dims.nodeNode).toBe('32');
+    expect(config.dims.nodeLayer).toBe('50');
   });
 
   it('keeps architecture diagrams from collapsing below readable spacing', () => {

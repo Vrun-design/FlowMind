@@ -62,6 +62,8 @@ describe('importFidelity', () => {
         const report = buildImportFidelityReport({
             source: 'mermaid',
             importState: 'editable_partial',
+            layoutMode: 'mermaid_preserved_partial',
+            layoutFallbackReason: 'matched 1/2 official flowchart edge routes',
             originalSource: 'flowchart TD\nA-->B',
             nodeCount: 2,
             edgeCount: 1,
@@ -70,7 +72,84 @@ describe('importFidelity', () => {
         });
 
         expect(report.originalSource).toContain('flowchart TD');
+        expect(report.status).toBe('success_with_warnings');
+        expect(report.summary.warningCount).toBe(2);
+        expect(report.issues).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    code: 'MERMAID_LAYOUT_PRESERVED',
+                    severity: 'warning',
+                }),
+            ])
+        );
         expect(summarizeImportReport(report)).toContain('Ready with warnings');
-        expect(getImportRecoveryGuidance(report)).toContain('fully editable');
+        expect(summarizeImportReport(report)).toContain('partial Mermaid layout preserved');
+        expect(getImportRecoveryGuidance(report)).toContain('mostly preserved');
+    });
+
+    it('describes Mermaid ELK fallback separately in summaries and recovery guidance', () => {
+        const report = buildImportFidelityReport({
+            source: 'mermaid',
+            importState: 'editable_partial',
+            layoutMode: 'elk_fallback',
+            layoutFallbackReason: 'Mermaid SVG extraction unavailable',
+            originalSource: 'flowchart TD\nA-->B',
+            nodeCount: 2,
+            edgeCount: 1,
+            elapsedMs: 9,
+            issues: [{ code: 'MERMAID_GENERAL', severity: 'warning', message: 'diag' }],
+        });
+
+        expect(summarizeImportReport(report)).toContain('ELK fallback');
+        expect(getImportRecoveryGuidance(report)).toContain('ELK fallback was used');
+    });
+
+    it('records Mermaid layout degradation as a warning even without parser diagnostics', () => {
+        const report = buildImportFidelityReport({
+            source: 'mermaid',
+            importState: 'editable_full',
+            layoutMode: 'mermaid_preserved_partial',
+            layoutFallbackReason: 'matched 1/2 official flowchart edge routes',
+            originalSource: 'flowchart LR\nA-->B',
+            nodeCount: 2,
+            edgeCount: 1,
+            elapsedMs: 7,
+            issues: [],
+        });
+
+        expect(report.status).toBe('success_with_warnings');
+        expect(report.summary.warningCount).toBe(1);
+        expect(report.summary.errorCount).toBe(0);
+        expect(report.issues).toEqual([
+            expect.objectContaining({
+                code: 'MERMAID_LAYOUT_PRESERVED',
+                severity: 'warning',
+                message: expect.stringContaining('matched 1/2 official flowchart edge routes'),
+            }),
+        ]);
+        expect(summarizeImportReport(report)).toContain('Ready with warnings');
+    });
+
+    it('uses native editable wording for structurally partial official Mermaid imports', () => {
+        const report = buildImportFidelityReport({
+            source: 'mermaid',
+            importState: 'editable_partial',
+            layoutMode: 'mermaid_partial',
+            layoutFallbackReason: 'matched 0/1 official flowchart sections',
+            originalSource: 'flowchart LR\nsubgraph group\nA-->B\nend',
+            nodeCount: 2,
+            edgeCount: 1,
+            elapsedMs: 11,
+            issues: [],
+        });
+
+        expect(report.issues).toEqual([
+            expect.objectContaining({
+                code: 'MERMAID_LAYOUT_PARTIAL',
+                message: expect.stringContaining('Official Mermaid flowchart import preserved native editable geometry with partial fidelity'),
+            }),
+        ]);
+        expect(summarizeImportReport(report)).toContain('editable Mermaid import with preserved official flowchart geometry');
+        expect(getImportRecoveryGuidance(report)).toContain('Official Mermaid flowchart import was partial, but native editable geometry was preserved');
     });
 });

@@ -16,6 +16,7 @@ describe('flowCanvasNodeTypes', () => {
         "er_entity",
         "image",
         "journey",
+        "mermaid_svg",
         "mindmap",
         "mobile",
         "process",

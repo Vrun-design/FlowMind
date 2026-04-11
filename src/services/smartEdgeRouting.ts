@@ -5,6 +5,7 @@ import { getNodeParentId } from '@/lib/nodeParent';
 import { getNodeHandleIdForSide, type HandleSide } from '@/lib/nodeHandles';
 import { resolveNodeSize } from '@/components/nodeHelpers';
 import { estimateWrappedTextBox, DEFAULT_MAX_WIDTH } from './elk-layout/textSizing';
+import { readMermaidImportedEdgeMetadata } from './mermaid/importProvenance';
 
 // Walks the parent hierarchy to get the canvas-absolute position of a node.
 // Uses node.position (relative) rather than positionAbsolute, which can be
@@ -178,6 +179,43 @@ export function assignSmartHandlesWithOptions(
     const profile = options.profile ?? 'standard';
 
     return edges.map((edge) => {
+        if (edge.data?.routingMode === 'import-fixed') {
+            return edge;
+        }
+
+        const importedEdgeMetadata = readMermaidImportedEdgeMetadata(edge);
+        if (
+            importedEdgeMetadata
+            && importedEdgeMetadata.hasFixedRoute === false
+        ) {
+            const preservedSourceHandle =
+                typeof edge.sourceHandle === 'string'
+                    ? edge.sourceHandle
+                    : importedEdgeMetadata.preferredSourceHandle;
+            const preservedTargetHandle =
+                typeof edge.targetHandle === 'string'
+                    ? edge.targetHandle
+                    : importedEdgeMetadata.preferredTargetHandle;
+
+            if (
+                typeof preservedSourceHandle === 'string'
+                && typeof preservedTargetHandle === 'string'
+            ) {
+                if (
+                    edge.sourceHandle === preservedSourceHandle
+                    && edge.targetHandle === preservedTargetHandle
+                ) {
+                    return edge;
+                }
+
+                return {
+                    ...edge,
+                    sourceHandle: preservedSourceHandle,
+                    targetHandle: preservedTargetHandle,
+                };
+            }
+        }
+
         const sourceNode = nodeMap.get(edge.source);
         const targetNode = nodeMap.get(edge.target);
 
